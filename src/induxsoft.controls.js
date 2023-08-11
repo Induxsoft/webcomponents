@@ -318,7 +318,7 @@ class InputKey extends HTMLElement
                     #input_search_container, #button_search_container, #input_description_container{ border: none; outline:1px solid #888; }
 
                     /* ========== 2 Section */
-                    #container2{ width: 100vw; height: 100vh; position: absolute; top:0; left:0; padding:0; margin: 0; display:flex; align-items:center; justify-content:center; }
+                    #container2{ width: 100vw; height: 100vh; position: fixed; top:0; left:0; padding:0; margin: 0; display:flex; align-items:center; justify-content:center; }
                     #search_container2{ width: 40rem; height: 30rem; border:1px solid #ededed; box-shadow: 1px 3px 6px 0 #DDD; display:flex;flex-direction: column;}
                     #header_section_container2, #search_section_container2, #tables_section_container2{border-bottom:1px solid #DDD;}
                     #header_section_container2{ padding: 6px 10px; }
