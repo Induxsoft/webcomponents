@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="induxsoft.controls.js"></script>
+    <title>Induxsoft Web Components</title>
+</head>
+<body style="font-family: monospace;">
+    <div style="max-width: 25rem; padding: 8px 16px; border: 1px solid #DDD;border-radius: 5px; padding-bottom: 32px; margin:4px;">
+        <h3>Edit Select</h3>
+        <!--
+            [PARAMS: edit-select]
+            ----------------------------------------------------------------------------------------------
+            - edit-options  (optional): Establece que las opciones puedan ser editables (def: false)
+            - manual-text   (optional): Establece el texto a mostrar para la opción editable (def: Escribir manualmente...)
+        -->
+        <edit-select id="micontrol1" name="opcion" edit-options="true" manual-text="Editar manualmente">
+            <option value="1">Opción 1</option>
+            <option value="2">Opción 2</option>
+            <option value="3">Opción 3</option>
+            <option >Opción 4</option>
+        </edit-select>
+    </div>
+    <div style="max-width: 25rem; padding: 8px 16px; border: 1px solid #DDD;border-radius: 5px; padding-bottom: 32px; margin:4px;">
+        <h3>Input Key</h3>
+        <!--
+            [PARAMS: input-key]
+            ----------------------------------------------------------------------------------------------
+            - data-key              (required): Establece el campo a guardar al seleccionar un registro
+            - data-search           (required): Establece el campo a considerar en la busqueda de un registro
+            - data-text             (optional): Establece el campo a mostrar en la descripción del registro seleccionado
+            - data-value            (optional): Establece los datos a usar en la selección de registros (ej: [{sys_pk:1,codigo:'001',nombre:'Bob'}, ...])
+            - data-source           (optional): Establece el endpoint para la obtención de registros (@search: valor del parámetro a buscar)
+            - box-title-text        (opcional): Texto a mostrar en el títilo del buscador (def: Seleccione un Registro)
+            - box-placeholder-text  (opcional): Texto a mostrar en el placeholder del buscador (de: Buscar...)
+            - box-nodata-text       (opcional): Texto a mostrar cuando no haya datos para mostrar (def: Sin registros)
+        -->
+        <input-key 
+            id="micontrol2"
+            name="cliente"
+            data-key="sys_pk"
+            data-search="codigo"
+            data-text="nombre"
+            data-source=""
+            box-title-text="Seleccione un cliente"
+            box-placeholder-text="Buscar cliente"
+            box-nodata-text="No se encontraron clientes">
+        </input-key>
+    </div>
+</body>
+</html>
