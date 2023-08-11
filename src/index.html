@@ -31,12 +31,19 @@
             - data-search           (required): Establece el campo a considerar en la busqueda de un registro
             - data-text             (optional): Establece el campo a mostrar en la descripción del registro seleccionado
             - data-value            (optional): Establece los datos a usar en la selección de registros (ej: [{sys_pk:1,codigo:'001',nombre:'Bob'}, ...])
-            - data-source           (optional): Establece el endpoint para la obtención de registros (@search: valor del parámetro a buscar)
+            - data-source           (optional): Establece el endpoint para la obtención de registros 
+            - add-url               (opcional): Establece el endpoint para la adición de nuevos registros
+            - edit-url              (opcional): Establece el endpoint para la edición del registro seleccionado
             - search-value          (opcional): Texto a mostrar por defecto en el campo de busqueda
             - text-value            (opcional): Texto a mostrar por defecto en el campo de descrición
             - box-title-text        (opcional): Texto a mostrar en el títilo del buscador (def: Seleccione un Registro)
             - box-placeholder-text  (opcional): Texto a mostrar en el placeholder del buscador (de: Buscar...)
             - box-nodata-text       (opcional): Texto a mostrar cuando no haya datos para mostrar (def: Sin registros)
+
+            Claves disponibles en la url
+            - @search               (opcional): Valor del parámetro a buscar establecido en el campo de busqueda del componente
+            - @key                  (opcional): Valor (data-key) del registro seleccionado
+            - @text                 (opcional): Descripción (data-text) del registro selccionado
         -->
         <input-key 
             id="micontrol2"
@@ -45,6 +52,8 @@
             data-search="codigo"
             data-text="nombre"
             data-source=""
+            add-url=""
+            edit-url=""
             search-value=""
             text-value=""
             box-title-text="Seleccione un cliente"

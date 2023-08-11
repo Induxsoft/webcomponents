@@ -157,35 +157,41 @@ class InputKey extends HTMLElement
     {
         document.addEventListener('DOMContentLoaded', () => 
         {
-            //=============== 1 Section
+            //=============== 1 SECTION [ MAIN CONTROL ]
             
             const shadow = this.attachShadow({ mode: 'closed' });
             const inputv = this.createFullElement('input', {type:'hidden', value:`${this.getAttribute('value')??''}`, name:`${this.getAttribute('name')}`});
             const container = this.createFullElement('div', {id:'container'});
             const search_container = this.createFullElement('div', {id:'search_container'});
             const input_search_container = this.createFullElement('input', {id:'input_search_container', type:'text'});
-            const button_search_container = this.createFullElement('button', {id:'button_search_container', type:'button', class:'hover-gray'});
+            const button_search_container = this.createFullElement('button', {id:'button_search_container', type:'button', class:'hover-gray btn-sm'});
             const description_container = this.createFullElement('div', {id:'description_container'});
-            const input_description_container = this.createFullElement('input', {id:'input_description_container', type:'text', disabled:'true'});
+            const input_description_container = this.createFullElement('input', {id:'input_description_container', type:'text', readonly:'readonly'});
+            const button_add_container = this.createFullElement('button', {id:'button_add_container', type:'button', class:'hover-gray btn-sm'});
+            const button_edit_container = this.createFullElement('button', {id:'button_edit_container', type:'button', class:'hover-gray btn-sm'});
 
             input_search_container.value = (this.getAttribute('search-value') ?? '');
             input_description_container.value = (this.getAttribute('text-value') ?? '');
             button_search_container.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16"><path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg>`;
-            
+            button_add_container.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/></svg>`;
+            button_edit_container.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16"><path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/></svg>`;
+
             search_container.appendChild(input_search_container);
             search_container.appendChild(button_search_container);
             description_container.appendChild(input_description_container);
+            if (this.getAttribute('add-url')) description_container.appendChild(button_add_container);
+            if (this.getAttribute('edit-url')) description_container.appendChild(button_edit_container);
             container.appendChild(search_container);
             container.appendChild(description_container);
 
-            //=============== 2 Section
+            //=============== 2 SECTION [ SEARCH AND SELECT ELEMENT ]
 
-            const container2 = this.createFullElement('div', {id:'container2', class:'hide-element'});
-            const search_container2 = this.createFullElement('div', {id:'search_container2', class:'bg-white'});
-            const header_section_container2 = this.createFullElement('div', {id:'header_section_container2', class:'d-flex'});
-            const search_section_container2 = this.createFullElement('div', {id:'search_section_container2', class:'d-flex p-2'});
-            const tables_section_container2 = this.createFullElement('div', {id:'tables_section_container2', class:'grow-1'});
-            const footer_section_container2 = this.createFullElement('div', {class:'bg-gray d-flex gap-1 justify-content-end p-2'});
+            const container2 = this.createFullElement('div', {id:'container2', class:'hide-element modal-backdrop'});
+            const search_container2 = this.createFullElement('div', {id:'search_container2', class:'bg-white modal-container'});
+            const header_section_container2 = this.createFullElement('div', {id:'header_section_container2', class:'d-flex modal-section modal-section-header'});
+            const search_section_container2 = this.createFullElement('div', {id:'search_section_container2', class:'d-flex p-2 modal-section'});
+            const tables_section_container2 = this.createFullElement('div', {id:'tables_section_container2', class:'grow-1 modal-section overflow'});
+            const footer_section_container2 = this.createFullElement('div', {class:'bg-gray d-flex gap-1 justify-content-end p-2 modal-section'});
 
             // header section
             const title_header_container2 = this.createFullElement('p', {id:'title_container2', class:'text-secondary grow-1'});
@@ -215,7 +221,6 @@ class InputKey extends HTMLElement
                 t.textContent = title;
                 head_tables_container2.appendChild(t);
             });
-            
 
             tables_section_container2.appendChild(head_tables_container2);
             tables_section_container2.appendChild(body_tables_container2);
@@ -234,7 +239,45 @@ class InputKey extends HTMLElement
             search_container2.appendChild(footer_section_container2);
             container2.appendChild(search_container2);
 
-            //=============== Events
+            //=============== 3 SECTION [ ADD ELEMENT ]
+
+            const container3 = this.createFullElement('div', {id:'container3', class:'hide-element modal-backdrop'});
+            const add_container3 = this.createFullElement('div', {id:'add_container3', class:'bg-white modal-container'});
+            const header_section_container3 = this.createFullElement('div', {id:'header_section_container3', class:'d-flex modal-section modal-section-header'});
+            const iframe_section_container3 = this.createFullElement('div', {id:'iframe_section_container3', class:'grow-1 modal-section'});
+
+            // header section
+            const title_header_container3 = this.createFullElement('p', {id:'title_container2', class:'text-secondary grow-1'});
+            const close_header_container3 = this.createFullElement('button', {id:'close_header_container2', class:"border-0 p-1 hover-red"});
+            title_header_container3.textContent = (this.getAttribute('box-title-text') ?? 'Agregar registro');
+            close_header_container3.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#FFF" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/></svg>`;
+            header_section_container3.appendChild(title_header_container3);
+            header_section_container3.appendChild(close_header_container3);
+
+            add_container3.appendChild(header_section_container3);
+            add_container3.appendChild(iframe_section_container3);
+            container3.appendChild(add_container3);
+
+            //=============== 4 SECTION [ EDIT ELEMENT ]
+
+            const container4 = this.createFullElement('div', {id:'container4', class:'hide-element modal-backdrop'});
+            const edit_container4 = this.createFullElement('div', {id:'edit_container4', class:'bg-white modal-container'});
+            const header_section_container4 = this.createFullElement('div', {id:'header_section_container4', class:'d-flex modal-section modal-section-header'});
+            const iframe_section_container4 = this.createFullElement('div', {id:'iframe_section_container4', class:'grow-1 modal-section'});
+
+            // header section
+            const title_header_container4 = this.createFullElement('p', {id:'title_container4', class:'text-secondary grow-1'});
+            const close_header_container4 = this.createFullElement('button', {id:'close_header_container4', class:"border-0 p-1 hover-red"});
+            title_header_container4.textContent = (this.getAttribute('box-title-text') ?? 'Editar registro');
+            close_header_container4.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#FFF" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/></svg>`;
+            header_section_container4.appendChild(title_header_container4);
+            header_section_container4.appendChild(close_header_container4);
+
+            edit_container4.appendChild(header_section_container4);
+            edit_container4.appendChild(iframe_section_container4);
+            container4.appendChild(edit_container4);
+
+            //=============== EVENTS
 
             button_search_container.addEventListener('click', () => {
                 this.setDataSource(input_search_container.value).then(()=>{
@@ -242,6 +285,9 @@ class InputKey extends HTMLElement
                     this.search(input_search_container, input_description_container, body_tables_container2, text_fields, container2, input_search_container2,accept_footer_container2, inputv, false);
                 });
             });
+            input_description_container.addEventListener('dblclick', () => {
+                button_search_container.click();
+            })
             close_header_container2.addEventListener('click', () => {
                 container2.classList.add('hide-element');
             });
@@ -288,8 +334,35 @@ class InputKey extends HTMLElement
                 if (e.key === 'Escape')
                     container2.classList.add('hide-element');
             });
+            button_add_container.addEventListener('click', (e) => {
+                e.stopPropagation();
+                let url = this.prepareUrl((this.getAttribute('add-url')??''), input_search_container, input_description_container);
+                const iframe_container3 = this.createFullElement('iframe', {width:'100%', height:'100%', title:'Add element', src:url});
+                iframe_section_container3.innerHTML = '';
+                iframe_section_container3.appendChild(iframe_container3);
+                container3.classList.remove('hide-element');
+            });
+            close_header_container3.addEventListener('click', () => {
+                container3.classList.add('hide-element');
+            });
+            button_edit_container.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (!this.getAttribute('value'))
+                {
+                    alert('Debe seleccionar un registro para continuar.');
+                    return;
+                }
+                let url = this.prepareUrl((this.getAttribute('edit-url')??''), input_search_container, input_description_container);
+                const iframe_container4 = this.createFullElement('iframe', {width:'100%', height:'100%', title:'Edit element', src:url});
+                iframe_section_container4.innerHTML = '';
+                iframe_section_container4.appendChild(iframe_container4);
+                container4.classList.remove('hide-element');
+            });
+            close_header_container4.addEventListener('click', () => {
+                container4.classList.add('hide-element');
+            });
             
-            //=============== Styles
+            //=============== STYLES
 
             shadow.innerHTML = `
                 <style>
@@ -307,23 +380,23 @@ class InputKey extends HTMLElement
                     .ps-1{ padding-left: 2px; }.ps-2{ padding-left: 4px; }.ps-3{ padding-left: 8px; }.ps-4{ padding-left: 16px; }.ps-5{ padding-left: 32px; }
                     .pe-1{ padding-right: 2px; }.pe-2{ padding-right: 4px; }.pe-3{ padding-right: 8px; }.pe-4{ padding-right: 16px; }.pe-5{ padding-right: 32px; }
                     .justify-content-start{ justify-content: start; }.justify-content-center{ justify-content: center; }.justify-content-end{ justify-content: end; }
-                    .hover-red:hover{ background-color:#F00; }.hover-gray:hover{ background-color:#DDD; }
+                    .hover-red:hover{ background-color:#F00; }.hover-gray:hover{ background-color:#DDD !important; }
                     .fw-500{font-weight: 500;}
+                    .btn-sm{display: flex; align-items:center; justify-content: center; padding: 0 5px; border: none; outline:1px solid #888;}
+                    .modal-backdrop{ width: 100vw; height: 100vh; position: fixed; top:0; left:0; padding:0; margin: 0; display:flex; align-items:center; justify-content:center; }
+                    .modal-container{ width: 40rem; height: 30rem; border:1px solid #ededed; box-shadow: 1px 3px 6px 0 #DDD; display:flex;flex-direction: column; }
+                    .modal-section{ border-bottom:1px solid #DDD; }
+                    .modal-section-header{ padding: 6px 10px; }
+                    .overflow{ overflow:auto; }
 
                     /* ========== 1 Section */
                     #container{ display: grid; grid-template-columns: 40% 60%; }
                     #search_container, #description_container{ display: flex; padding:0 4px;}
-                    #button_search_container{ display: flex; align-items:center; justify-content: center; padding: 0 5px;}
                     #input_search_container, #input_description_container{ padding: 4px 8px; width: 100%; }
-                    #input_search_container, #button_search_container, #input_description_container{ border: none; outline:1px solid #888; }
+                    #input_search_container, #input_description_container{ border: none; outline:1px solid #888; }
 
                     /* ========== 2 Section */
-                    #container2{ width: 100vw; height: 100vh; position: fixed; top:0; left:0; padding:0; margin: 0; display:flex; align-items:center; justify-content:center; }
-                    #search_container2{ width: 40rem; height: 30rem; border:1px solid #ededed; box-shadow: 1px 3px 6px 0 #DDD; display:flex;flex-direction: column;}
-                    #header_section_container2, #search_section_container2, #tables_section_container2{border-bottom:1px solid #DDD;}
-                    #header_section_container2{ padding: 6px 10px; }
                     #head_tables_container2, .row_table{ display:grid; grid-template-columns: 60% 40%;}
-                    #tables_section_container2{overflow:auto;}
                     .row_table:hover{background-color:#F5F5F5;color:#000;}
                     .row_selected{background-color:#3D75DD !important;color:#FFF !important;}
                 </style>
@@ -331,6 +404,8 @@ class InputKey extends HTMLElement
 
             shadow.appendChild(container);
             shadow.appendChild(container2);
+            shadow.appendChild(container3);
+            shadow.appendChild(container4);
             this.after(inputv);
         });
     }
@@ -497,6 +572,12 @@ class InputKey extends HTMLElement
         inputsearch2.value = text;
         inputsearch2.select();
         inputsearch2.focus();
+    }
+    prepareUrl(url, inputSearch, inputText)
+    {
+        return url.replace('@search',inputSearch.value)
+            .replace('@key',this.getAttribute('value')??'')
+            .replace('@text', inputText.value);
     }
     request(url, success, fail)
     {
