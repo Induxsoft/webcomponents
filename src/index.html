@@ -32,6 +32,8 @@
             - data-text             (optional): Establece el campo a mostrar en la descripción del registro seleccionado
             - data-value            (optional): Establece los datos a usar en la selección de registros (ej: [{sys_pk:1,codigo:'001',nombre:'Bob'}, ...])
             - data-source           (optional): Establece el endpoint para la obtención de registros (@search: valor del parámetro a buscar)
+            - search-value          (opcional): Texto a mostrar por defecto en el campo de busqueda
+            - text-value            (opcional): Texto a mostrar por defecto en el campo de descrición
             - box-title-text        (opcional): Texto a mostrar en el títilo del buscador (def: Seleccione un Registro)
             - box-placeholder-text  (opcional): Texto a mostrar en el placeholder del buscador (de: Buscar...)
             - box-nodata-text       (opcional): Texto a mostrar cuando no haya datos para mostrar (def: Sin registros)
@@ -43,6 +45,8 @@
             data-search="codigo"
             data-text="nombre"
             data-source=""
+            search-value=""
+            text-value=""
             box-title-text="Seleccione un cliente"
             box-placeholder-text="Buscar cliente"
             box-nodata-text="No se encontraron clientes">

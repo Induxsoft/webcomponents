@@ -160,6 +160,7 @@ class InputKey extends HTMLElement
             //=============== 1 Section
             
             const shadow = this.attachShadow({ mode: 'closed' });
+            const inputv = this.createFullElement('input', {type:'hidden', value:`${this.getAttribute('value')??''}`, name:`${this.getAttribute('name')}`});
             const container = this.createFullElement('div', {id:'container'});
             const search_container = this.createFullElement('div', {id:'search_container'});
             const input_search_container = this.createFullElement('input', {id:'input_search_container', type:'text'});
@@ -167,6 +168,8 @@ class InputKey extends HTMLElement
             const description_container = this.createFullElement('div', {id:'description_container'});
             const input_description_container = this.createFullElement('input', {id:'input_description_container', type:'text', disabled:'true'});
 
+            input_search_container.value = (this.getAttribute('search-value') ?? '');
+            input_description_container.value = (this.getAttribute('text-value') ?? '');
             button_search_container.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16"><path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg>`;
             
             search_container.appendChild(input_search_container);
@@ -236,7 +239,7 @@ class InputKey extends HTMLElement
             button_search_container.addEventListener('click', () => {
                 this.setDataSource(input_search_container.value).then(()=>{
                     this.setDataInputSearch2(input_search_container2, input_search_container.value);
-                    this.search(input_search_container, input_description_container, body_tables_container2, text_fields, container2, input_search_container2,accept_footer_container2, false);
+                    this.search(input_search_container, input_description_container, body_tables_container2, text_fields, container2, input_search_container2,accept_footer_container2, inputv, false);
                 });
             });
             close_header_container2.addEventListener('click', () => {
@@ -251,7 +254,7 @@ class InputKey extends HTMLElement
                     alert("Debe seleccionar un registro para continuar");
                     return;
                 }
-                this.setValue(input_search_container, input_description_container);
+                this.setValue(input_search_container, input_description_container, inputv);
                 container2.classList.add('hide-element');
             });
             input_search_container.addEventListener('click', () => {
@@ -263,7 +266,7 @@ class InputKey extends HTMLElement
                 {
                     this.setDataSource(input_search_container.value).then(()=>{
                         input_search_container2.value = input_search_container.value;
-                        this.search(input_search_container, input_description_container, body_tables_container2, text_fields, container2, input_search_container2, accept_footer_container2, true);
+                        this.search(input_search_container, input_description_container, body_tables_container2, text_fields, container2, input_search_container2, accept_footer_container2, inputv, true);
                     });
                 }
             });
@@ -271,15 +274,15 @@ class InputKey extends HTMLElement
                 if (e.key === 'Enter')
                     this.setDataSource(input_search_container.value).then(()=>{
                         input_search_container2.value = input_search_container.value;
-                        this.search(input_search_container, input_description_container, body_tables_container2, text_fields, container2, input_search_container2, accept_footer_container2, true);
+                        this.search(input_search_container, input_description_container, body_tables_container2, text_fields, container2, input_search_container2, accept_footer_container2,inputv, true);
                     });
             });
             button_search_container2.addEventListener('click', () => {
-                this.searchButton(input_search_container2, input_search_container, input_description_container, body_tables_container2, text_fields, container2, accept_footer_container2);
+                this.searchButton(input_search_container2, input_search_container, input_description_container, body_tables_container2, text_fields, container2, accept_footer_container2, inputv);
             });
             input_search_container2.addEventListener('keyup', (e) => {
                 if (e.key === 'Enter')
-                    this.searchButton(input_search_container2, input_search_container, input_description_container, body_tables_container2, text_fields, container2, accept_footer_container2);
+                    this.searchButton(input_search_container2, input_search_container, input_description_container, body_tables_container2, text_fields, container2, accept_footer_container2, inputv);
             });
             search_container2.addEventListener('keyup', (e) => {
                 if (e.key === 'Escape')
@@ -328,6 +331,7 @@ class InputKey extends HTMLElement
 
             shadow.appendChild(container);
             shadow.appendChild(container2);
+            this.after(inputv);
         });
     }
 
@@ -433,25 +437,29 @@ class InputKey extends HTMLElement
         {
             this.record_selected = this.data.find(d => d[this.getAttribute('data-search')] == id);
         }
+        return this.record_selected;
     }
-    setValue(inputSearch, inputDesc)
+    setValue(inputSearch, inputDesc, inputv)
     {
         if(!this.record_selected || Object.entries(this.record_selected).length <= 0)
         {
             inputSearch.value = '';
             inputDesc.value = '';
             this.setAttribute('value', '');
+            inputv.setAttribute('value', '');
+
             return;
         }
         inputSearch.value = (this.record_selected[this.getAttribute('data-search')]??'');
         inputDesc.value = (this.record_selected[this.getAttribute('data-text')]??'');
         this.setAttribute('value', this.record_selected[this.getAttribute('data-key')]??'');
+        inputv.setAttribute('value', this.record_selected[this.getAttribute('data-key')]??'');
     }
-    search(inputSearch, inputDesc, body_tables_container2, text_fields, container2, input_search2, accept_footer_container2, autoselect=false)
+    search(inputSearch, inputDesc, body_tables_container2, text_fields, container2, input_search2, accept_footer_container2, inputv, autoselect=false)
     {
         if (this.data && this.data.length == 1 && this.record_selected && autoselect)
         {
-            this.setValue(inputSearch, inputDesc);
+            this.setValue(inputSearch, inputDesc, inputv);
         }
         else
         {
@@ -468,11 +476,11 @@ class InputKey extends HTMLElement
             }
         }
     }
-    searchButton(input_search_container2, input_search_container, input_description_container, body_tables_container2, text_fields, container2, accept_footer_container2)
+    searchButton(input_search_container2, input_search_container, input_description_container, body_tables_container2, text_fields, container2, accept_footer_container2, inputv)
     {
         if (input_search_container2.value.trim() == ""){
             alert("Debe especificar el texto a buscar para continuar");
-            input.focus();
+            input_search_container2.focus();
             return;
         }
         if (!this.getAttribute('data-source')){
@@ -481,7 +489,7 @@ class InputKey extends HTMLElement
         }
 
         this.setDataSource(input_search_container2.value).then(()=>{
-            this.search(input_search_container, input_description_container, body_tables_container2, text_fields, container2, input_search_container2, accept_footer_container2, false);
+            this.search(input_search_container, input_description_container, body_tables_container2, text_fields, container2, input_search_container2, accept_footer_container2, inputv, false);
         });
     }
     setDataInputSearch2(inputsearch2, text)
