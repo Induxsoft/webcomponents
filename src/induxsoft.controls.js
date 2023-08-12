@@ -8,6 +8,10 @@
 class EditSelect extends HTMLElement 
 {
     attributes = null;
+    select = null;
+    inputh = null;
+    manualOption = null;
+    manualInput = null;
 
     // Inicializar el HTMLElement padre
     constructor() 
@@ -35,63 +39,56 @@ class EditSelect extends HTMLElement
         document.addEventListener('DOMContentLoaded', () => 
         {
             const shadow = this.attachShadow({ mode: 'closed' });
-            const select = document.createElement('select');
             const option = this.querySelectorAll('option');
             const contnr = document.createElement('div');
             const defval = this.getAttribute('value');
+            this.select = document.createElement('select');
+            this.inputh = document.createElement('input');
+
+            this.inputh.setAttribute('type', 'hidden');
+            this.inputh.setAttribute('name', (this.getAttribute('name')??''));
 
             //=============== Manual option
 
             const textIndicatorManual = (this.getAttribute('manual-text') ?? 'Escribir manualmente...');
-            const manualOption = document.createElement('option');
-            manualOption.value = -99;
-            manualOption.textContent = textIndicatorManual;
+            this.manualOption = document.createElement('option');
+            this.manualOption.value = -99;
+            this.manualOption.textContent = textIndicatorManual;
 
             //=============== Input manual
 
-            const manualInput = document.createElement('input');
-            manualInput.setAttribute('placeholder', textIndicatorManual);
+            this.manualInput = document.createElement('input');
+            this.manualInput.setAttribute('placeholder', textIndicatorManual);
 
             //=============== Events
 
-            select.addEventListener('change', (e) => 
+            this.select.addEventListener('change', (e) => 
             {
-                if (select.value === manualOption.value)
+                if (this.select.value === this.manualOption.value)
                 {
-                    manualInput.style.zIndex = 0;
-                    this.setAttribute('value', (select.getAttribute('text-value') ?? ''));
-                    select.setAttribute('value', (select.getAttribute('text-value') ?? ''));
-                    manualInput.value = (select.getAttribute('text-value') ?? '');
-                    manualInput.select();
-                    manualInput.focus();
+                    this.setValue((this.select.getAttribute('text-value') ?? ''));
                 }
                 else
                 {
-                    manualInput.style.zIndex = -1;
-                    this.setAttribute('value', e.target.value);
-                    select.setAttribute('value', e.target.value);
-                    if (select.selectedIndex >= 0)
-                        select.setAttribute('text-value', select.options[select.selectedIndex].textContent);
+                    this.setValue(e.target.value ?? '');
                 }
             });
 
-            manualInput.addEventListener('keyup', () => 
+            this.manualInput.addEventListener('keyup', () => 
             {
-                this.setAttribute('value', manualInput.value);
-                select.setAttribute('value', manualInput.value);
-                select.setAttribute('text-value', manualInput.value);
+                this.setValue(this.manualInput.value, false);
+                this.select.setAttribute('text-value', this.manualInput.value);
             });
 
             if ((this.getAttribute('edit-options') ?? 'false') == 'true')
             {
-                select.addEventListener('dblclick', () => 
+                this.select.addEventListener('dblclick', () => 
                 {
-                    manualInput.style.zIndex = 0;
-                    this.setAttribute('value', (select.getAttribute('text-value') ?? ''));
-                    select.setAttribute('value', (select.getAttribute('text-value') ?? ''));
-                    manualInput.value = (select.getAttribute('text-value') ?? '');
-                    manualInput.select();
-                    manualInput.focus();
+                    this.manualInput.style.zIndex = 0;
+                    this.setValue((this.select.getAttribute('text-value') ?? ''));
+                    this.manualInput.value = (this.select.getAttribute('text-value') ?? '');
+                    this.manualInput.select();
+                    this.manualInput.focus();
                 });
             }
 
@@ -103,29 +100,66 @@ class EditSelect extends HTMLElement
                     div{ position: relative !important; }
                     select{ width: 100% !important; padding: 4px 8px !important; }
                     input{ position: absolute !important; z-index: -1; left: 10px; top: 5px; width:90%; border: none !important; outline: none !important;}
+                    ` + (this.getAttribute('control-styles') ?? '') + `
                 </style>
             `;
 
             if (option && option.length >= 1) 
-                option.forEach(opt => select.appendChild(opt));
+                option.forEach(opt => this.select.appendChild(opt));
 
-            select.appendChild(manualOption);
+            this.select.appendChild(this.manualOption);
 
             if (defval) 
             {
-                select.value = defval;
-                this.setAttribute('value', defval);
-                if (select.selectedIndex >= 0)
-                    select.setAttribute('text-value', select.options[select.selectedIndex].textContent);
+                this.setValue(defval);
+                if (this.select.selectedIndex >= 0)
+                    this.select.setAttribute('text-value', this.select.options[this.select.selectedIndex].textContent);
+                else{
+                    this.select.setAttribute('text-value', defval);
+                    this.select.value = this.manualOption.value;
+                    this.select.dispatchEvent(new Event('change'));
+                }
             }
 
             if (this.hasAttribute('name'))
-                select.setAttribute('name', this.getAttribute('name'));
+                this.select.setAttribute('name', this.getAttribute('name'));
 
-            contnr.appendChild(select);
-            contnr.appendChild(manualInput);
+            contnr.appendChild(this.select);
+            contnr.appendChild(this.manualInput);
             shadow.appendChild(contnr);
+            this.after(this.inputh);
         });
+    }
+    
+    setValue(value, allowFocus=true)
+    {
+        this.setAttribute('value', value);
+        this.inputh.value = value;
+        this.select.value = value;
+
+        if ((this.select.selectedIndex < 0) || this.select.value === this.manualOption.value)
+        {
+            this.select.setAttribute('text-value', value);
+            this.select.value = this.manualOption.value;
+            this.manualInput.style.zIndex = 0;
+            this.manualInput.value = (this.select.getAttribute('text-value') ?? '');
+            
+            if (allowFocus)
+            {
+                this.manualInput.select();
+                this.manualInput.focus();
+            }            
+        }
+        else
+        {
+            this.manualInput.style.zIndex = -1;
+            this.select.setAttribute('text-value', this.select.options[this.select.selectedIndex].textContent); 
+        }
+    }
+
+    getValue()
+    {
+        return this.getAttribute('value');
     }
 }
 
