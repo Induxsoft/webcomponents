@@ -39,6 +39,7 @@
             - box-title-text        (opcional): Texto a mostrar en el títilo del buscador (def: Seleccione un Registro)
             - box-placeholder-text  (opcional): Texto a mostrar en el placeholder del buscador (de: Buscar...)
             - box-nodata-text       (opcional): Texto a mostrar cuando no haya datos para mostrar (def: Sin registros)
+            - disabled              (opcional): Desabilita los controles del componente cuando es igual a "true" (def: "false")
 
             Claves disponibles en la url
             - @search               (opcional): Valor del parámetro a buscar establecido en el campo de busqueda del componente
@@ -58,7 +59,8 @@
             text-value=""
             box-title-text="Seleccione un cliente"
             box-placeholder-text="Buscar cliente"
-            box-nodata-text="No se encontraron clientes">
+            box-nodata-text="No se encontraron clientes"
+            disabled="false">
         </input-key>
     </div>
 </body>

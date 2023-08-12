@@ -170,6 +170,8 @@ class InputKey extends HTMLElement
             const button_add_container = this.createFullElement('button', {id:'button_add_container', type:'button', class:'hover-gray btn-sm'});
             const button_edit_container = this.createFullElement('button', {id:'button_edit_container', type:'button', class:'hover-gray btn-sm'});
 
+            container.classList.toggle('disable-element', ((this.getAttribute('disabled')??'') === 'true'));
+
             input_search_container.value = (this.getAttribute('search-value') ?? '');
             input_description_container.value = (this.getAttribute('text-value') ?? '');
             button_search_container.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16"><path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg>`;
@@ -361,6 +363,15 @@ class InputKey extends HTMLElement
             close_header_container4.addEventListener('click', () => {
                 container4.classList.add('hide-element');
             });
+
+            const MO = new MutationObserver(()=>{
+                container.classList.toggle('disable-element', ((this.getAttribute('disabled')??'') === 'true'));
+            });
+
+            MO.observe(this, {
+                attributes: true,
+                attributeFilter: ['disabled']
+            });
             
             //=============== STYLES
 
@@ -388,6 +399,7 @@ class InputKey extends HTMLElement
                     .modal-section{ border-bottom:1px solid #DDD; }
                     .modal-section-header{ padding: 6px 10px; }
                     .overflow{ overflow:auto; }
+                    .disable-element{ pointer-events: none !important; opacity: .5 !important; }
 
                     /* ========== 1 Section */
                     #container{ display: grid; grid-template-columns: 40% 60%; }
