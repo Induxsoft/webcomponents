@@ -14,9 +14,9 @@
             ----------------------------------------------------------------------------------------------
             - edit-options      (optional): Establece que las opciones puedan ser editables (def: false)
             - manual-text       (optional): Establece el texto a mostrar para la opción editable (def: Escribir manualmente...)
-            - control-styles    (opcional): Establece los estilos personalizados que se le aplicarán al control
+            - control-styles    (opcional): Establece los estilos personalizados que se le aplicarán al control (ej: input{border:1px solid red;})
         -->
-        <edit-select id="micontrol1" name="opcion" edit-options="true" manual-text="Editar manualmente" value="asd" control-styles="">
+        <edit-select id="micontrol1" name="opcion" edit-options="true" manual-text="Editar manualmente" value="" control-styles="">
             <option value="1">Opción 1</option>
             <option value="2">Opción 2</option>
             <option value="3">Opción 3</option>
@@ -32,20 +32,24 @@
             - data-search           (required): Establece el campo a considerar en la busqueda de un registro
             - data-text             (optional): Establece el campo a mostrar en la descripción del registro seleccionado
             - data-value            (optional): Establece los datos a usar en la selección de registros (ej: [{sys_pk:1,codigo:'001',nombre:'Bob'}, ...])
-            - data-source           (optional): Establece el endpoint para la obtención de registros 
+            - data-source           (optional): Establece el endpoint para la obtención de registros
+            - columns               (opcional): Establece los campos a mostrar en la tabla de resultados de busqueda (ej: "codigo,nombre", def: valores de todos los campos)
+            - colcaptions           (opcional): Establece los encabezados de la tabla de resultados de busqueda (ej: "Código, Nombre", def: nombre de todos los campos)
             - add-url               (opcional): Establece el endpoint para la adición de nuevos registros
             - edit-url              (opcional): Establece el endpoint para la edición del registro seleccionado
             - search-value          (opcional): Texto a mostrar por defecto en el campo de busqueda
             - text-value            (opcional): Texto a mostrar por defecto en el campo de descrición
             - box-title-text        (opcional): Texto a mostrar en el títilo del buscador (def: Seleccione un Registro)
-            - box-placeholder-text  (opcional): Texto a mostrar en el placeholder del buscador (de: Buscar...)
+            - box-placeholder-text  (opcional): Texto a mostrar en el placeholder del buscador (def: Buscar...)
             - box-nodata-text       (opcional): Texto a mostrar cuando no haya datos para mostrar (def: Sin registros)
             - disabled              (opcional): Desabilita los controles del componente cuando es igual a "true" (def: "false")
+            - required              (opcional): Establece que el campo tenga datos antes de enviarse el formulario (def: "false")
+            - control-styles        (opcional): Establece los estilos personalizados que se le aplicarán al control (ej: input{border:1px solid red;})
 
-            Claves disponibles en la url
+            Claves en la URL:
             - @search               (opcional): Valor del parámetro a buscar establecido en el campo de busqueda del componente
             - @key                  (opcional): Valor (data-key) del registro seleccionado
-            - @text                 (opcional): Descripción (data-text) del registro selccionado
+            - @text                 (opcional): Descripción (data-text) del registro seleccionado
         -->
         <input-key 
             id="micontrol2"
@@ -53,7 +57,10 @@
             data-key="sys_pk"
             data-search="codigo"
             data-text="nombre"
+            data-value=''
             data-source=""
+            columns="codigo,nombre"
+            colcaptions="Código,Nombre"
             add-url=""
             edit-url=""
             search-value=""
@@ -61,7 +68,9 @@
             box-title-text="Seleccione un cliente"
             box-placeholder-text="Buscar cliente"
             box-nodata-text="No se encontraron clientes"
-            disabled="false">
+            disabled="false"
+            required="true"
+            control-styles="">
         </input-key>
     </div>
 </body>

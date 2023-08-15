@@ -169,6 +169,18 @@ class InputKey extends HTMLElement
     data = null;
     searchData = null;
     record_selected = {};
+    accept_data = null;
+    table_tables_container2 = null;
+    head_tables_container2 = null;
+    body_tables_container2 = null;
+    columns = null;
+    colcaptions = null;
+    inputv = null;
+    input_search_container = null;
+    input_search_container2 = null;
+    input_description_container = null;
+    accept_footer_container2 = null;
+    change_event = null;
 
     constructor() 
     {
@@ -191,30 +203,34 @@ class InputKey extends HTMLElement
     {
         document.addEventListener('DOMContentLoaded', () => 
         {
+            this.columns = this.getAttribute('columns');
+            this.colcaptions = this.getAttribute('colcaptions');
+
             //=============== 1 SECTION [ MAIN CONTROL ]
             
             const shadow = this.attachShadow({ mode: 'closed' });
-            const inputv = this.createFullElement('input', {type:'hidden', value:`${this.getAttribute('value')??''}`, name:`${this.getAttribute('name')}`});
+            this.inputv = this.createFullElement('input', {id:'inputv', type:'text', value:`${this.getAttribute('value')??''}`, name:`${this.getAttribute('name')}`, style:'opacity: 0 !important;width: 1px !important; height:1px !important; border:none !important; outline:none !important; box-shadow:none !important; padding:0 !important; margin: 0 !important; pointer-events: none !important; background-color: transparent !important; position:relative !important; display:block !important; top:-15px !important;'});
             const container = this.createFullElement('div', {id:'container'});
             const search_container = this.createFullElement('div', {id:'search_container'});
-            const input_search_container = this.createFullElement('input', {id:'input_search_container', type:'text'});
+            this.input_search_container = this.createFullElement('input', {id:'input_search_container', type:'text'});
             const button_search_container = this.createFullElement('button', {id:'button_search_container', type:'button', class:'hover-gray btn-sm'});
             const description_container = this.createFullElement('div', {id:'description_container'});
-            const input_description_container = this.createFullElement('input', {id:'input_description_container', type:'text', readonly:'readonly'});
+            this.input_description_container = this.createFullElement('input', {id:'input_description_container', type:'text', readonly:'readonly'});
             const button_add_container = this.createFullElement('button', {id:'button_add_container', type:'button', class:'hover-gray btn-sm'});
             const button_edit_container = this.createFullElement('button', {id:'button_edit_container', type:'button', class:'hover-gray btn-sm'});
 
             container.classList.toggle('disable-element', ((this.getAttribute('disabled')??'') === 'true'));
+            this.inputv.required = ((this.getAttribute('required') ?? 'false') === 'true');
 
-            input_search_container.value = (this.getAttribute('search-value') ?? '');
-            input_description_container.value = (this.getAttribute('text-value') ?? '');
+            this.input_search_container.value = (this.getAttribute('search-value') ?? '');
+            this.input_description_container.value = (this.getAttribute('text-value') ?? '');
             button_search_container.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16"><path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg>`;
             button_add_container.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/></svg>`;
             button_edit_container.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16"><path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/></svg>`;
 
-            search_container.appendChild(input_search_container);
+            search_container.appendChild(this.input_search_container);
             search_container.appendChild(button_search_container);
-            description_container.appendChild(input_description_container);
+            description_container.appendChild(this.input_description_container);
             if (this.getAttribute('add-url')) description_container.appendChild(button_add_container);
             if (this.getAttribute('edit-url')) description_container.appendChild(button_edit_container);
             container.appendChild(search_container);
@@ -239,34 +255,27 @@ class InputKey extends HTMLElement
 
             // search section
             const button_search_container2 = this.createFullElement('button', {type:'button',class:'p-2 border-0 border-1 hover-gray'});
-            const input_search_container2 = this.createFullElement('input', {type:'text', class:'grow-1 p-2 border-0 border-1'});
+            this.input_search_container2 = this.createFullElement('input', {type:'text', class:'grow-1 p-2 border-0 border-1'});
             button_search_container2.textContent = 'Buscar';
-            input_search_container2.setAttribute('placeholder', (this.getAttribute('box-placeholder-text') ?? 'Buscar...'));
-            search_section_container2.appendChild(input_search_container2);
+            this.input_search_container2.setAttribute('placeholder', (this.getAttribute('box-placeholder-text') ?? 'Buscar...'));
+            search_section_container2.appendChild(this.input_search_container2);
             search_section_container2.appendChild(button_search_container2);
 
             // tables section
-            const head_tables_container2 = this.createFullElement('div', {id:'head_tables_container2', class:'bg-light-gray'});
-            const body_tables_container2 = this.createFullElement('div', {id:'body_tables_container2'});
-            const text_fields = {nombre:'Nombre', codigo:'Código'}
-            const titles = Object.values(text_fields);
+            this.table_tables_container2 = this.createFullElement('table', {id:'table_tables_container2'});
+            this.head_tables_container2 = this.createFullElement('thead', {id:'head_tables_container2', class:'bg-light-gray'});
+            this.body_tables_container2 = this.createFullElement('tbody', {id:'body_tables_container2'});
 
-            titles.forEach(title => 
-            {
-                const t = this.createFullElement('p',{class:'fw-500 border-1 p-2 ps-3 pe-3'});
-                t.textContent = title;
-                head_tables_container2.appendChild(t);
-            });
-
-            tables_section_container2.appendChild(head_tables_container2);
-            tables_section_container2.appendChild(body_tables_container2);
+            this.table_tables_container2.appendChild(this.head_tables_container2);
+            this.table_tables_container2.appendChild(this.body_tables_container2);
+            tables_section_container2.appendChild(this.table_tables_container2);
 
             // footer section
-            const accept_footer_container2 = this.createFullElement('button', {type:'button',class:'p-2'});
+            this.accept_footer_container2 = this.createFullElement('button', {type:'button',class:'p-2'});
             const close2_footer_container2 = this.createFullElement('button', {id:'close2_container2', type:'button', class:'p-2'});
-            accept_footer_container2.textContent = 'Aceptar';
+            this.accept_footer_container2.textContent = 'Aceptar';
             close2_footer_container2.textContent = 'Cancelar';
-            footer_section_container2.appendChild(accept_footer_container2);
+            footer_section_container2.appendChild(this.accept_footer_container2);
             footer_section_container2.appendChild(close2_footer_container2);
 
             search_container2.appendChild(header_section_container2);
@@ -316,12 +325,12 @@ class InputKey extends HTMLElement
             //=============== EVENTS
 
             button_search_container.addEventListener('click', () => {
-                this.setDataSource(input_search_container.value).then(()=>{
-                    this.setDataInputSearch2(input_search_container2, input_search_container.value);
-                    this.search(input_search_container, input_description_container, body_tables_container2, text_fields, container2, input_search_container2,accept_footer_container2, inputv, false);
+                this.setDataSource(this.input_search_container.value).then(()=>{
+                    this.setDataInputSearch2();
+                    this.search(container2, false);
                 });
             });
-            input_description_container.addEventListener('dblclick', () => {
+            this.input_description_container.addEventListener('dblclick', () => {
                 button_search_container.click();
             })
             close_header_container2.addEventListener('click', () => {
@@ -330,41 +339,41 @@ class InputKey extends HTMLElement
             close2_footer_container2.addEventListener('click', () => {
                 container2.classList.add('hide-element');
             });
-            accept_footer_container2.addEventListener('click', () => {
+            this.accept_footer_container2.addEventListener('click', () => {
                 if (!this.record_selected || Object.entries(this.record_selected).length <= 0)
                 {
                     alert("Debe seleccionar un registro para continuar");
                     return;
                 }
-                this.setValue(input_search_container, input_description_container, inputv);
+                this.setValue(this.record_selected);
                 container2.classList.add('hide-element');
             });
-            input_search_container.addEventListener('click', () => {
-                input_search_container.select();
-                input_search_container.focus();
+            this.input_search_container.addEventListener('click', () => {
+                this.input_search_container.select();
+                this.input_search_container.focus();
             });
-            input_search_container.addEventListener('blur', (e) => {
-                if (container2.classList.contains('hide-element') && input_search_container.value.trim())
+            this.input_search_container.addEventListener('blur', (e) => {
+                if (this.input_search_container.value.trim() && container2.classList.contains('hide-element') && (this.accept_data && ((this.accept_data[this.getAttribute('data-search') ?? '']) != this.input_search_container.value)))
                 {
-                    this.setDataSource(input_search_container.value).then(()=>{
-                        input_search_container2.value = input_search_container.value;
-                        this.search(input_search_container, input_description_container, body_tables_container2, text_fields, container2, input_search_container2, accept_footer_container2, inputv, true);
+                    this.setDataSource(this.input_search_container.value).then(()=>{
+                        this.input_search_container2.value = this.input_search_container.value;
+                        this.search(container2, true);
                     });
                 }
             });
-            input_search_container.addEventListener('keyup', (e) => {
+            this.input_search_container.addEventListener('keyup', (e) => {
                 if (e.key === 'Enter')
-                    this.setDataSource(input_search_container.value).then(()=>{
-                        input_search_container2.value = input_search_container.value;
-                        this.search(input_search_container, input_description_container, body_tables_container2, text_fields, container2, input_search_container2, accept_footer_container2,inputv, true);
+                    this.setDataSource(this.input_search_container.value).then(()=>{
+                        this.input_search_container2.value = this.input_search_container.value;
+                        this.search(container2, true);
                     });
             });
             button_search_container2.addEventListener('click', () => {
-                this.searchButton(input_search_container2, input_search_container, input_description_container, body_tables_container2, text_fields, container2, accept_footer_container2, inputv);
+                this.searchButton(container2);
             });
-            input_search_container2.addEventListener('keyup', (e) => {
+            this.input_search_container2.addEventListener('keyup', (e) => {
                 if (e.key === 'Enter')
-                    this.searchButton(input_search_container2, input_search_container, input_description_container, body_tables_container2, text_fields, container2, accept_footer_container2, inputv);
+                    this.searchButton(container2);
             });
             search_container2.addEventListener('keyup', (e) => {
                 if (e.key === 'Escape')
@@ -372,7 +381,7 @@ class InputKey extends HTMLElement
             });
             button_add_container.addEventListener('click', (e) => {
                 e.stopPropagation();
-                let url = this.prepareUrl((this.getAttribute('add-url')??''), input_search_container, input_description_container);
+                let url = this.prepareUrl((this.getAttribute('add-url')??''));
                 const iframe_container3 = this.createFullElement('iframe', {width:'100%', height:'100%', title:'Add element', src:url});
                 iframe_section_container3.innerHTML = '';
                 iframe_section_container3.appendChild(iframe_container3);
@@ -388,7 +397,7 @@ class InputKey extends HTMLElement
                     alert('Debe seleccionar un registro para continuar.');
                     return;
                 }
-                let url = this.prepareUrl((this.getAttribute('edit-url')??''), input_search_container, input_description_container);
+                let url = this.prepareUrl((this.getAttribute('edit-url')??''));
                 const iframe_container4 = this.createFullElement('iframe', {width:'100%', height:'100%', title:'Edit element', src:url});
                 iframe_section_container4.innerHTML = '';
                 iframe_section_container4.appendChild(iframe_container4);
@@ -442,9 +451,20 @@ class InputKey extends HTMLElement
                     #input_search_container, #input_description_container{ border: none; outline:1px solid #888; }
 
                     /* ========== 2 Section */
-                    #head_tables_container2, .row_table{ display:grid; grid-template-columns: 60% 40%;}
+                    #table_tables_container2{width:100%;border-spacing: 0;}
+                    th,td{ border: 1px solid #DDD; }
+                    th{text-align:start;}
+                    #body_tables_container2{text-wrap: nowrap;}
+                    .row_table{cursor: default;}
                     .row_table:hover{background-color:#F5F5F5;color:#000;}
                     .row_selected{background-color:#3D75DD !important;color:#FFF !important;}
+
+                    @media screen and (max-width:600px) {
+                        #search_container2{width: 100%;}
+                    }
+
+                    ` + (this.getAttribute('control-styles') ?? '') + `
+                    
                 </style>
             `;
 
@@ -452,7 +472,7 @@ class InputKey extends HTMLElement
             shadow.appendChild(container2);
             shadow.appendChild(container3);
             shadow.appendChild(container4);
-            this.after(inputv);
+            this.after(this.inputv);
         });
     }
 
@@ -463,62 +483,86 @@ class InputKey extends HTMLElement
         keys.forEach(key => elem.setAttribute(key, attributes[key]));
         return elem;
     }
-    printTableData(body_table, datas, text_fields, accept_footer_container2)
+    printTableData()
     {
-        body_table.innerHTML = ``;
-        if (!datas || datas.length <= 0)
+        this.body_tables_container2.innerHTML = ``;
+        this.head_tables_container2.innerHTML = ``;
+
+        if (!this.data || this.data.length <= 0)
         { 
-            body_table.innerHTML = `<p class="p-3 text-secondary">${(this.getAttribute('box-nodata-text')??'Sin registros')}</p>`; 
+            this.body_tables_container2.innerHTML = `<p class="p-3 text-secondary">${(this.getAttribute('box-nodata-text')??'Sin registros')}</p>`; 
             return;
         }
-        const fields = Object.keys(text_fields);
-        if(!fields || fields.length <= 0) return;
-        datas.forEach((data, i) => 
+
+        const titles = (this.colcaptions ? this.colcaptions.split(',') : Object.keys(this.data[0]));
+        const fields = (this.columns ? this.columns.split(',') : Object.keys(this.data[0]));
+
+        while (fields.length > titles.length && fields.length <= Object.keys(this.data[0]).length)
+            titles[titles.length] = fields[titles.length];
+
+        while (titles.length > fields.length && titles.length <= Object.keys(this.data[0]).length)
+            fields[fields.length] = Object.keys(this.data[0])[fields.length];
+            
+        const tr_tables_container2 = this.createFullElement('tr', {id:'tr_tables_container2'});
+        
+        titles.forEach(title => 
         {
-            const row = this.createFullElement('div',{class:'row_table', value:`${data[this.getAttribute('data-search')]}`, tabindex:`0`});
-            row.addEventListener('click', (e) => 
+            const t = this.createFullElement('th',{class:'fw-500 border-1 p-2 ps-3 pe-3'});
+            t.textContent = title.trim();
+            tr_tables_container2.appendChild(t);
+        });
+        
+        this.head_tables_container2.appendChild(tr_tables_container2);
+
+        this.data.forEach((dt, i) => 
+        {
+            const row_tables_conatiner2 = this.createFullElement('tr',{class:'row_table', value:`${dt[this.getAttribute('data-search')]}`, tabindex:`0`});
+            row_tables_conatiner2.addEventListener('click', (e) => 
             {
                 e.stopPropagation();
-                this.getValue(e.target.parentNode.getAttribute('value'));
+                this.findValue(e.target.parentNode.getAttribute('value'));
                 e.target.parentNode.parentNode.childNodes.forEach(child => child.classList.remove('row_selected'));
                 e.target.parentNode.classList.add('row_selected');
             });
-            row.addEventListener('keyup', (e) => 
+            row_tables_conatiner2.addEventListener('dblclick', () => {
+                this.accept_footer_container2.click();
+            });
+            row_tables_conatiner2.addEventListener('keyup', (e) => 
             {
                 switch(e.key)
                 {
                     case "ArrowRight":
                     case "ArrowDown":
                         if(e.target.nextElementSibling)e.target.nextElementSibling.focus();
-                        else if(body_table.firstChild) body_table.firstChild.focus();
+                        else if(this.body_tables_container2.firstChild) this.body_tables_container2.firstChild.focus();
                         break;
                     case "ArrowLeft":
                     case "ArrowUp":
                         if(e.target.previousElementSibling)e.target.previousElementSibling.focus();
-                        else if(body_table.lastChild) body_table.lastChild.focus();
+                        else if(this.body_tables_container2.lastChild) this.body_tables_container2.lastChild.focus();
                         break;
                     case "Enter":
-                        accept_footer_container2.click();
+                        this.accept_footer_container2.click();
                         break;
                 }
             });
-            row.addEventListener('focus', (e) => 
+            row_tables_conatiner2.addEventListener('focus', (e) => 
             {
                 e.stopPropagation();
-                this.getValue(e.target.getAttribute('value'));
+                this.findValue(e.target.getAttribute('value'));
                 e.target.parentNode.childNodes.forEach(child => child.classList.remove('row_selected'));
                 e.target.classList.add('row_selected');
             });
             fields.forEach(field => 
             {
-                const cell = this.createFullElement('p',{class:'border-1 p-1 ps-2 pe-2'});
-                cell.textContent = data[field];
-                row.appendChild(cell);
+                const cell = this.createFullElement('td',{class:'border-1 p-1 ps-2 pe-2'});
+                cell.textContent = dt[field.trim()];
+                row_tables_conatiner2.appendChild(cell);
             });
-            body_table.appendChild(row);
+            this.body_tables_container2.appendChild(row_tables_conatiner2);
         });
 
-        return body_table;
+        return this.body_tables_container2;
     }
     setDataSource(id="")
     {
@@ -530,20 +574,20 @@ class InputKey extends HTMLElement
             {
                 this.request(url.replace('@search', id), (dataSuccess) => {
                     this.data = dataSuccess;
-                    this.getValue(id);
+                    this.findValue(id);
                     resolve();
                 }, (dataFail) => {
                     alert("Ocurrió un error al invocar el servicio.\n\n" + dataFail);
                 });
             }
-            else if(this.hasAttribute('data-value'))
+            else if(this.hasAttribute('data-value') && this.getAttribute('data-value').trim() != '')
             {
                 try{ this.data = JSON.parse(this.getAttribute('data-value')); }
                 catch{ alert('El valor del atributo "data-value" tiene un formato JSON inválido'); }
                 if (id && this.data){
                     this.data = this.data.filter(data => data[this.getAttribute('data-search')].includes(id));
                 }
-                this.getValue(id);
+                this.findValue(id);
                 resolve();
             }
             else
@@ -552,56 +596,83 @@ class InputKey extends HTMLElement
             }
         });
     }
-    getValue(id)
+    findValue(id)
     {
-        if (this.data)
+        if (this.data && this.data.length > 0)
         {
             this.record_selected = this.data.find(d => d[this.getAttribute('data-search')] == id);
         }
         return this.record_selected;
     }
-    setValue(inputSearch, inputDesc, inputv)
+    getValue()
     {
-        if(!this.record_selected || Object.entries(this.record_selected).length <= 0)
+        return this.accept_data;
+    }
+    setValue(value={})
+    {
+        //if(!this.isDiferent(this.accept_data, value)) return;
+        
+        this.accept_data = value;
+        
+        if(!this.accept_data || Object.entries(this.accept_data).length <= 0)
         {
-            inputSearch.value = '';
-            inputDesc.value = '';
+            this.input_search_container.value = '';
+            this.input_description_container.value = '';
             this.setAttribute('value', '');
-            inputv.setAttribute('value', '');
-
+            this.inputv.setAttribute('value', '');
             return;
         }
-        inputSearch.value = (this.record_selected[this.getAttribute('data-search')]??'');
-        inputDesc.value = (this.record_selected[this.getAttribute('data-text')]??'');
-        this.setAttribute('value', this.record_selected[this.getAttribute('data-key')]??'');
-        inputv.setAttribute('value', this.record_selected[this.getAttribute('data-key')]??'');
+        
+        this.input_search_container.value = (this.accept_data[this.getAttribute('data-search')]??'');
+        this.input_description_container.value = (this.accept_data[this.getAttribute('data-text')]??'');
+        this.setAttribute('value', this.accept_data[this.getAttribute('data-key')]??'');
+        this.inputv.setAttribute('value', this.accept_data[this.getAttribute('data-key')]??'');
+
+        if (this.change_event)
+            this.change_event(value);
     }
-    search(inputSearch, inputDesc, body_tables_container2, text_fields, container2, input_search2, accept_footer_container2, inputv, autoselect=false)
+    isDiferent(o1, o2, noValideNulls=true)
+    {
+        if ((!o1 || !o2) && noValideNulls) return true;
+
+        const k1 = Object.keys(o1);
+        const k2 = Object.keys(o2);
+
+        let flag = false;
+        
+        if (k1.length === k2.length)
+        {
+            k1.forEach(k => { if(typeof(k1[k]) === typeof(k2[k]) && k1[k] !== k2[k]) flag = true; });
+            k2.forEach(k => { if(typeof(k1[k]) === typeof(k2[k]) && k1[k] !== k2[k]) flag = true; });
+        }
+        return flag;
+    }
+    search(container2, autoselect=false)
     {
         if (this.data && this.data.length == 1 && this.record_selected && autoselect)
         {
-            this.setValue(inputSearch, inputDesc, inputv);
+            this.setValue(this.record_selected);
         }
         else
         {
-            this.printTableData(body_tables_container2, this.data , text_fields, accept_footer_container2);
+            this.printTableData();
             container2.classList.remove('hide-element');
             if(!this.data || this.data.length <= 0)
             {
-                input_search2.select();
-                input_search2.focus();
+                this.input_search_container2.select();
+                this.input_search_container2.focus();
             }
             else
             {
-                body_tables_container2.childNodes[0].focus();
+                this.body_tables_container2.childNodes[0].focus();
             }
         }
     }
-    searchButton(input_search_container2, input_search_container, input_description_container, body_tables_container2, text_fields, container2, accept_footer_container2, inputv)
+    searchButton(container2)
     {
-        if (input_search_container2.value.trim() == ""){
+        if (this.input_search_container2.value.trim() == ""){
             alert("Debe especificar el texto a buscar para continuar");
-            input_search_container2.focus();
+            this.input_search_container2.focus();
             return;
         }
         if (!this.getAttribute('data-source')){
@@ -609,21 +680,30 @@ class InputKey extends HTMLElement
             return;
         }
 
-        this.setDataSource(input_search_container2.value).then(()=>{
-            this.search(input_search_container, input_description_container, body_tables_container2, text_fields, container2, input_search_container2, accept_footer_container2, inputv, false);
+        this.setDataSource(this.input_search_container2.value).then(()=>{
+            this.search(container2, false);
         });
     }
-    setDataInputSearch2(inputsearch2, text)
+    setDataInputSearch2()
     {
-        inputsearch2.value = text;
-        inputsearch2.select();
-        inputsearch2.focus();
+        this.input_search_container2.value = this.input_search_container.value;
+        this.input_search_container2.select();
+        this.input_search_container2.focus();
     }
-    prepareUrl(url, inputSearch, inputText)
+    addEventListener(ename, func)
     {
-        return url.replace('@search',inputSearch.value)
+        switch(ename)
+        {
+            case 'change':
+                this.change_event = func;
+                break;
+        }
+    }
+    prepareUrl(url)
+    {
+        return url.replace('@search',this.input_search_container.value)
             .replace('@key',this.getAttribute('value')??'')
-            .replace('@text', inputText.value);
+            .replace('@text', this.input_description_container.value);
     }
     request(url, success, fail)
     {
