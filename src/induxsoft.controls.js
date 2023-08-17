@@ -610,8 +610,6 @@ class InputKey extends HTMLElement
     }
     setValue(value={})
     {
-        //if(!this.isDiferent(this.accept_data, value)) return;
-        
         this.accept_data = value;
         
         if(!this.accept_data || Object.entries(this.accept_data).length <= 0)
@@ -630,22 +628,6 @@ class InputKey extends HTMLElement
 
         if (this.change_event)
             this.change_event(value);
-    }
-    isDiferent(o1, o2, noValideNulls=true)
-    {
-        if ((!o1 || !o2) && noValideNulls) return true;
-
-        const k1 = Object.keys(o1);
-        const k2 = Object.keys(o2);
-
-        let flag = false;
-        
-        if (k1.length === k2.length)
-        {
-            k1.forEach(k => { if(typeof(k1[k]) === typeof(k2[k]) && k1[k] !== k2[k]) flag = true; });
-            k2.forEach(k => { if(typeof(k1[k]) === typeof(k2[k]) && k1[k] !== k2[k]) flag = true; });
-        }
-        return flag;
     }
     search(container2, autoselect=false)
     {
@@ -729,5 +711,271 @@ class InputKey extends HTMLElement
     }
 }
 
+class CheckList extends HTMLElement
+{
+    attributes = null;
+    data = null;
+    locked = null;
+    doneStyle = null;
+    canRemove = null;
+    canEdit = null;
+    canMove = null;
+    canCheck = null;
+    showPercents = null;
+
+    _containerwc = null;
+    _headSection = null;
+    _titleHeader = null;
+    _bodySection = null;
+
+    constructor() 
+    {
+        super();
+        document.addEventListener('DOMContentLoaded', () => this.attributes = this.getAttributeNames());
+    }
+
+    static get observedAttributes()
+    {
+        return this.attributes;
+    }
+
+    attributeChangeCallback(property, oldValue, newValue)
+    {
+        if (newValue === oldValue) return;
+        this[property] = newValue;
+    }
+
+    connectedCallback()
+    {
+        document.addEventListener('DOMContentLoaded', () => 
+        {
+            const shadow =      this.attachShadow({ mode: 'closed' });
+            this.locked =       this._parseBool(this.getAttribute('data-locked'));
+            this.doneStyle =    this._parseInt(this.getAttribute('data-done-style'));
+            this.canRemove =    this._parseBool(this.getAttribute('can-remove'));
+            this.canEdit =      this._parseBool(this.getAttribute('can-edit'));
+            this.canMove =      this._parseBool(this.getAttribute('can-move'));
+            this.canCheck =     this._parseBool(this.getAttribute('can-check'));
+            this.showPercents = this._parseBool(this.getAttribute('show-percents'));
+
+            this._containerwc = this._createFullElement('div', { id:'CL_container', class:'bordered d-flex flex-column rounded' });
+            this._headSection = this._createFullElement('div', { id:'CL_headerSection', class:'p-3 d-flex' });
+            this._bodySection = this._createFullElement('div', { id:'CL_bodySection', class:'grow-1', style:'min-height: 4rem; padding-bottom: 1rem;' });
+
+            // head section
+            this._titleHeader = this._createFullElement('input', { id:'CL_title_headSection', type: 'text', class:'w-100 fz-big2 p-2 noborder', placeholder:'Título'});
+            this._headSection.appendChild(this._titleHeader);
+            this._containerwc.appendChild(this._headSection);
+
+            // body section
+            this._containerwc.appendChild(this._bodySection);
+
+            shadow.innerHTML = `
+                <style>
+                    /* ========== General */
+                    *{ box-sizing: border-box;margin:0;padding:0; }
+                    .d-flex{ display:flex; }
+                    .flex-column{ flex-direction: column; }
+                    .gap-1{gap:4px;} .gap-2{gap:8px;}
+                    .justify-content-start{ justify-content: start; } .justify-content-center{ justify-content: center; } .justify-content-end{ justify-content: end; }
+                    .align-items-start{ align-items: start; } .align-items-center{ align-items: center; } .align-items-end{ align-items: end; }
+                    .fz-sm{ font-size: .8rem; } .fz-normal{ font-size: 1rem; } .fz-big1{ font-size: 1.2rem; } .fz-big2{ font-size: 1.4rem; }
+                    .grow-1{ flex-grow: 1; }
+                    .w-100{ width: 100%; }
+                    .bordered{ border: 1px solid #DDD; }
+                    .noborder{ border: none !important; outline: none !important; }
+                    .rounded{ border-radius: 6px; }
+                    .rounded-50{ border-radius: 50%; }
+                    .p-1{ padding: 4px; } .p-2{ padding: 8px; } .p-3{ padding: 12px; } .p-4{ padding: 16px; } .p-5{ padding: 32px; }
+                    .ps-1{ padding-left: 4px; }.ps-2{ padding-left: 8px; }.ps-3{ padding-left: 12px; }.ps-4{ padding-left: 16px; }.ps-5{ padding-left: 32px; }
+                    .pe-1{ padding-right: 4px; }.pe-2{ padding-right: 8px; }.pe-3{ padding-right: 12px; }.pe-4{ padding-right: 16px; }.pe-5{ padding-right: 32px; }
+                    .bg-white{ background-color: #FFF;} .bg-light-gray{ background-color: #F5F5F5; } .bg-transparent{background-color:transparent;}
+                    
+                    /* ========== List */
+                    .list-item-new{ display: grid; grid-template-columns: 1rem 1rem 1fr; gap:4px;}
+                    .list-item{ display: grid; grid-template-columns: 1rem 1rem 1fr 2rem; gap:4px;}
+                    .sub-item{ margin-left: 1.6rem; }
+                    .hover-item:focus-within{ outline: 1px solid #DDD !important; }
+                    .movItem, .delItem{ position: relative; left: -1000rem; }
+                    .hover-item:hover > div > button{ left: 0; }
+                    .delItem:hover{ background-color: #F5F5F5; fill: #000 !important; color: #000 !important; cursor: pointer; }
+                    .movItem:hover{ cursor: move ; }
+                    
+                </style>
+            `;
+
+            shadow.appendChild(this._containerwc);
+
+            if (this.hasAttribute('data') && this.getAttribute('data').trim())
+            {
+                try
+                {
+                    this.data = JSON.parse(this.getAttribute('data'));
+                }
+                catch(error)
+                {
+                    alert('El valor del atributo "data" no contiene un formato JSON válido');
+                    this.data = null;
+                }
+            }
+
+            this._printData();
+        });
+    }
+
+    _parseBool(value, _default = false)
+    {
+        if (value) return (value.toLowerCase() === 'true');
+        return _default;
+    }
+    _parseInt(value, _default = 0)
+    {
+        if (value != null && isFinite(value.trim()) && !isNaN(value.trim())) { return this.parseInt(value.trim()); }
+        return _default;
+    }
+    _createFullElement(tagName="div", attributes={})
+    {
+        const elem = document.createElement(tagName);
+        const keys = Object.keys(attributes);
+        keys.forEach(key => elem.setAttribute(key, attributes[key]));
+        return elem;
+    }
+    _printData()
+    {
+        // title
+        this._titleHeader.value = this.data?.text ?? '';
+        this._bodySection.innerHTML = ``;
+
+        // New item
+        const newItem = this._createRowItem(null, { isNew: true, id: this._generateUUID()});
+
+        // Items List
+        if (this.data && this.data.items && this.data.items.length > 0)
+        {
+            this.data.items.forEach(item => 
+            {
+                const id = (item.id ?? this._generateUUID());
+                this._bodySection.appendChild(this._createRowItem(item, { id: id }));
+
+                if (item.items && item.items.length > 0)
+                    item.items.forEach(subItem => this._bodySection.appendChild(this._createRowItem(subItem, { isNew: false, isSubItem: true, id: (subItem.id ?? this._generateUUID()), parentId: id })));
+            });
+        }
+
+        this._bodySection.appendChild(newItem);
+    }
+    _generateUUID()
+    {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+            const r = Math.random() * 16 | 0, 
+                v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
+
+    _createRowItem(item, params = { isNew: false, isSubItem: false, id: '', parentId:''})
+    {
+        let containerItem = null;
+
+        if (params.isNew)
+        {
+            containerItem = this._createFullElement('div', { id:'CL_newCont', class:'hover-item p-1 pe-3' });
+            const newItem = this._createFullElement('div', { id:'CL_newItem', class:'list-item-new', 'item-id': params.id });
+            const newEmpt = this._createFullElement('div');
+            const newIcon = this._createFullElement('div', { class:'d-flex align-items-center justify-content-center' });
+            const newText = this._createFullElement('input', { type:'text', class:'p-2 noborder w-100 bg-transparent', placeholder:'Elemento de lista'});
+
+            newIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#888" class="bi bi-plus-lg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/></svg>`;
+
+            newItem.appendChild(newEmpt);
+            newItem.appendChild(newIcon);
+            newItem.appendChild(newText);
+            containerItem.appendChild(newItem);
+
+            newText.addEventListener('blur', () => {
+                if (newText.value.trim() != ""){
+                    containerItem.before(this._createRowItem({text:newText.value.trim(), id:this._generateUUID()}));
+                    newText.value = "";
+                }
+            });
+            newText.addEventListener('keyup', (e) => {
+                if (newText.value.trim() != "" && e.key === 'Enter'){
+                    containerItem.before(this._createRowItem({text:newText.value.trim(), id:this._generateUUID()}));
+                    newText.value = "";
+                }
+            });
+        }
+        else
+        {
+            containerItem = this._createFullElement('div', { class:'hover-item p-1 pe-3' });
+            const rowItem = this._createFullElement('div', { class:'list-item', 'item-id':`${params.id}` });
+            const movItem = this._createFullElement('button', { class:'movItem noborder', style:'background: transparent;' });
+            const chkItem = this._createFullElement('input', { type:'checkbox' });
+            const txtItem = this._createFullElement('input', { type:'text', class:'p-2 noborder w-100 bg-transparent'});
+            const delItem = this._createFullElement('button', { class:'delItem noborder rounded-50 bg-transparent d-flex align-items-center justify-content-center' });
+
+            movItem.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#888" class="bi bi-three-dots-vertical" viewBox="0 0 16 16"><path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/></svg>`;
+            delItem.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/></svg>`;
+            txtItem.value = item.text;
+            chkItem.checked = (item.done ?? false);
+
+            if (params.isSubItem)
+            {
+                rowItem.classList.add('sub-item');
+                rowItem.setAttribute('parent-id', params.parentId);
+            }
+
+            rowItem.appendChild(movItem);
+            rowItem.appendChild(chkItem);
+            rowItem.appendChild(txtItem);
+            rowItem.appendChild(delItem);
+            containerItem.appendChild(rowItem);
+
+            delItem.addEventListener('click', () => {
+                this._bodySection.removeChild(containerItem);
+            });
+        }
+
+        return containerItem;
+    }
+    _addOrUpdateItem(element)
+    {
+        if (element)
+        {
+            let index = 0;
+            let items = [];
+
+            if (this.data && this.data.items && this.data.items.length > 0)
+            {
+                items = this.data.items;
+                this.data.forEach((item, i) => {
+                    if (element.getAttribute('item-id') == (item.id ?? ''))
+                        index = i;
+                });
+            }
+        }
+    }
+
+    setData(obj)
+    {
+        this.data = obj;
+        this._printData();
+    }
+    getData(withoutmeta = false)
+    {
+        let temp = JSON.parse(JSON.stringify(this.data));
+        
+        if (withoutmeta) 
+            temp.items.forEach(t => delete t._meta);
+
+        return temp;
+    }
+    getItem(id)
+    {
+
+    }
+}
+
 customElements.define('edit-select', EditSelect);
 customElements.define('input-key', InputKey);
+customElements.define('check-list', CheckList);
