@@ -714,7 +714,7 @@ class InputKey extends HTMLElement
 class CheckList extends HTMLElement
 {
     attributes = null;
-    data = null;
+    data = {};
     locked = null;
     doneStyle = null;
     canRemove = null;
@@ -727,6 +727,7 @@ class CheckList extends HTMLElement
     _headSection = null;
     _titleHeader = null;
     _bodySection = null;
+    _footSection = null;
 
     constructor() 
     {
@@ -761,6 +762,7 @@ class CheckList extends HTMLElement
             this._containerwc = this._createFullElement('div', { id:'CL_container', class:'bordered d-flex flex-column rounded' });
             this._headSection = this._createFullElement('div', { id:'CL_headerSection', class:'p-3 d-flex' });
             this._bodySection = this._createFullElement('div', { id:'CL_bodySection', class:'grow-1', style:'min-height: 4rem; padding-bottom: 1rem;' });
+            this._footSection = this._createFullElement('div', { id:'CL_footSection', class:'p-1'});
 
             // head section
             this._titleHeader = this._createFullElement('input', { id:'CL_title_headSection', type: 'text', class:'w-100 fz-big2 p-2 noborder', placeholder:'Título'});
@@ -769,6 +771,14 @@ class CheckList extends HTMLElement
 
             // body section
             this._containerwc.appendChild(this._bodySection);
+
+            // foot section
+            this._containerwc.appendChild(this._footSection);
+
+            // events
+            this._titleHeader.addEventListener('keyup', () => {
+                this.data['text'] = this._titleHeader.value;
+            });
 
             shadow.innerHTML = `
                 <style>
@@ -790,6 +800,9 @@ class CheckList extends HTMLElement
                     .ps-1{ padding-left: 4px; }.ps-2{ padding-left: 8px; }.ps-3{ padding-left: 12px; }.ps-4{ padding-left: 16px; }.ps-5{ padding-left: 32px; }
                     .pe-1{ padding-right: 4px; }.pe-2{ padding-right: 8px; }.pe-3{ padding-right: 12px; }.pe-4{ padding-right: 16px; }.pe-5{ padding-right: 32px; }
                     .bg-white{ background-color: #FFF;} .bg-light-gray{ background-color: #F5F5F5; } .bg-transparent{background-color:transparent;}
+                    .hide-element{ display: none !important; }
+                    .disable-element{ pointer-events: none !important; opacity: .5 !important; }
+                    .disable-element-op0{ pointer-events: none !important; opacity: 0 !important; }
                     
                     /* ========== List */
                     .list-item-new{ display: grid; grid-template-columns: 1rem 1rem 1fr; gap:4px;}
@@ -810,16 +823,16 @@ class CheckList extends HTMLElement
             {
                 try
                 {
-                    this.data = JSON.parse(this.getAttribute('data'));
+                    this.setData(JSON.parse(this.getAttribute('data')));
                 }
                 catch(error)
                 {
                     alert('El valor del atributo "data" no contiene un formato JSON válido');
-                    this.data = null;
+                    this.data = {};
                 }
             }
 
-            this._printData();
+            this._refreshView();
         });
     }
 
@@ -830,7 +843,7 @@ class CheckList extends HTMLElement
     }
     _parseInt(value, _default = 0)
     {
-        if (value != null && isFinite(value.trim()) && !isNaN(value.trim())) { return this.parseInt(value.trim()); }
+        if (value != null && isFinite(value.trim()) && !isNaN(value.trim())) { return parseInt(value.trim()); }
         return _default;
     }
     _createFullElement(tagName="div", attributes={})
@@ -840,25 +853,28 @@ class CheckList extends HTMLElement
         keys.forEach(key => elem.setAttribute(key, attributes[key]));
         return elem;
     }
-    _printData()
+    _refreshView()
     {
         // title
-        this._titleHeader.value = this.data?.text ?? '';
+        this._titleHeader.value = (this.data?.text ?? '');
         this._bodySection.innerHTML = ``;
 
         // New item
-        const newItem = this._createRowItem(null, { isNew: true, id: this._generateUUID()});
+        let id = this._generateUUID()
+        const newItem = this._createRowItem(null, { isNew: true, id: id});
 
         // Items List
         if (this.data && this.data.items && this.data.items.length > 0)
         {
             this.data.items.forEach(item => 
             {
-                const id = (item.id ?? this._generateUUID());
+                let id = (item.id ?? this._generateUUID());
                 this._bodySection.appendChild(this._createRowItem(item, { id: id }));
 
                 if (item.items && item.items.length > 0)
-                    item.items.forEach(subItem => this._bodySection.appendChild(this._createRowItem(subItem, { isNew: false, isSubItem: true, id: (subItem.id ?? this._generateUUID()), parentId: id })));
+                    item.items.forEach(subItem => { 
+                        this._bodySection.appendChild(this._createRowItem(subItem, { isNew: false, isSubItem: true, id: (subItem.id ?? this._generateUUID()), parentId: id }))
+                    });
             });
         }
 
@@ -866,7 +882,7 @@ class CheckList extends HTMLElement
     }
     _generateUUID()
     {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+        return 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
             const r = Math.random() * 16 | 0, 
                 v = c == 'x' ? r : (r & 0x3 | 0x8);
             return v.toString(16);
@@ -876,7 +892,6 @@ class CheckList extends HTMLElement
     _createRowItem(item, params = { isNew: false, isSubItem: false, id: '', parentId:''})
     {
         let containerItem = null;
-
         if (params.isNew)
         {
             containerItem = this._createFullElement('div', { id:'CL_newCont', class:'hover-item p-1 pe-3' });
@@ -894,21 +909,25 @@ class CheckList extends HTMLElement
 
             newText.addEventListener('blur', () => {
                 if (newText.value.trim() != ""){
-                    containerItem.before(this._createRowItem({text:newText.value.trim(), id:this._generateUUID()}));
+                    const newItemElement = this._createRowItem({ text: newText.value.trim() }, { id: this._generateUUID() });
+                    //containerItem.before(newItemElement);
                     newText.value = "";
+                    this._addOrUpdateItem(newItemElement);
                 }
             });
             newText.addEventListener('keyup', (e) => {
                 if (newText.value.trim() != "" && e.key === 'Enter'){
-                    containerItem.before(this._createRowItem({text:newText.value.trim(), id:this._generateUUID()}));
+                    const newItemElement = this._createRowItem({ text: newText.value.trim() }, { id: this._generateUUID() });
+                    //containerItem.before(newItemElement);
                     newText.value = "";
+                    this._addOrUpdateItem(newItemElement);
                 }
             });
         }
         else
         {
-            containerItem = this._createFullElement('div', { class:'hover-item p-1 pe-3' });
-            const rowItem = this._createFullElement('div', { class:'list-item', 'item-id':`${params.id}` });
+            containerItem = this._createFullElement('div', { class:'hover-item p-1 pe-3', 'item-id':`${params.id}` });
+            const rowItem = this._createFullElement('div', { class:'list-item' });
             const movItem = this._createFullElement('button', { class:'movItem noborder', style:'background: transparent;' });
             const chkItem = this._createFullElement('input', { type:'checkbox' });
             const txtItem = this._createFullElement('input', { type:'text', class:'p-2 noborder w-100 bg-transparent'});
@@ -918,12 +937,20 @@ class CheckList extends HTMLElement
             delItem.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/></svg>`;
             txtItem.value = item.text;
             chkItem.checked = (item.done ?? false);
+            containerItem.setAttribute('item-text', item.text);
+            containerItem.setAttribute('item-done', chkItem.checked);
 
             if (params.isSubItem)
             {
-                rowItem.classList.add('sub-item');
-                rowItem.setAttribute('parent-id', params.parentId);
+                containerItem.classList.add('sub-item');
+                containerItem.setAttribute('parent-id', params.parentId);
             }
+
+            if (chkItem.checked && this.locked) chkItem.classList.add('disable-element');
+            if (!this.canRemove) delItem.classList.add('hide-element');
+            if (!this.canEdit) txtItem.classList.add('disable-element');
+            if (!this.canMove) movItem.classList.add('disable-element-op0');
+            if (!this.canCheck) chkItem.classList.add('disable-element-op0');
 
             rowItem.appendChild(movItem);
             rowItem.appendChild(chkItem);
@@ -932,47 +959,175 @@ class CheckList extends HTMLElement
             containerItem.appendChild(rowItem);
 
             delItem.addEventListener('click', () => {
-                this._bodySection.removeChild(containerItem);
+                //this._bodySection.removeChild(containerItem);
+                this._addOrUpdateItem(containerItem, true);
+            });
+            txtItem.addEventListener('keyup', (e) => {
+                containerItem.setAttribute('item-text', txtItem.value);
+                this._addOrUpdateItem(containerItem);
+                if (e.key === 'Enter' && containerItem.nextElementSibling && containerItem.nextElementSibling.childNodes[0] && containerItem.nextElementSibling.childNodes[0].childNodes[2]){
+                    containerItem.nextElementSibling.childNodes[0].childNodes[2].focus();
+                }
+            });
+            chkItem.addEventListener('click', () => {
+                containerItem.setAttribute('item-done', chkItem.checked);
+                this._addOrUpdateItem(containerItem);
+                if (chkItem.checked && this.locked)
+                    chkItem.classList.add('disable-element');
             });
         }
 
         return containerItem;
     }
-    _addOrUpdateItem(element)
+    _elementChecked(element, checked=false)
     {
-        if (element)
+        switch(this.doneStyle)
         {
-            let index = 0;
-            let items = [];
-
-            if (this.data && this.data.items && this.data.items.length > 0)
+            case 0:
             {
-                items = this.data.items;
-                this.data.forEach((item, i) => {
-                    if (element.getAttribute('item-id') == (item.id ?? ''))
-                        index = i;
-                });
+                break;
+            }
+            case 1:
+            {
+                if (checked)
+                {
+                    this._footSection.appendChild(element);
+                }
+                else
+                {
+                    this._bodySection.lastChild.before(element);
+                }
+                break;
+            }
+            case 2:
+            {
+                if (checked)
+                    this._bodySection.removeChild(element);
+                break;
             }
         }
     }
+    __addOrUpdateItem(element, del=false, data=null)
+    {
+        if (data == null) data = this.data;
+        
+        let updated = false;
+        let items = (data?.items??[]);
+        let itemId = (element.getAttribute('item-id') ?? '_');
+        let parentId = (element.getAttribute('parent-id')??'_');
 
+        if (items && items.length > 0)
+        {
+            items.forEach((item, i) => 
+            {
+                if (!updated && itemId == item.id)
+                {
+                    if (del)
+                    {
+                        let delSubItems = [];
+
+                        if (items[i].items && items[i].items.length > 0)
+                        {
+                            this._bodySection.childNodes.forEach((itm) => {
+                                if ((itm.getAttribute('parent-id')??'') == itemId) delSubItems.push(itm);
+                            });
+                        }
+                        items.splice(i, 1);
+                        delSubItems.forEach(subItem => subItem.remove());
+                        this._bodySection.removeChild(element);
+                    }
+                    else
+                    {
+                        items[i].text = element.getAttribute('item-text');
+                        items[i].done = ((element.getAttribute('item-done') ?? '') === 'true');
+                        this._elementChecked(element, ((element.getAttribute('item-done') ?? '') === 'true'));
+                    }
+                    updated = true;
+                }
+                else if (item.items && item.items.length > 0 && parentId == item.id)
+                {
+                    items[i].items = this.__addOrUpdateItem(element, del, item);
+                    updated = true;
+                }
+            });
+        }
+
+        if (!updated)
+        {
+            items.push({
+                id: element.getAttribute('item-id'), 
+                text: element.getAttribute('item-text'),
+                done: ((element.getAttribute('item-done') ?? '') === 'true'),
+                _meta: {
+                    percent: -1, 
+                    progress: '100'
+                }
+            });
+            this._bodySection.lastChild.before(element);
+        }
+
+        return items;
+    }
+    _addOrUpdateItem(element, del=false)
+    {
+        this.data['items'] = this.__addOrUpdateItem(element, del);
+    }
     setData(obj)
     {
         this.data = obj;
-        this._printData();
+        
+        if (this.data && this.data.items && this.data.items.length > 0)
+        {
+            this.data.items.forEach(item => 
+            {
+                item['id'] = (item.id ?? this._generateUUID());
+                item['_meta'] = (item._meta ?? { percent:-1, progress:'100' });
+                if (item.items && item.items.length > 0)
+                {
+                    item.items.forEach(subItem => { 
+                        subItem['id'] = (subItem.id ?? this._generateUUID());
+                        subItem['_meta'] = (subItem._meta ?? { percent:-1, progress:'100' });
+                    });
+                }
+            });
+        }
+        this._refreshView();
     }
     getData(withoutmeta = false)
     {
         let temp = JSON.parse(JSON.stringify(this.data));
         
-        if (withoutmeta) 
-            temp.items.forEach(t => delete t._meta);
-
+        if (withoutmeta)
+        {
+            temp.items.forEach(t => {
+                delete t._meta
+                if (t.items && t.items.length > 0)
+                    t.items.forEach(s => delete s._meta);
+            });
+        }
+        
         return temp;
     }
     getItem(id)
     {
+        let itm = null;
 
+        if (this.data && this.data.items && this.data.items.length > 0)
+            itm = this.data.items.find(item => item.id == id);
+
+        if (!itm && this.data && this.data.items && this.data.items.length)
+        {
+            this.data.items.forEach(item => {
+                if (item.items && item.items.length > 0) {
+                    item.items.forEach(subItem => {
+                        if (subItem.id == id)
+                            itm = subItem;
+                    });
+                }
+            });
+        }
+
+        return itm;
     }
 }
 
