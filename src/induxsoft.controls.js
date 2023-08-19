@@ -728,6 +728,9 @@ class CheckList extends HTMLElement
     _titleHeader = null;
     _bodySection = null;
     _footSection = null;
+    _btnDropDown = null;
+    _footHeader = null;
+    _textDropDown = null;
 
     constructor() 
     {
@@ -761,8 +764,8 @@ class CheckList extends HTMLElement
 
             this._containerwc = this._createFullElement('div', { id:'CL_container', class:'bordered d-flex flex-column rounded' });
             this._headSection = this._createFullElement('div', { id:'CL_headerSection', class:'p-3 d-flex' });
-            this._bodySection = this._createFullElement('div', { id:'CL_bodySection', class:'grow-1', style:'min-height: 4rem; padding-bottom: 1rem;' });
-            this._footSection = this._createFullElement('div', { id:'CL_footSection', class:'p-1'});
+            this._bodySection = this._createFullElement('div', { id:'CL_bodySection', class:'grow-1 bg-light-gray' });
+            this._footSection = this._createFullElement('div', { id:'CL_footSection'});
 
             // head section
             this._titleHeader = this._createFullElement('input', { id:'CL_title_headSection', type: 'text', class:'w-100 fz-big2 p-2 noborder', placeholder:'Título'});
@@ -774,10 +777,33 @@ class CheckList extends HTMLElement
 
             // foot section
             this._containerwc.appendChild(this._footSection);
+            this._footHeader = this._createFullElement('div', { id:'CL_footHeader', class:'ps-2 pe-2 hide-element' });
+            this._btnDropDown = this._createFullElement('button', { id:'CL_btnDropDown', class:'d-flex align-items-center gap-2 noborder bg-transparent p-3' });
+            const _svgDropDown = this._createFullElement('div', { class:'d-flex align-items-center justify-content-center' });
+            this._textDropDown = this._createFullElement('span');
+
+            _svgDropDown.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>`;
+
+            this._btnDropDown.appendChild(_svgDropDown);
+            this._btnDropDown.appendChild(this._textDropDown);
+            this._footHeader.appendChild(this._btnDropDown);
+            this._footSection.before(this._footHeader);
 
             // events
             this._titleHeader.addEventListener('keyup', () => {
                 this.data['text'] = this._titleHeader.value;
+            });
+            this._btnDropDown.addEventListener('click', () => {
+                if (this._footSection.classList.contains('hide-element'))
+                {
+                    this._footSection.classList.remove('hide-element');
+                    _svgDropDown.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>`;
+                }
+                else
+                {
+                    this._footSection.classList.add('hide-element');
+                    _svgDropDown.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>`;
+                }
             });
 
             shadow.innerHTML = `
@@ -803,17 +829,22 @@ class CheckList extends HTMLElement
                     .hide-element{ display: none !important; }
                     .disable-element{ pointer-events: none !important; opacity: .5 !important; }
                     .disable-element-op0{ pointer-events: none !important; opacity: 0 !important; }
+                    .pb-4{ border-bottom: 4px solid #DDD !important; }
+                    .pt-4{ border-top: 4px solid #DDD !important; }
                     
                     /* ========== List */
                     .list-item-new{ display: grid; grid-template-columns: 1rem 1rem 1fr; gap:4px;}
                     .list-item{ display: grid; grid-template-columns: 1rem 1rem 1fr 2rem; gap:4px;}
-                    .sub-item{ margin-left: 1.6rem; }
+                    .sub-item{ padding-left: 1.6rem; }
                     .hover-item:focus-within{ outline: 1px solid #DDD !important; }
                     .movItem, .delItem{ position: relative; left: -1000rem; }
-                    .hover-item:hover > div > button{ left: 0; }
+                    .hover-item:hover > div > div > button{ left: 0; }
                     .delItem:hover{ background-color: #F5F5F5; fill: #000 !important; color: #000 !important; cursor: pointer; }
                     .movItem:hover{ cursor: move ; }
-                    
+                    #CL_btnDropDown:hover{ !important; cursor: pointer !important; }
+                    #CL_footHeader{ border-top: 1px solid #DDD !important; transition: .3s; }
+                    #CL_footHeader:hover{ background-color: #f5f5f5; }
+                    .item{ border-bottom: 4px solid #FFFz; border-top: 4px solid #FFF; }
                 </style>
             `;
 
@@ -858,6 +889,8 @@ class CheckList extends HTMLElement
         // title
         this._titleHeader.value = (this.data?.text ?? '');
         this._bodySection.innerHTML = ``;
+        this._footSection.innerHTML = ``;
+        this._footHeader.classList.add('hide-element');
 
         // New item
         let id = this._generateUUID()
@@ -879,6 +912,8 @@ class CheckList extends HTMLElement
         }
 
         this._bodySection.appendChild(newItem);
+
+        this._reprintElementChecked();
     }
     _generateUUID()
     {
@@ -894,7 +929,7 @@ class CheckList extends HTMLElement
         let containerItem = null;
         if (params.isNew)
         {
-            containerItem = this._createFullElement('div', { id:'CL_newCont', class:'hover-item p-1 pe-3' });
+            containerItem = this._createFullElement('div', { id:'CL_newCont', class:'hover-item p-2 pe-3 bg-white' });
             const newItem = this._createFullElement('div', { id:'CL_newItem', class:'list-item-new', 'item-id': params.id });
             const newEmpt = this._createFullElement('div');
             const newIcon = this._createFullElement('div', { class:'d-flex align-items-center justify-content-center' });
@@ -910,7 +945,6 @@ class CheckList extends HTMLElement
             newText.addEventListener('blur', () => {
                 if (newText.value.trim() != ""){
                     const newItemElement = this._createRowItem({ text: newText.value.trim() }, { id: this._generateUUID() });
-                    //containerItem.before(newItemElement);
                     newText.value = "";
                     this._addOrUpdateItem(newItemElement);
                 }
@@ -918,7 +952,6 @@ class CheckList extends HTMLElement
             newText.addEventListener('keyup', (e) => {
                 if (newText.value.trim() != "" && e.key === 'Enter'){
                     const newItemElement = this._createRowItem({ text: newText.value.trim() }, { id: this._generateUUID() });
-                    //containerItem.before(newItemElement);
                     newText.value = "";
                     this._addOrUpdateItem(newItemElement);
                 }
@@ -926,9 +959,10 @@ class CheckList extends HTMLElement
         }
         else
         {
-            containerItem = this._createFullElement('div', { class:'hover-item p-1 pe-3', 'item-id':`${params.id}` });
+            containerItem = this._createFullElement('div', { class:'hover-item item p-1 pe-3 bg-white', 'item-id':`${params.id}` });
+            const test = this._createFullElement('div');
             const rowItem = this._createFullElement('div', { class:'list-item' });
-            const movItem = this._createFullElement('button', { class:'movItem noborder', style:'background: transparent;' });
+            const movItem = this._createFullElement('button', { class:'movItem noborder', style:'background: transparent;', draggable:'true' });
             const chkItem = this._createFullElement('input', { type:'checkbox' });
             const txtItem = this._createFullElement('input', { type:'text', class:'p-2 noborder w-100 bg-transparent'});
             const delItem = this._createFullElement('button', { class:'delItem noborder rounded-50 bg-transparent d-flex align-items-center justify-content-center' });
@@ -956,10 +990,10 @@ class CheckList extends HTMLElement
             rowItem.appendChild(chkItem);
             rowItem.appendChild(txtItem);
             rowItem.appendChild(delItem);
-            containerItem.appendChild(rowItem);
+            test.appendChild(rowItem);
+            containerItem.appendChild(test);
 
             delItem.addEventListener('click', () => {
-                //this._bodySection.removeChild(containerItem);
                 this._addOrUpdateItem(containerItem, true);
             });
             txtItem.addEventListener('keyup', (e) => {
@@ -972,37 +1006,87 @@ class CheckList extends HTMLElement
             chkItem.addEventListener('click', () => {
                 containerItem.setAttribute('item-done', chkItem.checked);
                 this._addOrUpdateItem(containerItem);
+                this._refreshView();
                 if (chkItem.checked && this.locked)
                     chkItem.classList.add('disable-element');
             });
+
+            
+            containerItem.addEventListener('dragover', (e) => {
+                e.preventDefault();
+
+                const rect = containerItem.getBoundingClientRect();
+                const limit = (rect.y + (rect.height / 2));
+
+                let limitInferior = (e.clientY < limit);
+
+                containerItem.classList.toggle('pb-4', !limitInferior);
+                containerItem.classList.toggle('pt-4', limitInferior);
+            });
+            containerItem.addEventListener('dragleave', (e) => {
+                containerItem.classList.remove('pb-4');
+                containerItem.classList.remove('pt-4');
+            })
         }
 
         return containerItem;
     }
-    _elementChecked(element, checked=false)
+    _reprintElementChecked()
     {
+        this._footSection.innerHTML = '';
+
         switch(this.doneStyle)
         {
             case 0:
             {
+                this._footHeader.classList.add('hide-element');
                 break;
             }
             case 1:
             {
-                if (checked)
+                let checkedItems = this._getCheckedItems();
+                let lastParendtId = '🧔';
+
+                checkedItems.forEach(itemChecked => 
                 {
-                    this._footSection.appendChild(element);
-                }
-                else
+                    this._bodySection.childNodes.forEach(itemList => 
+                    {
+                        if (itemChecked.id == itemList.getAttribute('item-id'))
+                        {
+                            let parentId = (itemList.getAttribute('parent-id') ?? '');
+                            if (parentId && parentId != lastParendtId)
+                            {
+                                lastParendtId = parentId;
+                                let parentItemList = null; 
+                                this._bodySection.childNodes.forEach(item => { 
+                                    if(item.getAttribute('item-id') == parentId)  
+                                        parentItemList = item;
+                                });
+                                if (parentItemList)
+                                {
+                                    const parentClone = parentItemList.cloneNode(true);
+                                    parentClone.classList.add('disable-element');
+                                    this._footSection.appendChild(parentClone);
+                                }
+                            }
+                            this._footSection.appendChild(itemList);
+                        }
+                    });
+                });
+                
+                if (checkedItems.length > 0)
                 {
-                    this._bodySection.lastChild.before(element);
+                    this._footHeader.classList.remove('hide-element');
+                    let text = (checkedItems.length == 1 ? ' Elemento completado' : ' Elementos completados');
+                    this._textDropDown.textContent = checkedItems.length + text;
                 }
                 break;
             }
             case 2:
             {
-                if (checked)
-                    this._bodySection.removeChild(element);
+                this._footHeader.classList.add('hide-element');
+                let checkedItems = this._getCheckedItems();
+                checkedItems.forEach(item => this._bodySection.childNodes.forEach(itemList => { if (item.id == itemList.getAttribute('item-id')) itemList.remove(); }));
                 break;
             }
         }
@@ -1034,13 +1118,14 @@ class CheckList extends HTMLElement
                         }
                         items.splice(i, 1);
                         delSubItems.forEach(subItem => subItem.remove());
-                        this._bodySection.removeChild(element);
+                        element.remove();
                     }
                     else
                     {
                         items[i].text = element.getAttribute('item-text');
                         items[i].done = ((element.getAttribute('item-done') ?? '') === 'true');
-                        this._elementChecked(element, ((element.getAttribute('item-done') ?? '') === 'true'));
+                        if (items[i].items && items[i].items.length > 0)
+                            items[i].items.forEach(subitem => subitem.done = items[i].done);
                     }
                     updated = true;
                 }
@@ -1071,6 +1156,33 @@ class CheckList extends HTMLElement
     _addOrUpdateItem(element, del=false)
     {
         this.data['items'] = this.__addOrUpdateItem(element, del);
+        this.data.items.forEach(item => 
+        {
+            if (item.items && item.items.length > 0)
+            {
+                let allSubItemsChecked = true;
+                item.items.forEach(subItem => {
+                    if(!subItem.done) allSubItemsChecked = false;
+                });
+                item.done = allSubItemsChecked;
+            }
+        });
+    }
+    _getCheckedItems()
+    {
+        let itemsCompleted = [];
+        if (this.data && this.data.items && this.data.items.length > 0)
+        {
+            this.data.items.forEach(item => {
+                if (item.done == true) itemsCompleted.push(item);
+                if (item.items && item.items.length > 0){
+                    item.items.forEach(subitem => {
+                        if (subitem.done == true) itemsCompleted.push(subitem);
+                    });
+                }
+            });
+        }
+        return itemsCompleted;
     }
     setData(obj)
     {
@@ -1081,12 +1193,12 @@ class CheckList extends HTMLElement
             this.data.items.forEach(item => 
             {
                 item['id'] = (item.id ?? this._generateUUID());
-                item['_meta'] = (item._meta ?? { percent:-1, progress:'100' });
+                item['_meta'] =  { percent:(item.meta?.percent ?? -1), progress:(item.meta?.progress ?? '100') };
                 if (item.items && item.items.length > 0)
                 {
                     item.items.forEach(subItem => { 
                         subItem['id'] = (subItem.id ?? this._generateUUID());
-                        subItem['_meta'] = (subItem._meta ?? { percent:-1, progress:'100' });
+                        subItem['_meta'] = { percent:(subItem.meta?.percent ?? -1), progress:(subItem.meta?.progress ?? '100') };
                     });
                 }
             });
