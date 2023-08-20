@@ -733,6 +733,7 @@ class CheckList extends HTMLElement
     _textDropDown = null;
     _topPositionDragEvent = true;
     _isChildItemDragEvent = true;
+    _draggingItem = null;
 
     constructor() 
     {
@@ -853,7 +854,7 @@ class CheckList extends HTMLElement
                     #CL_btnDropDown:hover{ !important; cursor: pointer !important; }
                     #CL_footHeader{ border-top: 1px solid #DDD !important; transition: .3s; }
                     #CL_footHeader:hover{ background-color: #f5f5f5; }
-                    
+                    .in-done-list .list-item .movItem{ pointer-events: none !important; opacity: 0 !important; }
                 </style>
             `;
 
@@ -968,9 +969,9 @@ class CheckList extends HTMLElement
         }
         else
         {
-            containerItem = this._createFullElement('div', { class:'hover-item bg-white ps-1 pe-3 borderxy4', 'item-id':`${params.id}`, style:'position: relative; margin-top: 1px;', draggable:'true' });
+            containerItem = this._createFullElement('div', { class:'hover-item bg-white ps-1 pe-3 borderxy4', 'item-id':`${params.id}`, style:'position: relative; margin-top: 1px;' });
             const rowItem = this._createFullElement('div', { class:'list-item' });
-            const movItem = this._createFullElement('button', { class:'movItem noborder', style:'background: transparent;' });
+            const movItem = this._createFullElement('button', { class: 'movItem noborder', style: 'background: transparent;', draggable: 'true' });
             const chkItem = this._createFullElement('input', { type:'checkbox' });
             const txtItem = this._createFullElement('input', { type:'text', class:'p-2 noborder w-100 bg-transparent'});
             const delItem = this._createFullElement('button', { class:'delItem noborder rounded-50 bg-transparent d-flex align-items-center justify-content-center' });
@@ -1023,6 +1024,7 @@ class CheckList extends HTMLElement
 
 
             containerItem.addEventListener('dragstart', (e) => {
+                this._draggingItem = containerItem;
                 e.dataTransfer.setData('text/plain', containerItem.getAttribute('item-id'));
                 containerItem.classList.add('dragging');
                 let item = this.getItem(containerItem.getAttribute('item-id'));
@@ -1036,8 +1038,14 @@ class CheckList extends HTMLElement
                     })
                 }
             });
+            containerItem.addEventListener('dragend', () => {
+                containerItem.classList.remove('dragging');
+                this._draggingItem = null;
+            })
             containerItem.addEventListener('dragover', (e) => {
                 e.preventDefault();
+                if (containerItem.classList.contains('in-done-list')) return;
+                if (this._draggingItem && containerItem.getAttribute('item-id') == this._draggingItem.getAttribute('item-id')) return;
                 const rect = containerItem.getBoundingClientRect();
                 const limity = (rect.y + (rect.height / 2));
                 const limitx = (rect.x + (rect.width / 5))
@@ -1064,6 +1072,7 @@ class CheckList extends HTMLElement
             });
             containerItem.addEventListener('drop', (e) => {
                 e.preventDefault();
+                if (containerItem.classList.contains('in-done-list')) return;
                 containerItem.classList.remove('border-b');
                 containerItem.classList.remove('border-t');
                 containerItem.classList.remove('bg-light-gray');
@@ -1173,6 +1182,7 @@ class CheckList extends HTMLElement
                                     this._footSection.appendChild(parentClone);
                                 }
                             }
+                            itemList.classList.add('in-done-list');
                             this._footSection.appendChild(itemList);
                         }
                     });
