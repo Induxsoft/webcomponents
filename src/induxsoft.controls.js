@@ -723,6 +723,10 @@ class CheckList extends HTMLElement
     canCheck = null;
     showPercents = null;
 
+    onItemChanged = null;
+    onItemChecked = null;
+    onItemMoved = null;
+
     _containerwc = null;
     _headSection = null;
     _titleHeader = null;
@@ -762,7 +766,7 @@ class CheckList extends HTMLElement
             this.canRemove =    this._parseBool(this.getAttribute('can-remove'));
             this.canEdit =      this._parseBool(this.getAttribute('can-edit'));
             this.canMove =      this._parseBool(this.getAttribute('can-move'));
-            this.canCheck =     this._parseBool(this.getAttribute('can-check'));
+            this.canCheck =     this._parseBool(this.getAttribute('can-check'), true);
             this.showPercents = this._parseBool(this.getAttribute('show-percents'));
 
             this._containerwc = this._createFullElement('div', { id:'CL_container', class:'bordered d-flex flex-column rounded' });
@@ -840,7 +844,7 @@ class CheckList extends HTMLElement
                     .borderxy4{ border-top: 6px solid transparent; border-bottom: 6px solid transparent; }
                     .border-t{ border-top-color: #005CC8; }
                     .border-b{ border-bottom-color: #005CC8; }
-                    .dragging{ background-color: #F0F8FF ; }
+                    .dragging{ background-color: #F0F8FF; }
 
                     /* ========== List */
                     .list-item-new{ display: grid; grid-template-columns: 1rem 1rem 1fr; gap:4px;}
@@ -859,6 +863,7 @@ class CheckList extends HTMLElement
             `;
 
             shadow.appendChild(this._containerwc);
+            this._refreshView();
 
             if (this.hasAttribute('data') && this.getAttribute('data').trim())
             {
@@ -872,8 +877,6 @@ class CheckList extends HTMLElement
                     this.data = {};
                 }
             }
-
-            this._refreshView();
         });
     }
 
@@ -896,6 +899,8 @@ class CheckList extends HTMLElement
     }
     _refreshView()
     {
+        this._valideCheckedItems();
+
         // title
         this._titleHeader.value = (this.data?.text ?? '');
         this._bodySection.innerHTML = ``;
@@ -922,7 +927,6 @@ class CheckList extends HTMLElement
         }
 
         this._bodySection.appendChild(newItem);
-
         this._reprintElementChecked();
     }
     _generateUUID()
@@ -939,7 +943,7 @@ class CheckList extends HTMLElement
         let containerItem = null;
         if (params.isNew)
         {
-            containerItem = this._createFullElement('div', { id:'CL_newCont', class:'hover-item p-2 pe-3 bg-white' });
+            containerItem = this._createFullElement('div', { id:'CL_newCont', class:'hover-item p-2 pe-3 bg-white', style:'margin-top: 1px;' });
             const newItem = this._createFullElement('div', { id:'CL_newItem', class:'list-item-new', 'item-id': params.id });
             const newEmpt = this._createFullElement('div');
             const newIcon = this._createFullElement('div', { class:'d-flex align-items-center justify-content-center' });
@@ -1018,6 +1022,11 @@ class CheckList extends HTMLElement
                 containerItem.setAttribute('item-done', chkItem.checked);
                 this._addOrUpdateItem(containerItem);
                 this._refreshView();
+                if (chkItem.checked && this.onItemChecked)
+                {
+                    let item = this.getItem((containerItem.getAttribute('item-id')??''))
+                    this.onItemChecked(item);
+                }
                 if (chkItem.checked && this.locked)
                     chkItem.classList.add('disable-element');
             });
@@ -1035,12 +1044,22 @@ class CheckList extends HTMLElement
                             if (item.id == itemList.getAttribute('item-id'))
                                 itemList.classList.add('disable-element');
                         });
-                    })
+                    });
                 }
             });
             containerItem.addEventListener('dragend', () => {
                 containerItem.classList.remove('dragging');
                 this._draggingItem = null;
+                let item = this.getItem(containerItem.getAttribute('item-id'));
+                if (item && item.items && item.items.length > 0)
+                {
+                    this._bodySection.childNodes.forEach(itemList => {
+                        item.items.forEach(item => {
+                            if (item.id == itemList.getAttribute('item-id'))
+                                itemList.classList.remove('disable-element');
+                        });
+                    });
+                }
             })
             containerItem.addEventListener('dragover', (e) => {
                 e.preventDefault();
@@ -1114,29 +1133,36 @@ class CheckList extends HTMLElement
                         delete sourceItem.subindex;
 
                         if (targetItem.subindex != undefined)
+                        {
+                            let subitemsSource = JSON.parse(JSON.stringify(sourceItem.items ?? []));
+                            if (subitemsSource && subitemsSource.length > 0)
+                                delete sourceItem.items;
                             this.data.items[targetItem.subindex].items.splice(index, 0, sourceItem);
+                            subitemsSource.forEach(subitem => {
+                                index ++;
+                                this.data.items[targetItem.subindex].items.splice(index, 0, subitem);
+                            });
+                        }
                         else if (this._isChildItemDragEvent)
                         {
                             let subitems = (this.data.items[targetItem.index].items??[]);
+                            let subitemsSource = JSON.parse(JSON.stringify(sourceItem.items ?? []));
+                            if (subitemsSource && subitemsSource.length > 0)
+                                delete sourceItem.items;
                             subitems.unshift(sourceItem);
+                            let _index = 0;
+                            subitemsSource.forEach(subitem => {
+                                _index ++;
+                                subitems.splice(_index, 0, subitem);
+                            });
                             this.data.items[targetItem.index].items = subitems;
                         }
                         else
                         {
                             this.data.items.splice(index, 0, sourceItem);
                         }
+                        if (this.onItemMoved) this.onItemMoved(sourceItem);
                     }
-                    // if (itemDrop)
-                    //     itemDrop.classList.toggle('sub-item', this._isChildItemDragEvent);
-                    
-                    // if (this._topPositionDragEvent)
-                    // {
-                    //     containerItem.before(itemDrop);
-                    // }
-                    // else
-                    // {
-                    //     containerItem.after(itemDrop);
-                    // }
                 }
                 this._refreshView();
             });
@@ -1240,6 +1266,8 @@ class CheckList extends HTMLElement
                         items[i].done = ((element.getAttribute('item-done') ?? '') === 'true');
                         if (items[i].items && items[i].items.length > 0)
                             items[i].items.forEach(subitem => subitem.done = items[i].done);
+                        if (this.onItemChanged)
+                            this.onItemChanged(item);
                     }
                     updated = true;
                 }
@@ -1270,17 +1298,24 @@ class CheckList extends HTMLElement
     _addOrUpdateItem(element, del=false)
     {
         this.data['items'] = this.__addOrUpdateItem(element, del);
-        this.data.items.forEach(item => 
+        this._valideCheckedItems();
+    }
+    _valideCheckedItems()
+    {
+        if (this.data && this.data.items && this.data.items.length > 0)
         {
-            if (item.items && item.items.length > 0)
+            this.data.items.forEach(item => 
             {
-                let allSubItemsChecked = true;
-                item.items.forEach(subItem => {
-                    if(!subItem.done) allSubItemsChecked = false;
-                });
-                item.done = allSubItemsChecked;
-            }
-        });
+                if (item.items && item.items.length > 0)
+                {
+                    let allSubItemsChecked = true;
+                    item.items.forEach(subItem => {
+                        if(!subItem.done) allSubItemsChecked = false;
+                    });
+                    item.done = allSubItemsChecked;
+                }
+            });
+        }
     }
     _getCheckedItems()
     {
@@ -1370,6 +1405,291 @@ class CheckList extends HTMLElement
     }
 }
 
+class StackEdit extends HTMLElement
+{
+    attributes = null;
+    data = {};
+    captionA = '';
+    captionB = '';
+    captionC = '';
+    captionD = '';
+    title = '';
+    subtitle = '';
+    colorField = '';
+    backColorField = '';
+
+    _stackContainer = null;
+    onElementClick = null;
+
+    constructor() 
+    {
+        super();
+        document.addEventListener('DOMContentLoaded', () => this.attributes = this.getAttributeNames());
+    }
+
+    static get observedAttributes()
+    {
+        return this.attributes;
+    }
+
+    attributeChangeCallback(property, oldValue, newValue)
+    {
+        if (newValue === oldValue) return;
+        this[property] = newValue;
+    }
+
+    connectedCallback()
+    {
+        document.addEventListener('DOMContentLoaded', () => 
+        {
+            const shadow =      this.attachShadow({ mode: 'closed' });
+            this.captionA =     (this.getAttribute('caption-a')??'');
+            this.captionB =     (this.getAttribute('caption-b')??'');
+            this.captionC =     (this.getAttribute('caption-c')??'');
+            this.captionD =     (this.getAttribute('caption-d')??'');
+            this.title =        (this.getAttribute('title')??'');
+            this.subtitle =     (this.getAttribute('subtitle')??'');
+            this.colorField =   (this.getAttribute('color-field')??'#000');
+            this.backColorField = (this.getAttribute('backcolor-field')??'#FFF');
+
+            this._stackContainer = this._createFullElement('div', { id:'_stackContainer' });
+
+            shadow.innerHTML = `
+                <style>
+                    *{ box-sizing: border-box;margin:0;padding:0; }
+                    .d-flex{ display:flex; }
+                    .flex-column{ flex-direction: column; }
+                    .wrap{ flex-wrap: wrap; }
+                    .gap-1{gap:4px;} .gap-2{gap:8px;}
+                    .justify-content-start{ justify-content: start; } .justify-content-center{ justify-content: center; } .justify-content-end{ justify-content: end; }
+                    .align-items-start{ align-items: start; } .align-items-center{ align-items: center; } .align-items-end{ align-items: end; }
+                    .fz-sm{ font-size: .8rem; } .fz-normal{ font-size: 1rem; } .fz-big1{ font-size: 1.2rem; } .fz-big2{ font-size: 1.4rem; }
+                    .fw-bold{ font-weight: bold; }
+                    .grow-1{ flex-grow: 1; }
+                    .w-100{ width: 100%; }
+                    .bordered{ border: 1px solid #DDD; }
+                    .noborder{ border: none !important; outline: none !important; }
+                    .rounded{ border-radius: 6px; }
+                    .p-1{ padding: 4px; } .p-2{ padding: 8px; } .p-3{ padding: 12px; } .p-4{ padding: 16px; } .p-5{ padding: 32px; }
+                    .ps-1{ padding-left: 4px; }.ps-2{ padding-left: 8px; }.ps-3{ padding-left: 12px; }.ps-4{ padding-left: 16px; }.ps-5{ padding-left: 32px; }
+                    .pe-1{ padding-right: 4px; }.pe-2{ padding-right: 8px; }.pe-3{ padding-right: 12px; }.pe-4{ padding-right: 16px; }.pe-5{ padding-right: 32px; }
+                    .borderx{ border-top: 6px solid transparent; border-bottom: 6px solid transparent; }
+                    .text-secondary{ color: #888; }
+
+                    .stack-item{ display: grid; grid-template-columns: 1.5rem 1fr; }
+                    .container-item{ background-color: ${this.backColorField} !important; color: ${this.colorField} !important; outline: 1px solid #DDD; }
+                    .mov-item{ background: transparent; color: currentColor; cursor: move; }
+                    #_stackContainer{ min-height: 30vh; background-color: #F5F5F5; display: flex; flex-direction: column-reverse; }
+                    .dragging{ background-color: #F0F8FF !important; }
+                    .border-t{ border-top-color: #005CC8; }
+                    .border-b{ border-bottom-color: #005CC8; }
+                    ` + (this.getAttribute('control-styles') ?? '') + `
+                </style>
+            `;
+
+            shadow.appendChild(this._stackContainer);
+            this._refreshView();
+
+            if (this.hasAttribute('data') && this.getAttribute('data').trim())
+            {
+                try
+                {
+                    this.setData(JSON.parse(this.getAttribute('data')));
+                }
+                catch(error)
+                {
+                    alert('El valor del atributo "data" no contiene un formato JSON válido');
+                    this.data = {};
+                }
+            }
+        });
+    }
+    _refreshView()
+    {
+        this._stackContainer.innerHTML = '';
+        // Items List
+        if (this.data && this.data.length > 0)
+        {
+            this.data.forEach(item => 
+            {
+                let id = (item.id ?? this._generateUUID());
+                this._stackContainer.appendChild(this._createRowItem(item, id));
+            });
+        }
+    }
+    _createRowItem(item, id = '')
+    {
+        const containerItem = this._createFullElement('div', { class:'container-item ps-1 borderx', 'item-id':`${id}`, style:'position: relative; margin-top: 1px;' });
+        const rowItem = this._createFullElement('div', { class:'stack-item' });
+        const movItem = this._createFullElement('button', { class: 'noborder mov-item', draggable: 'true' });
+        const rowData = this._createFullElement('div', { class:'p-2 d-flex wrap gap-2' });
+
+        movItem.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16"><path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/></svg>`;
+
+        // row data
+        const sectionASide = this._createFullElement('div', { id:'sectionASide', class:'fz-sm grow-1' });
+        const sectionBSide = this._createFullElement('div', { id:'sectionBSide', class:'fz-sm' });
+        const sectionTitle = this._createFullElement('div', { id:'sectionTitle', class:'w-100 fw-bold fz-normal'});
+        const sectionSubtl = this._createFullElement('div', { id:'sectionSubtl', class:'w-100 fz-normal'});
+        const sectionCSide = this._createFullElement('div', { id:'sectionCSide', class:'fz-sm grow-1' });
+        const sectionDSide = this._createFullElement('div', { id:'sectionDSide', class:'fz-sm' });
+
+        const headItemSect = this._createFullElement('div', { id:'headItemSect', class:'w-100 d-flex align-items-center'});
+        const bodyItemSect = this._createFullElement('div', { id:'bodyItemSect', class:'w-100 d-flex align-items-center wrap' });
+        const footItemSect = this._createFullElement('div', { id:'footItemSect', class:'w-100 d-flex align-items-center'});
+
+        sectionASide.textContent = (item?.[this.captionA]??'');
+        sectionBSide.textContent = (item?.[this.captionB]??'');
+        sectionTitle.textContent = (item?.[this.title]??'');
+        sectionSubtl.textContent = (item?.[this.subtitle]??'');
+        sectionCSide.textContent = (item?.[this.captionC]??'');
+        sectionDSide.textContent = (item?.[this.captionD]??'');
+
+        headItemSect.appendChild(sectionASide);
+        headItemSect.appendChild(sectionBSide);
+        bodyItemSect.appendChild(sectionTitle);
+        bodyItemSect.appendChild(sectionSubtl);
+        footItemSect.appendChild(sectionCSide);
+        footItemSect.appendChild(sectionDSide);
+
+        rowData.appendChild(headItemSect);
+        rowData.appendChild(bodyItemSect);
+        rowData.appendChild(footItemSect);
+
+        rowItem.appendChild(movItem);
+        rowItem.appendChild(rowData);
+
+        containerItem.appendChild(rowItem);
+
+        containerItem.addEventListener('click', () => {
+            let item = this._getItem(containerItem.getAttribute('item-id'), false);
+            let index = item.index;
+            delete item.index;
+            delete item.id;
+            if (this.onElementClick)
+                this.onElementClick(item, index);
+        });
+
+        containerItem.addEventListener('dragstart', (e) => {
+            this._draggingItem = containerItem;
+            e.dataTransfer.setData('text/plain', containerItem.getAttribute('item-id'));
+            containerItem.classList.add('dragging');
+        });
+        containerItem.addEventListener('dragend', () => {
+            containerItem.classList.remove('dragging');
+            this._draggingItem = null;
+        })
+        containerItem.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            if (this._draggingItem && containerItem.getAttribute('item-id') == this._draggingItem.getAttribute('item-id')) return;
+            const rect = containerItem.getBoundingClientRect();
+            const limity = (rect.y + (rect.height / 2));
+
+            let y = (e.clientY < limity);
+
+            containerItem.classList.toggle('border-b', !y);
+            containerItem.classList.toggle('border-t', y);
+
+            this._topPositionDragEvent = y;
+        });
+        containerItem.addEventListener('dragleave', (e) => {
+            containerItem.classList.remove('border-b');
+            containerItem.classList.remove('border-t');
+        });
+        containerItem.addEventListener('drop', (e) => {
+            e.preventDefault();
+            containerItem.classList.remove('border-b');
+            containerItem.classList.remove('border-t');
+
+            if (this._draggingItem && containerItem.getAttribute('item-id') == this._draggingItem.getAttribute('item-id')) return;
+
+            if (this._draggingItem)
+            {
+                this._draggingItem.classList.remove('dragging');
+
+                let index = 0;
+                let sourceItem = this._getItem(this._draggingItem.getAttribute('item-id'), false);
+                
+                if (sourceItem)
+                    this.data.splice(sourceItem.index, 1);
+
+                let targetItem = this._getItem(containerItem.getAttribute('item-id'), false);
+                
+                if (this._topPositionDragEvent)
+                    index = 1;
+                
+                if (targetItem)
+                {
+                    index += targetItem.index;
+                    delete sourceItem.index;
+                    this.data.splice(index, 0, sourceItem);
+                }
+            }
+            this._refreshView();
+        });
+
+        return containerItem;
+    }
+    setData(obj)
+    {
+        this.data = obj;
+        if (this.data && this.data.length > 0)
+        {
+            this.data.forEach(item => {
+                item['id'] = (item.id ?? this._generateUUID());
+            });
+        }
+        this._refreshView();
+    }
+    getData()
+    {
+        const copy = JSON.parse(JSON.stringify(this.data))
+        
+        if (copy && copy.length > 0)
+            copy.forEach(item => {
+                delete item.id;
+                delete item.index;
+            });
+        
+        return copy;
+    }
+    _createFullElement(tagName="div", attributes={})
+    {
+        const elem = document.createElement(tagName);
+        const keys = Object.keys(attributes);
+        keys.forEach(key => elem.setAttribute(key, attributes[key]));
+        return elem;
+    }
+    _generateUUID()
+    {
+        return 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+            const r = Math.random() * 16 | 0, 
+                v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
+    _getItem(id, withoutindex=true)
+    {
+        let itm = null;
+        let temp = JSON.parse(JSON.stringify(this.data));
+        
+        if (temp && temp.length > 0)
+        {
+            temp.forEach((item, i) => 
+            {
+                if (item.id == id)
+                {
+                    itm = item;
+                    if (!withoutindex) itm['index'] = i;
+                }
+            });
+        }
+        
+        return itm;
+    }
+}
+
 customElements.define('edit-select', EditSelect);
 customElements.define('input-key', InputKey);
 customElements.define('check-list', CheckList);
+customElements.define('stack-edit', StackEdit);

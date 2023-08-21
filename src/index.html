@@ -78,6 +78,13 @@
         <!--
             [PARAMS: check-list]
             ----------------------------------------------------------------------------------------------
+            - data              (opcional): datos de la lista
+            - data-locked       (opcional): Elementos marcados ya no pueden desmarcarse (true/false, def: false)
+            - data-done-style   (opcional): Visualización de elementos marcados: 0-Permanecen en su sitio, 1-Desaparecen, 2-Se apilan en una lista en la parte inferior (def: 0)
+            - can-remove        (opcional): Pueden eliminarse elementos (true/false, def: false)
+            - can-edit          (opcional): Pueden editarse elementos (true/false, def: false)
+            - can-move          (opcional): Pueden moverse elementos (true/false, def: false)
+            - can-check         (opcional): Pueden marcarse como completados o actualizar su progreso (true/false, def: true)
         -->
         <check-list 
             id="micontrol3"
@@ -88,6 +95,44 @@
             can-edit="true" 
             can-move="true" 
             can-check="true"
+        />
+    </div>
+    <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD;border-radius: 5px; padding-bottom: 32px; margin:4px; min-height: 35vh;">
+        <h3>Stack Edit</h3>
+        <!--
+            [PARAMS: stack-edit ]
+            ----------------------------------------------------------------------------------------------
+            - data              (opcional): datos de la pila
+            - caption-a         (opcional): Campo a mostrar en la esquina superior izquierda de los elementos de la pila
+            - caption-b         (opcional): Campo a mostrar en la esquina superior derecha de los elementos de la pila
+            - caption-c         (opcional): Campo a mostrar en la esquina inferior izquierda de los elementos de la pila
+            - caption-d         (opcional): Campo a mostrar en la esquina inferior derecha de los elementos de la pila
+            - title             (opcional): Campo a mostrar como título de los elementos de la pila
+            - subtitle          (opcional): Campo a mostrar como subtítulo de los elementos de la pila
+            - color-field       (opcional): Color del texto de los elementos de la pila (def: #000)
+            - backcolor-field   (opcional): Color de fondo de los elementos de la pila (def: #FFF)
+            - control-styles    (opcional): Establece los estilos personalizados que se le aplicarán al control (ej: input{border:1px solid red;})
+        -->
+        <stack-edit 
+            id="micontrol4"
+            caption-a="a" 
+            caption-b="b"
+            caption-c="c"
+            caption-d="d" 
+            title="title" 
+            subtitle="subtitle" 
+            color-field="#000" 
+            backcolor-field="#FFF" 
+            data='[
+                {
+                    "a":"01-01-2001",
+                    "b":"Activo",
+                    "c":"Verde",
+                    "d":"Uno",
+                    "title":"Item Verde",
+                    "subtitle":"Este es un item de color Verde"
+                }
+            ]'
         />
     </div>
 </body>
