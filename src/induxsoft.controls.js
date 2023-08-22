@@ -213,11 +213,12 @@ class InputKey extends HTMLElement
             const container = this.createFullElement('div', {id:'container'});
             const search_container = this.createFullElement('div', {id:'search_container'});
             this.input_search_container = this.createFullElement('input', {id:'input_search_container', type:'text'});
-            const button_search_container = this.createFullElement('button', {id:'button_search_container', type:'button', class:'hover-gray btn-sm'});
+            const button_search_container = this.createFullElement('button', {id:'button_search_container', type:'button', class:'hover-gray btn-sm', title:'Buscar'});
             const description_container = this.createFullElement('div', {id:'description_container'});
             this.input_description_container = this.createFullElement('input', {id:'input_description_container', type:'text', readonly:'readonly'});
-            const button_add_container = this.createFullElement('button', {id:'button_add_container', type:'button', class:'hover-gray btn-sm'});
-            const button_edit_container = this.createFullElement('button', {id:'button_edit_container', type:'button', class:'hover-gray btn-sm'});
+            const button_add_container = this.createFullElement('button', {id:'button_add_container', type:'button', class:'hover-gray btn-sm', title:'Agregar'});
+            const button_edit_container = this.createFullElement('button', {id:'button_edit_container', type:'button', class:'hover-gray btn-sm', title:'Editar'});
+            const button_clear_container = this.createFullElement('button', {id:'button_clear_container', type:'button', class:'hover-gray btn-sm', title:'Limpiar'});
 
             container.classList.toggle('disable-element', ((this.getAttribute('disabled')??'') === 'true'));
             this.inputv.required = ((this.getAttribute('required') ?? 'false') === 'true');
@@ -227,12 +228,14 @@ class InputKey extends HTMLElement
             button_search_container.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16"><path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg>`;
             button_add_container.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/></svg>`;
             button_edit_container.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16"><path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/></svg>`;
+            button_clear_container.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/></svg>`;
 
             search_container.appendChild(this.input_search_container);
             search_container.appendChild(button_search_container);
             description_container.appendChild(this.input_description_container);
             if (this.getAttribute('add-url')) description_container.appendChild(button_add_container);
             if (this.getAttribute('edit-url')) description_container.appendChild(button_edit_container);
+            description_container.appendChild(button_clear_container);
             container.appendChild(search_container);
             container.appendChild(description_container);
 
@@ -338,6 +341,7 @@ class InputKey extends HTMLElement
             });
             close2_footer_container2.addEventListener('click', () => {
                 container2.classList.add('hide-element');
+                this.setValue(this.accept_data);
             });
             this.accept_footer_container2.addEventListener('click', () => {
                 if (!this.record_selected || Object.entries(this.record_selected).length <= 0)
@@ -353,20 +357,35 @@ class InputKey extends HTMLElement
                 this.input_search_container.focus();
             });
             this.input_search_container.addEventListener('blur', (e) => {
-                if (this.input_search_container.value.trim() && container2.classList.contains('hide-element') && (this.accept_data && ((this.accept_data[this.getAttribute('data-search') ?? '']) != this.input_search_container.value)))
+                if (container2.classList.contains('hide-element'))
                 {
-                    this.setDataSource(this.input_search_container.value).then(()=>{
-                        this.input_search_container2.value = this.input_search_container.value;
-                        this.search(container2, true);
-                    });
+                    if (!this.input_search_container.value.trim())
+                    {
+                        this.clear();
+                    }
+                    else if (!this.accept_data || Object.keys(this.accept_data).length < 1)
+                    {
+                        this.setDataSource(this.input_search_container.value).then(()=>{
+                            this.input_search_container2.value = this.input_search_container.value;
+                            this.search(container2, true);
+                        });
+                    }
+                    else if (this.accept_data && (this.accept_data[this.getAttribute('data-search') ?? '']) != this.input_search_container.value)
+                    {
+                        this.setValue(this.accept_data);
+                    }
                 }
             });
             this.input_search_container.addEventListener('keyup', (e) => {
-                if (e.key === 'Enter')
+                if (e.key === 'Enter' && this.input_search_container.value == "")
+                    this.clear();
+                else if (e.key === 'Enter')
                     this.setDataSource(this.input_search_container.value).then(()=>{
                         this.input_search_container2.value = this.input_search_container.value;
                         this.search(container2, true);
                     });
+                else if (e.key === 'Escape')
+                    this.input_search_container.blur();
             });
             button_search_container2.addEventListener('click', () => {
                 this.searchButton(container2);
@@ -403,6 +422,10 @@ class InputKey extends HTMLElement
                 iframe_section_container4.appendChild(iframe_container4);
                 container4.classList.remove('hide-element');
             });
+            button_clear_container.addEventListener('click', () => {
+                this.clear();
+                this.input_search_container.focus();
+            });
             close_header_container4.addEventListener('click', () => {
                 container4.classList.add('hide-element');
             });
@@ -437,7 +460,7 @@ class InputKey extends HTMLElement
                     .hover-red:hover{ background-color:#F00; }.hover-gray:hover{ background-color:#DDD !important; }
                     .fw-500{font-weight: 500;}
                     .btn-sm{display: flex; align-items:center; justify-content: center; padding: 0 5px; border: none; outline:1px solid #888;}
-                    .modal-backdrop{ width: 100vw; height: 100vh; position: fixed; top:0; left:0; padding:0; margin: 0; display:flex; align-items:center; justify-content:center; }
+                    .modal-backdrop{ width: 100vw; height: 100vh; position: fixed; top:0; left:0; padding:0; margin: 0; display:flex; align-items:center; justify-content:center; z-index: 1000; }
                     .modal-container{ width: 40rem; height: 30rem; border:1px solid #ededed; box-shadow: 1px 3px 6px 0 #DDD; display:flex;flex-direction: column; }
                     .modal-section{ border-bottom:1px solid #DDD; }
                     .modal-section-header{ padding: 6px 10px; }
@@ -628,6 +651,12 @@ class InputKey extends HTMLElement
 
         if (this.change_event)
             this.change_event(value);
+    }
+    clear()
+    {
+        this.accept_data = null;
+        this.record_selected = null;
+        this.setValue(null);
     }
     search(container2, autoselect=false)
     {
