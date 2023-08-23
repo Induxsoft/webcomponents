@@ -7,7 +7,7 @@
     <title>Induxsoft Web Components</title>
 </head>
 <body style="font-family: monospace;">
-    <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD;border-radius: 5px; padding-bottom: 32px; margin:4px;">
+    <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD;border-radius: 5px; padding-bottom: 32px; margin:4px;display: flex; flex-direction: column; max-height: 100vh; align-content: start;">
         <h3>Edit Select</h3>
         <!--
             [PARAMS: edit-select]
@@ -112,6 +112,7 @@
             - color-field       (opcional): Color del texto de los elementos de la pila (def: #000)
             - backcolor-field   (opcional): Color de fondo de los elementos de la pila (def: #FFF)
             - control-styles    (opcional): Establece los estilos personalizados que se le aplicarán al control (ej: input{border:1px solid red;})
+            - styles-field      (opcional): Especifica el campo en el objeto del array (data) con los estilos para cada contenedor de los items de la pila
         -->
         <stack-edit 
             id="micontrol4"
@@ -122,7 +123,8 @@
             title="title" 
             subtitle="subtitle" 
             color-field="#000" 
-            backcolor-field="#FFF" 
+            backcolor-field="#FFF"
+            styles-field="styles"
             data='[
                 {
                     "a":"01-01-2001",

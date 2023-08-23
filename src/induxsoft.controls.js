@@ -5,7 +5,7 @@
  * página.
  */
 
-class EditSelect extends HTMLElement 
+class EditSelect extends HTMLElement
 {
     attributes = null;
     select = null;
@@ -1506,10 +1506,10 @@ class StackEdit extends HTMLElement
                     .text-secondary{ color: #888; }
 
                     .stack-item{ display: grid; grid-template-columns: 1.5rem 1fr; }
-                    .container-item{ background-color: ${this.backColorField} !important; color: ${this.colorField} !important; outline: 1px solid #DDD; }
+                    .container-item{ background-color: ${this.backColorField} !important; color: ${this.colorField} !important; outline: 1px solid #DDD; position: relative; margin-top: 1px; }
                     .mov-item{ background: transparent; color: currentColor; cursor: move; }
                     #_stackContainer{ min-height: 30vh; background-color: #F5F5F5; display: flex; flex-direction: column-reverse; }
-                    .dragging{ background-color: #F0F8FF !important; }
+                    .dragging{ background-color: #F0F8FF !important; transform: scale(1.02); box-shadow: 3px 3px 8px 0 #AAA; }
                     .border-t{ border-top-color: #005CC8; }
                     .border-b{ border-bottom-color: #005CC8; }
                     ` + (this.getAttribute('control-styles') ?? '') + `
@@ -1548,7 +1548,7 @@ class StackEdit extends HTMLElement
     }
     _createRowItem(item, id = '')
     {
-        const containerItem = this._createFullElement('div', { class:'container-item ps-1 borderx', 'item-id':`${id}`, style:'position: relative; margin-top: 1px;' });
+        const containerItem = this._createFullElement('div', { class:'container-item ps-1 borderx', 'item-id':`${id}` });
         const rowItem = this._createFullElement('div', { class:'stack-item' });
         const movItem = this._createFullElement('button', { class: 'noborder mov-item', draggable: 'true' });
         const rowData = this._createFullElement('div', { class:'p-2 d-flex wrap gap-2' });
@@ -1656,6 +1656,9 @@ class StackEdit extends HTMLElement
             }
             this._refreshView();
         });
+
+        if ((this.getAttribute('styles-field')??'') != '')
+            containerItem.setAttribute('style', (item[this.getAttribute('styles-field')]??''));
 
         return containerItem;
     }
