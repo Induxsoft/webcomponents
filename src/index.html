@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="induxsoft.controls.js"></script>
+    <script src="induxsoft.controls.editable.js"></script>
     <title>Induxsoft Web Components</title>
 </head>
-<body style="font-family: monospace;">
-    <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD;border-radius: 5px; padding-bottom: 32px; margin:4px;display: flex; flex-direction: column; max-height: 100vh; align-content: start;">
+<body style="font-family: monospace;display: flex; flex-direction: column; max-height: 100vh; flex-wrap: wrap; align-content: start;">
+    <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD;border-radius: 5px; padding-bottom: 32px; margin:4px;">
         <h3>Edit Select</h3>
         <!--
             [PARAMS: edit-select]
@@ -136,6 +137,35 @@
                 }
             ]'
         />
+    </div>
+    <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD;border-radius: 5px; padding-bottom: 32px; margin:4px;">
+        <h3>Edit Table</h3>
+        <edit-table>
+            <table>
+                <thead>
+                    <tr>
+                        <th>uno</th>
+                        <th>dos</th>
+                        <th>tres</th>
+                        <th>cuatro</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>aaa</td>
+                        <td>bbb</td>
+                        <td>ccc</td>
+                        <td>ddd</td>
+                    </tr>
+                    <tr>
+                        <td>aaa2</td>
+                        <td>bbb2</td>
+                        <td>ccc2</td>
+                        <td>ddd2</td>
+                    </tr>
+                </tbody>
+            </table>
+        </edit-table>
     </div>
 </body>
 </html>
