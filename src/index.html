@@ -101,7 +101,7 @@
     <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD;border-radius: 5px; padding-bottom: 32px; margin:4px; min-height: 35vh;">
         <h3>Stack Edit</h3>
         <!--
-            [PARAMS: stack-edit ]
+            [PARAMS: stack-edit]
             ----------------------------------------------------------------------------------------------
             - data              (opcional): datos de la pila
             - caption-a         (opcional): Campo a mostrar en la esquina superior izquierda de los elementos de la pila
@@ -126,16 +126,7 @@
             color-field="#000" 
             backcolor-field="#FFF"
             styles-field="styles"
-            data='[
-                {
-                    "a":"01-01-2001",
-                    "b":"Activo",
-                    "c":"Verde",
-                    "d":"Uno",
-                    "title":"Item Verde",
-                    "subtitle":"Este es un item de color Verde"
-                }
-            ]'
+            data='[{"a":"01-01-2001","b":"Activo","c":"Verde","d":"Uno","title":"Item Verde","subtitle":"Este es un item de color Verde"}]'
         />
     </div>
     <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD;border-radius: 5px; padding-bottom: 32px; margin:4px;">
@@ -144,24 +135,37 @@
             <button onclick="document.querySelector('#micontrol5').AddRow();" style="color: #888;">+</button>
         </div>
         <div style="max-height: 30vh; display: flex;">
+            <!--
+            [PARAMS: edit-table]
+            ----------------------------------------------------------------------------------------------
+            - data              (opcional): datos de la tabla (ej: [{"title1":"value1"},...])
+            - control-styles    (opcional): Establece los estilos personalizados que se le aplicarán al control (ej: input{border:1px solid red;})
+
+            [PARAMS:edit-th]
+            ----------------------------------------------------------------------------------------------
+            - type      (opcional): Tipo de celda: Text,Number,Date,DateTime,Memo,Check,Select,Custom,NoEditable (def:Text)
+            - field     (opcional): Nombre del campo donde se guardará el valor de la celda
+            - default   (opcional): Valor por defecto de la celda al iniciarse
+            - options   (opcional): Datos de las opciones de una celda tipo Select (ej: {"a":"Opción 1","b":"Opción 2","c":"Opción 3"})
+        -->
             <edit-table id="micontrol5" style="width: 100%;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th type="Text" field="uno">Título 1</th>
-                            <th type="Text" field="dos">Título 2</th>
-                            <th type="Text" field="tres">Título 2</th>
-                            <th type="Text" field="cuatro">Título 4</th>
-                        </tr>
-                    </thead>
-                </table>
+                <edit-thead>
+                    <edit-tr>
+                        <edit-th type="Text" field="uno">Título 1</edit-th>
+                        <edit-th type="Text" field="dos" default="Valor 2">Título 2</edit-th>
+                        <edit-th type="Select" keyfield="opcion_clave" options='{"a":"Opción 1","b":"Opción 2","c":"Opción 3"}'>Título 2</edit-th>
+                        <edit-th type="Text" field="cuatro">Título 4</edit-th>
+                    </edit-tr>
+                </edit-thead>
             </edit-table>
         </div>
     </div>
+    
     <style>
         @media screen and (max-width: 600px) {
             body{ flex-wrap: nowrap !important; }
         }
     </style>
+
 </body>
 </html>

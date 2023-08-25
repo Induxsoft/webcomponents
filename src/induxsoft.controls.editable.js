@@ -4,6 +4,7 @@ class EditTable extends HTMLElement
     _table = null;
     _shadow = null;
     _current = null;
+    
     constructor() 
     {
         super();
@@ -26,39 +27,30 @@ class EditTable extends HTMLElement
         document.addEventListener('DOMContentLoaded', () => 
         {
             this._shadow = this.attachShadow({ mode: 'closed' });
-            const ttemp = this._createFullElement('table');
+            this._table = this._getFullTable();
             
-            ttemp.innerHTML = this.innerHTML;
-            
-            this._table = this._createFullElement('table', { id:(this.getAttribute('id')??'f077fb41716141eeb7ecb1ed0a1ce292') });
-            const thead = (ttemp.querySelector('thead') ?? this._createFullElement('thead'));
-            const tbody = (ttemp.querySelector('tbody') ?? this._createFullElement('tbody'));
-
-            
-            this._table.appendChild(thead);
-            this._table.appendChild(tbody);
-
             this._shadow.innerHTML = `
                 <style>
                     .EdiTable-Selector{
-                        width: 100% !important;
-                        height: 100% !important;
-                        text-align: left !important;
-                        background-color: rgba(255,255,255,.5) !important;
-                        cursor: text !important;
-                        border: 1px solid #FFF !important;
-                        border-radius: 3px !important;
-                        outline: none !important;
+                        width: 100%;
+                        height: 100%;
+                        text-align: left;
+                        background-color: rgba(255,255,255,.5);
+                        cursor: text;
+                        border: 1px solid #FFF;
+                        border-radius: 3px;
+                        outline: none;
+                        padding: 3px;
                     }
                     .EdiTable-Input-Check{
-                        height: 100% !important;
+                        height: 100%;
                     }
                     .EdiTable-Cell
                     {
-                        height: 1.4rem !important;
-                        padding: 2px 6px !important;
-                        outline: 1px solid #EDEDED !important;
-                        position: relative !important;
+                        height: 1.4rem;
+                        padding: 4px;
+                        outline: 1px solid #EDEDED;
+                        position: relative;
                     }
                     .EdiTable-Row-Selected
                     {
@@ -66,21 +58,21 @@ class EditTable extends HTMLElement
                         color: #FFF !important;
                     }
                     
-                    
+                    table{ width: 100%; }
                     tbody tr:hover {
                         background-color: #F5F5F5;
                     }
                     thead {
-                        background-color: #F5F5F5 !important;
+                        background-color: #F5F5F5;
                         position: sticky;
                         top: 0;
                         z-index: 100;
                     }
                     thead tr th{
-                        padding: 4px 8px !important;
-                        outline: 1px solid #DDD !important;
-                        font-weight: normal !important;
-                        position: relative !important;
+                        padding: 4px 8px;
+                        outline: 1px solid #DDD;
+                        font-weight: normal;
+                        position: relative;
                     }
                     .Editable-Input-Number,
                     .Editable-Input-Text, 
@@ -100,32 +92,87 @@ class EditTable extends HTMLElement
                         position: absolute; 
                         top: 0; 
                         right: 0; 
-                        width: 4px; 
+                        width: 5px; 
                         cursor: col-resize;
                         background-color: transparent;
                     }
+                    ` + (this.getAttribute('control-styles') ?? '') + `
                 </style>
             `;
 
-            const container1 = this._createFullElement('div', { style:'max-height: 100%; overflow: auto;' });
-
-            container1.appendChild(this._table);
+            const container1 = this._createFullElement('div', { style:'min-height: 2rem; max-height: 100%; overflow: auto; padding-bottom: 5px' });
             
+            container1.appendChild(this._table);
+            this.innerHTML = '';
             this._shadow.appendChild(container1);
+            
+            if (this.hasAttribute('data') && this.getAttribute('data').trim() != "")
+            {
+                try{ this.DataArray = JSON.parse(this.getAttribute('data')); }
+                catch{ alert('El valor del atributo "data" tiene un formato JSON inválido'); this.DataArray = []; }
+            }
+            
             this.Initialize(this._table.getAttribute('id'));
             this._processAtributesColumn();
             this._resizableGrid(this._table);
         });
     }
 
-    _createFullElement(tagName="div", attributes={})
+    _getFullTable=()=>
+    {
+        const table = this._createFullElement('table', { id:(this.getAttribute('id')??'f077fb41716141eeb7ecb1ed0a1ce292') });
+        const thead = (this._replaceTagNameElement(this.querySelector('edit-thead'), 'thead') ?? this._createFullElement('thead'));
+        const tbody = (this._replaceTagNameElement(this.querySelector('edit-tbody'), 'tbody') ?? this._createFullElement('tbody'));
+
+        if (thead.hasChildNodes())
+        {
+            thead.querySelectorAll('*').forEach(e => { if (e.tagName.toLocaleLowerCase() != 'edit-tr' && e.tagName.toLocaleLowerCase() != 'edit-th') e.remove(); });
+
+            thead.querySelectorAll('edit-tr').forEach(editTr => editTr.replaceWith(this._replaceTagNameElement(editTr, 'tr')));
+            thead.querySelectorAll('tr').forEach(tr => {
+                tr.querySelectorAll('edit-th').forEach(editTh => editTh.replaceWith(this._replaceTagNameElement(editTh, 'th')));
+            });
+        }
+
+        if (tbody.hasChildNodes())
+        {
+            tbody.querySelectorAll('*').forEach(e => { if (e.tagName.toLocaleLowerCase() != 'edit-tr' && e.tagName.toLocaleLowerCase() != 'edit-td') e.remove(); });
+            
+            tbody.querySelectorAll('edit-tr').forEach(editTr => editTr.replaceWith(this._replaceTagNameElement(editTr, 'tr')));
+            tbody.querySelectorAll('tr').forEach(tr => {
+                tr.querySelectorAll('edit-td').forEach(editTd => {
+                    editTd.classList.add('EdiTable-Cell');
+                    editTd.replaceWith(this._replaceTagNameElement(editTd, 'td'))
+                });
+            });
+        }
+
+        table.appendChild(thead);
+        table.appendChild(tbody);
+        return table;
+    }
+    _replaceTagNameElement=(element, tagName)=>
+    {
+        if (!element) return null;
+
+        let attributes = {};
+
+        if (element.hasAttributes())
+            element.getAttributeNames().forEach(attrName => attributes[attrName] = element.getAttribute(attrName));
+
+        const newElement = this._createFullElement(tagName, attributes);
+        newElement.innerHTML = element.innerHTML;
+
+        return newElement;
+    }
+    _createFullElement=(tagName="div", attributes={})=>
     {
         const elem = document.createElement(tagName);
         const keys = Object.keys(attributes);
         keys.forEach(key => elem.setAttribute(key, attributes[key]));
         return elem;
     }
-    _processAtributesColumn()
+    _processAtributesColumn=()=>
     {
         let listColumns = this._shadow.querySelectorAll('th');
         if (listColumns && listColumns.length > 0)
@@ -142,7 +189,7 @@ class EditTable extends HTMLElement
             });
         }
     }
-    _getAttributeColumn(attr, value)
+    _getAttributeColumn=(attr, value)=>
     {
         switch (attr)
         {
@@ -151,10 +198,15 @@ class EditTable extends HTMLElement
                 value = eval('this.EdiTable.Const.Columns.Types.' + value);
                 break;
             }
+            case 'options':
+            {
+                value = JSON.parse(value);
+                break;   
+            }
         }
         return value;
     }
-    _resizableGrid(table)
+    _resizableGrid=(table)=>
     {
         const rows = table.querySelectorAll('tr');
         if (!rows || rows.length < 1) return;
@@ -168,7 +220,7 @@ class EditTable extends HTMLElement
             col.appendChild(sizableBorder);
         });
     }
-    _addSizableFunction(element)
+    _addSizableFunction=(element)=>
     {
         var pageX,curCol,nxtCol,curColWidth,nxtColWidth;
         element.addEventListener('mousedown', (e) => {
@@ -194,6 +246,19 @@ class EditTable extends HTMLElement
             nxtColWidth = undefined;
             curColWidth = undefined;
         });    
+    }
+    _getRowIndex=(tr)=>
+    {
+        let index = -1;
+        let tbody = tr?.parentElement;
+        if (tbody) tbody.querySelectorAll('tr').forEach((_tr, i) => { if (_tr === tr) index = i });
+        return index;
+    }
+    _getCurren=(setnew=false)=>
+    {
+        if (!this._current || setnew)
+            this._current = Object.assign({}, this);
+        return this._current;
     }
 
     // ========================= EDITABLE FUNCTIONS
@@ -548,7 +613,6 @@ class EditTable extends HTMLElement
         Cell:"EdiTable-Cell",
         RowSelected: "EdiTable-Row-Selected"
     };
-
     Initialize = (tableId) =>
     {
         let tds = this._shadow.querySelectorAll(this.EdiTable.Const.HTML.TABLE+"#"+tableId+" "+this.EdiTable.Const.HTML.TD);
@@ -657,12 +721,12 @@ class EditTable extends HTMLElement
 
         if (tds==undefined) return false;
 
-        for(i=0;i<this.TDCount(tr);i++)
+        for(let i=0;i<this.TDCount(tr);i++)
         {
             if (this.Columns[i]!=undefined)
             {
                 if (this.Columns[i].field!=undefined)
-                    tds[i].innerHTML = this.DataArray[row][this.Columns[i].field];
+                    tds[i].innerHTML = (this.DataArray[row][this.Columns[i].field] ?? '');
             }
         }
 
@@ -670,7 +734,7 @@ class EditTable extends HTMLElement
     }
     UpdateData=()=>
     {
-        for(i=0;i<this.TRCount();i++)
+        for(let i=0;i<this.TRCount();i++)
             this.UpdateDataRow(i);
     }
     UpdateDataRow=(row)=>
@@ -682,7 +746,7 @@ class EditTable extends HTMLElement
 
         if (tds==undefined) return false;
 
-        for(i=0;i<this.TDCount(tr);i++)
+        for(let i=0;i<this.TDCount(tr);i++)
         {
             if (this.Columns[i]!=undefined)
             {
@@ -714,14 +778,14 @@ class EditTable extends HTMLElement
         {
             this.DataArray[row][field]=value;
             var eventArgs={
-                sender:this._current,
+                sender:this._getCurren(),
                 row:row,
                 field:field,
                 value:value
             };
-
-            if (this._current.Events[this.EdiTable.Const.Events.FieldUpdated]!=undefined && !stopfire)
-                this._current.Events[this.EdiTable.Const.Events.FieldUpdated](eventArgs);
+            
+            if (this._getCurren().Events[this.EdiTable.Const.Events.FieldUpdated]!=undefined && !stopfire)
+                this._getCurren().Events[this.EdiTable.Const.Events.FieldUpdated](eventArgs);
         }
 
         return this.DataArray[row];
@@ -776,13 +840,13 @@ class EditTable extends HTMLElement
                 this.CellFocus(nr.cells[0]);
             
             var eventArgs={
-                sender:this._current,
+                sender:this._getCurren(),
                 tr:nr,
                 rowIndex:indexRow,
             };
 
-            if (this._current.Events[this.EdiTable.Const.Events.RowAdded]!=undefined)
-                this._current.Events[this.EdiTable.Const.Events.RowAdded](eventArgs);
+            if (this._getCurren().Events[this.EdiTable.Const.Events.RowAdded]!=undefined)
+                this._getCurren().Events[this.EdiTable.Const.Events.RowAdded](eventArgs);
         }
     }
     TRCount=()=>
@@ -825,7 +889,7 @@ class EditTable extends HTMLElement
     }
     CurrentTd=()=>
     {
-        if (this.EdiTable.focusedTable!=this._current)
+        if (this.EdiTable.focusedTable!=this._getCurren())
             return null;
         
         var selector=undefined;
@@ -899,28 +963,28 @@ class EditTable extends HTMLElement
     }
     LeaveCell=(td)=>
     {
-        if (this._current.Events[this.EdiTable.Const.Events.LeaveCell]==undefined)
+        if (this._getCurren().Events[this.EdiTable.Const.Events.LeaveCell]==undefined)
         return;
 
         var eventArgs={
-                td:td,
-                sender:this._current,
-            };
+            td:td,
+            sender:this._getCurren(),
+        };
 
-        this._current.Events[this.EdiTable.Const.Events.LeaveCell](eventArgs);
+        this._getCurren().Events[this.EdiTable.Const.Events.LeaveCell](eventArgs);
     }
     EnterCell=(td)=>
     {
         
-        if (this._current.Events[this.EdiTable.Const.Events.EnterCell]==undefined)
+        if (this._getCurren().Events[this.EdiTable.Const.Events.EnterCell]==undefined)
         return;
 
         var eventArgs={
-                td:td,
-                sender:this._current,
-            };
+            td:td,
+            sender:this._getCurren(),
+        };
 
-        this._current.Events[this.EdiTable.Const.Events.EnterCell](eventArgs);
+        this._getCurren().Events[this.EdiTable.Const.Events.EnterCell](eventArgs);
     }
     Editing=false;
     GetColumnDef=()=>
@@ -961,12 +1025,12 @@ class EditTable extends HTMLElement
         {
             var eventArgs={
                 td:td,
-                sender:this._current,
+                sender:this._getCurren(),
                 coldef:columnDef,
                 text:text
             };
 
-            this._current.Events[this.EdiTable.Const.Events.StartEdition](eventArgs);
+            this._getCurren().Events[this.EdiTable.Const.Events.StartEdition](eventArgs);
         }
 
         if (columnDef.type==this.EdiTable.Const.Columns.Types.Custom)
@@ -1018,11 +1082,11 @@ class EditTable extends HTMLElement
 
         if (columnDef.type==this.EdiTable.Const.Columns.Types.Select && columnDef.options!=undefined)
         {
-            columnDef.options.forEach((key, value) => {
-                input.appendChild(this._createFullElement('option', {
-                    value: key,
-                    text: value
-                }));
+            Object.entries(columnDef.options).forEach(([key, value]) => {
+                const option = this._createFullElement('option');
+                option.value = key;
+                option.textContent = value;
+                input.appendChild(option);
             });
 
             if (columnDef.keyfield!=undefined)
@@ -1036,22 +1100,22 @@ class EditTable extends HTMLElement
         var eventArgs={
             input:input,
             td:td,
-            sender:this._current,
+            sender:this._getCurren(),
             text:text,
             coldef:columnDef
         };
 
-        if (this._current.Events[this.EdiTable.Const.Events.InputCreated]!=undefined)
-            this._current.Events[this.EdiTable.Const.Events.InputCreated](eventArgs);
+        if (this._getCurren().Events[this.EdiTable.Const.Events.InputCreated]!=undefined)
+            this._getCurren().Events[this.EdiTable.Const.Events.InputCreated](eventArgs);
 
         
-        if (this._current.Events[this.EdiTable.Const.Events.BeforeSetInput]!=undefined)
-            this._current.Events[this.EdiTable.Const.Events.BeforeSetInput](eventArgs);
+        if (this._getCurren().Events[this.EdiTable.Const.Events.BeforeSetInput]!=undefined)
+            this._getCurren().Events[this.EdiTable.Const.Events.BeforeSetInput](eventArgs);
         
-        this.EdiTable.SetInputVal(input, eventArgs.text, this._current, columnDef);
+        this.EdiTable.SetInputVal(input, eventArgs.text, this._getCurren(), columnDef);
 
         input.focus();
-        this.EdiTable.SetInputEventHandler(input,this._current); 
+        this.EdiTable.SetInputEventHandler(input,this._getCurren()); 
                                 
     }
     ConfirmEdit=(td,displayText)=>
@@ -1068,18 +1132,18 @@ class EditTable extends HTMLElement
             input:input,
             text:displayText,
             td:td,
-            sender:this._current,
+            sender:this._getCurren(),
             coldef:columnDef,
             cancel:false
         };
 
         if (input!=undefined)
         {
-            eventArgs.text=this.EdiTable.GetInputValue(input, this._current, columnDef);
+            eventArgs.text=this.EdiTable.GetInputValue(input, this._getCurren(), columnDef);
 
             if (columnDef.keyfield!=undefined && columnDef.type==this.EdiTable.Const.Columns.Types.Select)
             {
-                var combo=input[0];
+                var combo=input;
                 if (combo.selectedIndex<0)
                     eventArgs.text="";
                 else
@@ -1101,8 +1165,8 @@ class EditTable extends HTMLElement
             eventArgs.input=undefined;
         }
 
-        if (this._current.Events[this.EdiTable.Const.Events.ConfirmEdition]!=undefined)
-            this._current.Events[this.EdiTable.Const.Events.ConfirmEdition](eventArgs);
+        if (this._getCurren().Events[this.EdiTable.Const.Events.ConfirmEdition]!=undefined)
+            this._getCurren().Events[this.EdiTable.Const.Events.ConfirmEdition](eventArgs);
         
         if (eventArgs.cancel)
             return false;
@@ -1125,7 +1189,7 @@ class EditTable extends HTMLElement
         {
             input.remove();
 
-            if (this["temp_html"]!=undefined && this.EdiTable.focusedTable==this._current)
+            if (this["temp_html"]!=undefined && this.EdiTable.focusedTable==this._getCurren())
             {
                 td.innerHTML = this["temp_html"];
             }
@@ -1137,10 +1201,10 @@ class EditTable extends HTMLElement
         {
             var eventArgs={
                 td:td,
-                sender:this._current,
+                sender:this._getCurren(),
             };
 
-            this._current.Events[this.EdiTable.Const.Events.CancelEdition](eventArgs);
+            this._getCurren().Events[this.EdiTable.Const.Events.CancelEdition](eventArgs);
         }
     }
     CellFocus=(td)=>
@@ -1174,8 +1238,7 @@ class EditTable extends HTMLElement
         
         selector=this.EdiTable.GetSelector();
         selector.innerHTML = txt;
-        this._current = Object.assign({}, this);
-        this.EdiTable.focusedTable=this._current;
+        this.EdiTable.focusedTable=this._getCurren(true);
 
         selector.focus();
         this.EnterCell(selector.parentElement);
@@ -1187,7 +1250,7 @@ class EditTable extends HTMLElement
         selector.removeEventListener('click', clickFunc);
         selector.addEventListener('click', clickFunc);
 
-        this.EdiTable.SetSelectorKeyEventHandler(selector, this._current);
+        this.EdiTable.SetSelectorKeyEventHandler(selector, this._getCurren());
         if (this.CSS.RowSelected)
         {
             let trs = td.parentElement.parentElement.querySelectorAll('tr');
@@ -1255,14 +1318,6 @@ class EditTable extends HTMLElement
             if (this.AutoAddRow)
                 this.AddRow();
         }
-    }
-
-    _getRowIndex=(tr)=>
-    {
-        let index = -1;
-        let tbody = tr?.parentElement;
-        if (tbody) tbody.querySelectorAll('tr').forEach((_tr, i) => { if (_tr === tr) index = i });
-        return index;
     }
 }
 
