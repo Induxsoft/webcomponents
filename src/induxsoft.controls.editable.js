@@ -3,7 +3,7 @@ class EditTable extends HTMLElement
     attributes = null;
     _table = null;
     _shadow = null;
-
+    _current = null;
     constructor() 
     {
         super();
@@ -29,7 +29,7 @@ class EditTable extends HTMLElement
             const ttemp = this._createFullElement('table');
             
             ttemp.innerHTML = this.innerHTML;
-
+            
             this._table = this._createFullElement('table', { id:(this.getAttribute('id')??'f077fb41716141eeb7ecb1ed0a1ce292') });
             const thead = (ttemp.querySelector('thead') ?? this._createFullElement('thead'));
             const tbody = (ttemp.querySelector('tbody') ?? this._createFullElement('tbody'));
@@ -38,65 +38,83 @@ class EditTable extends HTMLElement
             this._table.appendChild(thead);
             this._table.appendChild(tbody);
 
-            // this._shadow.innerHTML = `
-            //     <style>
-            //         .EdiTable-Selector{
-            //             width: 100% !important;
-            //             height: 100% !important;
-            //             text-align: left !important;
-            //             background-color: rgba(255,255,255,.5) !important;
-            //             cursor: text !important;
-            //             border: 1px solid #FFF !important;
-            //             border-radius: 3px !important;
-            //             outline: none !important;
-            //         }
-            //         .EdiTable-Input-Check{
-            //             height: 100% !important;
-            //         }
-            //         .EdiTable-Cell
-            //         {
-            //             height: 1.4rem !important;
-            //             padding: 2px 6px !important;
-            //             outline: 1px solid #EDEDED !important;
-            //             position: relative !important;
-            //         }
-            //         .EdiTable-Row-Selected
-            //         {
-            //             background-color: #3D75DD !important;
-            //             color: #FFF !important;
-            //         }
+            this._shadow.innerHTML = `
+                <style>
+                    .EdiTable-Selector{
+                        width: 100% !important;
+                        height: 100% !important;
+                        text-align: left !important;
+                        background-color: rgba(255,255,255,.5) !important;
+                        cursor: text !important;
+                        border: 1px solid #FFF !important;
+                        border-radius: 3px !important;
+                        outline: none !important;
+                    }
+                    .EdiTable-Input-Check{
+                        height: 100% !important;
+                    }
+                    .EdiTable-Cell
+                    {
+                        height: 1.4rem !important;
+                        padding: 2px 6px !important;
+                        outline: 1px solid #EDEDED !important;
+                        position: relative !important;
+                    }
+                    .EdiTable-Row-Selected
+                    {
+                        background-color: #3D75DD !important;
+                        color: #FFF !important;
+                    }
                     
                     
-            //         tbody tr:hover {
-            //             background-color: #F5F5F5;
-            //         }
-            //         thead {
-            //             background-color: #F5F5F5 !important;
-            //         }
-            //         thead tr th{
-            //             padding: 4px 8px !important;
-            //             outline: 1px solid #DDD !important;
-            //             font-weight: normal !important;
-            //         }
-            //         .Editable-Input-Number,
-            //         .EdiTable-Input-Text, 
-            //         .EdiTable-Input-Memo, 
-            //         .EdiTable-Input-Date, 
-            //         .EdiTable-Input-DateTime,
-            //         .EdiTable-Input-Select {
-            //             width: 100% !important;
-            //             height: 100% !important;
-            //             position: absolute !important;
-            //             top: 0 !important;
-            //             left: 0 !important;
-            //             z-index: 100 !important;
-            //         }
-            //     </style>
-            // `;
-            
-            this._shadow.appendChild(this._table);
+                    tbody tr:hover {
+                        background-color: #F5F5F5;
+                    }
+                    thead {
+                        background-color: #F5F5F5 !important;
+                        position: sticky;
+                        top: 0;
+                        z-index: 100;
+                    }
+                    thead tr th{
+                        padding: 4px 8px !important;
+                        outline: 1px solid #DDD !important;
+                        font-weight: normal !important;
+                        position: relative !important;
+                    }
+                    .Editable-Input-Number,
+                    .Editable-Input-Text, 
+                    .Editable-Input-Memo, 
+                    .Editable-Input-Date, 
+                    .Editable-Input-DateTime,
+                    .Editable-Input-Select {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        box-sizing: border-box;
+                        width: 100%;
+                        height: 100%;
+                    }
 
+                    .sizable-border {
+                        position: absolute; 
+                        top: 0; 
+                        right: 0; 
+                        width: 4px; 
+                        cursor: col-resize;
+                        background-color: transparent;
+                    }
+                </style>
+            `;
+
+            const container1 = this._createFullElement('div', { style:'max-height: 100%; overflow: auto;' });
+
+            container1.appendChild(this._table);
+            
+            this._shadow.appendChild(container1);
             this.Initialize(this._table.getAttribute('id'));
+            this._processAtributesColumn();
+            this._resizableGrid(this._table);
         });
     }
 
@@ -107,24 +125,80 @@ class EditTable extends HTMLElement
         keys.forEach(key => elem.setAttribute(key, attributes[key]));
         return elem;
     }
-    _processAtributesColumn(listColumns)
+    _processAtributesColumn()
     {
+        let listColumns = this._shadow.querySelectorAll('th');
         if (listColumns && listColumns.length > 0)
         {
-            listColumns.forEach(column => {
+            listColumns.forEach((column, i) => {
                 let attributes = column.getAttributeNames();
+                let settings = {};
                 if (attributes && attributes.length > 0){
                     attributes.forEach(attr => {
-
+                        settings[attr] = this._getAttributeColumn(attr, column.getAttribute(attr));
                     });
                 }
+                this.Columns[i] = settings;
             });
         }
     }
+    _getAttributeColumn(attr, value)
+    {
+        switch (attr)
+        {
+            case 'type':
+            {
+                value = eval('this.EdiTable.Const.Columns.Types.' + value);
+                break;
+            }
+        }
+        return value;
+    }
+    _resizableGrid(table)
+    {
+        const rows = table.querySelectorAll('tr');
+        if (!rows || rows.length < 1) return;
+        
+        const cols = rows[0].querySelectorAll('th');
+        if (!cols || cols.length < 1) return;
+        
+        cols.forEach(col => {
+            const sizableBorder = this._createFullElement('div', { class:'sizable-border', style:`height:${table.offsetHeight}px;` });
+            this._addSizableFunction(sizableBorder);
+            col.appendChild(sizableBorder);
+        });
+    }
+    _addSizableFunction(element)
+    {
+        var pageX,curCol,nxtCol,curColWidth,nxtColWidth;
+        element.addEventListener('mousedown', (e) => {
+            curCol = e.target.parentElement;
+            nxtCol = curCol.nextElementSibling;
+            pageX = e.pageX;
+            curColWidth = curCol.offsetWidth
+            if (nxtCol)
+                nxtColWidth = nxtCol.offsetWidth
+        });
+        document.addEventListener('mousemove', (e) => {
+        if (curCol) {
+            var diffX = e.pageX - pageX;
+            if (nxtCol)
+                nxtCol.style.width = (nxtColWidth - (diffX))+'px';
+            curCol.style.width = (curColWidth + diffX)+'px';
+        }
+        });
+        document.addEventListener('mouseup', (e) => { 
+            curCol,nxtCol = undefined;
+            nxtCol = undefined;
+            pageX = undefined;
+            nxtColWidth = undefined;
+            curColWidth = undefined;
+        });    
+    }
 
-    // ===========================================
+    // ========================= EDITABLE FUNCTIONS
     
-    EdiTable= () => { return {
+    _EdiTable = () => { return {
         Const : {
             HTML:{
                 Selector:'<button id="__table_selector" class="EdiTable-Selector"></button>',
@@ -204,12 +278,12 @@ class EditTable extends HTMLElement
         },
         GetSelector:function()
         {
-            return this._shadow.querySelector("#"+this.EdiTable().Const.SelectorId);
+            return this._shadow.querySelector("#"+this.EdiTable.Const.SelectorId);
         }.bind(this),
         GetInput:function()
         {
-            var input=this._shadow.querySelector("#"+this.EdiTable().Const.InputId);
-            if (input && input.tagName==undefined)
+            var input=this._shadow.querySelector("#"+this.EdiTable.Const.InputId);
+            if (!input?.tagName)
                 return undefined;
             
             return input;
@@ -247,14 +321,17 @@ class EditTable extends HTMLElement
             switch(input.tagName.toLowerCase())
             {
                 case "input":
+                {
                     switch (input.getAttribute('type').toLowerCase())
                     {
                         case "checkbox":
+                        {
                             input.checked = columnDef.Converts.FromString(text);
                             break;
+                        }   
                     }
-    
                     break;
+                }
             }
 
             input.value = text;
@@ -338,7 +415,7 @@ class EditTable extends HTMLElement
                 switch(e.key)
                 {
                     case "ArrowUp":
-                        _current.NavUp(this.parentElement);
+                        _current.NavUp(input.parentElement);
                         e.stopPropagation();
                         break;
                     case "Escape":
@@ -442,20 +519,22 @@ class EditTable extends HTMLElement
             switch(input.tagName.toLowerCase())
             {
                 case "input":
-                    this.EdiTable().SetInputStdEventHandler(input, _current);
+                    this.EdiTable.SetInputStdEventHandler(input, _current);
                     break;
                 case "textarea":
-                    this.EdiTable().SetInputTextareaEventHandler(input, _current);
+                    this.EdiTable.SetInputTextareaEventHandler(input, _current);
                     break;
                 case "select":
-                    this.EdiTable().SetInputSelectEventHandler(input, _current);
+                    this.EdiTable.SetInputSelectEventHandler(input, _current);
                     break;
             }
             
         }.bind(this)
     }};
 
-    // ========================= EdiTable Functions
+    EdiTable = this._EdiTable();
+
+    // ========================= EDITABLE WC FUNCTIONS
 
     Events = { };
     TheadRowIndex = 0;
@@ -464,15 +543,15 @@ class EditTable extends HTMLElement
     EverMove = true; //Si es true, deplazamiento a la izquierda en la primera celda sube una fila y se mueve a la última, a la derecha en la última baja una fila y va a la primer celda
     PagOffSet = 10; //Desplazamiento con AvPag PrevPag
     DataArray = []; //Contiene un array asociado a las filas
-    ColumnsDefaultType = this.EdiTable().Const.Columns.Types.Text;
+    ColumnsDefaultType = this.EdiTable.Const.Columns.Types.Text;
     CSS = {
         Cell:"EdiTable-Cell",
         RowSelected: "EdiTable-Row-Selected"
     };
 
-    Initialize(tableId)
+    Initialize = (tableId) =>
     {
-        let tds = this._shadow.querySelectorAll(this.EdiTable().Const.HTML.TABLE+"#"+tableId+" "+this.EdiTable().Const.HTML.TD);
+        let tds = this._shadow.querySelectorAll(this.EdiTable.Const.HTML.TABLE+"#"+tableId+" "+this.EdiTable.Const.HTML.TD);
         tds.forEach(td => {
             td.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -482,22 +561,22 @@ class EditTable extends HTMLElement
         this["tableId"]=tableId;
     }
     Columns=[];
-    GetTHead()
+    GetTHead=()=>
     {
-        return this._shadow.querySelector(this.EdiTable().Const.HTML.TABLE+"#"+this.tableId+" "+this.EdiTable().Const.HTML.THEAD);
+        return this._shadow.querySelector(this.EdiTable.Const.HTML.TABLE+"#"+this.tableId+" "+this.EdiTable.Const.HTML.THEAD);
     }
-    GetTBody(){
-        var tbody= this._shadow.querySelector(this.EdiTable().Const.HTML.TABLE+"#"+this.tableId+" "+this.EdiTable().Const.HTML.TBODY);
+    GetTBody=()=>{
+        var tbody= this._shadow.querySelector(this.EdiTable.Const.HTML.TABLE+"#"+this.tableId+" "+this.EdiTable.Const.HTML.TBODY);
 
-        if (tbody.length==0)
+        if (!tbody)
         {
             this._shadow.querySelector("#"+this.tableId).innerHTML = "<tbody></tbody>";
-            tbody=this._shadow.querySelector(this.EdiTable().Const.HTML.TABLE+"#"+this.tableId+" "+this.EdiTable().Const.HTML.TBODY);
+            tbody=this._shadow.querySelector(this.EdiTable.Const.HTML.TABLE+"#"+this.tableId+" "+this.EdiTable.Const.HTML.TBODY);
         }
 
         return tbody;
     }
-    ColumnsCount()
+    ColumnsCount=()=>
     {
         var cols=this.THCount();
 
@@ -508,23 +587,23 @@ class EditTable extends HTMLElement
         
         return cols;
     }
-    NavToHome()
+    NavToHome=()=>
     {
         this.NavTo(0,0);
     }
-    NavToEnd()
+    NavToEnd=()=>
     {
         this.NavTo(this.TRCount()-1,this.ColumnsCount()-1);
     }
-    NavToFirstCell(row)
+    NavToFirstCell=(row)=>
     {
         this.NavTo(row,0);
     }
-    NavToLastCell(row)
+    NavToLastCell=(row)=>
     {
         this.NavTo(row,this.ColumnsCount()-1);
     }
-    NavTo(row, col)
+    NavTo=(row, col)=>
     {
         let rows=this.TRCount();
         let cols=this.ColumnsCount();
@@ -532,10 +611,10 @@ class EditTable extends HTMLElement
         if (rows<1 || cols<1 || row>rows-1 || col>cols-1 || col<0 || row<0) return;
         
         let tbody=this.GetTBody();
-        let td = tbody.querySelectorAll(this.EdiTable().Const.HTML.TR)[row].querySelectorAll(this.EdiTable().Const.HTML.TD)[col];
+        let td = tbody.querySelectorAll(this.EdiTable.Const.HTML.TR)[row].querySelectorAll(this.EdiTable.Const.HTML.TD)[col];
         this.CellFocus( td );
     }
-    GetTrByIndex(row)
+    GetTrByIndex=(row)=>
     {
         let rows=this.TRCount();
         let cols=this.ColumnsCount();
@@ -544,9 +623,9 @@ class EditTable extends HTMLElement
         
         let tbody=this.GetTBody();
 
-        return tbody.querySelectorAll(this.EdiTable().Const.HTML.TR)[row];
+        return tbody.querySelectorAll(this.EdiTable.Const.HTML.TR)[row];
     }
-    DeleteCurrentRow()
+    DeleteCurrentRow=()=>
     {
         let col=this.CurrentColIndex();
         let row=this.CurrentRowIndex();
@@ -554,7 +633,7 @@ class EditTable extends HTMLElement
         if (this.DeleteRow(row))
             this.NavTo(row,col);
     }
-    DeleteRow(row)
+    DeleteRow=(row)=>
     {
         let rows=this.TRCount();
         let cols=this.ColumnsCount();
@@ -569,12 +648,12 @@ class EditTable extends HTMLElement
 
         return false;
     }
-    UpdateRow(row)
+    UpdateRow=(row)=>
     {
         let tr=this.GetTrByIndex(row);
 
         if (tr==undefined) return false;
-        var tds=tr.querySelectorAll(this.EdiTable().Const.HTML.TD);
+        var tds=tr.querySelectorAll(this.EdiTable.Const.HTML.TD);
 
         if (tds==undefined) return false;
 
@@ -589,17 +668,17 @@ class EditTable extends HTMLElement
 
         return true;
     }
-    UpdateData()
+    UpdateData=()=>
     {
         for(i=0;i<this.TRCount();i++)
             this.UpdateDataRow(i);
     }
-    UpdateDataRow(row)
+    UpdateDataRow=(row)=>
     {
         let tr=this.GetTrByIndex(row);
 
         if (tr==undefined) return false;
-        var tds=tr.querySelectorAll(this.EdiTable().Const.HTML.TD);
+        var tds=tr.querySelectorAll(this.EdiTable.Const.HTML.TD);
 
         if (tds==undefined) return false;
 
@@ -613,7 +692,7 @@ class EditTable extends HTMLElement
                     {
                         if (!this.Editing)
                         {
-                            this.UpdateDataMember(row,this.Columns[i].field,this.EdiTable().GetSelector().innerHTML);
+                            this.UpdateDataMember(row,this.Columns[i].field,this.EdiTable.GetSelector().innerHTML);
                         }
                     }
                     else
@@ -626,7 +705,7 @@ class EditTable extends HTMLElement
 
         return true;
     }
-    UpdateDataMember(row, field, value, stopfire = false)
+    UpdateDataMember=(row, field, value, stopfire = false)=>
     {
         if (this.DataArray[row]==undefined)
             this.DataArray[row]={};
@@ -635,23 +714,23 @@ class EditTable extends HTMLElement
         {
             this.DataArray[row][field]=value;
             var eventArgs={
-                sender:this,
+                sender:this._current,
                 row:row,
                 field:field,
                 value:value
             };
 
-            if (this.Events[this.EdiTable().Const.Events.FieldUpdated]!=undefined && !stopfire)
-                this.Events[this.EdiTable().Const.Events.FieldUpdated](eventArgs);
+            if (this._current.Events[this.EdiTable.Const.Events.FieldUpdated]!=undefined && !stopfire)
+                this._current.Events[this.EdiTable.Const.Events.FieldUpdated](eventArgs);
         }
 
         return this.DataArray[row];
     }
-    AddRow()
+    AddRow=()=>
     {
         return this.InsertRow();
     }
-    InsertRow(rw, nofocus = false)
+    InsertRow=(rw, nofocus = false)=>
     {
         var tbody=this.GetTBody();
         var cols=this.ColumnsCount();
@@ -666,7 +745,6 @@ class EditTable extends HTMLElement
 
         if (tbody)
         {
-            console.log(tbody.querySelectorAll('tr')[0]);
             var nr=tbody.insertRow(rw);
             var indexRow=this._getRowIndex(nr);
 
@@ -687,9 +765,9 @@ class EditTable extends HTMLElement
             }
             const clickFunct = (e) => {
                 e.stopPropagation();
-                this.CellFocus(this);
+                this.CellFocus(e.target);
             }
-            this._shadow.querySelectorAll(this.EdiTable().Const.HTML.TABLE+"#"+this.tableId+" "+this.EdiTable().Const.HTML.TD).forEach(td => {
+            this._shadow.querySelectorAll(this.EdiTable.Const.HTML.TABLE+"#"+this.tableId+" "+this.EdiTable.Const.HTML.TD).forEach(td => {
                 td.removeEventListener('click', clickFunct);
                 td.addEventListener('click', clickFunct);
             });
@@ -698,69 +776,69 @@ class EditTable extends HTMLElement
                 this.CellFocus(nr.cells[0]);
             
             var eventArgs={
-                sender:this,
+                sender:this._current,
                 tr:nr,
                 rowIndex:indexRow,
             };
 
-            if (this.Events[this.EdiTable().Const.Events.RowAdded]!=undefined)
-                this.Events[this.EdiTable().Const.Events.RowAdded](eventArgs);
+            if (this._current.Events[this.EdiTable.Const.Events.RowAdded]!=undefined)
+                this._current.Events[this.EdiTable.Const.Events.RowAdded](eventArgs);
         }
     }
-    TRCount()
+    TRCount=()=>
     {
         var tbody=this.GetTBody();
         if (tbody)
         {
-            let trs=tbody.querySelectorAll(this.EdiTable().Const.HTML.TR);
+            let trs=tbody.querySelectorAll(this.EdiTable.Const.HTML.TR);
             if (trs)
                 if (trs) return trs.length;
         }
 
         return 0;
     }
-    THCount()
+    THCount=()=>
     {
         var thead=this.GetTHead();
         if (thead)
         {
-            let tr=thead.querySelectorAll(this.EdiTable().Const.HTML.TR)[this.TheadRowIndex];
+            let tr=thead.querySelectorAll(this.EdiTable.Const.HTML.TR)[this.TheadRowIndex];
 
             if (tr)
             {
-                let ths=tr.querySelectorAll(this.EdiTable().Const.HTML.TH);
+                let ths=tr.querySelectorAll(this.EdiTable.Const.HTML.TH);
                 if (ths) return ths.length;
             }
         }
 
         return 0;
     }
-    TDCount(tr)
+    TDCount=(tr)=>
     {
         if (tr)
         {
-            let tds=tr.querySelectorAll(this.EdiTable().Const.HTML.TD);
+            let tds=tr.querySelectorAll(this.EdiTable.Const.HTML.TD);
             if (tds) return tds.length;
         }
 
         return 0;
     }
-    CurrentTd()
+    CurrentTd=()=>
     {
-        if (this.EdiTable().focusedTable!=this)
+        if (this.EdiTable.focusedTable!=this._current)
             return null;
         
         var selector=undefined;
-
+        
         if (this.Editing)
         {
-            selector=this.EdiTable().GetInput();
+            selector=this.EdiTable.GetInput();
             if (selector==undefined)
-                selector=this.EdiTable().GetSelector();
+                selector=this.EdiTable.GetSelector();
         }
         else
         {
-            selector=this.EdiTable().GetSelector();
+            selector=this.EdiTable.GetSelector();
         }
 
         if (selector==undefined)
@@ -772,7 +850,7 @@ class EditTable extends HTMLElement
         return selector.parentElement;
         
     }
-    TrOfTd(td)
+    TrOfTd=(td)=>
     {
         if (td==undefined)
             return null;
@@ -782,7 +860,7 @@ class EditTable extends HTMLElement
         
         return td.parentElement;
     }
-    RowIndexOfTd(td)
+    RowIndexOfTd=(td)=>
     {
         if (td==undefined)
             return -1;
@@ -792,16 +870,15 @@ class EditTable extends HTMLElement
         
         return this._getRowIndex(td.parentElement);
     }
-    CurrentRowIndex()
+    CurrentRowIndex=()=>
     {
         let current_td=this.CurrentTd();
-
         if (current_td==null)
             return -1;
         
         return this._getRowIndex(current_td.parentElement);
     }
-    ColIndexOfTd(td)
+    ColIndexOfTd=(td)=>
     {
         if (td==undefined)
             return -1;
@@ -811,7 +888,7 @@ class EditTable extends HTMLElement
         
         return td.cellIndex;
     }
-    CurrentColIndex()
+    CurrentColIndex=()=>
     {
         let current_td=this.CurrentTd();
 
@@ -820,33 +897,33 @@ class EditTable extends HTMLElement
         
         return current_td.cellIndex;
     }
-    LeaveCell(td)
+    LeaveCell=(td)=>
     {
-        if (this.Events[this.EdiTable().Const.Events.LeaveCell]==undefined)
+        if (this._current.Events[this.EdiTable.Const.Events.LeaveCell]==undefined)
         return;
 
         var eventArgs={
                 td:td,
-                sender:this,
+                sender:this._current,
             };
 
-        this.Events[this.EdiTable().Const.Events.LeaveCell](eventArgs);
+        this._current.Events[this.EdiTable.Const.Events.LeaveCell](eventArgs);
     }
-    EnterCell(td)
+    EnterCell=(td)=>
     {
         
-        if (this.Events[this.EdiTable().Const.Events.EnterCell]==undefined)
+        if (this._current.Events[this.EdiTable.Const.Events.EnterCell]==undefined)
         return;
 
         var eventArgs={
                 td:td,
-                sender:this,
+                sender:this._current,
             };
 
-        this.Events[this.EdiTable().Const.Events.EnterCell](eventArgs);
+        this._current.Events[this.EdiTable.Const.Events.EnterCell](eventArgs);
     }
     Editing=false;
-    GetColumnDef()
+    GetColumnDef=()=>
     {
         let columnDef=this.Columns[this.CurrentColIndex()];
         if (columnDef==undefined)
@@ -855,14 +932,14 @@ class EditTable extends HTMLElement
         if (columnDef.type==undefined)
                 columnDef.type=this.ColumnsDefaultType;
 
-        if (columnDef.type==this.EdiTable().Const.Columns.Types.Check)
+        if (columnDef.type==this.EdiTable.Const.Columns.Types.Check)
         {
             if (columnDef["Converts"]==undefined)
-                columnDef["Converts"]=this.EdiTable().Converts.Boolean;
+                columnDef["Converts"]=this.EdiTable.Converts.Boolean;
         }
         return columnDef;
     }
-    GetColumnDefOfTd(td)
+    GetColumnDefOfTd=(td)=>
     {
         let columnDef=this.Columns[this.ColIndexOfTd(td)];
         if (columnDef==undefined)
@@ -870,35 +947,35 @@ class EditTable extends HTMLElement
 
         return columnDef;
     }
-    StartEdit(td,text,clear)
+    StartEdit=(td,text,clear)=>
     {
         
         let columnDef=this.GetColumnDef();
         
-        if (columnDef.type==this.EdiTable().Const.Columns.Types.NoEditable)
+        if (columnDef.type==this.EdiTable.Const.Columns.Types.NoEditable)
             return;
 
         this.Editing=true;
         
-        if (this.Events[this.EdiTable().Const.Events.StartEdition]!=undefined)
+        if (this.Events[this.EdiTable.Const.Events.StartEdition]!=undefined)
         {
             var eventArgs={
                 td:td,
-                sender:this,
+                sender:this._current,
                 coldef:columnDef,
                 text:text
             };
 
-            this.Events[this.EdiTable().Const.Events.StartEdition](eventArgs);
+            this._current.Events[this.EdiTable.Const.Events.StartEdition](eventArgs);
         }
 
-        if (columnDef.type==this.EdiTable().Const.Columns.Types.Custom)
+        if (columnDef.type==this.EdiTable.Const.Columns.Types.Custom)
         {
             this.Editing=false;
             return;
         }
 
-        let selector=this.EdiTable().GetSelector();
+        let selector=this.EdiTable.GetSelector();
 
         this["temp_html"]=selector.innerHTML;
 
@@ -915,31 +992,31 @@ class EditTable extends HTMLElement
 
         switch(columnDef.type)
         {
-            case this.EdiTable().Const.Columns.Types.Memo:
-                td.innerHTML = this.EdiTable().Const.HTML.Inputs.Memo;
+            case this.EdiTable.Const.Columns.Types.Memo:
+                td.innerHTML = this.EdiTable.Const.HTML.Inputs.Memo;
                 break;
-            case this.EdiTable().Const.Columns.Types.Date:
-                td.innerHTML = this.EdiTable().Const.HTML.Inputs.Date;
+            case this.EdiTable.Const.Columns.Types.Date:
+                td.innerHTML = this.EdiTable.Const.HTML.Inputs.Date;
                 break;
-            case this.EdiTable().Const.Columns.Types.DateTime:
-                td.innerHTML = this.EdiTable().Const.HTML.Inputs.DateTime;
+            case this.EdiTable.Const.Columns.Types.DateTime:
+                td.innerHTML = this.EdiTable.Const.HTML.Inputs.DateTime;
                 break;
-            case this.EdiTable().Const.Columns.Types.Select:
-                td.innerHTML = this.EdiTable().Const.HTML.Inputs.Select;
+            case this.EdiTable.Const.Columns.Types.Select:
+                td.innerHTML = this.EdiTable.Const.HTML.Inputs.Select;
                 break;
-            case this.EdiTable().Const.Columns.Types.Check:
-                td.innerHTML = this.EdiTable().Const.HTML.Inputs.Check;
+            case this.EdiTable.Const.Columns.Types.Check:
+                td.innerHTML = this.EdiTable.Const.HTML.Inputs.Check;
                 break;
-            case this.EdiTable().Const.Columns.Types.Number:
-                td.innerHTML = this.EdiTable().Const.HTML.Inputs.Number;
+            case this.EdiTable.Const.Columns.Types.Number:
+                td.innerHTML = this.EdiTable.Const.HTML.Inputs.Number;
                 break;
-            case this.EdiTable().Const.Columns.Types.Text:
-                td.innerHTML = this.EdiTable().Const.HTML.Inputs.Text;
+            case this.EdiTable.Const.Columns.Types.Text:
+                td.innerHTML = this.EdiTable.Const.HTML.Inputs.Text;
                 break;
         }
-        let input=this.EdiTable().GetInput();
+        let input=this.EdiTable.GetInput();
 
-        if (columnDef.type==this.EdiTable().Const.Columns.Types.Select && columnDef.options!=undefined)
+        if (columnDef.type==this.EdiTable.Const.Columns.Types.Select && columnDef.options!=undefined)
         {
             columnDef.options.forEach((key, value) => {
                 input.appendChild(this._createFullElement('option', {
@@ -959,25 +1036,25 @@ class EditTable extends HTMLElement
         var eventArgs={
             input:input,
             td:td,
-            sender:this,
+            sender:this._current,
             text:text,
             coldef:columnDef
         };
 
-        if (this.Events[this.EdiTable().Const.Events.InputCreated]!=undefined)
-            this.Events[this.EdiTable().Const.Events.InputCreated](eventArgs);
+        if (this._current.Events[this.EdiTable.Const.Events.InputCreated]!=undefined)
+            this._current.Events[this.EdiTable.Const.Events.InputCreated](eventArgs);
 
         
-        if (this.Events[this.EdiTable().Const.Events.BeforeSetInput]!=undefined)
-            this.Events[this.EdiTable().Const.Events.BeforeSetInput](eventArgs);
+        if (this._current.Events[this.EdiTable.Const.Events.BeforeSetInput]!=undefined)
+            this._current.Events[this.EdiTable.Const.Events.BeforeSetInput](eventArgs);
         
-        this.EdiTable().SetInputVal(input, eventArgs.text, this, columnDef);
+        this.EdiTable.SetInputVal(input, eventArgs.text, this._current, columnDef);
 
         input.focus();
-        this.EdiTable().SetInputEventHandler(input,this); 
+        this.EdiTable.SetInputEventHandler(input,this._current); 
                                 
     }
-    ConfirmEdit(td,displayText)
+    ConfirmEdit=(td,displayText)=>
     {
         if (!this.Editing)
             return true;
@@ -986,21 +1063,21 @@ class EditTable extends HTMLElement
 
         this.Editing=false;
 
-        let input=this.EdiTable().GetInput();
+        let input=this.EdiTable.GetInput();
         var eventArgs={
             input:input,
             text:displayText,
             td:td,
-            sender:this,
+            sender:this._current,
             coldef:columnDef,
             cancel:false
         };
 
         if (input!=undefined)
         {
-            eventArgs.text=this.EdiTable().GetInputValue(input, this, columnDef);
+            eventArgs.text=this.EdiTable.GetInputValue(input, this._current, columnDef);
 
-            if (columnDef.keyfield!=undefined && columnDef.type==this.EdiTable().Const.Columns.Types.Select)
+            if (columnDef.keyfield!=undefined && columnDef.type==this.EdiTable.Const.Columns.Types.Select)
             {
                 var combo=input[0];
                 if (combo.selectedIndex<0)
@@ -1011,8 +1088,8 @@ class EditTable extends HTMLElement
                 this.UpdateDataMember (this.RowIndexOfTd(eventArgs.td),columnDef.keyfield,input.value);
             }
 
-            if (this.Events[this.EdiTable().Const.Events.BeforeUpdateCell]!=undefined)
-                this.Events[this.EdiTable().Const.Events.BeforeUpdateCell](eventArgs);
+            if (this.Events[this.EdiTable.Const.Events.BeforeUpdateCell]!=undefined)
+                this.Events[this.EdiTable.Const.Events.BeforeUpdateCell](eventArgs);
 
             if (eventArgs.cancel)
             {
@@ -1024,8 +1101,8 @@ class EditTable extends HTMLElement
             eventArgs.input=undefined;
         }
 
-        if (this.Events[this.EdiTable().Const.Events.ConfirmEdition]!=undefined)
-            this.Events[this.EdiTable().Const.Events.ConfirmEdition](eventArgs);
+        if (this._current.Events[this.EdiTable.Const.Events.ConfirmEdition]!=undefined)
+            this._current.Events[this.EdiTable.Const.Events.ConfirmEdition](eventArgs);
         
         if (eventArgs.cancel)
             return false;
@@ -1035,21 +1112,20 @@ class EditTable extends HTMLElement
 
         return true;
     }
-    CancelEdit(td)
+    CancelEdit=(td)=>
     {
-        
         if (!this.Editing)
             return;
 
         this.Editing=false;
 
-        let input=this.EdiTable().GetInput();
+        let input=this.EdiTable.GetInput();
 
         if (input!=undefined)
         {
             input.remove();
 
-            if (this["temp_html"]!=undefined && this.EdiTable().focusedTable==this)
+            if (this["temp_html"]!=undefined && this.EdiTable.focusedTable==this._current)
             {
                 td.innerHTML = this["temp_html"];
             }
@@ -1057,25 +1133,27 @@ class EditTable extends HTMLElement
             this.CellFocus(td);
         }
 
-        if (this.Events[this.EdiTable().Const.Events.CancelEdition]!=undefined)
+        if (this.Events[this.EdiTable.Const.Events.CancelEdition]!=undefined)
         {
             var eventArgs={
                 td:td,
-                sender:this,
+                sender:this._current,
             };
 
-            this.Events[this.EdiTable().Const.Events.CancelEdition](eventArgs);
+            this._current.Events[this.EdiTable.Const.Events.CancelEdition](eventArgs);
         }
     }
-    CellFocus(td)
+    CellFocus=(td)=>
     {
-        let selector=this.EdiTable().GetSelector();
-        let input=this.EdiTable().GetInput();
+        let selector=this.EdiTable.GetSelector();
+        let input=this.EdiTable.GetInput();
 
         if (input!=undefined)
         {
-            if (this.EdiTable().focusedTable!=null)
-                if (!this.EdiTable().focusedTable.ConfirmEdit(input.parentElement)) return;
+            if (this.EdiTable.focusedTable!=null)
+            {
+                if (!this.EdiTable.focusedTable.ConfirmEdit(input.parentElement)) return;
+            }
             else
                 input.remove();
         }
@@ -1083,7 +1161,7 @@ class EditTable extends HTMLElement
         if (selector!=undefined)
         {
             selector.parentElement.innerHTML = selector.innerHTML;
-            if (this.EdiTable().focusedTable!=null)
+            if (this.EdiTable.focusedTable!=null)
             {
                 this.LeaveCell(selector.parentElement);
             }
@@ -1092,12 +1170,12 @@ class EditTable extends HTMLElement
         }
         
         let txt=td.innerHTML;
-        td.innerHTML = this.EdiTable().Const.HTML.Selector;
+        td.innerHTML = this.EdiTable.Const.HTML.Selector;
         
-        selector=this.EdiTable().GetSelector();
+        selector=this.EdiTable.GetSelector();
         selector.innerHTML = txt;
-
-        this.EdiTable().focusedTable=this;
+        this._current = Object.assign({}, this);
+        this.EdiTable.focusedTable=this._current;
 
         selector.focus();
         this.EnterCell(selector.parentElement);
@@ -1109,25 +1187,25 @@ class EditTable extends HTMLElement
         selector.removeEventListener('click', clickFunc);
         selector.addEventListener('click', clickFunc);
 
-        this.EdiTable().SetSelectorKeyEventHandler(selector, this);
+        this.EdiTable.SetSelectorKeyEventHandler(selector, this._current);
         if (this.CSS.RowSelected)
         {
             let trs = td.parentElement.parentElement.querySelectorAll('tr');
-            if (trs && trs.length > 0) trs.forEach(tr => tr.classList.remove('this.CSS.RowSelected'));
+            if (trs && trs.length > 0) trs.forEach(tr => tr.classList.remove(this.CSS.RowSelected));
             td.parentElement.classList.add(this.CSS.RowSelected);
         }
     }
-    NavUp(active_cell)
+    NavUp=(active_cell)=>
     {
         let active_cell_index=active_cell.cellIndex;
         let parent_tr = active_cell.parentElement;
         let parent_tbody = active_cell.parentElement.parentElement;
-        let target_tr = parent_tbody?.querySelectorAll(this.EdiTable().Const.HTML.TR)[(this._getRowIndex(parent_tr) - 1)];
-        let target_cell = target_tr?.querySelectorAll(this.EdiTable().Const.HTML.TD)[active_cell_index];
+        let target_tr = parent_tbody?.querySelectorAll(this.EdiTable.Const.HTML.TR)[(this._getRowIndex(parent_tr) - 1)];
+        let target_cell = target_tr?.querySelectorAll(this.EdiTable.Const.HTML.TD)[active_cell_index];
         if( this._getRowIndex(parent_tr) != 0 ) 
             this.CellFocus(target_cell);
     }
-    NavLeft(active_cell)
+    NavLeft=(active_cell)=>
     {
         let active_cell_index=active_cell.cellIndex;
         if (active_cell_index==0)
@@ -1141,10 +1219,10 @@ class EditTable extends HTMLElement
         }
 
         let parent_tr = active_cell.parentElement;
-        let target_cell = parent_tr.querySelectorAll(this.EdiTable().Const.HTML.TD)[active_cell_index-1];
+        let target_cell = parent_tr.querySelectorAll(this.EdiTable.Const.HTML.TD)[active_cell_index-1];
         this.CellFocus(target_cell);
     }
-    NavRight(active_cell)
+    NavRight=(active_cell)=>
     {
         let active_cell_index=active_cell.cellIndex;
 
@@ -1160,16 +1238,16 @@ class EditTable extends HTMLElement
             return;
         }
 
-        let target_cell = parent_tr.querySelectorAll(this.EdiTable().Const.HTML.TD)[active_cell_index+1];
+        let target_cell = parent_tr.querySelectorAll(this.EdiTable.Const.HTML.TD)[active_cell_index+1];
         this.CellFocus(target_cell);
     }
-    NavDown(active_cell) 
+    NavDown=(active_cell)=> 
     {
         let active_cell_index=active_cell.cellIndex;
         let parent_tr = active_cell.parentElement;
         let parent_tbody = active_cell.parentElement.parentElement;
-        let target_tr = parent_tbody?.querySelectorAll(this.EdiTable().Const.HTML.TR)[(this._getRowIndex(parent_tr) + 1)];
-        let target_cell = target_tr?.querySelectorAll(this.EdiTable().Const.HTML.TD)[active_cell_index];
+        let target_tr = parent_tbody?.querySelectorAll(this.EdiTable.Const.HTML.TR)[(this._getRowIndex(parent_tr) + 1)];
+        let target_cell = target_tr?.querySelectorAll(this.EdiTable.Const.HTML.TD)[active_cell_index];
         if( target_tr!=undefined) 
             this.CellFocus(target_cell);
         else
@@ -1179,9 +1257,9 @@ class EditTable extends HTMLElement
         }
     }
 
-    _getRowIndex(tr)
+    _getRowIndex=(tr)=>
     {
-        let index = 0;
+        let index = -1;
         let tbody = tr?.parentElement;
         if (tbody) tbody.querySelectorAll('tr').forEach((_tr, i) => { if (_tr === tr) index = i });
         return index;

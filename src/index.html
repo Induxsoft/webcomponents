@@ -139,33 +139,29 @@
         />
     </div>
     <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD;border-radius: 5px; padding-bottom: 32px; margin:4px;">
-        <h3>Edit Table</h3>
-        <edit-table>
-            <table>
-                <thead>
-                    <tr>
-                        <th>uno</th>
-                        <th>dos</th>
-                        <th>tres</th>
-                        <th>cuatro</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>aaa</td>
-                        <td>bbb</td>
-                        <td>ccc</td>
-                        <td>ddd</td>
-                    </tr>
-                    <tr>
-                        <td>aaa2</td>
-                        <td>bbb2</td>
-                        <td>ccc2</td>
-                        <td>ddd2</td>
-                    </tr>
-                </tbody>
-            </table>
-        </edit-table>
+        <div style="display: flex; gap: 8px; padding: 1rem 0; align-items: center;">
+            <h3 style="margin: 0;">Edit Table</h3>
+            <button onclick="document.querySelector('#micontrol5').AddRow();" style="color: #888;">+</button>
+        </div>
+        <div style="max-height: 30vh; display: flex;">
+            <edit-table id="micontrol5" style="width: 100%;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th type="Text" field="uno">Título 1</th>
+                            <th type="Text" field="dos">Título 2</th>
+                            <th type="Text" field="tres">Título 2</th>
+                            <th type="Text" field="cuatro">Título 4</th>
+                        </tr>
+                    </thead>
+                </table>
+            </edit-table>
+        </div>
     </div>
+    <style>
+        @media screen and (max-width: 600px) {
+            body{ flex-wrap: nowrap !important; }
+        }
+    </style>
 </body>
 </html>
