@@ -155,7 +155,7 @@ class EditTable extends HTMLElement
                 thead.querySelectorAll('th').forEach(th => {
                     const td = this._createFullElement('td', { class:'EdiTable-Cell' });
                     Object.keys(data).forEach(key => {
-                        if (td.textContent == '' && th.getAttribute('field') == key)
+                        if (td.textContent == '' && (th.getAttribute('field') == key || th.getAttribute('keyfield') == key))
                             td.textContent = data[key];
                     });
                     tr.appendChild(td);
