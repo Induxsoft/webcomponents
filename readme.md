@@ -208,32 +208,32 @@ ___
  - **Columns**: (Array obj) Array de objetos con información de las filas.
 
 #### Métodos:
- - DeleteCurrentRow(): Elimina la fila seleccionada.
- - UpdateRow(row): Actualiza los valores que se muestran de la fila especificada. Retorna *true* si se completó la tarea, en caso contrario: *false*.
+ - **DeleteCurrentRow()**: Elimina la fila seleccionada.
+ - **UpdateRow(row)**: Actualiza los valores que se muestran de la fila especificada. Retorna *true* si se completó la tarea, en caso contrario: *false*.
    - row: (number) Índice de la fila.
- - UpdateData(): Actualiza los objetos del dataArray con los valores todas las filas de la tabla.
- - UpdateDataMember(row, field, value, stopfire): Actualiza el objeto del dataArray de la fila especificada. Retorna la información del **objeto** de la fila especificada.
+ - **UpdateData()**: Actualiza los objetos del dataArray con los valores todas las filas de la tabla.
+ - **UpdateDataMember(row, field, value, stopfire)**: Actualiza el objeto del dataArray de la fila especificada. Retorna la información del **objeto** de la fila especificada.
    - row: (number) Índice de la fila.
    - field: (text) Nombre del campo a actualizar.
    - value: (text) Valor del campo a actualizar.
    - stopfire: (bool - opcional, def: false) Detiene la ejecución del evento descendiente *FieldUpdated* del elemento en cuestión.
- - AddRow(): Agrega una nueva fila a la tabla.
- - RowIndexOfTd(td): Retorna el índice del elemento *tr* de la celda especificada, -1 si la celda es *undefined* o *null*.
+ - **AddRow()**: Agrega una nueva fila a la tabla.
+ - **RowIndexOfTd(td)**: Retorna el índice del elemento *tr* de la celda especificada, -1 si la celda es *undefined* o *null*.
    - td: (HTMLTableCellElement) Referencia a un elemento *td* de la tabla.
- - CurrentRowIndex(): Retorna el índice de la fila *tr* de la celda *td* actualmente seleccionada, -1 si no hay niguna celda selccionada.
- - CurrentColIndex(): Retorna de índice de la celda *td* actualmente seleccionada en relación a su fila, -1 si la celda es *null*, o no pertenece a una fila *tr*.
- - CellFocus(td): Establece el foco a la celda *td* especificada.
+ - **CurrentRowIndex()**: Retorna el índice de la fila *tr* de la celda *td* actualmente seleccionada, -1 si no hay niguna celda selccionada.
+ - **CurrentColIndex()**: Retorna de índice de la celda *td* actualmente seleccionada en relación a su fila, -1 si la celda es *null*, o no pertenece a una fila *tr*.
+ - **CellFocus(td)**: Establece el foco a la celda *td* especificada.
    - td: (HTMLTableCellElement) Referencia a un elemento *td* de la tabla.
 
 #### Atributos del componente:
- - data: (opcional) datos de la tabla (ej: [{"title1":"value1"},...]).
- - control-styles: (opcional) Establece los estilos personalizados que se le aplicarán al control (ej: input{border:1px solid red;}).
+ - **data**: (opcional) datos de la tabla (ej: [{"title1":"value1"},...]).
+ - **control-styles**: (opcional) Establece los estilos personalizados que se le aplicarán al control (ej: input{border:1px solid red;}).
 
 #### Atributos de las columnas del componente:
- - type: (opcional, def: Text) Tipo de celda: Text,Number,Date,DateTime,Memo,Check,Select,Custom,NoEditable (def:Text).
- - field: (opcional) Nombre del campo donde se guardará el valor de la celda.
- - default: (opcional) Valor por defecto de la celda al iniciarse.
- - options: (opcional) Datos de las opciones de una columna de tipo Select (ej: {"a":"Opción 1","b":"Opción 2","c":"Opción 3"}).
+ - **type**: (opcional, def: Text) Tipo de celda: Text,Number,Date,DateTime,Memo,Check,Select,Custom,NoEditable (def:Text).
+ - **field**: (opcional) Nombre del campo donde se guardará el valor de la celda.
+ - **default**: (opcional) Valor por defecto de la celda al iniciarse.
+ - **options**: (opcional) Datos de las opciones de una columna de tipo Select (ej: {"a":"Opción 1","b":"Opción 2","c":"Opción 3"}).
 
 #### Ejemplo:
 ```
