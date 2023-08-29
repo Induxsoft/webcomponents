@@ -27,7 +27,6 @@ class EditTable extends HTMLElement
         document.addEventListener('DOMContentLoaded', () => 
         {
             this._shadow = this.attachShadow({ mode: 'closed' });
-            this._table = this._getFullTable();
             
             this._shadow.innerHTML = `
                 <style>
@@ -100,17 +99,19 @@ class EditTable extends HTMLElement
                 </style>
             `;
 
-            const container1 = this._createFullElement('div', { style:'min-height: 2rem; max-height: 100%; overflow: auto; padding-bottom: 5px' });
-            
-            container1.appendChild(this._table);
-            this.innerHTML = '';
-            this._shadow.appendChild(container1);
-            
             if (this.hasAttribute('data') && this.getAttribute('data').trim() != "")
             {
                 try{ this.DataArray = JSON.parse(this.getAttribute('data')); }
                 catch{ alert('El valor del atributo "data" tiene un formato JSON inválido'); this.DataArray = []; }
             }
+
+            const container1 = this._createFullElement('div', { style:'min-height: 2rem; max-height: 100%; overflow: auto; padding-bottom: 5px' });
+            this._table = this._getFullTable();
+            container1.appendChild(this._table);
+            this.innerHTML = '';
+            this._shadow.appendChild(container1);
+            
+            
             
             this.Initialize(this._table.getAttribute('id'));
             this._processAtributesColumn();
@@ -145,6 +146,22 @@ class EditTable extends HTMLElement
                     editTd.replaceWith(this._replaceTagNameElement(editTd, 'td'))
                 });
             });
+        }
+
+        if (this.DataArray && this.DataArray.length > 0 && thead.hasChildNodes() && !tbody.hasChildNodes())
+        {
+            this.DataArray.forEach(data => {
+                const tr = this._createFullElement('tr');
+                thead.querySelectorAll('th').forEach(th => {
+                    const td = this._createFullElement('td', { class:'EdiTable-Cell' });
+                    Object.keys(data).forEach(key => {
+                        if (td.textContent == '' && th.getAttribute('field') == key)
+                            td.textContent = data[key];
+                    });
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });  
         }
 
         table.appendChild(thead);
