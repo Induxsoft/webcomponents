@@ -2,12 +2,15 @@
 
 Descripción de las funciones y propiedades de los Web Components:
 
-- **EditSelect** (Input select editable)
-- **InputKey** (Control de búsqueda y selección de datos)
-- **CheckList** (Lista de verificación)
-- **StackEdit** (Pila de elementos ordenables)
-- **EditTable** (Tabla editable)
+- **[EditSelect](#CheckList)** (Input select editable)
+- **[InputKey](#InputKey)** (Control de búsqueda y selección de datos)
+- **[CheckList](#CheckList)** (Lista de verificación)
+- **[StackEdit](#StackEdit)** (Pila de elementos ordenables)
+- **[EditTable](#EditTable)** (Tabla editable)
 ___
+
+<a name="EditSelect"></a>
+
 ## EditSelect
 
 #### Métodos:
@@ -32,7 +35,11 @@ ___
 </edit-select>
 ```
 ___
+
+<a name="InputKey"></a>
+
 ## InputKey:
+
 
 #### Propiedades:
  - **data**: (array obj) Establece los datos a usar en la selección de registros.
@@ -94,6 +101,9 @@ ___
 </input-key>
 ```
 ___
+
+<a name="CheckList"></a>
+
 ## CheckList:
 
 #### Propiedades:
@@ -142,6 +152,9 @@ ___
 </check-list>
 ```
 ___
+
+<a name="StackEdit"></a>
+
 ## StackEdit
 
 #### Propiedades:
@@ -194,6 +207,9 @@ ___
 </stack-edit>
 ```
 ___
+
+<a name="EditTable"></a>
+
 ## EditTable
 
 #### Propiedades:
