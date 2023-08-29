@@ -8,20 +8,20 @@ Descripción de las funciones y propiedades de los Web Components:
 - **StackEdit** (Pila de elementos ordenables)
 - **EditTable** (Tabla editable)
 ___
-### EditSelect
+## EditSelect
 
-##### Métodos:
+#### Métodos:
 - **setValue(value, allowFocus)**: Establece el valor del select.
    - value: (text) Valor a establecer.
    - allowFocus: (bool - opcional, def: true) Establece el foco y la selección automática el input editable.
 - **getValue()**: Retorna el valor del select.
 
-##### Atributos del componente:
+#### Atributos del componente:
  - **edit-options**: (bool - opcional, def: false) Establece que las opciones puedan ser editables.
  - **manual-text**: (opcional, def: "Escribir manualmente...") Establece el texto a mostrar para la opción editable.
  - **control-styles**: (opcional) Establece los estilos personalizados que se le aplicarán al control (ej: input{border:1px solid red;}).
 
-##### Ejemplo:
+#### Ejemplo:
 
 ```
 <edit-select id="micontrol1" name="opcion" edit-options="true" manual-text="Editar manualmente" value="" control-styles="">
@@ -32,16 +32,16 @@ ___
 </edit-select>
 ```
 ___
-### InputKey:
+## InputKey:
 
-##### Propiedades:
+#### Propiedades:
  - **data**: (array obj) Establece los datos a usar en la selección de registros.
  - **searchData**: (text) Establece el campo a considerar en la búsqueda de un registro.
  - **columns**: (text, def:*) Establece los campos a mostrar en la tabla de resultados de búsqueda.
  - **colcaptions**: (text, def:*) Establece los encabezados de la tabla de resultados de búsqueda.
  - **change_event**: Se dispara cuando se establece un nuevo valor al componente.
 
-##### Métodos:
+#### Métodos:
  - **findValue(id)**: Retorna un elemento dentro del objeto de datos que coincida con el valor especificado establecido en la propiedad searchData y el identificador proporcionado.
    - id: (text) cadena con el valor a buscar.
  - **getValue()**: Retorna el objeto seleccionado en la tabla de datos.
@@ -52,7 +52,7 @@ ___
    - ename: (text) Nombre del evento.
    - func: (obj) función a disparar con el evento.
 
-##### Atributos del componente:
+#### Atributos del componente:
  - **data-key**: (requerido) Establece el campo a guardar al seleccionar un registro.
  - **data-search**: (requerido) Establece el campo a considerar en la búsqueda de un registro.
  - **data-text**: (opcional) Establece el campo a mostrar en la descripción del registro seleccionado.
@@ -71,12 +71,12 @@ ___
  - **required**: (bool, opcional, def: "false") Establece que el campo tenga datos antes de enviarse el formulario.
  - **control-styles**: (opcional) Establece los estilos personalizados que se le aplicarán al control (ej: input{border:1px solid red;}).
 
-##### Claves en URL's:
+#### Claves en URL's:
  - **@search**: (opcional) Valor del parámetro a buscar establecido en el campo de búsqueda del componente.
  - **@key**: (opcional) Valor "data-key" del registro seleccionado.
  - **@text**: (opcional) Descripción "data-text" del registro seleccionado.
 
-##### Ejemplo:
+#### Ejemplo:
 
 ```
 <input-key 
@@ -94,9 +94,9 @@ ___
 </input-key>
 ```
 ___
-###CheckList:
+## CheckList:
 
-##### Propiedades:
+#### Propiedades:
  - **data**: (array obj) Datos de la lista.
  - **locked**: (bool - opcional, def: false) Elementos marcados ya no pueden desmarcarse.
  - **doneStyle**: (number - opcional - def: 0) Visualización de elementos marcados: 0-Permanecen en su sitio, 1-Desaparecen, 2-Se apilan en una lista en la parte inferior.
@@ -108,7 +108,7 @@ ___
  - **onItemChecked**: Se dispara cuando se completa (o desmarca) un elemento.
  - **onItemMoved**: Se dispara cuando un elemento ha sido movido a otra posición en el árbol de lista.
 
-##### Métodos:
+#### Métodos:
  - **_refreshView()**: Actualiza la interfaz de la lista.
  - **setData(obj)**: Establece los datos de la lista.
    - obj: (array obj) Array de objetos a mostrarse en la lista.
@@ -118,7 +118,7 @@ ___
    - id: (text) Identificador del elemento.
    - withoutindex: (bool - opcional, def: true) Elimina la información del índice del elemento.
 
-##### Atributos del componente:
+#### Atributos del componente:
  - **data**: (opcional) datos de la lista.
  - **data-locked**: (bool - opcional, def: false) Elementos marcados ya no pueden desmarcarse.
  - **data-done-style**: (number - opcional, def: 0) Visualización de elementos marcados: 0-Permanecen en su sitio, 1-Desaparecen, 2-Se apilan en una lista en la parte inferior.
@@ -127,7 +127,7 @@ ___
  - **can-move**: (bool - opcional, def: false) Pueden moverse elementos
  - **can-check**: (bool - opcional, def: true) Pueden marcarse como completados o actualizar su progreso.
 
-##### Ejemplo:
+#### Ejemplo:
 
 ```
 <check-list 
@@ -142,9 +142,9 @@ ___
 </check-list>
 ```
 ___
-### StackEdit
+## StackEdit
 
-##### Propiedades:
+#### Propiedades:
  - **data**: (array obj) Datos de la pila.
  - **captionA**: (text) Campo a mostrar en la esquina superior derecha de los elementos de la pila.
  - **captionB**: (text) Campo a mostrar en la esquina superior izquierda de los elementos de la pila.
@@ -156,7 +156,7 @@ ___
  - **backColorField**: (text) Color de fondo de los elementos de la pila (def: #FFF).
  - **onElementClick**: Se dispara cuando se hace clic en un elementos de la pila.
 
-##### Métodos:
+#### Métodos:
  - **_refreshView()**: Actualiza la interfaz de la pila.
  - **setData(obj)**: Establece los datos de la pila.
    - obj: (Array obj - opcional) Array de objetos a mostrarse en la pila.
@@ -164,7 +164,7 @@ ___
  - **_getItem(id)**: Retorna la información de un elemento de la pila.
    - id: (text) Identificador del elemento.
 
-##### Atributos del componente:
+#### Atributos del componente:
  - **data**: (opcional) datos de la pila.
  - **caption-a**: (opcional) Campo a mostrar en la esquina superior izquierda de los elementos de la pila.
  - **caption-b**: (opcional) Campo a mostrar en la esquina superior derecha de los elementos de la pila.
@@ -177,7 +177,7 @@ ___
  - **control-styles**: (opcional) Establece los estilos personalizados que se le aplicarán al control (ej: input{border:1px solid red;}).
  - **styles-field**: (opcional) Especifica el campo en el objeto del array (data) con los estilos para cada contenedor de los elementos de la pila.
 
-##### Ejemplo:
+#### Ejemplo:
 ```
 <stack-edit 
     id="micontrol4"
@@ -194,9 +194,9 @@ ___
 </stack-edit>
 ```
 ___
-### EditTable
+## EditTable
 
-##### Propiedades:
+#### Propiedades:
  - **[Events](https://github.com/Induxsoft/EdiTable.js#eventos)**: Eventos que se disparan en los procesos de los controles.
  - **TheadRowIndex**: (number, def:0) Establece el índice de la fila en la tabla que es el encabezado de la misma.
  - **AutoAddRow**: (bool, def:true) Permite la inserción de filas nuevas en la tabla de forma automática.
@@ -207,7 +207,7 @@ ___
  - **ColumnsDefaultType**: (text, def:"Text") Disponibles: Text, Number, Date, DateTime, Memo, Check, Select, Custom, NoEditable
  - **Columns**: (Array obj) Array de objetos con información de las filas.
 
-##### Métodos:
+#### Métodos:
  - DeleteCurrentRow(): Elimina la fila seleccionada.
  - UpdateRow(row): Actualiza los valores que se muestran de la fila especificada. Retorna *true* si se completó la tarea, en caso contrario: *false*.
    - row: (number) Índice de la fila.
@@ -225,17 +225,17 @@ ___
  - CellFocus(td): Establece el foco a la celda *td* especificada.
    - td: (HTMLTableCellElement) Referencia a un elemento *td* de la tabla.
 
-##### Atributos del componente:
+#### Atributos del componente:
  - data: (opcional) datos de la tabla (ej: [{"title1":"value1"},...]).
  - control-styles: (opcional) Establece los estilos personalizados que se le aplicarán al control (ej: input{border:1px solid red;}).
 
-##### Atributos de las columnas del componente:
+#### Atributos de las columnas del componente:
  - type: (opcional, def: Text) Tipo de celda: Text,Number,Date,DateTime,Memo,Check,Select,Custom,NoEditable (def:Text).
  - field: (opcional) Nombre del campo donde se guardará el valor de la celda.
  - default: (opcional) Valor por defecto de la celda al iniciarse.
  - options: (opcional) Datos de las opciones de una columna de tipo Select (ej: {"a":"Opción 1","b":"Opción 2","c":"Opción 3"}).
 
-##### Ejemplo:
+#### Ejemplo:
 ```
 <edit-table id="micontrol5" style="width: 100%;">
     <edit-thead>
