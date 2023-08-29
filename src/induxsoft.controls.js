@@ -498,7 +498,11 @@ class InputKey extends HTMLElement
             this.after(this.inputv);
         });
     }
-
+    /**
+     * @param {string} tagName Nombre de etiqueta.
+     * @param {object} attributes Objeto que representan los atributos del elemento, ej: {id:'miElement',class:'mi-element'}
+     * @returns Retorna un **nuevo elemento HTML**
+     */
     createFullElement(tagName="div", attributes={})
     {
         const elem = document.createElement(tagName);
@@ -506,6 +510,10 @@ class InputKey extends HTMLElement
         keys.forEach(key => elem.setAttribute(key, attributes[key]));
         return elem;
     }
+    /**
+     * Pinta la información en la tabla de búsqueda.
+     * @returns retorna el elemento ***tbody*** de la tabla
+     */
     printTableData()
     {
         this.body_tables_container2.innerHTML = ``;
@@ -587,6 +595,11 @@ class InputKey extends HTMLElement
 
         return this.body_tables_container2;
     }
+    /**
+     * Establece el objeto de datos a partir de un identificador con el cual se realizará la búsqueda de similitudes.
+     * @param {string} id Cadena con el valor a buscar.
+     * @returns retorna un objeto **promise** al que se le puede adjuntar un *callback* de retorno.
+     */
     setDataSource(id="")
     {
         this.data = null;
@@ -619,6 +632,10 @@ class InputKey extends HTMLElement
             }
         });
     }
+    /**
+     * @param {string} id Cadena con el valor a buscar.
+     * @returns Retorna un **elemento** dentro del objeto de datos que coincida con el valor especificado establecido en la propiedad searchData y el identificador proporcionado.
+     */
     findValue(id)
     {
         if (this.data && this.data.length > 0)
@@ -627,10 +644,17 @@ class InputKey extends HTMLElement
         }
         return this.record_selected;
     }
+    /**
+     * @returns Retorna el **objeto** seleccionado en la tabla de datos.
+     */
     getValue()
     {
         return this.accept_data;
     }
+    /**
+     * Establece el valor del control.
+     * @param {object} value Objeto a establecer
+     */
     setValue(value={})
     {
         this.accept_data = value;
@@ -652,12 +676,20 @@ class InputKey extends HTMLElement
         if (this.change_event)
             this.change_event(value);
     }
+    /**
+     * Limpia la información del objeto seleccionado y los controles del componente.
+     */
     clear()
     {
         this.accept_data = null;
         this.record_selected = null;
         this.setValue(null);
     }
+    /**
+     * Abre la tabla de busqueda
+     * @param {HTMLElement} container2 Referencia del contenedor principal de la tabla de búsqueda
+     * @param {Boolean} autoselect Define la selección automática de un elemento al lanzarse la búsqueda y encontrarse una sola coincidencia.
+     */
     search(container2, autoselect=false)
     {
         if (this.data && this.data.length == 1 && this.record_selected && autoselect)
@@ -679,6 +711,10 @@ class InputKey extends HTMLElement
             }
         }
     }
+    /**
+     * Lanza la búsqueda de un elemento.
+     * @param {HTMLElement} container2 Referencia del contenedor principal de la tabla de búsqueda.
+     */
     searchButton(container2)
     {
         if (this.input_search_container2.value.trim() == ""){
@@ -695,12 +731,20 @@ class InputKey extends HTMLElement
             this.search(container2, false);
         });
     }
+    /**
+     * Sincroniza el valor del campo de búsqueda del primer control del componente con el campo de búsqueda de la tabla de datos.
+     */
     setDataInputSearch2()
     {
         this.input_search_container2.value = this.input_search_container.value;
         this.input_search_container2.select();
         this.input_search_container2.focus();
     }
+    /**
+     * Sobrescribe el escuchador de eventos del componente con el definido por el usuario.
+     * @param {string} ename Nombre del evento.
+     * @param {object} func Función a disparar con el evento.
+     */
     addEventListener(ename, func)
     {
         switch(ename)
@@ -710,6 +754,11 @@ class InputKey extends HTMLElement
                 break;
         }
     }
+    /**
+     * Procesa la URL proporcionada para remplazar las claves que contenga con los valores del control.
+     * @param {string} url URL a procesar.
+     * @returns Retorna la nueva URL
+     */
     prepareUrl(url)
     {
         return url.replace('@search',this.input_search_container.value)

@@ -625,10 +625,18 @@ class EditTable extends HTMLElement
         this["tableId"]=tableId;
     }
     Columns=[];
+    /**
+     * 
+     * @returns Retorna la referencia al elemento ***thead*** de la tabla.
+     */
     GetTHead=()=>
     {
         return this._shadow.querySelector(this.EdiTable.Const.HTML.TABLE+"#"+this.tableId+" "+this.EdiTable.Const.HTML.THEAD);
     }
+    /**
+     * 
+     * @returns Retorna la referencia ***tbody*** de la tabla.
+     */
     GetTBody=()=>{
         var tbody= this._shadow.querySelector(this.EdiTable.Const.HTML.TABLE+"#"+this.tableId+" "+this.EdiTable.Const.HTML.TBODY);
 
@@ -640,6 +648,10 @@ class EditTable extends HTMLElement
 
         return tbody;
     }
+    /**
+     * 
+     * @returns Retorna el **número** de columnas de la tabla.
+     */
     ColumnsCount=()=>
     {
         var cols=this.THCount();
@@ -651,22 +663,41 @@ class EditTable extends HTMLElement
         
         return cols;
     }
+    /**
+     * Mueve el selector a la primera columna y primera fila de la tabla.
+     */
     NavToHome=()=>
     {
         this.NavTo(0,0);
     }
+    /**
+     * Mueve el selector a la última columna y última fila de la tabla.
+     */
     NavToEnd=()=>
     {
         this.NavTo(this.TRCount()-1,this.ColumnsCount()-1);
     }
+    /**
+     * Mueve el selector a la primer columna de la fila especificada.
+     * @param {Number} row Índice de la fila.
+     */
     NavToFirstCell=(row)=>
     {
         this.NavTo(row,0);
     }
+    /**
+     * Mueve el selector a la última columna de la fila especificada.
+     * @param {Number} row Índice de la fila.
+     */
     NavToLastCell=(row)=>
     {
         this.NavTo(row,this.ColumnsCount()-1);
     }
+    /**
+     * Mueve el selector a la columna y fila especificada.
+     * @param {Number} row Índice de la fila.
+     * @param {Number} col Índice de la columna.
+     */
     NavTo=(row, col)=>
     {
         let rows=this.TRCount();
@@ -678,6 +709,10 @@ class EditTable extends HTMLElement
         let td = tbody.querySelectorAll(this.EdiTable.Const.HTML.TR)[row].querySelectorAll(this.EdiTable.Const.HTML.TD)[col];
         this.CellFocus( td );
     }
+    /**
+     * @param {Number} row Índice de la fila.
+     * @returns Retorna la referencia al elemento ***tr*** de la fila especificada.
+     */
     GetTrByIndex=(row)=>
     {
         let rows=this.TRCount();
@@ -689,6 +724,9 @@ class EditTable extends HTMLElement
 
         return tbody.querySelectorAll(this.EdiTable.Const.HTML.TR)[row];
     }
+    /**
+     * Elimina la fila seleccionada.
+     */
     DeleteCurrentRow=()=>
     {
         let col=this.CurrentColIndex();
@@ -697,6 +735,11 @@ class EditTable extends HTMLElement
         if (this.DeleteRow(row))
             this.NavTo(row,col);
     }
+    /**
+     * Elimina la fila especificada.
+     * @param {Number} row Índice de la fila a eliminar.
+     * @returns Retorna ***true*** si la fila fué eliminada, en caso contrario: ***false***.
+     */
     DeleteRow=(row)=>
     {
         let rows=this.TRCount();
@@ -712,6 +755,11 @@ class EditTable extends HTMLElement
 
         return false;
     }
+    /**
+     * Actualiza los valores que se muestran de la fila especificada.
+     * @param {Number} row Índice de la fila.
+     * @returns Retorna ***true*** si se completó la tarea, en caso contrario: ***false***.
+     */
     UpdateRow=(row)=>
     {
         let tr=this.GetTrByIndex(row);
@@ -732,11 +780,19 @@ class EditTable extends HTMLElement
 
         return true;
     }
+    /**
+     * Actualiza los objetos del dataArray con los valores todas las filas de la tabla.
+     */
     UpdateData=()=>
     {
         for(let i=0;i<this.TRCount();i++)
             this.UpdateDataRow(i);
     }
+    /**
+     * Actualiza el objeto del dataArray con el valor de la fila especificada.
+     * @param {Number} row Índice de la fila.
+     * @returns Retorna ***true*** si se completó la tarea, en caso contrario: ***false***.
+     */
     UpdateDataRow=(row)=>
     {
         let tr=this.GetTrByIndex(row);
@@ -769,6 +825,14 @@ class EditTable extends HTMLElement
 
         return true;
     }
+    /**
+     * 
+     * @param {Number} row Índice de la fila.
+     * @param {String} field Nombre del campo a actualizar.
+     * @param {String} value Valor del campo a actualizar.
+     * @param {Boolean} stopfire Detiene la ejecución del evento descendiente *FieldUpdated* del elemento en cuestión.
+     * @returns Retorna la información del **objeto** de la fila especificada.
+     */
     UpdateDataMember=(row, field, value, stopfire = false)=>
     {
         if (this.DataArray[row]==undefined)
@@ -790,10 +854,18 @@ class EditTable extends HTMLElement
 
         return this.DataArray[row];
     }
+    /**
+     * Agrega una nueva fila a la tabla.
+     */
     AddRow=()=>
     {
         return this.InsertRow();
     }
+    /**
+     * Crea una nueva fila en el índice especificado.
+     * @param {Number} rw índice de la nueva fila.
+     * @param {Boolean} nofocus Bloquea la selcción y foco automático al crear la fila.
+     */
     InsertRow=(rw, nofocus = false)=>
     {
         var tbody=this.GetTBody();
@@ -849,6 +921,9 @@ class EditTable extends HTMLElement
                 this._getCurren().Events[this.EdiTable.Const.Events.RowAdded](eventArgs);
         }
     }
+    /**
+     * @returns Retorna el **número** de filas del elemento *tbody* de la tabla.
+     */
     TRCount=()=>
     {
         var tbody=this.GetTBody();
@@ -861,6 +936,10 @@ class EditTable extends HTMLElement
 
         return 0;
     }
+    /**
+     * 
+     * @returns Retorna el **número** de columnas del elemento *thead* de la tabla.
+     */
     THCount=()=>
     {
         var thead=this.GetTHead();
@@ -877,6 +956,10 @@ class EditTable extends HTMLElement
 
         return 0;
     }
+    /** 
+     * @param {HTMLTableRowElement} tr Referencia a una fila *tr* de la tabla.
+     * @returns Retorna el **número** de celdas *td* de la fila especificada.
+     */
     TDCount=(tr)=>
     {
         if (tr)
@@ -887,6 +970,9 @@ class EditTable extends HTMLElement
 
         return 0;
     }
+    /**
+     * @returns Retorna la **celda** *td* actualmente seleccionada.
+     */
     CurrentTd=()=>
     {
         if (this.EdiTable.focusedTable!=this._getCurren())
@@ -914,6 +1000,10 @@ class EditTable extends HTMLElement
         return selector.parentElement;
         
     }
+    /**
+     * @param {HTMLTableCellElement} td Referencia a un elemento *td* de la tabla.
+     * @returns Retorna el elemento ***tr*** de la celda especificada.
+     */
     TrOfTd=(td)=>
     {
         if (td==undefined)
@@ -924,6 +1014,10 @@ class EditTable extends HTMLElement
         
         return td.parentElement;
     }
+    /**
+     * @param {HTMLTableCellElement} td Referencia a un elemento *td* de la tabla.
+     * @returns Retorna el **índice** del elemento *tr* de la celda especificada, -1 si la celda es *undefined* o *null*.
+     */
     RowIndexOfTd=(td)=>
     {
         if (td==undefined)
@@ -934,6 +1028,9 @@ class EditTable extends HTMLElement
         
         return this._getRowIndex(td.parentElement);
     }
+    /**
+     * @returns Retorna el **índice** de la fila *tr* de la celda *td* actualmente seleccionada, -1 si no hay niguna celda selccionada.
+     */
     CurrentRowIndex=()=>
     {
         let current_td=this.CurrentTd();
@@ -942,6 +1039,11 @@ class EditTable extends HTMLElement
         
         return this._getRowIndex(current_td.parentElement);
     }
+    /**
+     * 
+     * @param {HTMLTableCellElement} td Referencia a un elemento *td* de la tabla.
+     * @returns Retorna el **índice** de la celda *td* especificada en relación a su fila *tr*, -1 si la celda es *undefined*, *null*, o no pertenece a una fila *tr*.
+     */
     ColIndexOfTd=(td)=>
     {
         if (td==undefined)
@@ -952,6 +1054,9 @@ class EditTable extends HTMLElement
         
         return td.cellIndex;
     }
+    /**
+     * @returns Retorna el **índice** de la celda *td* actualmente seleccionada en relación a su fila, -1 si la celda es *null*, o no pertenece a una fila *tr*.
+     */
     CurrentColIndex=()=>
     {
         let current_td=this.CurrentTd();
@@ -961,6 +1066,10 @@ class EditTable extends HTMLElement
         
         return current_td.cellIndex;
     }
+    /**
+     * Ejecuta el evento LeaveCell de la celda especificada.
+     * @param {HTMLTableCellElement} td Referencia a un elemento *td* de la tabla.
+     */
     LeaveCell=(td)=>
     {
         if (this._getCurren().Events[this.EdiTable.Const.Events.LeaveCell]==undefined)
@@ -973,6 +1082,10 @@ class EditTable extends HTMLElement
 
         this._getCurren().Events[this.EdiTable.Const.Events.LeaveCell](eventArgs);
     }
+    /**
+     * Ejecuta el evento EnterCell de la celda especificada.
+     * @param {HTMLTableCellElement} td Referencia a un elemento *td* de la tabla.
+     */
     EnterCell=(td)=>
     {
         
@@ -987,6 +1100,9 @@ class EditTable extends HTMLElement
         this._getCurren().Events[this.EdiTable.Const.Events.EnterCell](eventArgs);
     }
     Editing=false;
+    /**
+     * @returns Retorna información del **objeto** de la columna actualmente seleccionada.
+     */
     GetColumnDef=()=>
     {
         let columnDef=this.Columns[this.CurrentColIndex()];
@@ -1003,6 +1119,10 @@ class EditTable extends HTMLElement
         }
         return columnDef;
     }
+    /**
+     * @param {Number} td índice de la celda *td*.
+     * @returns Retorna información del **objeto** de la columna *td* especificada.
+     */
     GetColumnDefOfTd=(td)=>
     {
         let columnDef=this.Columns[this.ColIndexOfTd(td)];
@@ -1011,6 +1131,12 @@ class EditTable extends HTMLElement
 
         return columnDef;
     }
+    /**
+     * Se preparan los datos y eventos descendientes al iniciar la edición de un elemento *td*.
+     * @param {HTMLTableCellElement} td Referencia a un elemento *td* de la tabla.
+     * @param {String} text Texto que se pasará como parámetro en los eventos descendientes.
+     * @param {*} clear Si se establece el valor de *text* será vacio.
+     */
     StartEdit=(td,text,clear)=>
     {
         
@@ -1118,6 +1244,12 @@ class EditTable extends HTMLElement
         this.EdiTable.SetInputEventHandler(input,this._getCurren()); 
                                 
     }
+    /**
+     * Actualiza los valores de la columna modificada en el dataArray e inicializa sus eventos descendientes.
+     * @param {HTMLTableCellElement} td Referencia a un elemento *td* de la tabla.
+     * @param {String} displayText Texto que se pasará como parámetro en los eventos descendientes.
+     * @returns Retorna ***true*** si se culminó la edición, en caso contrario: ***false***.
+     */
     ConfirmEdit=(td,displayText)=>
     {
         if (!this.Editing)
@@ -1176,6 +1308,10 @@ class EditTable extends HTMLElement
 
         return true;
     }
+    /**
+     * Cancela la edición de la celda *td* especificada y restablece su valor.
+     * @param {HTMLTableCellElement} td Referencia a un elemento *td* de la tabla.
+     */
     CancelEdit=(td)=>
     {
         if (!this.Editing)
@@ -1207,6 +1343,10 @@ class EditTable extends HTMLElement
             this._getCurren().Events[this.EdiTable.Const.Events.CancelEdition](eventArgs);
         }
     }
+    /**
+     * Establece el foco a la celda *td* especificada.
+     * @param {HTMLTableCellElement} td Referencia a un elemento *td* de la tabla.
+     */
     CellFocus=(td)=>
     {
         let selector=this.EdiTable.GetSelector();
@@ -1258,6 +1398,10 @@ class EditTable extends HTMLElement
             td.parentElement.classList.add(this.CSS.RowSelected);
         }
     }
+    /**
+     * Mueve el selector una celda hacia arriba de la celda *td* especificada.
+     * @param {HTMLTableCellElement} active_cell Referencia a un elemento *td* de la tabla.
+     */
     NavUp=(active_cell)=>
     {
         let active_cell_index=active_cell.cellIndex;
@@ -1268,6 +1412,11 @@ class EditTable extends HTMLElement
         if( this._getRowIndex(parent_tr) != 0 ) 
             this.CellFocus(target_cell);
     }
+    /**
+     * Mueve el selector hacia la izquierda de la celda *td* especificada.
+     * Si la propiedad *EverMove* está establecida en *true* y el indice de la celda *td* especificada es igual a 0 o es la primera de la fila el selector subirá una fila y se posicionará al final de ésta.
+     * @param {HTMLTableCellElement} active_cell Referencia a un elemento *td* de la tabla.
+     */
     NavLeft=(active_cell)=>
     {
         let active_cell_index=active_cell.cellIndex;
@@ -1285,6 +1434,12 @@ class EditTable extends HTMLElement
         let target_cell = parent_tr.querySelectorAll(this.EdiTable.Const.HTML.TD)[active_cell_index-1];
         this.CellFocus(target_cell);
     }
+    /**
+     * Mueve el selector hacia la derecha de la celda *td* especificada.
+     * Si la propiedad *EverMove* está establecida en *true* y la celda *td* especificada es la última de la fila el selector bajará una fila y se posicionará al principio de ésta.
+     * @param {HTMLTableCellElement} active_cell Referencia a un elemento *td* de la tabla.
+     * @returns 
+     */
     NavRight=(active_cell)=>
     {
         let active_cell_index=active_cell.cellIndex;
@@ -1304,6 +1459,11 @@ class EditTable extends HTMLElement
         let target_cell = parent_tr.querySelectorAll(this.EdiTable.Const.HTML.TD)[active_cell_index+1];
         this.CellFocus(target_cell);
     }
+    /**
+     * Mueve el selector una celda hacia abajo de la celda *td* especificada.
+     * Si no hay más celdas por bajar y la propiedad *AutoAddRow* está establecida en *true* se agregará una fila nueva hacia abajo de la tabla
+     * @param {HTMLTableCellElement} active_cell Referencia a un elemento *td* de la tabla.
+     */
     NavDown=(active_cell)=> 
     {
         let active_cell_index=active_cell.cellIndex;
