@@ -764,13 +764,9 @@ class EditTable extends HTMLElement
 
         if (rows<1 || cols<1 || row>rows-1 || row<0) return false;
 
-        if (this.GetTrByIndex(row).remove())
-        {
-            this.DataArray.splice(row, 1);
-            return true;
-        }
-
-        return false;
+        this.GetTrByIndex(row).remove();
+        this.DataArray.splice(row, 1);
+        return true;
     }
     /**
      * Actualiza los valores que se muestran de la fila especificada.
