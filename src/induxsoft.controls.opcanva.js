@@ -14,7 +14,9 @@ class OpCanva extends HTMLElement
     backgroundPic = "";
     data = [];
     unitSymbols = ["cm","m","in","ft","yd"]
+    clickEvent = null;
 
+    _ccntnt = null;
     _ccanva = null;
     _shadow = null;
     _zindex = 100;
@@ -47,10 +49,11 @@ class OpCanva extends HTMLElement
     {
         document.addEventListener('DOMContentLoaded', () => 
         {
-            this._shadow = this.attachShadow({ mode: 'closed' });
-            const contnr = this._createFullElement('div', { id:'OpCanva_contnr', class:'outline' });
-            this._ccanva = this._createFullElement('div', { id:'OpCanva_ccanva', class:'outline' });
-            const cfootr = this._createFullElement('div', { id:'OpCanva_cfootr', class:'outline' });
+            this._shadow    = this.attachShadow({ mode: 'closed' });
+            const contnr    = this._createFullElement('div', { id:'OpCanva_contnr', class:'outline' });
+            this._ccntnt    = this._createFullElement('div', { id:'OpCanva_ccntnt' }); 
+            this._ccanva    = this._createFullElement('div', { id:'OpCanva_ccanva' });
+            const cfootr    = this._createFullElement('div', { id:'OpCanva_cfootr', class:'outline' });
 
             this._loadProperties();
 
@@ -59,7 +62,7 @@ class OpCanva extends HTMLElement
             const zoomTitle = this._createFullElement('h5', { id:'OpCanva_zoomTitle', class:'text-secondary' });
             const zoomCntrl = this._createFullElement('div', { id:'OpCanva_zoomCntrl', class:'d-flex align-items-center w-100 gap-1' });
             const zoomRange = this._createFullElement('input', { id:'OpCanva_zoomRange', type:'range', min:5, max:500, class:'w-100' });
-            const zoomInput = this._createFullElement('input', { id:'OpCanva_zoomInput', type:'number', min:5, max:500, class:'bordered rounded p-1' });
+            const zoomInput = this._createFullElement('input', { id:'OpCanva_zoomInput', type:'number', min:5, max:500, class:'induxsoft-formcontrols p-1' });
             zoomTitle.textContent = 'Zoom:';
             zoomRange.value = this.zoom;
             zoomInput.value = this.zoom;
@@ -71,7 +74,7 @@ class OpCanva extends HTMLElement
             const scalCntnr = this._createFullElement('div', { id:'OpCanva_scalContnr', class:'d-flex align-items-center wrap outline grow-1 p-1' });
             const scalTitle = this._createFullElement('h5', { id:'OpCanva_scalTitle', class:'text-secondary' });
             const scalCntrl = this._createFullElement('div', { id:'OpCanva_scalCntrl', class:'d-flex align-items-center w-100 gap-1' });
-            const scalInput = this._createFullElement('input', { id:'OpCanva_scalInput', type:'number', class:'bordered rounded p-1' });
+            const scalInput = this._createFullElement('input', { id:'OpCanva_scalInput', type:'number', class:'induxsoft-formcontrols p-1' });
             scalTitle.textContent = 'Scale:';
             scalInput.value = this.scale;
             scalCntrl.appendChild(scalInput);
@@ -81,7 +84,7 @@ class OpCanva extends HTMLElement
             const dpiCntnr = this._createFullElement('div', { id:'OpCanva_dpiContnr', class:'d-flex align-items-center wrap outline grow-1 p-1' });
             const dpiTitle = this._createFullElement('h5', { id:'OpCanva_dpiTitle', class:'text-secondary' });
             const dpiCntrl = this._createFullElement('div', { id:'OpCanva_dpiCntrl', class:'d-flex align-items-center w-100 gap-1' });
-            const dpiInput = this._createFullElement('input', { id:'OpCanva_dpiInput', type:'number', class:'bordered rounded p-1' });
+            const dpiInput = this._createFullElement('input', { id:'OpCanva_dpiInput', type:'number', class:'induxsoft-formcontrols p-1' });
             dpiTitle.textContent = 'DPI:';
             dpiInput.value = this.dpi;
             dpiCntrl.appendChild(dpiInput);
@@ -91,7 +94,7 @@ class OpCanva extends HTMLElement
             const fitCntnr = this._createFullElement('div', { id:'OpCanva_fitContnr', class:'d-flex align-items-center wrap outline grow-1 p-1' });
             const fitTitle = this._createFullElement('h5', { id:'OpCanva_fitTitle', class:'text-secondary' });
             const fitCntrl = this._createFullElement('div', { id:'OpCanva_fitCntrl', class:'d-flex align-items-center w-100 gap-1' });
-            const fitInput = this._createFullElement('input', { id:'OpCanva_fitInput', type:'number', step:0.1, class:'bordered rounded p-1' });
+            const fitInput = this._createFullElement('input', { id:'OpCanva_fitInput', type:'number', step:0.1, class:'induxsoft-formcontrols p-1' });
             fitTitle.textContent = 'Fit:';
             fitInput.value = this.fit;
             fitCntrl.appendChild(fitInput);
@@ -101,7 +104,7 @@ class OpCanva extends HTMLElement
             const unitCntnr = this._createFullElement('div', { id:'OpCanva_unitCntnr', class:'d-flex align-items-center wrap outline grow-1 p-1' });
             const unitTitle = this._createFullElement('h5', { id:'OpCanva_unitTitle', class:'text-secondary' });
             const unitCntrl = this._createFullElement('div', { id:'OpCanva_unitCntrl', class:'d-flex align-items-center w-100 gap-1' });
-            const unitSlect = this._createFullElement('select', { id:'OpCanva_unitSlect', class:'bordered rounded p-1' });
+            const unitSlect = this._createFullElement('select', { id:'OpCanva_unitSlect', class:'induxsoft-formselect p-1' });
             unitTitle.textContent = 'Unit:';
             this.unitSymbols.forEach(unitOpt => {
                 const option = this._createFullElement('option', { value:unitOpt });
@@ -158,7 +161,7 @@ class OpCanva extends HTMLElement
                     .noborder{ border: none !important; outline: none !important; }
                     .rounded{ border-radius: 6px; }
                     .rounded-50{ border-radius: 50%; }
-                    .p-1{ padding: 4px; } .p-2{ padding: 8px; } .p-3{ padding: 12px; } .p-4{ padding: 16px; } .p-5{ padding: 32px; }
+                    .p-1{ padding: 4px !important; } .p-2{ padding: 8px; } .p-3{ padding: 12px; } .p-4{ padding: 16px; } .p-5{ padding: 32px; }
                     .ps-1{ padding-left: 4px; }.ps-2{ padding-left: 8px; }.ps-3{ padding-left: 12px; }.ps-4{ padding-left: 16px; }.ps-5{ padding-left: 32px; }
                     .pe-1{ padding-right: 4px; }.pe-2{ padding-right: 8px; }.pe-3{ padding-right: 12px; }.pe-4{ padding-right: 16px; }.pe-5{ padding-right: 32px; }
                     .bg-white{ background-color: #FFF;} .bg-light-gray{ background-color: #F5F5F5; } .bg-transparent{background-color:transparent;}
@@ -169,18 +172,29 @@ class OpCanva extends HTMLElement
                     .text-secondary{ color: #888; }
 
                     #OpCanva_contnr{ width: 100%; height: 100%; display: flex; flex-direction: column; }
-                    #OpCanva_ccanva{ width: 100%; height: 100%; overflow:scroll; position: relative; flex-grow: 1; }
+                    #OpCanva_ccntnt{ width: 100%; height: 100%; overflow:scroll; position: relative; flex-grow: 1; }
+                    #OpCanva_ccanva{ overflow:hidden; position: relative; border: 4px solid #DDD; background-repeat: no-repeat; background-size: contain; }
                     #OpCanva_cfootr{ width: 100%; display: flex; justify-content: end; flex-wrap: wrap; }
-                    #OpCanva_zoomInput,#OpCanva_dpiInput,#OpCanva_fitInput,#OpCanva_unitSlect,#OpCanva_scalInput{ width: 3rem; outline: none; text-align: center; flex-grow: 1; }
-                    .item:hover{ background-color: #DDD; }
-                    .item{ position:absolute; outline: 1px solid #000; background-color: #F5F5F5; }
-                    .resizer-both{ width: 8px;height: 8px;background-color: transparent;z-index: 10;position: absolute;right: -4px;bottom: -4px;cursor: nw-resize; }
-                    .resizer-both:active,.resizer-both:hover{ background-color: #EDEDED; outline: 1px solid #888; }
+                    #OpCanva_zoomInput,#OpCanva_dpiInput,#OpCanva_fitInput,#OpCanva_unitSlect,#OpCanva_scalInput{ width: 3.5rem; text-align: center; flex-grow: 1; }
+                    .item:hover { outline: 1px solid #000; & .resizer-point, .move-point{ background-color: #FFF; outline: 1px solid #CCC; }}
+                    .item{ position:absolute; background-repeat: no-repeat; background-size: contain; /*outline: 1px solid rgba(180,180,180,.3);*/ }
+                    .resizer-point{ width: 10px;height: 10px;background-color: transparent;z-index: 10;position: absolute;right: -5px;bottom: -5px;cursor: crosshair; }
+                    .move-point{ width: 10px;height: 10px;background-color: transparent;z-index: 10;position: absolute; top: -5px; left: -5px; cursor: move; }
+                    .resizer-point:active,.resizer-point:hover{ background-color: #FFF; outline: 1px solid #CCC; }
+                    .move-point:active, .move-point:hover{ background-color: #FFF; outline: 1px solid #CCC; }
                     .caption-container{ position: absolute; top: 0; left: 0; height: 100%; width: 100%; font-size: 1em; }
+
+                    .induxsoft-formcontrols{border: none; outline:1px solid #ced4da;display: block;width: 100%;padding: 0.375rem 0.75rem;font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-clip: padding-box;appearance: none;transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+                    }
+                    .induxsoft-formcontrols:disabled, .induxsoft-formcontrols[readonly] {background-color: #e9ecef;opacity: 1;
+                    }
+                    .induxsoft-formselect {display: block;width: 100%;padding: 0.375rem 2.25rem 0.375rem 0.75rem;-moz-padding-start: calc(0.75rem - 3px);font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");background-repeat: no-repeat;background-position: right 0.75rem center;background-size: 16px 12px;border: none;outline:1px solid #ced4da;-webkit-appearance: none;-moz-appearance: none;appearance: none;
+                    }
                 </style>
             `;
 
-            contnr.appendChild(this._ccanva);
+            this._ccntnt.appendChild(this._ccanva);
+            contnr.appendChild(this._ccntnt);
             contnr.appendChild(cfootr);
 
             this.style.width = "100%";
@@ -214,12 +228,26 @@ class OpCanva extends HTMLElement
 
         let elements = this._shadow.querySelectorAll('.item');
 
+        
+
         elements.forEach(item => 
         {
             if (!this._parseBool(item.getAttribute('locked')))
             {
                 // Move
-                item.addEventListener('mousedown', e => {
+                let movePoint = this._createFullElement('div', { class:'move-point' });
+                item.appendChild(movePoint);
+
+                movePoint.addEventListener('mousedown', (e) => {
+                    e.stopPropagation();
+                    isdown = true;
+                    moving = false;
+                    offset = [item.offsetLeft - e.clientX, item.offsetTop - e.clientY];
+                    item.style.zIndex = '' + ++this._zindex;
+                    current = item;
+                }, true);
+
+                item.onmousedown = e => {
                     e.stopPropagation();
                     if (e.target !== item) return;
                     isdown = true;
@@ -227,22 +255,32 @@ class OpCanva extends HTMLElement
                     offset = [e.target.offsetLeft - e.clientX, e.target.offsetTop - e.clientY];
                     e.target.style.zIndex = '' + ++this._zindex;
                     current = e.target;
-                });
+                }
             }
+
             if (this._parseBool(item.getAttribute('sizable')))
             {
                 // Sizable
-                let sizeBoth = this._createFullElement('div', { class:'resizer-both' });
-                item.appendChild(sizeBoth);
-                sizeBoth.parent = item;
-                sizeBoth.addEventListener('mousedown', this._initDrag, false);
+                let sizePoint = this._createFullElement('div', { class:'resizer-point' });
+                item.appendChild(sizePoint);
+                sizePoint.parent = item;
+                sizePoint.addEventListener('mousedown', this._initDrag, false);
             }
+
+            item.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (this.clickEvent){
+                    let dataItem = this.getItem(item.getAttribute('id'));
+                    this.clickEvent(e, dataItem);
+                }
+            });
         });
 
         const e1 = (e) => {
             isdown = false;
-            if (moving && e.target == current) this._updateItem(e.target)
+            if (moving && current) this._updateItem(current)
             moving = false;
+            current = null;
         }
         this._ccanva.onmouseup = e1;
 
@@ -253,8 +291,8 @@ class OpCanva extends HTMLElement
                 moving = true;
                 let left = (e.clientX + offset[0]);
                 let top = (e.clientY + offset[1]);
-                current.style.left = left + 'px';
-                current.style.top = top + 'px';
+                current.style.left = (left > 0 ? left : 0) + 'px';
+                current.style.top = (top > 0 ? top : 0) + 'px';
             }
         }
         this._ccanva.onmousemove = e2;
@@ -301,16 +339,18 @@ class OpCanva extends HTMLElement
     {
         this.setScale(this.getAttribute('scale'), false);
         this.setDpi(this.getAttribute('dpi'), false);
-        this.setZoom(this.getAttribute('zoom'));
+        this.setZoom(this.getAttribute('zoom'), false);
         this.setUnit(this.getAttribute('unit'), false);
         this.setFit(this.getAttribute('fit'), false);
-        this.setLXY(this.getAttribute('lx'), this.getAttribute('ly'));
+        this.setLXY(this.getAttribute('lx'), this.getAttribute('ly'), false);
         
         this.backgroundColor = (this.getAttribute('background-color') ?? '#FFF');
         this.backgroundPic = (this.getAttribute('background-pic') ?? '');
         this.design = this._parseBool(this.getAttribute('design'), this.design);
 
         this._ccanva.style.backgroundColor = this.backgroundColor;
+
+        if (this.backgroundPic.trim() != '') this._ccanva.style.backgroundImage = `url(${this.backgroundPic})`;
 
         if (this.hasAttribute('data') && this.getAttribute('data').trim())
         {
@@ -320,7 +360,7 @@ class OpCanva extends HTMLElement
             finally { this.data = data; }
         }
     }
-    _generateUUID()
+    _generateUUID=()=>
     {
         return 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
             const r = Math.random() * 16 | 0, 
@@ -336,86 +376,59 @@ class OpCanva extends HTMLElement
         {
             this.data.forEach(item => {
                 if (item.id == element.id){
-                    item.x = (element.offsetLeft / (this.zoom / 100));
-                    item.y = (element.offsetTop / (this.zoom / 100));
-                    item.lx = (Number(element.getAttribute('equivalencex')) * Number(document.defaultView.getComputedStyle(element).width.replace(/[^0-9.]+/g, '')));
-                    item.ly = (Number(element.getAttribute('equivalencey')) * Number(document.defaultView.getComputedStyle(element).height.replace(/[^0-9.]+/g, '')));
-                    // element.setAttribute('x', item.x);
-                    // element.setAttribute('y', item.y);
-                    // element.setAttribute('lx', item.lx);
-                    // element.setAttribute('ly', item.ly);
+                    const x = (Number(element.getAttribute('equivalencex')) >= 1 ? Number(element.getAttribute('equivalencex')) : 1);
+                    const y = (Number(element.getAttribute('equivalencex')) >= 1 ? Number(element.getAttribute('equivalencex')) : 1);
+                    const w = (Number(document.defaultView.getComputedStyle(element).width.replace(/[^0-9.]+/g, '')));
+                    const h = (Number(document.defaultView.getComputedStyle(element).height.replace(/[^0-9.]+/g, '')));
+                    const lx = (Number(element.getAttribute('equivalencelx')) >= 1 ? Number(element.getAttribute('equivalencelx')) : 1);
+                    const ly = (Number(element.getAttribute('equivalencely')) >= 1 ? Number(element.getAttribute('equivalencely')) : 1);
+                    
+                    item.x = (x * (element.offsetLeft >= 1 ? element.offsetLeft : 1));
+                    item.y = (y * (element.offsetTop >= 1 ? element.offsetTop : 1 ));
+                    item.lx = (lx * (w >= 1 ? w : 1));
+                    item.ly = (ly * (h >= 1 ? h : 1));
+                    item.index = document.defaultView.getComputedStyle(element).zIndex;
                 }
             });
             this._refreshView();
         }
     }
     _refreshView=()=>{
-        // if (this._ccanva)
-        //     this._ccanva.querySelectorAll('.item').forEach(item => {
-        //         item.style.top = `${item.getAttribute('y')}px`;
-        //         item.style.left = `${item.getAttribute('x')}px`;
-        //         item.style.width = `${this._sizeCalc(item.getAttribute('lx'))}px`;
-        //         item.style.height = `${this._sizeCalc(item.getAttribute('ly'))}px`;
-        //     });
         this._printItems();
     }
     _printItems=()=>{
         if (this._ccanva) this._ccanva.innerHTML = '';
+        this._ccanva.style.height = `${this._zoomVal(this._scaleCalc(this.ly))}px`;
+        this._ccanva.style.width = `${this._zoomVal(this._scaleCalc(this.lx))}px`;
+
         if (this.data && this.data.length > 0)
         {
-            this.data.forEach(item => {
+            this.data.forEach(item => 
+            {
                 const width = this._sizeCalc(item.lx);
                 const height = this._sizeCalc(item.ly);
-
+                const positionX = this._sizeCalc((item.x >= 1 ? item.x : 1));
+                const positionY = this._sizeCalc((item.y >= 1 ? item.y : 1));
+                
                 const element = this._createFullElement('div', { 
                     id: (item.id ?? this._generateUUID()),
-                    style:` top:${this._zoomVal(item.y)}px; left:${this._zoomVal(item.x)}px; width:${width}px; height:${height}px; overflow: hidden;`, 
+                    style:` top:${positionY}px; left:${positionX}px; width:${width}px; height:${height}px; z-index:${item.index ?? 1};`, 
                     class:'item d-flex align-items-center justify-content-center',
-                    equivalencey:`${(item.ly/height)}`,
-                    equivalencex:`${(item.lx/width)}`,
-                    lx: item.lx,
-                    ly: item.ly,
+                    equivalencely:`${(item.ly/height)}`,
+                    equivalencelx:`${(item.lx/width)}`,
+                    equivalencex: `${this._parseInt((item.x >= 1 ? item.x : 1)/positionX)}`,
+                    equivalencey: `${this._parseInt((item.y >= 1 ? item.y : 1)/positionY)}`,
                     locked: this._parseBool(item.locked),
                     sizable: this._parseBool(item.sizable),
-                    title:`Size: ${item.lx.toFixed(2)}${this.unit} x ${item.ly.toFixed(2)}${this.unit}, X: ${item.x}, Y: ${item.y}`
+                    title:`Size: ${item.lx.toFixed(2)}${this.unit} x ${item.ly.toFixed(2)}${this.unit}, X: ${item.x.toFixed(2)}, Y: ${item.y.toFixed(2)}`
                 });
 
                 element.innerHTML = (item.html ?? '');
-                element.style.backgroundColor = (item['background-color'] ?? '#FFF')
+                element.style.backgroundColor = (item['background-color'] ?? 'transparent')
                 element.style.color = (item['color'] ?? '#000');
-                //element.style.backgroundImage = 'url(https://png.pngtree.com/thumb_back/fh260/background/20200714/pngtree-modern-double-color-futuristic-neon-background-image_351866.jpg)';
 
-                const captionsCntnr = this._createFullElement('div', { class:'caption-container d-flex gap-2 flex-column bg-transparent p-1' });
-                const captHeadCntnr = this._createFullElement('div', { class:'d-flex w-100' });
-                const captBodyCntnr = this._createFullElement('div', { class:'d-flex flex-column gap-1 w-100 grow-1 wrap' });
-                const captFootCntnr = this._createFullElement('div', { class:'d-flex w-100' });
-
-                const captA = this._createFullElement('small', { class:'grow-1' });
-                const captB = this._createFullElement('small');
-                const captC = this._createFullElement('small', { class:'grow-1' });
-                const captD = this._createFullElement('small');
-                const captT = this._createFullElement('h4', { class:'w-100' });
-                const captS = this._createFullElement('span', { class:'grow-1' });
-
-                captHeadCntnr.appendChild(captA);
-                captHeadCntnr.appendChild(captB);
-                captFootCntnr.appendChild(captC);
-                captFootCntnr.appendChild(captD);
-                captBodyCntnr.appendChild(captT);
-                captBodyCntnr.appendChild(captS);
-
-                captA.textContent = (item['caption-a'] ?? '');
-                captB.textContent = (item['caption-b'] ?? '');
-                captC.textContent = (item['caption-c'] ?? '');
-                captD.textContent = (item['caption-d'] ?? '');
-                captT.textContent = (item['title'] ?? '');
-                captS.textContent = (item['subtitle'] ?? '');
-
-                captionsCntnr.appendChild(captHeadCntnr);
-                captionsCntnr.appendChild(captBodyCntnr);
-                captionsCntnr.appendChild(captFootCntnr);
-
-                //element.appendChild(captionsCntnr);
+                if (item['background-image'] && item['background-image'].trim() != '' )
+                    element.style.backgroundImage = `url(${item['background-image']})`;
 
                 this._ccanva.appendChild(element);
             });
@@ -542,10 +555,11 @@ class OpCanva extends HTMLElement
     {
         return this.fit;
     }
-    setLXY=(lx,ly)=>
+    setLXY=(lx,ly, refreshView = true)=>
     {
         this.lx = this._parseInt(lx, this.lx);
         this.ly = this._parseInt(ly, this.ly);
+        if (refreshView) this._refreshView();
     }
     getLX=()=>
     {

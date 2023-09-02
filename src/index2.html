@@ -9,7 +9,7 @@
     <title>Induxsoft Web Components</title>
 </head>
 <body style="font-family: monospace;display: flex; flex-direction: column; max-height: 100vh; flex-wrap: wrap; align-content: start;">
-    <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD; padding-bottom: 32px; margin:4px;">
+    <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD;border-radius: 5px; padding-bottom: 32px; margin:4px;">
         <h3>Edit Select</h3>
         <!--
             [PARAMS: edit-select]
@@ -25,7 +25,7 @@
             <option >Opción 4</option>
         </edit-select>
     </div>
-    <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD; padding-bottom: 32px; margin:4px;">
+    <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD;border-radius: 5px; padding-bottom: 32px; margin:4px;">
         <h3>Input Key</h3>
         <!--
             [PARAMS: input-key]
@@ -53,6 +53,12 @@
             - @key                  (opcional): Valor (data-key) del registro seleccionado
             - @text                 (opcional): Descripción (data-text) del registro seleccionado
         -->
+        <styles-manager css="bootstrap4.css" id="styles1">
+            <web-component type="input-key" >
+                <class-element type="input1" class="formcontrols" style="background-color: #DDD;"/>
+            </web-componet>
+        </styles-manager>
+
         <input-key 
             id="micontrol2"
             name="cliente"
@@ -72,10 +78,13 @@
             box-nodata-text="No se encontraron clientes"
             disabled="false"
             required="true"
+            styles-manager="styles1"
+            class-input1="formcontrols"
             control-styles="">
+            
         </input-key>
     </div>
-    <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD; padding-bottom: 32px; margin:4px;">
+    <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD;border-radius: 5px; padding-bottom: 32px; margin:4px;">
         <h3>Check List</h3>
         <!--
             [PARAMS: check-list]
@@ -99,7 +108,7 @@
             can-check="true"
         />
     </div>
-    <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD; padding-bottom: 32px; margin:4px; min-height: 35vh;">
+    <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD;border-radius: 5px; padding-bottom: 32px; margin:4px; min-height: 35vh;">
         <h3>Stack Edit</h3>
         <!--
             [PARAMS: stack-edit]
@@ -130,10 +139,10 @@
             data='[{"a":"01-01-2001","b":"Activo","c":"Verde","d":"Uno","title":"Item Verde","subtitle":"Este es un item de color Verde"}]'
         />
     </div>
-    <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD; padding-bottom: 32px; margin:4px;">
+    <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD;border-radius: 5px; padding-bottom: 32px; margin:4px;">
         <div style="display: flex; gap: 8px; padding: 1rem 0; align-items: center;">
             <h3 style="margin: 0;">Edit Table</h3>
-            <button onclick="document.querySelector('#micontrol5').AddRow();" style="color: #888;background-color:#FFF;border:none;outline:1px solid #DDD;padding:4px 8px;cursor:pointer;">+</button>
+            <button onclick="document.querySelector('#micontrol5').AddRow();" style="color: #888;">+</button>
         </div>
         <div style="max-height: 30vh; display: flex;">
             <!--
@@ -161,32 +170,121 @@
             </edit-table>
         </div>
     </div>
-    <div style="max-width: 40rem; padding: 8px 16px; border: 1px solid #DDD; padding-bottom: 32px; margin:4px;">
+    <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD;border-radius: 5px; padding-bottom: 32px; margin:4px;">
         <h3>Op Canva</h3>
         <div style="height: 40vh; display: flex;">
             <op-canva
                 id="micontrol6"
                 scale="354"
                 dpi="96"
-                zoom="100"
+                zoom="110"
                 design="true"
                 unit="cm"
                 fit="1"
                 lx="5000"
                 ly="2500"
                 background-color="#F5F5F5"
-                background-pic=""
-                data='[{"x":100,"y":100,"lx":2000,"ly":1000,"id":"556d852dbee9486ab432eb04411a2df5","overlapping":false,"locked":false,"sizable":true,"html":"<h4>HTML1</h4>","title":"My Title1","subtitle":"Subtitle text1","caption-a":"A1","caption-b":"B1","caption-c":"C1","caption-d":"D1","background-color":"","background-image":"","color":"#000"},
+                background-pic="https://images.vexels.com/media/users/3/158250/isolated/preview/6979f96bd8c12732ca0b21f9d784e885-diseno-de-cuadricula-de-puntos-cuadrados.png"
+                data='[{"x":100,"y":100,"lx":2000,"ly":1000,"id":"556d852dbee9486ab432eb04411a2df5","overlapping":false,"locked":false,"sizable":true,"html":"<h4>HTML1</h4>","title":"My Title1","subtitle":"Subtitle text1","caption-a":"A1","caption-b":"B1","caption-c":"C1","caption-d":"D1","background-color":"","background-image":"https://cdn-icons-png.flaticon.com/256/6544/6544002.png","color":"#000"},
                 {"x":1500,"y":1500,"lx":1500,"ly":800,"id":"556d852dbee9486ab432eb04411a2df6","overlapping":false,"locked":false,"sizable":true,"html":"<h4>HTML2</h4>","title":"My Title2","subtitle":"Subtitle text2","caption-a":"A2","caption-b":"B2","caption-c":"C2","caption-d":"D2","background-color":"#FFF","color":"red"}]'>
             </op-canva>
         </div>
     </div>
-    
+    <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD;border-radius: 5px; padding-bottom: 32px; margin:4px;">
+        <style>
+            .induxsoft-formcontrols {
+                border: none;
+                outline: 1px solid #ced4da;
+                display: block;
+                width: 100%;
+                padding: 0.375rem 0.75rem;
+                font-size: 1rem;
+                font-weight: 400;
+                line-height: 1.5;
+                color: #212529;
+                background-color: #fff;
+                background-clip: padding-box;
+                appearance: none;
+                transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            }
+            .induxsoft-formcontrols:disabled,
+            .induxsoft-formcontrols[readonly] {
+                background-color: #e9ecef;
+                opacity: 1;
+            }
+            .induxsoft-buttons {
+                display: inline-block;
+                font-weight: 400;
+                line-height: 1.5;
+                color: #212529;
+                text-align: center;
+                text-decoration: none;
+                vertical-align: middle;
+                cursor: pointer;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                user-select: none;
+                background-color: #FFF;
+                outline: 1px solid #ced4da;
+                border: none;
+                padding: 0.375rem 0.75rem;
+                font-size: 1rem;
+                transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            }
+            .induxsoft-buttons:hover {
+                color: #212529;
+                background-color: #F5F5F5;
+            }
+            .induxsoft-formselect {
+                display: block;
+                width: 100%;
+                padding: 0.375rem 2.25rem 0.375rem 0.75rem;
+                -moz-padding-start: calc(0.75rem - 3px);
+                font-size: 1rem;
+                font-weight: 400;
+                line-height: 1.5;
+                color: #212529;
+                background-color: #fff;
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+                background-repeat: no-repeat;
+                background-position: right 0.75rem center;
+                background-size: 16px 12px;
+                border: none;
+                outline: 1px solid #ced4da;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+            }
+            .induxsoft-formlabels {
+                margin-bottom: 0.5rem;
+            }
+        </style>
+
+        <h3>Inputs</h3>
+        <div>
+            <label class="induxsoft-formlabels">Inputs</label>
+            <input class="induxsoft-formcontrols" type="text" placeholder="Placeholder">
+            <input class="induxsoft-formcontrols" type="checkbox" name="" id="">
+            <input class="induxsoft-formcontrols" type="color" name="" id="">
+            <input class="induxsoft-formcontrols" type="file" name="" id="">
+            <input class="induxsoft-formcontrols" type="search" name="" id="" value="Search">
+            <input class="induxsoft-formcontrols" type="password" name="" id="" value="Password">
+            <input class="induxsoft-formcontrols" type="radio" name="" id="">
+            <input class="induxsoft-formcontrols" type="range" name="" id="">
+            <input class="induxsoft-formcontrols" type="week" name="" id="">
+            <input class="induxsoft-formcontrols" type="date">
+            <input class="induxsoft-formcontrols" type="number" value="0">
+            <textarea class="induxsoft-formcontrols" name="" id="" cols="30" rows="10">Textarea</textarea>
+            <select class="induxsoft-formselect" name="" id="">
+                <option value="1">1</option>
+                <option value="2">2</option>
+            </select>
+            <input class="induxsoft-buttons" type="submit" value="Botón">
+        </div>
+    </div>
     <style>
         @media screen and (max-width: 600px) {
             body{ flex-wrap: nowrap !important; }
         }
     </style>
-
 </body>
-</html>

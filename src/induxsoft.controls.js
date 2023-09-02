@@ -45,6 +45,8 @@ class EditSelect extends HTMLElement
             this.select = document.createElement('select');
             this.inputh = document.createElement('input');
 
+            this.select.classList.add('induxsoft-formselect');
+
             this.inputh.setAttribute('type', 'hidden');
             this.inputh.setAttribute('name', (this.getAttribute('name')??''));
 
@@ -58,6 +60,7 @@ class EditSelect extends HTMLElement
             //=============== Input manual
 
             this.manualInput = document.createElement('input');
+            this.manualInput.classList.add('induxsoft-formcontrols');
             this.manualInput.setAttribute('placeholder', textIndicatorManual);
 
             //=============== Events
@@ -99,7 +102,19 @@ class EditSelect extends HTMLElement
                 <style>
                     div{ position: relative !important; }
                     select{ width: 100% !important; padding: 4px 8px !important; }
-                    input{ position: absolute !important; z-index: -1; left: 10px; top: 5px; width:90%; border: none !important; outline: none !important;}
+                    input{ position: absolute !important; z-index: -1; left: 0; top: 0; width:85% !important; height: 60% !important; border: none !important; outline: none !important;}
+                    
+                    .induxsoft-formcontrols{border: none; outline:1px solid #ced4da;display: block;width: 100%;padding: 0.375rem 0.75rem;font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-clip: padding-box;appearance: none;transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+                    }
+                    .induxsoft-formcontrols:disabled, .induxsoft-formcontrols[readonly] {background-color: #e9ecef;opacity: 1;
+                    }
+                    .induxsoft-buttons{display: inline-block;font-weight: 400;line-height: 1.5;color: #212529;text-align: center;text-decoration: none;vertical-align: middle;cursor: pointer;-webkit-user-select: none;-moz-user-select: none;user-select: none;background-color: #FFF;outline:1px solid #ced4da;border: none;padding: 0.375rem 0.75rem;font-size: 1rem;transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+                    }
+                    .induxsoft-buttons:hover{color: #212529;background-color: #F5F5F5;
+                    }
+                    .induxsoft-formselect {display: block;width: 100%;padding: 0.375rem 2.25rem 0.375rem 0.75rem;-moz-padding-start: calc(0.75rem - 3px);font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");background-repeat: no-repeat;background-position: right 0.75rem center;background-size: 16px 12px;border: none;outline:1px solid #ced4da;-webkit-appearance: none;-moz-appearance: none;appearance: none;
+                    }
+                    
                     ` + (this.getAttribute('control-styles') ?? '') + `
                 </style>
             `;
@@ -212,13 +227,13 @@ class InputKey extends HTMLElement
             this.inputv = this.createFullElement('input', {id:'inputv', type:'text', value:`${this.getAttribute('value')??''}`, name:`${this.getAttribute('name')}`, style:'opacity: 0 !important;width: 1px !important; height:1px !important; border:none !important; outline:none !important; box-shadow:none !important; padding:0 !important; margin: 0 !important; pointer-events: none !important; background-color: transparent !important; position:relative !important; display:block !important; top:-15px !important;'});
             const container = this.createFullElement('div', {id:'container'});
             const search_container = this.createFullElement('div', {id:'search_container'});
-            this.input_search_container = this.createFullElement('input', {id:'input_search_container', type:'text'});
-            const button_search_container = this.createFullElement('button', {id:'button_search_container', type:'button', class:'hover-gray btn-sm', title:'Buscar'});
+            this.input_search_container = this.createFullElement('input', {id:'input_search_container', type:'text', class:'form-control induxsoft-formcontrols'});
+            const button_search_container = this.createFullElement('button', {id:'button_search_container', type:'button', class:'induxsoft-buttons', title:'Buscar'});
             const description_container = this.createFullElement('div', {id:'description_container'});
-            this.input_description_container = this.createFullElement('input', {id:'input_description_container', type:'text', readonly:'readonly'});
-            const button_add_container = this.createFullElement('button', {id:'button_add_container', type:'button', class:'hover-gray btn-sm', title:'Agregar'});
-            const button_edit_container = this.createFullElement('button', {id:'button_edit_container', type:'button', class:'hover-gray btn-sm', title:'Editar'});
-            const button_clear_container = this.createFullElement('button', {id:'button_clear_container', type:'button', class:'hover-gray btn-sm', title:'Limpiar'});
+            this.input_description_container = this.createFullElement('input', {id:'input_description_container', type:'text', readonly:'readonly', class:'induxsoft-formcontrols'});
+            const button_add_container = this.createFullElement('button', {id:'button_add_container', type:'button', class:'induxsoft-buttons', title:'Agregar'});
+            const button_edit_container = this.createFullElement('button', {id:'button_edit_container', type:'button', class:'induxsoft-buttons', title:'Editar'});
+            const button_clear_container = this.createFullElement('button', {id:'button_clear_container', type:'button', class:'induxsoft-buttons', title:'Limpiar'});
 
             container.classList.toggle('disable-element', ((this.getAttribute('disabled')??'') === 'true'));
             this.inputv.required = ((this.getAttribute('required') ?? 'false') === 'true');
@@ -246,7 +261,7 @@ class InputKey extends HTMLElement
             const header_section_container2 = this.createFullElement('div', {id:'header_section_container2', class:'d-flex modal-section modal-section-header'});
             const search_section_container2 = this.createFullElement('div', {id:'search_section_container2', class:'d-flex p-2 modal-section'});
             const tables_section_container2 = this.createFullElement('div', {id:'tables_section_container2', class:'grow-1 modal-section overflow'});
-            const footer_section_container2 = this.createFullElement('div', {class:'bg-gray d-flex gap-1 justify-content-end p-2 modal-section'});
+            const footer_section_container2 = this.createFullElement('div', {class:'bg-light-gray d-flex gap-1 justify-content-end p-2 modal-section'});
 
             // header section
             const title_header_container2 = this.createFullElement('p', {id:'title_container2', class:'text-secondary grow-1'});
@@ -257,8 +272,8 @@ class InputKey extends HTMLElement
             header_section_container2.appendChild(close_header_container2);
 
             // search section
-            const button_search_container2 = this.createFullElement('button', {type:'button',class:'p-2 border-0 border-1 hover-gray'});
-            this.input_search_container2 = this.createFullElement('input', {type:'text', class:'grow-1 p-2 border-0 border-1'});
+            const button_search_container2 = this.createFullElement('button', {type:'button',class:'p-2 induxsoft-buttons'});
+            this.input_search_container2 = this.createFullElement('input', {type:'text', class:'grow-1 induxsoft-formcontrols'});
             button_search_container2.textContent = 'Buscar';
             this.input_search_container2.setAttribute('placeholder', (this.getAttribute('box-placeholder-text') ?? 'Buscar...'));
             search_section_container2.appendChild(this.input_search_container2);
@@ -274,8 +289,8 @@ class InputKey extends HTMLElement
             tables_section_container2.appendChild(this.table_tables_container2);
 
             // footer section
-            this.accept_footer_container2 = this.createFullElement('button', {type:'button',class:'p-2'});
-            const close2_footer_container2 = this.createFullElement('button', {id:'close2_container2', type:'button', class:'p-2'});
+            this.accept_footer_container2 = this.createFullElement('button', {type:'button',class:'induxsoft-buttons'});
+            const close2_footer_container2 = this.createFullElement('button', {id:'close2_container2', type:'button', class:'induxsoft-buttons'});
             this.accept_footer_container2.textContent = 'Aceptar';
             close2_footer_container2.textContent = 'Cancelar';
             footer_section_container2.appendChild(this.accept_footer_container2);
@@ -471,7 +486,6 @@ class InputKey extends HTMLElement
                     #container{ display: grid; grid-template-columns: 40% 60%; }
                     #search_container, #description_container{ display: flex; padding:0 4px;}
                     #input_search_container, #input_description_container{ padding: 4px 8px; width: 100%; }
-                    #input_search_container, #input_description_container{ border: none; outline:1px solid #888; }
 
                     /* ========== 2 Section */
                     #table_tables_container2{width:100%;border-spacing: 0;}
@@ -484,6 +498,17 @@ class InputKey extends HTMLElement
 
                     @media screen and (max-width:600px) {
                         #search_container2{width: 100%;}
+                    }
+
+                    .induxsoft-formcontrols{border: none; outline:1px solid #ced4da;display: block;width: 100%;padding: 0.375rem 0.75rem;font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-clip: padding-box;appearance: none;transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+                    }
+                    .induxsoft-formcontrols:disabled, .induxsoft-formcontrols[readonly] {background-color: #e9ecef;opacity: 1;
+                    }
+                    .induxsoft-buttons{display: inline-block;font-weight: 400;line-height: 1.5;color: #212529;text-align: center;text-decoration: none;vertical-align: middle;cursor: pointer;-webkit-user-select: none;-moz-user-select: none;user-select: none;background-color: #FFF;outline:1px solid #ced4da;border: none;padding: 0.375rem 0.75rem;font-size: 1rem;transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+                    }
+                    .induxsoft-buttons:hover{color: #212529;background-color: #F5F5F5;
+                    }
+                    .induxsoft-formselect {display: block;width: 100%;padding: 0.375rem 2.25rem 0.375rem 0.75rem;-moz-padding-start: calc(0.75rem - 3px);font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");background-repeat: no-repeat;background-position: right 0.75rem center;background-size: 16px 12px;border: none;outline:1px solid #ced4da;-webkit-appearance: none;-moz-appearance: none;appearance: none;
                     }
 
                     ` + (this.getAttribute('control-styles') ?? '') + `
@@ -848,7 +873,7 @@ class CheckList extends HTMLElement
             this.canCheck =     this._parseBool(this.getAttribute('can-check'), true);
             this.showPercents = this._parseBool(this.getAttribute('show-percents'));
 
-            this._containerwc = this._createFullElement('div', { id:'CL_container', class:'bordered d-flex flex-column rounded' });
+            this._containerwc = this._createFullElement('div', { id:'CL_container', class:'bordered d-flex flex-column' });
             this._headSection = this._createFullElement('div', { id:'CL_headerSection', class:'p-3 d-flex' });
             this._bodySection = this._createFullElement('div', { id:'CL_bodySection', class:'grow-1' });
             this._footSection = this._createFullElement('div', { id:'CL_footSection'});
@@ -1057,7 +1082,7 @@ class CheckList extends HTMLElement
             const movItem = this._createFullElement('button', { class: 'movItem noborder', style: 'background: transparent;', draggable: 'true' });
             const chkItem = this._createFullElement('input', { type:'checkbox' });
             const txtItem = this._createFullElement('input', { type:'text', class:'p-2 noborder w-100 bg-transparent'});
-            const delItem = this._createFullElement('button', { class:'delItem noborder rounded-50 bg-transparent d-flex align-items-center justify-content-center' });
+            const delItem = this._createFullElement('button', { class:'delItem noborder bg-transparent d-flex align-items-center justify-content-center' });
             const childIcon = this._createFullElement('div', { style:'position:absolute; top: 5px; left: 2px;', class:'hide-element'});
             
             childIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#005CC8" class="bi bi-arrow-right-short" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"/></svg>`;
