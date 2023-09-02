@@ -62,7 +62,7 @@ class OpCanva extends HTMLElement
             const zoomTitle = this._createFullElement('h5', { id:'OpCanva_zoomTitle', class:'text-secondary' });
             const zoomCntrl = this._createFullElement('div', { id:'OpCanva_zoomCntrl', class:'d-flex align-items-center w-100 gap-1' });
             const zoomRange = this._createFullElement('input', { id:'OpCanva_zoomRange', type:'range', min:5, max:500, class:'w-100' });
-            const zoomInput = this._createFullElement('input', { id:'OpCanva_zoomInput', type:'number', min:5, max:500, class:'induxsoft-formcontrols p-1' });
+            const zoomInput = this._createFullElement('input', { id:'OpCanva_zoomInput', type:'number', min:5, max:500, class:'induxsoft-form-control p-1' });
             zoomTitle.textContent = 'Zoom:';
             zoomRange.value = this.zoom;
             zoomInput.value = this.zoom;
@@ -74,7 +74,7 @@ class OpCanva extends HTMLElement
             const scalCntnr = this._createFullElement('div', { id:'OpCanva_scalContnr', class:'d-flex align-items-center wrap outline grow-1 p-1' });
             const scalTitle = this._createFullElement('h5', { id:'OpCanva_scalTitle', class:'text-secondary' });
             const scalCntrl = this._createFullElement('div', { id:'OpCanva_scalCntrl', class:'d-flex align-items-center w-100 gap-1' });
-            const scalInput = this._createFullElement('input', { id:'OpCanva_scalInput', type:'number', class:'induxsoft-formcontrols p-1' });
+            const scalInput = this._createFullElement('input', { id:'OpCanva_scalInput', type:'number', class:'induxsoft-form-control p-1' });
             scalTitle.textContent = 'Scale:';
             scalInput.value = this.scale;
             scalCntrl.appendChild(scalInput);
@@ -84,7 +84,7 @@ class OpCanva extends HTMLElement
             const dpiCntnr = this._createFullElement('div', { id:'OpCanva_dpiContnr', class:'d-flex align-items-center wrap outline grow-1 p-1' });
             const dpiTitle = this._createFullElement('h5', { id:'OpCanva_dpiTitle', class:'text-secondary' });
             const dpiCntrl = this._createFullElement('div', { id:'OpCanva_dpiCntrl', class:'d-flex align-items-center w-100 gap-1' });
-            const dpiInput = this._createFullElement('input', { id:'OpCanva_dpiInput', type:'number', class:'induxsoft-formcontrols p-1' });
+            const dpiInput = this._createFullElement('input', { id:'OpCanva_dpiInput', type:'number', class:'induxsoft-form-control p-1' });
             dpiTitle.textContent = 'DPI:';
             dpiInput.value = this.dpi;
             dpiCntrl.appendChild(dpiInput);
@@ -94,7 +94,7 @@ class OpCanva extends HTMLElement
             const fitCntnr = this._createFullElement('div', { id:'OpCanva_fitContnr', class:'d-flex align-items-center wrap outline grow-1 p-1' });
             const fitTitle = this._createFullElement('h5', { id:'OpCanva_fitTitle', class:'text-secondary' });
             const fitCntrl = this._createFullElement('div', { id:'OpCanva_fitCntrl', class:'d-flex align-items-center w-100 gap-1' });
-            const fitInput = this._createFullElement('input', { id:'OpCanva_fitInput', type:'number', step:0.1, class:'induxsoft-formcontrols p-1' });
+            const fitInput = this._createFullElement('input', { id:'OpCanva_fitInput', type:'number', step:0.1, class:'induxsoft-form-control p-1' });
             fitTitle.textContent = 'Fit:';
             fitInput.value = this.fit;
             fitCntrl.appendChild(fitInput);
@@ -104,7 +104,7 @@ class OpCanva extends HTMLElement
             const unitCntnr = this._createFullElement('div', { id:'OpCanva_unitCntnr', class:'d-flex align-items-center wrap outline grow-1 p-1' });
             const unitTitle = this._createFullElement('h5', { id:'OpCanva_unitTitle', class:'text-secondary' });
             const unitCntrl = this._createFullElement('div', { id:'OpCanva_unitCntrl', class:'d-flex align-items-center w-100 gap-1' });
-            const unitSlect = this._createFullElement('select', { id:'OpCanva_unitSlect', class:'induxsoft-formselect p-1' });
+            const unitSlect = this._createFullElement('select', { id:'OpCanva_unitSlect', class:'induxsoft-form-select p-1' });
             unitTitle.textContent = 'Unit:';
             this.unitSymbols.forEach(unitOpt => {
                 const option = this._createFullElement('option', { value:unitOpt });
@@ -184,11 +184,11 @@ class OpCanva extends HTMLElement
                     .move-point:active, .move-point:hover{ background-color: #FFF; outline: 1px solid #CCC; }
                     .caption-container{ position: absolute; top: 0; left: 0; height: 100%; width: 100%; font-size: 1em; }
 
-                    .induxsoft-formcontrols{border: none; outline:1px solid #ced4da;display: block;width: 100%;padding: 0.375rem 0.75rem;font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-clip: padding-box;appearance: none;transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+                    .induxsoft-form-control{border: none; outline:1px solid #ced4da;display: block;width: 100%;padding: 0.375rem 0.75rem !important;font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-clip: padding-box;appearance: none;transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
                     }
-                    .induxsoft-formcontrols:disabled, .induxsoft-formcontrols[readonly] {background-color: #e9ecef;opacity: 1;
+                    .induxsoft-form-control:disabled, .induxsoft-form-control[readonly] {background-color: #e9ecef;opacity: 1;
                     }
-                    .induxsoft-formselect {display: block;width: 100%;padding: 0.375rem 2.25rem 0.375rem 0.75rem;-moz-padding-start: calc(0.75rem - 3px);font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");background-repeat: no-repeat;background-position: right 0.75rem center;background-size: 16px 12px;border: none;outline:1px solid #ced4da;-webkit-appearance: none;-moz-appearance: none;appearance: none;
+                    .induxsoft-form-select {display: block;width: 100%;padding: 0.375rem 2.25rem 0.375rem 0.75rem !important;-moz-padding-start: calc(0.75rem - 3px);font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");background-repeat: no-repeat;background-position: right 0.75rem center;background-size: 16px 12px;border: none;outline:1px solid #ced4da;-webkit-appearance: none;-moz-appearance: none;appearance: none;
                     }
                 </style>
             `;

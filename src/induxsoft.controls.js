@@ -45,7 +45,7 @@ class EditSelect extends HTMLElement
             this.select = document.createElement('select');
             this.inputh = document.createElement('input');
 
-            this.select.classList.add('induxsoft-formselect');
+            this.select.classList.add('induxsoft-form-select');
 
             this.inputh.setAttribute('type', 'hidden');
             this.inputh.setAttribute('name', (this.getAttribute('name')??''));
@@ -60,7 +60,7 @@ class EditSelect extends HTMLElement
             //=============== Input manual
 
             this.manualInput = document.createElement('input');
-            this.manualInput.classList.add('induxsoft-formcontrols');
+            this.manualInput.classList.add('induxsoft-form-control');
             this.manualInput.setAttribute('placeholder', textIndicatorManual);
 
             //=============== Events
@@ -104,15 +104,15 @@ class EditSelect extends HTMLElement
                     select{ width: 100% !important; padding: 4px 8px !important; }
                     input{ position: absolute !important; z-index: -1; left: 0; top: 0; width:85% !important; height: 60% !important; border: none !important; outline: none !important;}
                     
-                    .induxsoft-formcontrols{border: none; outline:1px solid #ced4da;display: block;width: 100%;padding: 0.375rem 0.75rem;font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-clip: padding-box;appearance: none;transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+                    .induxsoft-form-control{border: none; outline:1px solid #ced4da;display: block;width: 100%;padding: 0.375rem 0.75rem !important;font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-clip: padding-box;appearance: none;transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
                     }
-                    .induxsoft-formcontrols:disabled, .induxsoft-formcontrols[readonly] {background-color: #e9ecef;opacity: 1;
+                    .induxsoft-form-control:disabled, .induxsoft-form-control[readonly] {background-color: #e9ecef;opacity: 1;
                     }
                     .induxsoft-buttons{display: inline-block;font-weight: 400;line-height: 1.5;color: #212529;text-align: center;text-decoration: none;vertical-align: middle;cursor: pointer;-webkit-user-select: none;-moz-user-select: none;user-select: none;background-color: #FFF;outline:1px solid #ced4da;border: none;padding: 0.375rem 0.75rem;font-size: 1rem;transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
                     }
                     .induxsoft-buttons:hover{color: #212529;background-color: #F5F5F5;
                     }
-                    .induxsoft-formselect {display: block;width: 100%;padding: 0.375rem 2.25rem 0.375rem 0.75rem;-moz-padding-start: calc(0.75rem - 3px);font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");background-repeat: no-repeat;background-position: right 0.75rem center;background-size: 16px 12px;border: none;outline:1px solid #ced4da;-webkit-appearance: none;-moz-appearance: none;appearance: none;
+                    .induxsoft-form-select {display: block;width: 100%;padding: 0.375rem 2.25rem 0.375rem 0.75rem !important;-moz-padding-start: calc(0.75rem - 3px);font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");background-repeat: no-repeat;background-position: right 0.75rem center;background-size: 16px 12px;border: none;outline:1px solid #ced4da;-webkit-appearance: none;-moz-appearance: none;appearance: none;
                     }
                     
                     ` + (this.getAttribute('control-styles') ?? '') + `
@@ -227,10 +227,10 @@ class InputKey extends HTMLElement
             this.inputv = this.createFullElement('input', {id:'inputv', type:'text', value:`${this.getAttribute('value')??''}`, name:`${this.getAttribute('name')}`, style:'opacity: 0 !important;width: 1px !important; height:1px !important; border:none !important; outline:none !important; box-shadow:none !important; padding:0 !important; margin: 0 !important; pointer-events: none !important; background-color: transparent !important; position:relative !important; display:block !important; top:-15px !important;'});
             const container = this.createFullElement('div', {id:'container'});
             const search_container = this.createFullElement('div', {id:'search_container'});
-            this.input_search_container = this.createFullElement('input', {id:'input_search_container', type:'text', class:'form-control induxsoft-formcontrols'});
+            this.input_search_container = this.createFullElement('input', {id:'input_search_container', type:'text', class:'form-control induxsoft-form-control'});
             const button_search_container = this.createFullElement('button', {id:'button_search_container', type:'button', class:'induxsoft-buttons', title:'Buscar'});
             const description_container = this.createFullElement('div', {id:'description_container'});
-            this.input_description_container = this.createFullElement('input', {id:'input_description_container', type:'text', readonly:'readonly', class:'induxsoft-formcontrols'});
+            this.input_description_container = this.createFullElement('input', {id:'input_description_container', type:'text', readonly:'readonly', class:'induxsoft-form-control'});
             const button_add_container = this.createFullElement('button', {id:'button_add_container', type:'button', class:'induxsoft-buttons', title:'Agregar'});
             const button_edit_container = this.createFullElement('button', {id:'button_edit_container', type:'button', class:'induxsoft-buttons', title:'Editar'});
             const button_clear_container = this.createFullElement('button', {id:'button_clear_container', type:'button', class:'induxsoft-buttons', title:'Limpiar'});
@@ -273,7 +273,7 @@ class InputKey extends HTMLElement
 
             // search section
             const button_search_container2 = this.createFullElement('button', {type:'button',class:'p-2 induxsoft-buttons'});
-            this.input_search_container2 = this.createFullElement('input', {type:'text', class:'grow-1 induxsoft-formcontrols'});
+            this.input_search_container2 = this.createFullElement('input', {type:'text', class:'grow-1 induxsoft-form-control'});
             button_search_container2.textContent = 'Buscar';
             this.input_search_container2.setAttribute('placeholder', (this.getAttribute('box-placeholder-text') ?? 'Buscar...'));
             search_section_container2.appendChild(this.input_search_container2);
@@ -500,15 +500,15 @@ class InputKey extends HTMLElement
                         #search_container2{width: 100%;}
                     }
 
-                    .induxsoft-formcontrols{border: none; outline:1px solid #ced4da;display: block;width: 100%;padding: 0.375rem 0.75rem;font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-clip: padding-box;appearance: none;transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+                    .induxsoft-form-control{border: none; outline:1px solid #ced4da;display: block;width: 100%;padding: 0.375rem 0.75rem !important;font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-clip: padding-box;appearance: none;transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
                     }
-                    .induxsoft-formcontrols:disabled, .induxsoft-formcontrols[readonly] {background-color: #e9ecef;opacity: 1;
+                    .induxsoft-form-control:disabled, .induxsoft-form-control[readonly] {background-color: #e9ecef;opacity: 1;
                     }
                     .induxsoft-buttons{display: inline-block;font-weight: 400;line-height: 1.5;color: #212529;text-align: center;text-decoration: none;vertical-align: middle;cursor: pointer;-webkit-user-select: none;-moz-user-select: none;user-select: none;background-color: #FFF;outline:1px solid #ced4da;border: none;padding: 0.375rem 0.75rem;font-size: 1rem;transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
                     }
                     .induxsoft-buttons:hover{color: #212529;background-color: #F5F5F5;
                     }
-                    .induxsoft-formselect {display: block;width: 100%;padding: 0.375rem 2.25rem 0.375rem 0.75rem;-moz-padding-start: calc(0.75rem - 3px);font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");background-repeat: no-repeat;background-position: right 0.75rem center;background-size: 16px 12px;border: none;outline:1px solid #ced4da;-webkit-appearance: none;-moz-appearance: none;appearance: none;
+                    .induxsoft-form-select {display: block;width: 100%;padding: 0.375rem 2.25rem 0.375rem 0.75rem !important;-moz-padding-start: calc(0.75rem - 3px);font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");background-repeat: no-repeat;background-position: right 0.75rem center;background-size: 16px 12px;border: none;outline:1px solid #ced4da;-webkit-appearance: none;-moz-appearance: none;appearance: none;
                     }
 
                     ` + (this.getAttribute('control-styles') ?? '') + `
