@@ -176,12 +176,12 @@ class OpCanva extends HTMLElement
                     #OpCanva_ccanva{ overflow:hidden; position: relative; border: 4px solid #DDD; background-repeat: no-repeat; background-size: contain; }
                     #OpCanva_cfootr{ width: 100%; display: flex; justify-content: end; flex-wrap: wrap; }
                     #OpCanva_zoomInput,#OpCanva_dpiInput,#OpCanva_fitInput,#OpCanva_unitSlect,#OpCanva_scalInput{ width: 3.5rem; text-align: center; flex-grow: 1; }
-                    .item:hover { outline: 1px solid #000; & .resizer-point, .move-point{ background-color: #FFF; outline: 1px solid #CCC; }}
+                    .item:hover { outline: 1px solid #000; & .resizer-point, .move-point{ background-color: #FFF; color: #888; outline: 1px solid #CCC; }}
                     .item{ position:absolute; background-repeat: no-repeat; background-size: contain; /*outline: 1px solid rgba(180,180,180,.3);*/ }
                     .resizer-point{ width: 10px;height: 10px;background-color: transparent;z-index: 10;position: absolute;right: -5px;bottom: -5px;cursor: crosshair; }
-                    .move-point{ width: 10px;height: 10px;background-color: transparent;z-index: 10;position: absolute; top: -5px; left: -5px; cursor: move; }
+                    .move-point{ width: 70%;height: 10px;background-color: transparent;color:transparent;z-index: 10;position: absolute; top: -5px; left: 15%; cursor: move; }
                     .resizer-point:active,.resizer-point:hover{ background-color: #FFF; outline: 1px solid #CCC; }
-                    .move-point:active, .move-point:hover{ background-color: #FFF; outline: 1px solid #CCC; }
+                    .move-point:active, .move-point:hover{ background-color: #FFF; color: #888; outline: 1px solid #CCC; }
                     .caption-container{ position: absolute; top: 0; left: 0; height: 100%; width: 100%; font-size: 1em; }
 
                     .induxsoft-form-control{border: none; outline:1px solid #ced4da;display: block;width: 100%;padding: 0.375rem 0.75rem !important;font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-clip: padding-box;appearance: none;transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
@@ -235,7 +235,10 @@ class OpCanva extends HTMLElement
             if (!this._parseBool(item.getAttribute('locked')))
             {
                 // Move
-                let movePoint = this._createFullElement('div', { class:'move-point' });
+                let movePoint = this._createFullElement('div', { class:'move-point d-flex align-items-center justify-content-center' });
+                movePoint.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-arrows-move" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M7.646.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 1.707V5.5a.5.5 0 0 1-1 0V1.707L6.354 2.854a.5.5 0 1 1-.708-.708l2-2zM8 10a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 14.293V10.5A.5.5 0 0 1 8 10zM.146 8.354a.5.5 0 0 1 0-.708l2-2a.5.5 0 1 1 .708.708L1.707 7.5H5.5a.5.5 0 0 1 0 1H1.707l1.147 1.146a.5.5 0 0 1-.708.708l-2-2zM10 8a.5.5 0 0 1 .5-.5h3.793l-1.147-1.146a.5.5 0 0 1 .708-.708l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708L14.293 8.5H10.5A.5.5 0 0 1 10 8z"/>
+              </svg>`
                 item.appendChild(movePoint);
 
                 movePoint.addEventListener('mousedown', (e) => {

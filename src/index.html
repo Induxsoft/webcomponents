@@ -161,8 +161,23 @@
             </edit-table>
         </div>
     </div>
-    <div style="max-width: 40rem; padding: 8px 16px; border: 1px solid #DDD; padding-bottom: 32px; margin:4px;">
+    <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD; padding-bottom: 32px; margin:4px;">
         <h3>Op Canva</h3>
+        <!--
+            [PARAMS: op-canva]
+            ----------------------------------------------------------------------------------------------
+            - scale             (opcional) Valor numérico que representa la proporción de las dimensiones reales de un objeto a la representación gráfica del canva (def: 354)
+            - dpi               (opcional) Valor numérico que representa la densidad de pixeles por pulgada en el canva (def: 96)
+            - zoom              (opcional) Valor numérico que define el % de acercamiento o alejamiento de los objetos del canva (def: 100)
+            - design            (opcional) Valor booleano que define si se podrá mover y redimensionar los objetos del canva (def: true)
+            - unit              (opcional) Unidad de medida para representar objetos dentro del canva ["cm","m","in","ft","yd"] (def: cm)
+            - fit               (opcional) Valor numérico que representa el ajuste de posición y tamaño de los objetos del canva (def: 1)
+            - lx                Establece la longitud en 'X' o ancho del canva
+            - ly                Establece la longitud en 'Y' o alto del canva
+            - background-color  (opcional) Color de fondo del canva
+            - background-pic    (opcional) URL de una imagen para visualizarse como el fondo del canva
+            - data              (opcional) Datos de los objetos del canva
+        -->
         <div style="height: 40vh; display: flex;">
             <op-canva
                 id="micontrol6"
@@ -181,7 +196,44 @@
             </op-canva>
         </div>
     </div>
-    
+    <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD; padding-bottom: 32px; margin:4px;">
+        <h3>Date Range</h3>
+        <!--
+            [PARAMS: date-range]
+            ----------------------------------------------------------------------------------------------
+            - hidden-input-name-start   (opcional): Nombre del elemento input que guardará el valor de la fecha inicial
+            - hidden-input-name-end     (opcional): Nombre del elemento input que guardará el valor de la fecha final
+            - start                     (opcional): Fecha inicial en formato: YYYY-mm-dd
+            - end                       (opcional): Fecha final en formato: YYYY-mm-dd
+            - data                      (opcional): Objeto con la información de fecha final e inicial, ej: {"start":"2023-01-01","end":"2023-12-31"}
+        -->
+        <date-range
+            id="micontrol7"
+            hidden-input-name-start="dt_start"
+            hidden-input-name-end="dt_end"
+            start=""
+            end=""
+            data='{"start":"2023-01-01","end":"2023-12-31"}'>
+        </date-range>
+    </div>
+    <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD; padding-bottom: 32px; margin:4px;">
+        <h3>Safe input</h3>
+        <!--
+            [PARAMS: safe-input]
+            ----------------------------------------------------------------------------------------------
+            - type          Tipo de input [text,email,number,textarea,date,time,datetime,select] (def: text)
+            - data-select   (opcional) Objeto de datos clave-valor que establecen las opciones del input cuando es de tipo select, ej: {"val1":"text1", "val2":"text2"}
+            - name          (opcional) Nombre del elemento input
+            - hidden-input  (opcional) Define si se crea un elemento input oculto fuera el web component para ser tomado por formularios o selectores (def: false)
+        -->
+        <safe-input 
+            id="micontrol8"
+            type="text"
+            name="nombre"
+            value="Example value"
+            hidden-input="true">
+        </safe-input>
+    </div>
     <style>
         @media screen and (max-width: 600px) {
             body{ flex-wrap: nowrap !important; }

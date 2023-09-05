@@ -265,9 +265,9 @@ class InputKey extends HTMLElement
 
             // header section
             const title_header_container2 = this.createFullElement('p', {id:'title_container2', class:'text-secondary grow-1'});
-            const close_header_container2 = this.createFullElement('button', {id:'close_header_container2', class:"border-0 p-1 hover-red"});
+            const close_header_container2 = this.createFullElement('button', {id:'close_header_container2', class:"border-0 induxsoft-buttons p-2 d-flex align-items-center justify-content-center hover-red"});
             title_header_container2.textContent = (this.getAttribute('box-title-text') ?? 'Seleccione un Registro');
-            close_header_container2.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#FFF" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/></svg>`;
+            close_header_container2.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#333" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/></svg>`;
             header_section_container2.appendChild(title_header_container2);
             header_section_container2.appendChild(close_header_container2);
 
@@ -504,7 +504,7 @@ class InputKey extends HTMLElement
                     }
                     .induxsoft-form-control:disabled, .induxsoft-form-control[readonly] {background-color: #e9ecef;opacity: 1;
                     }
-                    .induxsoft-buttons{display: inline-block;font-weight: 400;line-height: 1.5;color: #212529;text-align: center;text-decoration: none;vertical-align: middle;cursor: pointer;-webkit-user-select: none;-moz-user-select: none;user-select: none;background-color: #FFF;outline:1px solid #ced4da;border: none;padding: 0.375rem 0.75rem;font-size: 1rem;transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+                    .induxsoft-buttons{font-weight: 400;line-height: 1.5;color: #212529;text-align: center;text-decoration: none;vertical-align: middle;cursor: pointer;-webkit-user-select: none;-moz-user-select: none;user-select: none;background-color: #FFF;outline:1px solid #ced4da;border: none;padding: 0.375rem 0.75rem;font-size: 1rem;transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
                     }
                     .induxsoft-buttons:hover{color: #212529;background-color: #F5F5F5;
                     }
@@ -1796,7 +1796,367 @@ class StackEdit extends HTMLElement
     }
 }
 
+class DateRange extends HTMLElement
+{
+    attributes = null;
+    data = {};
+    onChange = null;
+
+    _iptStr = null;
+    _iptEnd = null;
+    _hiddenInputStr = null;
+    _hiddenInputEnd = null;
+
+    constructor() 
+    {
+        super();
+        document.addEventListener('DOMContentLoaded', () => this.attributes = this.getAttributeNames());
+    }
+
+    static get observedAttributes()
+    {
+        return  attributes;
+    }
+
+    attributeChangeCallback(property, oldValue, newValue)
+    {
+        if (newValue === oldValue) return;
+        this[property] = newValue;
+    }
+
+    connectedCallback()
+    {
+        document.addEventListener('DOMContentLoaded', () => 
+        {
+            const shadow = this.attachShadow({ mode: 'closed' });
+            const contnr = this._createFullElement('div', { id:'DateRange_contnr', class:'w-100 d-flex gap-2 align-items-center justify-content-center'});
+            
+            const cntnr1 = this._createFullElement('div', { id:'DateRange_cntnr1', class:'w-100 d-flex wrap' });
+            const lblStr = this._createFullElement('span', { id:'DateRange_lblStr', class:'induxsoft-form-label text-secondary'});
+            this._iptStr = this._createFullElement('input', { type:'date', id:'DateRange_iptStr', class:'induxsoft-form-control' });
+            lblStr.textContent = 'Fecha inicial:';
+            cntnr1.appendChild(lblStr);
+            cntnr1.appendChild(this._iptStr);
+            contnr.appendChild(cntnr1);
+
+            const cntnr2 = this._createFullElement('div', { id:'DateRange_cntnr2', class:'w-100 d-flex wrap' });
+            const lblEnd = this._createFullElement('span', { id:'DateRange_lblEnd', class:'induxsoft-form-label text-secondary'});
+            this._iptEnd = this._createFullElement('input', { type:'date', id:'DateRange_iptEnd', class:'induxsoft-form-control' });
+            lblEnd.textContent = 'Fecha final:';
+            cntnr2.appendChild(lblEnd);
+            cntnr2.appendChild(this._iptEnd);
+            contnr.appendChild(cntnr2);
+
+            this._iptStr.addEventListener('change', () => {
+                this.data.start = this._iptStr.value;
+                this._refreshDates();
+            });
+            this._iptEnd.addEventListener('change', () => {
+                this.data.end = this._iptEnd.value;
+                this._refreshDates();
+            });
+
+            shadow.innerHTML = `
+                <style>
+                    *{ box-sizing: border-box;margin:0;padding:0; }
+                    .d-flex{ display:flex; }
+                    .wrap{ flex-wrap: wrap; }
+                    .gap-1{gap:4px;} .gap-2{gap:8px;}
+                    .justify-content-start{ justify-content: start; } .justify-content-center{ justify-content: center; } .justify-content-end{ justify-content: end; }
+                    .align-items-start{ align-items: start; } .align-items-center{ align-items: center; } .align-items-end{ align-items: end; }
+                    .grow-1{ flex-grow: 1; }
+                    .w-100{ width: 100%; }
+                    .text-secondary{ color: #888; }
+
+                    .induxsoft-form-control{ border: none; outline: 1px solid #ced4da; display: block; width: 100%; padding: 0.375rem 0.75rem !important; font-size: 1rem; font-weight: 400; line-height: 1.5; color: #212529; background-color: #fff; background-clip: padding-box; appearance: none; transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; }
+                    .induxsoft-form-label{ margin-bottom: 0.5rem; }
+                </style>
+            `
+
+            if (this.hasAttribute('data') && this.getAttribute('data').trim() != '')
+            {
+                try {
+                    this.data = JSON.parse(this.getAttribute('data'));
+                }
+                catch(error) {
+                    alert('El valor del atributo "data" no contiene un formato JSON válido');
+                    this.data = {};
+                }
+            }
+
+            if (this.hasAttribute('start') && this.getAttribute('start').trim() != '')
+                this.data.start = this.getAttribute('start').trim();
+            if (this.hasAttribute('end') && this.getAttribute('end').trim() != '')
+                this.data.end = this.getAttribute('end').trim();
+
+            if (this.hasAttribute('hidden-input-name-start') && this.getAttribute('hidden-input-name-start').trim() != '')
+            {
+                this._hiddenInputStr = this._createFullElement('input', { type:'hidden', name:this.getAttribute('hidden-input-name-start').trim() });
+                this.after(this._hiddenInputStr);
+            }
+            if (this.hasAttribute('hidden-input-name-end') && this.getAttribute('hidden-input-name-end').trim() != '')
+            {
+                this._hiddenInputEnd = this._createFullElement('input', { type:'hidden', name:this.getAttribute('hidden-input-name-end').trim() });
+                this.after(this._hiddenInputEnd);
+            }
+
+            shadow.appendChild(contnr);
+            this._refreshDates();
+        });
+    }
+
+    /**
+     * @param {string} tagName Nombre de etiqueta.
+     * @param {object} attributes Objeto que representan los atributos del elemento, ej: {id:'miElement',class:'mi-element'}
+     * @returns Retorna un **nuevo elemento HTML**
+     */
+    _createFullElement(tagName="div", attributes={})
+    {
+        const elem = document.createElement(tagName);
+        const keys = Object.keys(attributes);
+        keys.forEach(key => elem.setAttribute(key, attributes[key]));
+        return elem;
+    }
+    _refreshDates=()=>
+    {
+        if (this.data && Object.entries(this.data).length > 0)
+        {
+            this._iptStr.value = (this.data.start ?? '');
+            this._iptEnd.value = (this.data.end ?? '');
+            if (this._hiddenInputStr) this._hiddenInputStr.value = (this.data.start ?? '');
+            if (this._hiddenInputEnd) this._hiddenInputEnd.value = (this.data.end ?? '');
+        }
+        else
+        {
+            this._iptStr.value = '';
+            this._iptEnd.value = '';
+            if (this._hiddenInputStr) this._hiddenInputStr.value = '';
+            if (this._hiddenInputEnd) this._hiddenInputEnd.value = '';
+        }
+
+        if (this.onChange) this.onChange(this.data);
+    }
+    setData=(obj)=>
+    {
+        this.data = obj;
+        this._refreshDates();
+    }
+    getData=()=>
+    {
+        return this.data;
+    }
+}
+
+class SafeInput extends HTMLElement
+{
+    attributes = null;
+    _inputTypes = ['text','email','number','textarea','date','time','datetime','select'];
+    _tempValue = '';
+    
+    _inputSf = null;
+    _inputHd = null;
+    _btnEdit = null;
+    _btnDone = null;
+    _btnUndo = null;
+
+    onChanging = null;
+
+    constructor() 
+    {
+        super();
+        document.addEventListener('DOMContentLoaded', () => this.attributes = this.getAttributeNames());
+    }
+
+    static get observedAttributes()
+    {
+        return  attributes;
+    }
+
+    attributeChangeCallback(property, oldValue, newValue)
+    {
+        if (newValue === oldValue) return;
+        this[property] = newValue;
+    }
+
+    connectedCallback()
+    {
+        document.addEventListener('DOMContentLoaded', () => 
+        {
+            const shadow = this.attachShadow({ mode: 'closed' });
+            
+            const contanr = this._createFullElement('div', { id:'SafeInput_contnr', class:'d-flex justify-content-center' });
+            this._btnEdit = this._createFullElement('button', { id:'SafeInput_btnEdit', title:'Edit', class:'induxsoft-buttons d-flex justify-content-center align-items-center' });
+            this._btnDone = this._createFullElement('button', { id:'SafeInput_btnDone', title:'Save', class:'d-none induxsoft-buttons d-flex justify-content-center align-items-center' });
+            this._btnUndo = this._createFullElement('button', { id:'SafeInput_btnUndo', title:'Cancel', class:'d-none induxsoft-buttons d-flex justify-content-center align-items-center' });
+            this._inputSf = this._getProcessInput();
+
+            this._btnEdit.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16"><path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/></svg>`;
+            this._btnDone.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2" viewBox="0 0 16 16"><path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/></svg>`;
+            this._btnUndo.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/></svg>`;
+            this._btnEdit.classList.toggle('disable-element', ((this.getAttribute('disabled')??'') === 'true'));
+            this._inputSf.setAttribute('disabled','true');
+
+
+            this._btnEdit.addEventListener('click', () => {
+                this._startEdit();
+                this._showControlButtons(true);
+            });
+            this._btnDone.addEventListener('click', () => {
+                if (this._cancelChange()) {
+                    this._cancelEdit();
+                }
+                else {
+                    this._showControlButtons(false);
+                    if (this._inputHd) this._inputHd.value = this._inputSf.value;
+                }
+            });
+            this._btnUndo.addEventListener('click', () => {
+                this._cancelEdit();
+                this._showControlButtons(false);
+            });
+
+            const MO = new MutationObserver(()=>{
+                this._btnEdit.classList.toggle('disable-element', ((this.getAttribute('disabled')??'') === 'true'));
+            });
+
+            MO.observe(this, {
+                attributes: true,
+                attributeFilter: ['disabled']
+            });
+
+            shadow.innerHTML = `
+                <style>
+                    *{ box-sizing: border-box;margin:0;padding:0; }
+                    .d-flex{ display:flex; } .d-none{ display: none !important; }
+                    .wrap{ flex-wrap: wrap; }
+                    .gap-1{gap:4px;} .gap-2{gap:8px;}
+                    .justify-content-start{ justify-content: start; } .justify-content-center{ justify-content: center; } .justify-content-end{ justify-content: end; }
+                    .align-items-start{ align-items: start; } .align-items-center{ align-items: center; } .align-items-end{ align-items: end; }
+                    .grow-1{ flex-grow: 1; }
+                    .w-100{ width: 100%; }
+                    .text-secondary{ color: #888; }
+                    .disable-element{ pointer-events: none; background-color: #e9ecef !important; opacity: 1;}
+
+                    .induxsoft-form-control{ border: none; outline: 1px solid #ced4da; display: block; width: 100%; padding: 0.375rem 0.75rem !important; font-size: 1rem; font-weight: 400; line-height: 1.5; color: #212529; background-color: #fff; background-clip: padding-box; appearance: none; transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; }
+                    .induxsoft-form-control:disabled, .induxsoft-form-control[readonly] { background-color: #e9ecef; opacity: 1; }
+                    .induxsoft-form-label{ margin-bottom: 0.5rem; }
+                    .induxsoft-form-select{ display: block;width: 100%;padding: 0.375rem 2.25rem 0.375rem 0.75rem !important;-moz-padding-start: calc(0.75rem - 3px);font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");background-repeat: no-repeat;background-position: right 0.75rem center;background-size: 16px 12px;border: none;outline: 1px solid #ced4da;-webkit-appearance: none;-moz-appearance: none;appearance: none; }
+                    .induxsoft-form-select:disabled, .induxsoft-form-select[readonly] { background-color: #e9ecef; opacity: 1; }
+                    .induxsoft-buttons{ font-weight: 400;line-height: 1.5;color: #212529;text-align: center;text-decoration: none;vertical-align: middle;cursor: pointer;-webkit-user-select: none;-moz-user-select: none;user-select: none;background-color: #FFF;outline:1px solid #ced4da;border: none;padding: 0.375rem 0.75rem;font-size: 1rem;transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; }
+                    .induxsoft-buttons:hover{ color: #212529;background-color: #F5F5F5; }
+                </style>
+            `
+
+            contanr.appendChild(this._inputSf);
+            contanr.appendChild(this._btnEdit);
+            contanr.appendChild(this._btnDone);
+            contanr.appendChild(this._btnUndo);
+
+            shadow.appendChild(contanr);
+        });
+    }
+    /**
+     * @param {string} tagName Nombre de etiqueta.
+     * @param {object} attributes Objeto que representan los atributos del elemento, ej: {id:'miElement',class:'mi-element'}
+     * @returns Retorna un **nuevo elemento HTML**
+     */
+    _createFullElement(tagName="div", attributes={})
+    {
+        const elem = document.createElement(tagName);
+        const keys = Object.keys(attributes);
+        keys.forEach(key => elem.setAttribute(key, attributes[key]));
+        return elem;
+    }
+    _getProcessInput=()=>
+    {
+        let attrType = (this.hasAttribute('type') ? this.getAttribute('type').trim().toLocaleLowerCase() : 'text');
+        let inputType = (this._inputTypes.find(type => type == attrType) ?? 'text');
+
+        let input = null;
+
+        switch(inputType)
+        {
+            case 'text':
+            case 'email':
+            case 'number':
+            case 'date':
+            case 'time':
+            {
+                input = this._createFullElement('input', { type: inputType, class:'induxsoft-form-control' });
+                break;
+            }
+            case 'datetime':
+            {
+                input = this._createFullElement('input', { type: 'datetime-local', class:'induxsoft-form-control' });
+                break;
+            }
+            case 'select':
+            {
+                input = this._createFullElement(inputType, { class:'induxsoft-form-select' });
+
+                if (this.hasAttribute('data-select') && this.getAttribute('data-select').trim() != '')
+                {
+                    let options = {};
+
+                    try{ options = JSON.parse(this.getAttribute('data-select').trim()); }
+                    catch(error){ alert('El valor del atributo "data" no contiene un formato JSON válido\n'+error); }
+
+                    Object.keys(options).forEach(key => {
+                        let option = this._createFullElement('option', { value:key });
+                        option.textContent = options[key];
+                        input.appendChild(option);
+                    });
+                }
+                break;
+            }
+            default:
+            {
+                input = this._createFullElement(inputType, { class:'induxsoft-form-control' });
+                break;
+            }
+        }
+
+        if (input) input.value = (this.getAttribute('value') ?? '');
+
+        if (this._parseBool(this.getAttribute('hidden-input')))
+        {
+            this._inputHd = this._createFullElement('input', { type:'hidden', id:'SafeInput_inputHd', name:(this.getAttribute('name') ?? '') });
+            this._inputHd.value = input.value;
+            this.after(this._inputHd);
+        }
+
+        return input;
+    }
+    _showControlButtons=(edit=false)=>
+    {
+        this._btnEdit.classList.toggle('d-none', edit );
+        this._btnDone.classList.toggle('d-none', !edit);
+        this._btnUndo.classList.toggle('d-none', !edit);
+        this._inputSf.toggleAttribute('disabled', !edit);
+    }
+    _startEdit=()=>
+    {
+        this._tempValue = (this._inputSf?.value ?? '');
+    }
+    _cancelEdit=()=>
+    {
+        if (this._inputSf) this._inputSf.value = this._tempValue;
+        if (this._inputHd) this._inputHd.value = this._tempValue;
+    }
+    _cancelChange=()=>
+    {
+        return (this.onChanging ? this.onChanging(this._tempValue, this._inputSf.value) : false)
+    }
+    _parseBool=(value, _default = false)=>
+    {
+        if (value) return (value.toString().toLowerCase() === 'true');
+        return _default;
+    }
+}
+
 customElements.define('edit-select', EditSelect);
 customElements.define('input-key', InputKey);
 customElements.define('check-list', CheckList);
 customElements.define('stack-edit', StackEdit);
+customElements.define('date-range', DateRange);
+customElements.define('safe-input', SafeInput);
