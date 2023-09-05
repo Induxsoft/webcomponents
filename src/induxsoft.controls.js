@@ -1103,7 +1103,7 @@ class CheckList extends HTMLElement
             if (!this.canRemove) delItem.classList.add('hide-element');
             if (!this.canEdit) txtItem.classList.add('disable-element');
             if (!this.canMove) movItem.classList.add('disable-element-op0');
-            if (!this.canCheck) chkItem.classList.add('disable-element-op0');
+            if (!this.canCheck) chkItem.classList.add('disable-element');
 
             rowItem.appendChild(movItem);
             rowItem.appendChild(chkItem);
@@ -1847,6 +1847,9 @@ class DateRange extends HTMLElement
             cntnr2.appendChild(this._iptEnd);
             contnr.appendChild(cntnr2);
 
+            this._iptStr.toggleAttribute('disabled', ((this.getAttribute('disabled')??'') === 'true'));
+            this._iptEnd.toggleAttribute('disabled', ((this.getAttribute('disabled')??'') === 'true'));
+
             this._iptStr.addEventListener('change', () => {
                 this.data.start = this._iptStr.value;
                 this._refreshDates();
@@ -1854,6 +1857,16 @@ class DateRange extends HTMLElement
             this._iptEnd.addEventListener('change', () => {
                 this.data.end = this._iptEnd.value;
                 this._refreshDates();
+            });
+
+            const MO = new MutationObserver(()=>{
+                this._iptStr.toggleAttribute('disabled', ((this.getAttribute('disabled')??'') === 'true'));
+                this._iptEnd.toggleAttribute('disabled', ((this.getAttribute('disabled')??'') === 'true'));
+            });
+
+            MO.observe(this, {
+                attributes: true,
+                attributeFilter: ['disabled']
             });
 
             shadow.innerHTML = `
@@ -1869,6 +1882,7 @@ class DateRange extends HTMLElement
                     .text-secondary{ color: #888; }
 
                     .induxsoft-form-control{ border: none; outline: 1px solid #ced4da; display: block; width: 100%; padding: 0.375rem 0.75rem !important; font-size: 1rem; font-weight: 400; line-height: 1.5; color: #212529; background-color: #fff; background-clip: padding-box; appearance: none; transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; }
+                    .induxsoft-form-control:disabled, .induxsoft-form-control[readonly] { background-color: #e9ecef; opacity: 1; }
                     .induxsoft-form-label{ margin-bottom: 0.5rem; }
                 </style>
             `
@@ -1889,15 +1903,15 @@ class DateRange extends HTMLElement
             if (this.hasAttribute('end') && this.getAttribute('end').trim() != '')
                 this.data.end = this.getAttribute('end').trim();
 
-            if (this.hasAttribute('hidden-input-name-start') && this.getAttribute('hidden-input-name-start').trim() != '')
-            {
-                this._hiddenInputStr = this._createFullElement('input', { type:'hidden', name:this.getAttribute('hidden-input-name-start').trim() });
-                this.after(this._hiddenInputStr);
-            }
             if (this.hasAttribute('hidden-input-name-end') && this.getAttribute('hidden-input-name-end').trim() != '')
             {
                 this._hiddenInputEnd = this._createFullElement('input', { type:'hidden', name:this.getAttribute('hidden-input-name-end').trim() });
                 this.after(this._hiddenInputEnd);
+            }
+            if (this.hasAttribute('hidden-input-name-start') && this.getAttribute('hidden-input-name-start').trim() != '')
+            {
+                this._hiddenInputStr = this._createFullElement('input', { type:'hidden', name:this.getAttribute('hidden-input-name-start').trim() });
+                this.after(this._hiddenInputStr);
             }
 
             shadow.appendChild(contnr);
