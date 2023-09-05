@@ -2015,14 +2015,19 @@ class SafeInput extends HTMLElement
                 this._startEdit();
                 this._showControlButtons(true);
             });
-            this._btnDone.addEventListener('click', () => {
-                if (this._cancelChange()) {
+            this._btnDone.addEventListener('click', async () => {
+                contanr.classList.add('waiting');
+                this.style.cursor = 'progress';
+                let res = await this._cancelChange();
+                if (res) {
                     this._cancelEdit();
                 }
                 else {
                     this._showControlButtons(false);
                     if (this._inputHd) this._inputHd.value = this._inputSf.value;
                 }
+                contanr.classList.remove('waiting');
+                this.style.cursor = 'initial';
             });
             this._btnUndo.addEventListener('click', () => {
                 this._cancelEdit();
@@ -2050,6 +2055,7 @@ class SafeInput extends HTMLElement
                     .w-100{ width: 100%; }
                     .text-secondary{ color: #888; }
                     .disable-element{ pointer-events: none; background-color: #e9ecef !important; opacity: 1;}
+                    .waiting{ pointer-events: none; opacity: .5; cursor: progress; }
 
                     .induxsoft-form-control{ border: none; outline: 1px solid #ced4da; display: block; width: 100%; padding: 0.375rem 0.75rem !important; font-size: 1rem; font-weight: 400; line-height: 1.5; color: #212529; background-color: #fff; background-clip: padding-box; appearance: none; transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; }
                     .induxsoft-form-control:disabled, .induxsoft-form-control[readonly] { background-color: #e9ecef; opacity: 1; }
@@ -2157,9 +2163,14 @@ class SafeInput extends HTMLElement
         if (this._inputSf) this._inputSf.value = this._tempValue;
         if (this._inputHd) this._inputHd.value = this._tempValue;
     }
-    _cancelChange=()=>
+    _cancelChange=async()=>
     {
-        return (this.onChanging ? this.onChanging(this._tempValue, this._inputSf.value) : false)
+        return new Promise(resolve => {
+            if (this.onChanging) 
+                resolve(this.onChanging(this._tempValue, this._inputSf.value));
+            else
+                resolve(false);
+        });
     }
     _parseBool=(value, _default = false)=>
     {
