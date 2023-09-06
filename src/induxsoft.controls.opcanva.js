@@ -58,7 +58,7 @@ class OpCanva extends HTMLElement
             this._loadProperties();
 
             // CONTROLS
-            const zoomCntnr = this._createFullElement('div', { id:'OpCanva_zoomCntnr', class:'d-flex align-items-center wrap outline grow-1 p-1' });
+            const zoomCntnr = this._createFullElement('div', { id:'OpCanva_zoomCntnr', class:'d-flex align-items-center wrap outline p-1' });
             const zoomTitle = this._createFullElement('h5', { id:'OpCanva_zoomTitle', class:'text-secondary' });
             const zoomCntrl = this._createFullElement('div', { id:'OpCanva_zoomCntrl', class:'d-flex align-items-center w-100 gap-1' });
             const zoomRange = this._createFullElement('input', { id:'OpCanva_zoomRange', type:'range', min:5, max:500, class:'w-100' });
@@ -71,7 +71,7 @@ class OpCanva extends HTMLElement
             zoomCntnr.appendChild(zoomTitle);
             zoomCntnr.appendChild(zoomCntrl);
 
-            const scalCntnr = this._createFullElement('div', { id:'OpCanva_scalContnr', class:'d-flex align-items-center wrap outline grow-1 p-1' });
+            const scalCntnr = this._createFullElement('div', { id:'OpCanva_scalContnr', class:'d-flex align-items-center wrap outline p-1' });
             const scalTitle = this._createFullElement('h5', { id:'OpCanva_scalTitle', class:'text-secondary' });
             const scalCntrl = this._createFullElement('div', { id:'OpCanva_scalCntrl', class:'d-flex align-items-center w-100 gap-1' });
             const scalInput = this._createFullElement('input', { id:'OpCanva_scalInput', type:'number', class:'induxsoft-form-control p-1' });
@@ -81,7 +81,7 @@ class OpCanva extends HTMLElement
             scalCntnr.appendChild(scalTitle);
             scalCntnr.appendChild(scalCntrl);
 
-            const dpiCntnr = this._createFullElement('div', { id:'OpCanva_dpiContnr', class:'d-flex align-items-center wrap outline grow-1 p-1' });
+            const dpiCntnr = this._createFullElement('div', { id:'OpCanva_dpiContnr', class:'d-flex align-items-center wrap outline p-1' });
             const dpiTitle = this._createFullElement('h5', { id:'OpCanva_dpiTitle', class:'text-secondary' });
             const dpiCntrl = this._createFullElement('div', { id:'OpCanva_dpiCntrl', class:'d-flex align-items-center w-100 gap-1' });
             const dpiInput = this._createFullElement('input', { id:'OpCanva_dpiInput', type:'number', class:'induxsoft-form-control p-1' });
@@ -91,7 +91,7 @@ class OpCanva extends HTMLElement
             dpiCntnr.appendChild(dpiTitle);
             dpiCntnr.appendChild(dpiCntrl);
 
-            const fitCntnr = this._createFullElement('div', { id:'OpCanva_fitContnr', class:'d-flex align-items-center wrap outline grow-1 p-1' });
+            const fitCntnr = this._createFullElement('div', { id:'OpCanva_fitContnr', class:'d-flex align-items-center wrap outline p-1' });
             const fitTitle = this._createFullElement('h5', { id:'OpCanva_fitTitle', class:'text-secondary' });
             const fitCntrl = this._createFullElement('div', { id:'OpCanva_fitCntrl', class:'d-flex align-items-center w-100 gap-1' });
             const fitInput = this._createFullElement('input', { id:'OpCanva_fitInput', type:'number', step:0.1, class:'induxsoft-form-control p-1' });
@@ -101,7 +101,7 @@ class OpCanva extends HTMLElement
             fitCntnr.appendChild(fitTitle);
             fitCntnr.appendChild(fitCntrl);
 
-            const unitCntnr = this._createFullElement('div', { id:'OpCanva_unitCntnr', class:'d-flex align-items-center wrap outline grow-1 p-1' });
+            const unitCntnr = this._createFullElement('div', { id:'OpCanva_unitCntnr', class:'d-flex align-items-center wrap outline p-1' });
             const unitTitle = this._createFullElement('h5', { id:'OpCanva_unitTitle', class:'text-secondary' });
             const unitCntrl = this._createFullElement('div', { id:'OpCanva_unitCntrl', class:'d-flex align-items-center w-100 gap-1' });
             const unitSlect = this._createFullElement('select', { id:'OpCanva_unitSlect', class:'induxsoft-form-select p-1' });
@@ -173,15 +173,15 @@ class OpCanva extends HTMLElement
 
                     #OpCanva_contnr{ width: 100%; height: 100%; display: flex; flex-direction: column; }
                     #OpCanva_ccntnt{ width: 100%; height: 100%; overflow:scroll; position: relative; flex-grow: 1; }
-                    #OpCanva_ccanva{ overflow:hidden; position: relative; border: 4px solid #DDD; background-repeat: no-repeat; background-size: contain; }
+                    #OpCanva_ccanva{ overflow:hidden; position: relative; border: 8px solid #DDD; background-repeat: no-repeat; background-size: contain; }
                     #OpCanva_cfootr{ width: 100%; display: flex; justify-content: end; flex-wrap: wrap; }
-                    #OpCanva_zoomInput,#OpCanva_dpiInput,#OpCanva_fitInput,#OpCanva_unitSlect,#OpCanva_scalInput{ width: 3.5rem; text-align: center; flex-grow: 1; }
-                    .item:hover { outline: 1px solid #000; & .resizer-point, .move-point{ background-color: #FFF; color: #888; outline: 1px solid #CCC; }}
+                    #OpCanva_zoomInput,#OpCanva_dpiInput,#OpCanva_fitInput,#OpCanva_unitSlect,#OpCanva_scalInput{ width: 4.5rem; text-align: center; flex-grow: 1; }
+                    
                     .item{ position:absolute; background-repeat: no-repeat; background-size: contain; /*outline: 1px solid rgba(180,180,180,.3);*/ }
-                    .resizer-point{ width: 10px;height: 10px;background-color: transparent;z-index: 10;position: absolute;right: -5px;bottom: -5px;cursor: crosshair; }
-                    .move-point{ width: 70%;height: 10px;background-color: transparent;color:transparent;z-index: 10;position: absolute; top: -5px; left: 15%; cursor: move; }
-                    .resizer-point:active,.resizer-point:hover{ background-color: #FFF; outline: 1px solid #CCC; }
-                    .move-point:active, .move-point:hover{ background-color: #FFF; color: #888; outline: 1px solid #CCC; }
+                    .resizer-point{ width: 12px;height: 12px; background-color: transparent;z-index: 10;position: absolute;right: -6px;bottom: -6px;cursor: crosshair; }
+                    .move-point{ width: 50%;height: 16px;background-color: transparent;color:transparent;z-index: 10;position: absolute; top: -8px; left: 25%; cursor: move; }
+                    .resizer-point:active,.resizer-point:hover{ background-color: rgba(245,250,255,.8); outline: 1px solid #000; }
+                    .move-point:active, .move-point:hover{ background-color: rgba(245,250,255,.8); color: #888; outline: 1px solid #000; }
                     .caption-container{ position: absolute; top: 0; left: 0; height: 100%; width: 100%; font-size: 1em; }
 
                     .induxsoft-form-control{border: none; outline:1px solid #ced4da;display: block;width: 100%;padding: 0.375rem 0.75rem !important;font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-clip: padding-box;appearance: none;transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
@@ -190,6 +190,25 @@ class OpCanva extends HTMLElement
                     }
                     .induxsoft-form-select {display: block;width: 100%;padding: 0.375rem 2.25rem 0.375rem 0.75rem !important;-moz-padding-start: calc(0.75rem - 3px);font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");background-repeat: no-repeat;background-position: right 0.75rem center;background-size: 16px 12px;border: none;outline:1px solid #ced4da;-webkit-appearance: none;-moz-appearance: none;appearance: none;
                     }
+
+                    .resizer{ background-color: transparent; position: absolute; width: 10px; height: 10px; }
+                    /*.resizer-top{ width: 100%; height: 8px; top: -4px; left: 0px; cursor: n-resize; }
+                    .resizer-right{ width: 8px; height: 100%; top: 0px; right: -4px; cursor: e-resize; }
+                    .resizer-bottom{ width: 100%; height: 8px; bottom: -4px; left: 0px; cursor: n-resize; }
+                    .resizer-left{ width: 8px; height: 100%; top: 0px; left: -4px; cursor: e-resize; }*/
+
+                    .resizer-top{ top: -5px; left: 11%; cursor: n-resize; }
+                    .resizer-right{ margin:auto; top: 0; bottom: 0; right: -5px; cursor: e-resize; }
+                    .resizer-bottom{ margin:auto; bottom: -5px; left: 0; right: 0; cursor: n-resize; }
+                    .resizer-left{ margin:auto; top: 0; bottom: 0; left: -5px; cursor: e-resize; }
+
+                    .resizer-corner{ cursor: crosshair; }
+                    .resizer-top-left{ top: -5px; left: -5px; }
+                    .resizer-top-right{ top: -5px; right: -5px; }
+                    .resizer-bottom-right{ bottom: -5px; right: -5px; }
+                    .resizer-bottom-left{ bottom: -5px; left: -5px; }
+
+                    .item:hover { outline: 1px solid #000; & .move-point, .resizer { background-color: rgba(245,250,255,.8); color: #000; outline: 1px solid #000; }}
                 </style>
             `;
 
@@ -228,21 +247,20 @@ class OpCanva extends HTMLElement
 
         let elements = this._shadow.querySelectorAll('.item');
 
-        
-
         elements.forEach(item => 
         {
             if (!this._parseBool(item.getAttribute('locked')))
             {
                 // Move
                 let movePoint = this._createFullElement('div', { class:'move-point d-flex align-items-center justify-content-center' });
-                movePoint.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-arrows-move" viewBox="0 0 16 16">
+                movePoint.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-arrows-move" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M7.646.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 1.707V5.5a.5.5 0 0 1-1 0V1.707L6.354 2.854a.5.5 0 1 1-.708-.708l2-2zM8 10a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 14.293V10.5A.5.5 0 0 1 8 10zM.146 8.354a.5.5 0 0 1 0-.708l2-2a.5.5 0 1 1 .708.708L1.707 7.5H5.5a.5.5 0 0 1 0 1H1.707l1.147 1.146a.5.5 0 0 1-.708.708l-2-2zM10 8a.5.5 0 0 1 .5-.5h3.793l-1.147-1.146a.5.5 0 0 1 .708-.708l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708L14.293 8.5H10.5A.5.5 0 0 1 10 8z"/>
               </svg>`
                 item.appendChild(movePoint);
 
                 movePoint.addEventListener('mousedown', (e) => {
                     e.stopPropagation();
+                    e.preventDefault();
                     isdown = true;
                     moving = false;
                     offset = [item.offsetLeft - e.clientX, item.offsetTop - e.clientY];
@@ -252,6 +270,7 @@ class OpCanva extends HTMLElement
 
                 item.onmousedown = e => {
                     e.stopPropagation();
+                    e.preventDefault();
                     if (e.target !== item) return;
                     isdown = true;
                     moving = false;
@@ -264,10 +283,37 @@ class OpCanva extends HTMLElement
             if (this._parseBool(item.getAttribute('sizable')))
             {
                 // Sizable
-                let sizePoint = this._createFullElement('div', { class:'resizer-point' });
-                item.appendChild(sizePoint);
-                sizePoint.parent = item;
-                sizePoint.addEventListener('mousedown', this._initDrag, false);
+                // let sizePoint = this._createFullElement('div', { class:'resizer-point' });
+                // item.appendChild(sizePoint);
+                // sizePoint.parent = item;
+                // sizePoint.addEventListener('mousedown', this._initDrag, false);
+
+                const resizer_top = this._createFullElement('div', { class:'resizer resizer-top' });
+                const resizer_rgt = this._createFullElement('div', { class:'resizer resizer-right' });
+                const resizer_btm = this._createFullElement('div', { class:'resizer resizer-bottom' });
+                const resizer_lft = this._createFullElement('div', { class:'resizer resizer-left' });
+                const rzr_top_lft = this._createFullElement('div', { class:'resizer resizer-corner resizer-top-left' });
+                const rzr_top_rgt = this._createFullElement('div', { class:'resizer resizer-corner resizer-top-right' });
+                const rzr_btm_rgt = this._createFullElement('div', { class:'resizer resizer-corner resizer-bottom-right' });
+                const rzr_btm_lft = this._createFullElement('div', { class:'resizer resizer-corner resizer-bottom-left' });
+
+                item.appendChild(resizer_top);
+                item.appendChild(resizer_rgt);
+                item.appendChild(resizer_btm);
+                item.appendChild(resizer_lft);
+                item.appendChild(rzr_top_lft);
+                item.appendChild(rzr_top_rgt);
+                item.appendChild(rzr_btm_rgt);
+                item.appendChild(rzr_btm_lft);
+
+                resizer_top.addEventListener('mousedown', this._resizeYNegative(), false);
+                resizer_rgt.addEventListener('mousedown', this._resizeXPositive(), false);
+                resizer_btm.addEventListener('mousedown', this._resizeYPositive(), false);
+                resizer_lft.addEventListener('mousedown', this._resizeXNegative(), false);
+                rzr_top_lft.addEventListener('mousedown', this._resizeXNegative(), false); rzr_top_lft.addEventListener('mousedown', this._resizeYNegative(true), false);
+                rzr_top_rgt.addEventListener('mousedown', this._resizeXPositive(), false); rzr_top_rgt.addEventListener('mousedown', this._resizeYNegative(true), false);
+                rzr_btm_rgt.addEventListener('mousedown', this._resizeXPositive(), false); rzr_btm_rgt.addEventListener('mousedown', this._resizeYPositive(true), false);
+                rzr_btm_lft.addEventListener('mousedown', this._resizeXNegative(), false); rzr_btm_lft.addEventListener('mousedown', this._resizeYPositive(true), false);
             }
 
             item.addEventListener('click', (e) => {
@@ -285,6 +331,7 @@ class OpCanva extends HTMLElement
             moving = false;
             current = null;
         }
+
         this._ccanva.onmouseup = e1;
 
         const e2 = (e) => {
@@ -372,6 +419,176 @@ class OpCanva extends HTMLElement
         });
     }
 
+    // =================================================== TEMP
+    _getIntStyle=(element, key)=>
+    {
+        return parseInt(window.getComputedStyle(element).getPropertyValue(key));
+    }
+    _resizeXPositive=(preventUpdate=false)=>
+    {
+        let offsetX = 0;
+        let target = null;
+
+        let elementDrag = (event) => 
+        {
+            if (target)
+            {
+                const {clientX} = event;
+                let x = (clientX - target.offsetLeft - offsetX);
+                if (x < 1) x = 1
+                target.style.width = `${x}px`;
+            }
+        }
+        let closeDragElement = () => 
+        {
+            this.removeEventListener('mouseup', closeDragElement);
+            this.removeEventListener('mousemove', elementDrag);
+            if (target && !preventUpdate) this._updateItem(target);
+            target = null;
+        }
+        let dragMouseDown = (event) => 
+        {
+            event.preventDefault();
+            event.stopPropagation();
+            target = event.target.parentElement;
+
+            const {clientX} = event;
+            offsetX = (clientX - target.offsetLeft - this._getIntStyle(target, 'width'));
+            this.addEventListener('mouseup', closeDragElement);
+            this.addEventListener('mousemove', elementDrag);
+        }
+        return dragMouseDown;
+    }
+    _resizeYPositive=(preventUpdate=false)=>
+    {
+        let offsetY = 0;
+        let target = null;
+        
+        let elementDrag = (event) => 
+        {
+            if (target)
+            {
+                const {clientY} = event;
+                let y = (clientY - target.offsetTop - offsetY);
+                if (y < 1) y = 1
+                target.style.height = `${y}px`;
+            }
+        }
+        let closeDragElement = () => 
+        {
+            this.removeEventListener('mouseup', closeDragElement);
+            this.removeEventListener('mousemove', elementDrag);
+            if (target && !preventUpdate) this._updateItem(target);
+            target = null;
+        }
+        let dragMouseDown = (event) => 
+        {
+            event.preventDefault();
+            event.stopPropagation();
+            target = event.target.parentElement;
+
+            const {clientY} = event;
+            offsetY = (clientY - target.offsetTop - this._getIntStyle(target, 'height'));
+            this.addEventListener('mouseup', closeDragElement);
+            this.addEventListener('mousemove', elementDrag);
+        }
+        return dragMouseDown;
+    }
+    _resizeXNegative=(preventUpdate=false)=>
+    {
+        let offsetX = 0;
+        let startX = 0;
+        let startW = 0;
+        let maxX = 0;
+        let target = null;
+
+        let elementDrag = (event) =>
+        {
+            const {clientX} = event;
+            let x = (clientX - offsetX);
+            let w = (startW + startX - x);
+            if (w < 1) w = 1;
+            if (x > maxX) x = maxX;
+            
+            if (target)
+            {
+                target.style.left = `${x}px`;
+                target.style.width = `${w}px`;
+            }
+        }
+        let closeDragElement = () => 
+        {
+            this.removeEventListener('mouseup', closeDragElement);
+            this.removeEventListener('mousemove', elementDrag);
+            if (target && !preventUpdate) this._updateItem(target);
+            target = null;
+        }
+        let dragMouseDown = (event) =>
+        {
+            event.preventDefault();
+            event.stopPropagation();
+            target = event.target.parentElement;
+
+            const {clientX} = event;
+            startX = this._getIntStyle(target, 'left');
+            startW = this._getIntStyle(target, 'width');
+            offsetX = (clientX - startX);
+            maxX = (startX + startW - 1);
+
+            this.addEventListener('mouseup', closeDragElement);
+            this.addEventListener('mousemove', elementDrag);
+        }
+
+        return dragMouseDown;
+    }
+    _resizeYNegative=(preventUpdate=false)=>
+    {
+        let offsetY = 0;
+        let startY = 0;
+        let startH = 0;
+        let maxY = 0;
+        let target = null;
+
+        let elementDrag = (event) =>
+        {
+            const {clientY} = event;
+            let y = (clientY - offsetY);
+            let h = (startH + startY - y);
+            if (h < 1) h = 1;
+            if (y > maxY) y = maxY;
+            
+            if (target)
+            {
+                target.style.top = `${y}px`;
+                target.style.height = `${h}px`;
+            }
+        }
+        let closeDragElement = () => 
+        {
+            this.removeEventListener('mouseup', closeDragElement);
+            this.removeEventListener('mousemove', elementDrag);
+            if (target && !preventUpdate) this._updateItem(target);
+            target = null;
+        }
+        let dragMouseDown = (event) =>
+        {
+            event.preventDefault();
+            event.stopPropagation();
+            target = event.target.parentElement;
+
+            const {clientY} = event;
+            startY = this._getIntStyle(target, 'top');
+            startH = this._getIntStyle(target, 'height');
+            offsetY = (clientY - startY);
+            maxY = (startY + startH - 1);
+
+            this.addEventListener('mouseup', closeDragElement);
+            this.addEventListener('mousemove', elementDrag);
+        }
+
+        return dragMouseDown;
+    }
+
     // ========== PRINT DATA
 
     _updateItem=(element)=>{
@@ -379,17 +596,17 @@ class OpCanva extends HTMLElement
         {
             this.data.forEach(item => {
                 if (item.id == element.id){
-                    const x = (Number(element.getAttribute('equivalencex')) >= 1 ? Number(element.getAttribute('equivalencex')) : 1);
-                    const y = (Number(element.getAttribute('equivalencex')) >= 1 ? Number(element.getAttribute('equivalencex')) : 1);
+                    const x = (Number(element.getAttribute('equivalencex')) > 0 ? Number(element.getAttribute('equivalencex')) : 1);
+                    const y = (Number(element.getAttribute('equivalencex')) > 0 ? Number(element.getAttribute('equivalencex')) : 1);
                     const w = (Number(document.defaultView.getComputedStyle(element).width.replace(/[^0-9.]+/g, '')));
                     const h = (Number(document.defaultView.getComputedStyle(element).height.replace(/[^0-9.]+/g, '')));
-                    const lx = (Number(element.getAttribute('equivalencelx')) >= 1 ? Number(element.getAttribute('equivalencelx')) : 1);
-                    const ly = (Number(element.getAttribute('equivalencely')) >= 1 ? Number(element.getAttribute('equivalencely')) : 1);
+                    const lx = (Number(element.getAttribute('equivalencelx')) > 0 ? Number(element.getAttribute('equivalencelx')) : 1);
+                    const ly = (Number(element.getAttribute('equivalencely')) > 0 ? Number(element.getAttribute('equivalencely')) : 1);
                     
-                    item.x = (x * (element.offsetLeft >= 1 ? element.offsetLeft : 1));
-                    item.y = (y * (element.offsetTop >= 1 ? element.offsetTop : 1 ));
-                    item.lx = (lx * (w >= 1 ? w : 1));
-                    item.ly = (ly * (h >= 1 ? h : 1));
+                    item.x = (x * (element.offsetLeft > 0 ? element.offsetLeft : 1));
+                    item.y = (y * (element.offsetTop > 0 ? element.offsetTop : 1 ));
+                    item.lx = (lx * (w > 0 ? w : 1));
+                    item.ly = (ly * (h > 0 ? h : 1));
                     item.index = document.defaultView.getComputedStyle(element).zIndex;
                 }
             });
@@ -410,8 +627,8 @@ class OpCanva extends HTMLElement
             {
                 const width = this._sizeCalc(item.lx);
                 const height = this._sizeCalc(item.ly);
-                const positionX = this._sizeCalc((item.x >= 1 ? item.x : 1));
-                const positionY = this._sizeCalc((item.y >= 1 ? item.y : 1));
+                const positionX = this._sizeCalc((item.x > 0 ? item.x : 1));
+                const positionY = this._sizeCalc((item.y > 0 ? item.y : 1));
                 
                 const element = this._createFullElement('div', { 
                     id: (item.id ?? this._generateUUID()),
@@ -419,8 +636,8 @@ class OpCanva extends HTMLElement
                     class:'item d-flex align-items-center justify-content-center',
                     equivalencely:`${(item.ly/height)}`,
                     equivalencelx:`${(item.lx/width)}`,
-                    equivalencex: `${this._parseInt((item.x >= 1 ? item.x : 1)/positionX)}`,
-                    equivalencey: `${this._parseInt((item.y >= 1 ? item.y : 1)/positionY)}`,
+                    equivalencex: `${this._parseInt((item.x > 0 ? item.x : 1)/positionX)}`,
+                    equivalencey: `${this._parseInt((item.y > 0 ? item.y : 1)/positionY)}`,
                     locked: this._parseBool(item.locked),
                     sizable: this._parseBool(item.sizable),
                     title:`Size: ${item.lx.toFixed(2)}${this.unit} x ${item.ly.toFixed(2)}${this.unit}, X: ${item.x.toFixed(2)}, Y: ${item.y.toFixed(2)}`
