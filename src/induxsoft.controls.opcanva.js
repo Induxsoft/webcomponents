@@ -22,11 +22,14 @@ class OpCanva extends HTMLElement
     _zindex = 100;
     _startX = null;
     _startY = null;
+    _unitTemp = null;
     _startWidth = null;
     _startHeight = null;
     _elementResizing = null;
     _equivalenceY = null;
     _equivalenceX = null;
+    _convertSizesFromUnit = true;
+    _moveSteps = 2;
 
     constructor() 
     {
@@ -143,6 +146,18 @@ class OpCanva extends HTMLElement
             unitSlect.addEventListener('change', () => {
                 this.setUnit(unitSlect.value);
             });
+            this._ccanva.addEventListener('click', e => {
+                let target = e.target;
+                this._ccanva.querySelectorAll('.item').forEach(item => item.classList.remove('item-selected'));
+                if (target && target.classList.contains('item')) {
+                    target.classList.add('item-selected');
+                    target.focus();
+                }
+            }, true);
+            
+            this._ccanva.addEventListener('keydown', e => {
+                e.preventDefault();
+            });
 
             // STYLES
             this._shadow.innerHTML = `
@@ -174,7 +189,7 @@ class OpCanva extends HTMLElement
                     #OpCanva_contnr{ width: 100%; height: 100%; display: flex; flex-direction: column; }
                     #OpCanva_ccntnt{ width: 100%; height: 100%; overflow:scroll; position: relative; flex-grow: 1; }
                     #OpCanva_ccanva{ overflow:hidden; position: relative; border: 8px solid #DDD; background-repeat: no-repeat; background-size: contain; }
-                    #OpCanva_cfootr{ width: 100%; display: flex; justify-content: end; flex-wrap: wrap; }
+                    #OpCanva_cfootr{ width: 100%; display: flex; flex-wrap: wrap; }
                     #OpCanva_zoomInput,#OpCanva_dpiInput,#OpCanva_fitInput,#OpCanva_unitSlect,#OpCanva_scalInput{ width: 4.5rem; text-align: center; flex-grow: 1; }
                     
                     .item{ position:absolute; background-repeat: no-repeat; background-size: contain; /*outline: 1px solid rgba(180,180,180,.3);*/ }
@@ -208,7 +223,8 @@ class OpCanva extends HTMLElement
                     .resizer-bottom-right{ bottom: -5px; right: -5px; }
                     .resizer-bottom-left{ bottom: -5px; left: -5px; }
 
-                    .item:hover { outline: 1px solid #000; & .move-point, .resizer { background-color: rgba(245,250,255,.8); color: #000; outline: 1px solid #000; }}
+                    .item:hover, .item-selected { outline: 1px solid #000; & .move-point, .resizer { background-color: rgba(245,250,255,.8); color: #000; outline: 1px solid #000; }}
+                    .item-selected{ outline: 2px solid #000 !important; }
                 </style>
             `;
 
@@ -314,6 +330,16 @@ class OpCanva extends HTMLElement
                 rzr_top_rgt.addEventListener('mousedown', this._resizeXPositive(), false); rzr_top_rgt.addEventListener('mousedown', this._resizeYNegative(true), false);
                 rzr_btm_rgt.addEventListener('mousedown', this._resizeXPositive(), false); rzr_btm_rgt.addEventListener('mousedown', this._resizeYPositive(true), false);
                 rzr_btm_lft.addEventListener('mousedown', this._resizeXNegative(), false); rzr_btm_lft.addEventListener('mousedown', this._resizeYPositive(true), false);
+
+                // Mobile
+                // resizer_top.addEventListener('touchstart', this._resizeYNegativeM(), false);
+                // resizer_rgt.addEventListener('touchstart', this._resizeXPositiveM(), false);
+                // resizer_btm.addEventListener('touchstart', this._resizeYPositiveM(), false);
+                // resizer_lft.addEventListener('touchstart', this._resizeXNegativeM(), false);
+                // rzr_top_lft.addEventListener('touchstart', this._resizeXNegativeM(), false); rzr_top_lft.addEventListener('touchstart', this._resizeYNegativeM(true), false);
+                // rzr_top_rgt.addEventListener('touchstart', this._resizeXPositiveM(), false); rzr_top_rgt.addEventListener('touchstart', this._resizeYNegativeM(true), false);
+                // rzr_btm_rgt.addEventListener('touchstart', this._resizeXPositiveM(), false); rzr_btm_rgt.addEventListener('touchstart', this._resizeYPositiveM(true), false);
+                // rzr_btm_lft.addEventListener('touchstart', this._resizeXNegativeM(), false); rzr_btm_lft.addEventListener('touchstart', this._resizeYPositiveM(true), false);
             }
 
             item.addEventListener('click', (e) => {
@@ -322,6 +348,42 @@ class OpCanva extends HTMLElement
                     let dataItem = this.getItem(item.getAttribute('id'));
                     this.clickEvent(e, dataItem);
                 }
+            });
+            item.addEventListener('keyup', e => {
+                e.preventDefault();
+                e.stopPropagation();
+                switch(e.key)
+                {
+                    case "ArrowRight":
+                    {
+                        item.style.left = `${(item.offsetLeft + this._moveSteps)}px`;
+                        this._updateItem(item);
+                        break;
+                    }
+                    case "ArrowDown":
+                    {
+                        item.style.top = `${(item.offsetTop + this._moveSteps)}px`;
+                        this._updateItem(item);
+                        break;
+                    }
+                    case "ArrowLeft":
+                    {
+                        item.style.left = `${(item.offsetLeft - this._moveSteps)}px`;
+                        this._updateItem(item);
+                        break;
+                    }
+                    case "ArrowUp":
+                    {
+                        item.style.top = `${(item.offsetTop - this._moveSteps)}px`;
+                        this._updateItem(item);
+                        break;
+                    }
+                }
+            });
+            item.addEventListener('touchstart', e => {
+                e.stopPropagation();
+                e.preventDefault();
+                item.click();
             });
         });
 
@@ -589,25 +651,237 @@ class OpCanva extends HTMLElement
         return dragMouseDown;
     }
 
+    // _resizeXPositiveM=(preventUpdate=false)=>
+    // {
+    //     let offsetX = 0;
+    //     let target = null;
+
+    //     let elementDrag = (event) => 
+    //     {
+    //         if (target)
+    //         {
+    //             const {pageX} = event.touches[0];
+    //             let x = (pageX - target.offsetLeft - offsetX);
+    //             if (x < 1) x = 1
+    //             target.style.width = `${x}px`;
+    //         }
+    //     }
+    //     let closeDragElement = () => 
+    //     {
+    //         this.removeEventListener('touchend', closeDragElement);
+    //         this.removeEventListener('touchmove', elementDrag);
+    //         if (target && !preventUpdate) this._updateItem(target);
+    //         target = null;
+    //     }
+    //     let dragMouseDown = (event) => 
+    //     {
+    //         event.stopPropagation();
+    //         target = event.target.parentElement;
+
+    //         const {pageX} = event.touches[0];
+    //         offsetX = (pageX - target.offsetLeft - this._getIntStyle(target, 'width'));
+    //         this.addEventListener('touchend', closeDragElement);
+    //         this.addEventListener('touchmove', elementDrag);
+    //     }
+    //     return dragMouseDown;
+    // }
+    // _resizeYPositiveM=(preventUpdate=false)=>
+    // {
+    //     let offsetY = 0;
+    //     let target = null;
+        
+    //     let elementDrag = (event) => 
+    //     {
+    //         if (target)
+    //         {
+    //             const {clientY} = event;
+    //             let y = (clientY - target.offsetTop - offsetY);
+    //             if (y < 1) y = 1
+    //             target.style.height = `${y}px`;
+    //         }
+    //     }
+    //     let closeDragElement = () => 
+    //     {
+    //         this.removeEventListener('touchend', closeDragElement);
+    //         this.removeEventListener('touchmove', elementDrag);
+    //         if (target && !preventUpdate) this._updateItem(target);
+    //         target = null;
+    //     }
+    //     let dragMouseDown = (event) => 
+    //     {
+    //         event.stopPropagation();
+    //         target = event.target.parentElement;
+
+    //         const {clientY} = event;
+    //         offsetY = (clientY - target.offsetTop - this._getIntStyle(target, 'height'));
+    //         this.addEventListener('touchend', closeDragElement);
+    //         this.addEventListener('touchmove', elementDrag);
+    //     }
+    //     return dragMouseDown;
+    // }
+    // _resizeXNegativeM=(preventUpdate=false)=>
+    // {
+    //     let offsetX = 0;
+    //     let startX = 0;
+    //     let startW = 0;
+    //     let maxX = 0;
+    //     let target = null;
+
+    //     let elementDrag = (event) =>
+    //     {
+    //         const {clientX} = event;
+    //         let x = (clientX - offsetX);
+    //         let w = (startW + startX - x);
+    //         if (w < 1) w = 1;
+    //         if (x > maxX) x = maxX;
+            
+    //         if (target)
+    //         {
+    //             target.style.left = `${x}px`;
+    //             target.style.width = `${w}px`;
+    //         }
+    //     }
+    //     let closeDragElement = () => 
+    //     {
+    //         this.removeEventListener('touchend', closeDragElement);
+    //         this.removeEventListener('touchmove', elementDrag);
+    //         if (target && !preventUpdate) this._updateItem(target);
+    //         target = null;
+    //     }
+    //     let dragMouseDown = (event) =>
+    //     {
+    //         event.stopPropagation();
+    //         target = event.target.parentElement;
+
+    //         const {clientX} = event;
+    //         startX = this._getIntStyle(target, 'left');
+    //         startW = this._getIntStyle(target, 'width');
+    //         offsetX = (clientX - startX);
+    //         maxX = (startX + startW - 1);
+
+    //         this.addEventListener('touchend', closeDragElement);
+    //         this.addEventListener('touchmove', elementDrag);
+    //     }
+
+    //     return dragMouseDown;
+    // }
+    // _resizeYNegativeM=(preventUpdate=false)=>
+    // {
+    //     let offsetY = 0;
+    //     let startY = 0;
+    //     let startH = 0;
+    //     let maxY = 0;
+    //     let target = null;
+
+    //     let elementDrag = (event) =>
+    //     {
+    //         const {clientY} = event;
+    //         let y = (clientY - offsetY);
+    //         let h = (startH + startY - y);
+    //         if (h < 1) h = 1;
+    //         if (y > maxY) y = maxY;
+            
+    //         if (target)
+    //         {
+    //             target.style.top = `${y}px`;
+    //             target.style.height = `${h}px`;
+    //         }
+    //     }
+    //     let closeDragElement = () => 
+    //     {
+    //         this.removeEventListener('touchend', closeDragElement);
+    //         this.removeEventListener('touchmove', elementDrag);
+    //         if (target && !preventUpdate) this._updateItem(target);
+    //         target = null;
+    //     }
+    //     let dragMouseDown = (event) =>
+    //     {
+    //         event.stopPropagation();
+    //         target = event.target.parentElement;
+
+    //         const {clientY} = event;
+    //         startY = this._getIntStyle(target, 'top');
+    //         startH = this._getIntStyle(target, 'height');
+    //         offsetY = (clientY - startY);
+    //         maxY = (startY + startH - 1);
+
+    //         this.addEventListener('touchend', closeDragElement);
+    //         this.addEventListener('touchmove', elementDrag);
+    //     }
+
+    //     return dragMouseDown;
+    // }
+
     // ========== PRINT DATA
 
     _updateItem=(element)=>{
         if (this.data && this.data.length > 0)
         {
-            this.data.forEach(item => {
-                if (item.id == element.id){
+            this.data.forEach(item => 
+            {
+                if (item.id == element.id)
+                {
                     const x = (Number(element.getAttribute('equivalencex')) > 0 ? Number(element.getAttribute('equivalencex')) : 1);
                     const y = (Number(element.getAttribute('equivalencex')) > 0 ? Number(element.getAttribute('equivalencex')) : 1);
                     const w = (Number(document.defaultView.getComputedStyle(element).width.replace(/[^0-9.]+/g, '')));
                     const h = (Number(document.defaultView.getComputedStyle(element).height.replace(/[^0-9.]+/g, '')));
                     const lx = (Number(element.getAttribute('equivalencelx')) > 0 ? Number(element.getAttribute('equivalencelx')) : 1);
                     const ly = (Number(element.getAttribute('equivalencely')) > 0 ? Number(element.getAttribute('equivalencely')) : 1);
-                    
-                    item.x = (x * (element.offsetLeft > 0 ? element.offsetLeft : 1));
-                    item.y = (y * (element.offsetTop > 0 ? element.offsetTop : 1 ));
-                    item.lx = (lx * (w > 0 ? w : 1));
-                    item.ly = (ly * (h > 0 ? h : 1));
-                    item.index = document.defaultView.getComputedStyle(element).zIndex;
+
+                    const new_x = (x * (element.offsetLeft > 0 ? element.offsetLeft : 1));
+                    const new_y = (y * (element.offsetTop > 0 ? element.offsetTop : 1 ));
+                    const newlx = (lx * (w > 0 ? w : 1));
+                    const newly = (ly * (h > 0 ? h : 1));
+
+                    let aplyUpdate = true;
+
+                    if (!this._parseBool(item.overlapping??'false'))
+                    {
+                        this.data.forEach(itm => 
+                        {
+                            if (aplyUpdate && item.id != itm.id)
+                            {
+                                // vertices partiendo de la posicion top-left hacia las manecillas del reloj
+                                let movingItm = 
+                                {
+                                    vrtc1 : { x: new_x, y: new_y },
+                                    vrtc2 : { x: (new_x + newlx), y: new_y },
+                                    vrtc3 : { x: (new_x + newlx), y: (new_y + newly) },
+                                    vrtc4 : { x: new_x, y: (new_y + newly) }
+                                }
+                                let normalItm = 
+                                {
+                                    vrtc1 : { x: itm.x, y: itm.y },
+                                    vrtc2 : { x: (itm.x + itm.lx), y: itm.y },
+                                    vrtc3 : { x: (itm.x + itm.lx), y: (itm.y + itm.ly) },
+                                    vrtc4 : { x: itm.x, y: (itm.y + itm.ly) }
+                                }
+                                /**
+                                 * Si no se cumplen ninguno de los siguientes casos están superpuestos de alguna manera 
+                                 * y no se aplica el cambio. (A = El item en movimiento, B = Otro item del canva):
+                                 * -> A está completamente a la izquierda de B
+                                 * -> A está completamente a la derecha de B
+                                 * -> A está completamente arriba de B
+                                 * -> A está complemante abajo de B
+                                 */
+                                if (!(movingItm.vrtc2.x <= normalItm.vrtc1.x || movingItm.vrtc1.x >= normalItm.vrtc2.x ||
+                                    movingItm.vrtc4.y <= normalItm.vrtc1.y || movingItm.vrtc1.y >= normalItm.vrtc4.y)) {
+                                    aplyUpdate = false;
+                                }
+                            }
+                        });
+                    }
+
+                    if (aplyUpdate)
+                    {
+                        item.x = new_x;
+                        item.y = new_y;
+                        item.lx = newlx;
+                        item.ly = newly;
+                        item.index = document.defaultView.getComputedStyle(element).zIndex;
+                    }
+
+                    item.focus = element.classList.contains('item-selected');
                 }
             });
             this._refreshView();
@@ -618,6 +892,13 @@ class OpCanva extends HTMLElement
     }
     _printItems=()=>{
         if (this._ccanva) this._ccanva.innerHTML = '';
+
+        if (this._convertSizesFromUnit && this._unitTemp && this._unitTemp != this.unit)
+        {
+            this.ly = (this._cmXUnitTemp(this.ly) / this._cmXUnit(1));
+            this.lx = (this._cmXUnitTemp(this.lx) / this._cmXUnit(1));
+        }
+
         this._ccanva.style.height = `${this._zoomVal(this._scaleCalc(this.ly))}px`;
         this._ccanva.style.width = `${this._zoomVal(this._scaleCalc(this.lx))}px`;
 
@@ -625,22 +906,36 @@ class OpCanva extends HTMLElement
         {
             this.data.forEach(item => 
             {
+                if (this._convertSizesFromUnit && this._unitTemp && this._unitTemp != this.unit)
+                {
+                    item.lx = (this._cmXUnitTemp(item.lx) / this._cmXUnit(1));
+                    item.ly = (this._cmXUnitTemp(item.ly) / this._cmXUnit(1));
+                    item.x = (this._cmXUnitTemp(item.x) / this._cmXUnit(1));
+                    item.y = (this._cmXUnitTemp(item.y) / this._cmXUnit(1));
+                }
+
                 const width = this._sizeCalc(item.lx);
                 const height = this._sizeCalc(item.ly);
                 const positionX = this._sizeCalc((item.x > 0 ? item.x : 1));
                 const positionY = this._sizeCalc((item.y > 0 ? item.y : 1));
+
+                const equivlx = (item.lx/width);
+                const equivly = (item.ly/height);
+                const equivx = this._parseInt((item.x > 0 ? item.x : 1)/positionX);
+                const equivy = this._parseInt((item.y > 0 ? item.y : 1)/positionY);
                 
                 const element = this._createFullElement('div', { 
                     id: (item.id ?? this._generateUUID()),
                     style:` top:${positionY}px; left:${positionX}px; width:${width}px; height:${height}px; z-index:${item.index ?? 1};`, 
                     class:'item d-flex align-items-center justify-content-center',
-                    equivalencely:`${(item.ly/height)}`,
-                    equivalencelx:`${(item.lx/width)}`,
-                    equivalencex: `${this._parseInt((item.x > 0 ? item.x : 1)/positionX)}`,
-                    equivalencey: `${this._parseInt((item.y > 0 ? item.y : 1)/positionY)}`,
+                    equivalencelx:`${equivlx}`,
+                    equivalencely:`${equivly}`,
+                    equivalencex: `${(equivx > 0 ? equivx : equivlx)}`,
+                    equivalencey: `${(equivy > 0 ? equivy : equivy)}`,
                     locked: this._parseBool(item.locked),
                     sizable: this._parseBool(item.sizable),
-                    title:`Size: ${item.lx.toFixed(2)}${this.unit} x ${item.ly.toFixed(2)}${this.unit}, X: ${item.x.toFixed(2)}, Y: ${item.y.toFixed(2)}`
+                    title:`Size: ${item.lx.toFixed(2)}${this.unit} x ${item.ly.toFixed(2)}${this.unit}, X: ${item.x.toFixed(2)}, Y: ${item.y.toFixed(2)}`,
+                    tabindex: '0'
                 });
 
                 element.innerHTML = (item.html ?? '');
@@ -651,9 +946,14 @@ class OpCanva extends HTMLElement
                     element.style.backgroundImage = `url(${item['background-image']})`;
 
                 this._ccanva.appendChild(element);
+                if (item.focus){
+                    element.classList.add('item-selected');
+                    element.focus();
+                }
             });
         }
         if (this.design) this.initMoveAndSizableElement();
+        this._unitTemp = this.unit;
     }
 
     // ========== CALCULATIONS
@@ -678,7 +978,19 @@ class OpCanva extends HTMLElement
         switch (this.unit)
         {
             case "cm": v = (v * 1); break;
-            case "m": v = (v * 100); break;
+            case "m":  v = (v * 100); break;
+            case "in": v = (v * 2.54); break;
+            case "ft": v = (v * 30.48); break;
+            case "yd": v = (v * 91.44); break;
+        }
+        return v;
+    }
+    _cmXUnitTemp=(v)=>
+    {
+        switch (this._unitTemp)
+        {
+            case "cm": v = (v * 1); break;
+            case "m":  v = (v * 100); break;
             case "in": v = (v * 2.54); break;
             case "ft": v = (v * 30.48); break;
             case "yd": v = (v * 91.44); break;

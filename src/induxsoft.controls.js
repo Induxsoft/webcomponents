@@ -2140,7 +2140,7 @@ class SafeInput extends HTMLElement
 
         if (this._parseBool(this.getAttribute('hidden-input')))
         {
-            this._inputHd = this._createFullElement('input', { type:'hidden', id:'SafeInput_inputHd', name:(this.getAttribute('name') ?? '') });
+            this._inputHd = this._createFullElement('input', { type:'hidden', id:'SafeInput_inputHd', name:(this.getAttribute('input-name') ?? '') });
             this._inputHd.value = input.value;
             this.after(this._inputHd);
         }
