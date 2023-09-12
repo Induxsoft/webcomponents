@@ -15,6 +15,7 @@ class OpCanva extends HTMLElement
     data = [];
     unitSymbols = ["cm","m","in","ft","yd"]
     clickEvent = null;
+    resizingEvent = null;
 
     _ccntnt = null;
     _ccanva = null;
@@ -284,6 +285,16 @@ class OpCanva extends HTMLElement
                     current = item;
                 }, true);
 
+                movePoint.addEventListener('touchstart', e => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    isdown = true;
+                    moving = false;
+                    offset = [item.offsetLeft - e.touches[0].pageX, item.offsetTop - e.touches[0].pageY];
+                    item.style.zIndex = '' + ++this._zindex;
+                    current = item;
+                }, true);
+
                 item.onmousedown = e => {
                     e.stopPropagation();
                     e.preventDefault();
@@ -299,11 +310,6 @@ class OpCanva extends HTMLElement
             if (this._parseBool(item.getAttribute('sizable')))
             {
                 // Sizable
-                // let sizePoint = this._createFullElement('div', { class:'resizer-point' });
-                // item.appendChild(sizePoint);
-                // sizePoint.parent = item;
-                // sizePoint.addEventListener('mousedown', this._initDrag, false);
-
                 const resizer_top = this._createFullElement('div', { class:'resizer resizer-top' });
                 const resizer_rgt = this._createFullElement('div', { class:'resizer resizer-right' });
                 const resizer_btm = this._createFullElement('div', { class:'resizer resizer-bottom' });
@@ -393,8 +399,8 @@ class OpCanva extends HTMLElement
             moving = false;
             current = null;
         }
-
         this._ccanva.onmouseup = e1;
+        this._ccanva.ontouchend = e1;
 
         const e2 = (e) => {
             e.preventDefault();
@@ -407,34 +413,18 @@ class OpCanva extends HTMLElement
                 current.style.top = (top > 0 ? top : 0) + 'px';
             }
         }
+        const e3 = (e) => {
+            if (isdown && current)
+            {
+                moving = true;
+                let left = (e.touches[0].pageX + offset[0]);
+                let top = (e.touches[0].pageY + offset[1]);
+                current.style.left = (left > 0 ? left : 0) + 'px';
+                current.style.top = (top > 0 ? top : 0) + 'px';
+            }
+        }
         this._ccanva.onmousemove = e2;
-    }
-    _doDrag=(e)=>
-    {
-        if (!this._elementResizing) return;
-        this._elementResizing.style.width = this._startWidth + e.clientX - this._startX + "px";
-        this._elementResizing.style.height = this._startHeight + e.clientY - this._startY + "px";
-    }
-    _stopDrag=(e)=>
-    {
-        this.removeEventListener("mousemove", this._doDrag, false);
-        this.removeEventListener("mouseup", this._stopDrag, false);
-        this._updateItem(this._elementResizing);
-    }
-    _initDrag=(event)=>
-    {
-        event.stopPropagation();
-        this._elementResizing = event.target.parent;
-        this._startX = event.clientX;
-        this._startY = event.clientY;
-
-        this._startWidth = parseInt(document.defaultView.getComputedStyle(this._elementResizing).width, 10);
-        this._startHeight = parseInt(document.defaultView.getComputedStyle(this._elementResizing).height, 10);
-        
-        this.removeEventListener('mousemove', this._doDrag, false);
-        this.removeEventListener('mouseup', this._stopDrag, false);
-        this.addEventListener('mousemove', this._doDrag, false);
-        this.addEventListener('mouseup', this._stopDrag, false);
+        this._ccanva.ontouchmove = e3;
     }
     _parseBool=(value, _default = false)=>
     {
@@ -481,7 +471,8 @@ class OpCanva extends HTMLElement
         });
     }
 
-    // =================================================== TEMP
+    // ========== RESIZE FUNCTIONS
+
     _getIntStyle=(element, key)=>
     {
         return parseInt(window.getComputedStyle(element).getPropertyValue(key));
@@ -490,6 +481,7 @@ class OpCanva extends HTMLElement
     {
         let offsetX = 0;
         let target = null;
+        let data = null;
 
         let elementDrag = (event) => 
         {
@@ -499,6 +491,13 @@ class OpCanva extends HTMLElement
                 let x = (clientX - target.offsetLeft - offsetX);
                 if (x < 1) x = 1
                 target.style.width = `${x}px`;
+                
+                if (this.resizingEvent)
+                {
+                    let lx = this._getLXCalc(target);
+                    let ly = this._getLYCalc(target);
+                    this.resizingEvent(data, lx, ly);
+                }
             }
         }
         let closeDragElement = () => 
@@ -507,12 +506,14 @@ class OpCanva extends HTMLElement
             this.removeEventListener('mousemove', elementDrag);
             if (target && !preventUpdate) this._updateItem(target);
             target = null;
+            data = null;
         }
         let dragMouseDown = (event) => 
         {
             event.preventDefault();
             event.stopPropagation();
             target = event.target.parentElement;
+            if (!data) data = this.getItem(target.getAttribute('id'));
 
             const {clientX} = event;
             offsetX = (clientX - target.offsetLeft - this._getIntStyle(target, 'width'));
@@ -525,6 +526,7 @@ class OpCanva extends HTMLElement
     {
         let offsetY = 0;
         let target = null;
+        let data = null;
         
         let elementDrag = (event) => 
         {
@@ -534,6 +536,13 @@ class OpCanva extends HTMLElement
                 let y = (clientY - target.offsetTop - offsetY);
                 if (y < 1) y = 1
                 target.style.height = `${y}px`;
+                
+                if (this.resizingEvent)
+                {
+                    let lx = this._getLXCalc(target);
+                    let ly = this._getLYCalc(target);
+                    this.resizingEvent(data, lx, ly);
+                }
             }
         }
         let closeDragElement = () => 
@@ -548,6 +557,7 @@ class OpCanva extends HTMLElement
             event.preventDefault();
             event.stopPropagation();
             target = event.target.parentElement;
+            if (!data) data = this.getItem(target.getAttribute('id'));
 
             const {clientY} = event;
             offsetY = (clientY - target.offsetTop - this._getIntStyle(target, 'height'));
@@ -563,6 +573,7 @@ class OpCanva extends HTMLElement
         let startW = 0;
         let maxX = 0;
         let target = null;
+        let data = null;
 
         let elementDrag = (event) =>
         {
@@ -576,6 +587,13 @@ class OpCanva extends HTMLElement
             {
                 target.style.left = `${x}px`;
                 target.style.width = `${w}px`;
+
+                if (this.resizingEvent)
+                {
+                    let lx = this._getLXCalc(target);
+                    let ly = this._getLYCalc(target);
+                    this.resizingEvent(data, lx, ly);
+                }
             }
         }
         let closeDragElement = () => 
@@ -590,6 +608,7 @@ class OpCanva extends HTMLElement
             event.preventDefault();
             event.stopPropagation();
             target = event.target.parentElement;
+            if (!data) data = this.getItem(target.getAttribute('id'));
 
             const {clientX} = event;
             startX = this._getIntStyle(target, 'left');
@@ -610,6 +629,7 @@ class OpCanva extends HTMLElement
         let startH = 0;
         let maxY = 0;
         let target = null;
+        let data = null;
 
         let elementDrag = (event) =>
         {
@@ -623,6 +643,13 @@ class OpCanva extends HTMLElement
             {
                 target.style.top = `${y}px`;
                 target.style.height = `${h}px`;
+
+                if (this.resizingEvent)
+                {
+                    let lx = this._getLXCalc(target);
+                    let ly = this._getLYCalc(target);
+                    this.resizingEvent(data, lx, ly);
+                }
             }
         }
         let closeDragElement = () => 
@@ -637,6 +664,7 @@ class OpCanva extends HTMLElement
             event.preventDefault();
             event.stopPropagation();
             target = event.target.parentElement;
+            if (!data) data = this.getItem(target.getAttribute('id'));
 
             const {clientY} = event;
             startY = this._getIntStyle(target, 'top');
@@ -650,7 +678,18 @@ class OpCanva extends HTMLElement
 
         return dragMouseDown;
     }
-
+    _getLXCalc=(element)=>
+    {
+        const w = (Number(document.defaultView.getComputedStyle(element).width.replace(/[^0-9.]+/g, '')));
+        const lx = (Number(element.getAttribute('equivalencelx')) > 0 ? Number(element.getAttribute('equivalencelx')) : 1);
+        return (lx * (w > 0 ? w : 1));
+    }
+    _getLYCalc=(element)=>
+    {
+        const h = (Number(document.defaultView.getComputedStyle(element).height.replace(/[^0-9.]+/g, '')));     
+        const ly = (Number(element.getAttribute('equivalencely')) > 0 ? Number(element.getAttribute('equivalencely')) : 1);
+        return (ly * (h > 0 ? h : 1));
+    }
     // _resizeXPositiveM=(preventUpdate=false)=>
     // {
     //     let offsetX = 0;
@@ -819,6 +858,8 @@ class OpCanva extends HTMLElement
         {
             this.data.forEach(item => 
             {
+                item.focus = false;
+                
                 if (item.id == element.id)
                 {
                     const x = (Number(element.getAttribute('equivalencex')) > 0 ? Number(element.getAttribute('equivalencex')) : 1);
@@ -880,7 +921,6 @@ class OpCanva extends HTMLElement
                         item.ly = newly;
                         item.index = document.defaultView.getComputedStyle(element).zIndex;
                     }
-
                     item.focus = element.classList.contains('item-selected');
                 }
             });
