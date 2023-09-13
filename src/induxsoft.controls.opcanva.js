@@ -31,6 +31,8 @@ class OpCanva extends HTMLElement
     _equivalenceX = null;
     _convertSizesFromUnit = true;
     _moveSteps = 2;
+    _resizeElementsInMouseDevices = true;
+    _resizeElementsInTouchDevices = true;
 
     constructor() 
     {
@@ -264,47 +266,36 @@ class OpCanva extends HTMLElement
 
         let elements = this._shadow.querySelectorAll('.item');
 
+        let resizeIn = [];
+        if (this._resizeElementsInMouseDevices) resizeIn.push("mousedown");
+        if (this._resizeElementsInTouchDevices) resizeIn.push("touchstart");
+
         elements.forEach(item => 
         {
             if (!this._parseBool(item.getAttribute('locked')))
             {
                 // Move
                 let movePoint = this._createFullElement('div', { class:'move-point d-flex align-items-center justify-content-center' });
-                movePoint.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-arrows-move" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M7.646.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 1.707V5.5a.5.5 0 0 1-1 0V1.707L6.354 2.854a.5.5 0 1 1-.708-.708l2-2zM8 10a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 14.293V10.5A.5.5 0 0 1 8 10zM.146 8.354a.5.5 0 0 1 0-.708l2-2a.5.5 0 1 1 .708.708L1.707 7.5H5.5a.5.5 0 0 1 0 1H1.707l1.147 1.146a.5.5 0 0 1-.708.708l-2-2zM10 8a.5.5 0 0 1 .5-.5h3.793l-1.147-1.146a.5.5 0 0 1 .708-.708l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708L14.293 8.5H10.5A.5.5 0 0 1 10 8z"/>
-              </svg>`
+                movePoint.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-arrows-move" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M7.646.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 1.707V5.5a.5.5 0 0 1-1 0V1.707L6.354 2.854a.5.5 0 1 1-.708-.708l2-2zM8 10a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 14.293V10.5A.5.5 0 0 1 8 10zM.146 8.354a.5.5 0 0 1 0-.708l2-2a.5.5 0 1 1 .708.708L1.707 7.5H5.5a.5.5 0 0 1 0 1H1.707l1.147 1.146a.5.5 0 0 1-.708.708l-2-2zM10 8a.5.5 0 0 1 .5-.5h3.793l-1.147-1.146a.5.5 0 0 1 .708-.708l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708L14.293 8.5H10.5A.5.5 0 0 1 10 8z"/></svg>`
                 item.appendChild(movePoint);
 
-                movePoint.addEventListener('mousedown', (e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    isdown = true;
-                    moving = false;
-                    offset = [item.offsetLeft - e.clientX, item.offsetTop - e.clientY];
-                    item.style.zIndex = '' + ++this._zindex;
-                    current = item;
-                }, true);
-
-                movePoint.addEventListener('touchstart', e => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    isdown = true;
-                    moving = false;
-                    offset = [item.offsetLeft - e.touches[0].pageX, item.offsetTop - e.touches[0].pageY];
-                    item.style.zIndex = '' + ++this._zindex;
-                    current = item;
-                }, true);
-
-                item.onmousedown = e => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    if (e.target !== item) return;
-                    isdown = true;
-                    moving = false;
-                    offset = [e.target.offsetLeft - e.clientX, e.target.offsetTop - e.clientY];
-                    e.target.style.zIndex = '' + ++this._zindex;
-                    current = e.target;
+                let mouseDown = (isMobile = false) => {
+                    return (e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        isdown = true;
+                        moving = false;
+                        offset = [item.offsetLeft - (isMobile ? e.touches[0].pageX : e.clientX), item.offsetTop - (isMobile ? e.touches[0].pageY : e.clientY)];
+                        item.style.zIndex = '' + ++this._zindex;
+                        current = item;
+                        item.click();
+                    }
                 }
+
+                movePoint.addEventListener('mousedown', mouseDown(false), true);
+                movePoint.addEventListener('touchstart', mouseDown(true), true);
+                item.onmousedown = mouseDown(false);
+                item.ontouchstart = mouseDown(true);
             }
 
             if (this._parseBool(item.getAttribute('sizable')))
@@ -319,42 +310,30 @@ class OpCanva extends HTMLElement
                 const rzr_btm_rgt = this._createFullElement('div', { class:'resizer resizer-corner resizer-bottom-right' });
                 const rzr_btm_lft = this._createFullElement('div', { class:'resizer resizer-corner resizer-bottom-left' });
 
-                item.appendChild(resizer_top);
-                item.appendChild(resizer_rgt);
-                item.appendChild(resizer_btm);
-                item.appendChild(resizer_lft);
-                item.appendChild(rzr_top_lft);
-                item.appendChild(rzr_top_rgt);
-                item.appendChild(rzr_btm_rgt);
-                item.appendChild(rzr_btm_lft);
+                let resizers = [resizer_top, resizer_rgt, resizer_btm, resizer_lft, rzr_top_lft, rzr_top_rgt, rzr_btm_rgt, rzr_btm_lft];
 
-                resizer_top.addEventListener('mousedown', this._resizeYNegative(), false);
-                resizer_rgt.addEventListener('mousedown', this._resizeXPositive(), false);
-                resizer_btm.addEventListener('mousedown', this._resizeYPositive(), false);
-                resizer_lft.addEventListener('mousedown', this._resizeXNegative(), false);
-                rzr_top_lft.addEventListener('mousedown', this._resizeXNegative(), false); rzr_top_lft.addEventListener('mousedown', this._resizeYNegative(true), false);
-                rzr_top_rgt.addEventListener('mousedown', this._resizeXPositive(), false); rzr_top_rgt.addEventListener('mousedown', this._resizeYNegative(true), false);
-                rzr_btm_rgt.addEventListener('mousedown', this._resizeXPositive(), false); rzr_btm_rgt.addEventListener('mousedown', this._resizeYPositive(true), false);
-                rzr_btm_lft.addEventListener('mousedown', this._resizeXNegative(), false); rzr_btm_lft.addEventListener('mousedown', this._resizeYPositive(true), false);
+                resizers.forEach(r => item.appendChild(r));
 
-                // Mobile
-                // resizer_top.addEventListener('touchstart', this._resizeYNegativeM(), false);
-                // resizer_rgt.addEventListener('touchstart', this._resizeXPositiveM(), false);
-                // resizer_btm.addEventListener('touchstart', this._resizeYPositiveM(), false);
-                // resizer_lft.addEventListener('touchstart', this._resizeXNegativeM(), false);
-                // rzr_top_lft.addEventListener('touchstart', this._resizeXNegativeM(), false); rzr_top_lft.addEventListener('touchstart', this._resizeYNegativeM(true), false);
-                // rzr_top_rgt.addEventListener('touchstart', this._resizeXPositiveM(), false); rzr_top_rgt.addEventListener('touchstart', this._resizeYNegativeM(true), false);
-                // rzr_btm_rgt.addEventListener('touchstart', this._resizeXPositiveM(), false); rzr_btm_rgt.addEventListener('touchstart', this._resizeYPositiveM(true), false);
-                // rzr_btm_lft.addEventListener('touchstart', this._resizeXNegativeM(), false); rzr_btm_lft.addEventListener('touchstart', this._resizeYPositiveM(true), false);
+                resizeIn.forEach(eName => {
+                    resizer_top.addEventListener(eName, this._resizeYNegative(false, (eName=='touchstart')), false);
+                    resizer_rgt.addEventListener(eName, this._resizeXPositive(false, (eName=='touchstart')), false);
+                    resizer_btm.addEventListener(eName, this._resizeYPositive(false, (eName=='touchstart')), false);
+                    resizer_lft.addEventListener(eName, this._resizeXNegative(false, (eName=='touchstart')), false);
+                    rzr_top_lft.addEventListener(eName, this._resizeXNegative(false, (eName=='touchstart')), false); rzr_top_lft.addEventListener(eName, this._resizeYNegative(true, (eName=='touchstart')), false);
+                    rzr_top_rgt.addEventListener(eName, this._resizeXPositive(false, (eName=='touchstart')), false); rzr_top_rgt.addEventListener(eName, this._resizeYNegative(true, (eName=='touchstart')), false);
+                    rzr_btm_rgt.addEventListener(eName, this._resizeXPositive(false, (eName=='touchstart')), false); rzr_btm_rgt.addEventListener(eName, this._resizeYPositive(true, (eName=='touchstart')), false);
+                    rzr_btm_lft.addEventListener(eName, this._resizeXNegative(false, (eName=='touchstart')), false); rzr_btm_lft.addEventListener(eName, this._resizeYPositive(true, (eName=='touchstart')), false);
+                });
             }
 
             item.addEventListener('click', (e) => {
                 e.stopPropagation();
+                e.preventDefault();
                 if (this.clickEvent){
                     let dataItem = this.getItem(item.getAttribute('id'));
-                    this.clickEvent(e, dataItem);
+                    this.clickEvent(dataItem);
                 }
-            });
+            },true);
             item.addEventListener('keyup', e => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -386,45 +365,34 @@ class OpCanva extends HTMLElement
                     }
                 }
             });
-            item.addEventListener('touchstart', e => {
-                e.stopPropagation();
-                e.preventDefault();
-                item.click();
-            });
         });
 
-        const e1 = (e) => {
-            isdown = false;
-            if (moving && current) this._updateItem(current)
-            moving = false;
-            current = null;
-        }
-        this._ccanva.onmouseup = e1;
-        this._ccanva.ontouchend = e1;
-
-        const e2 = (e) => {
-            e.preventDefault();
-            if (isdown && current)
-            {
-                moving = true;
-                let left = (e.clientX + offset[0]);
-                let top = (e.clientY + offset[1]);
-                current.style.left = (left > 0 ? left : 0) + 'px';
-                current.style.top = (top > 0 ? top : 0) + 'px';
+        // Move
+        const mouseup = () => {
+            return (e) => {
+                isdown = false;
+                if (moving && current) this._updateItem(current)
+                moving = false;
+                current = null;
             }
         }
-        const e3 = (e) => {
-            if (isdown && current)
-            {
-                moving = true;
-                let left = (e.touches[0].pageX + offset[0]);
-                let top = (e.touches[0].pageY + offset[1]);
-                current.style.left = (left > 0 ? left : 0) + 'px';
-                current.style.top = (top > 0 ? top : 0) + 'px';
+        const mousemove = (isMobile = false) => {
+            return (e) => {
+                if (isdown && current)
+                {
+                    moving = true;
+                    let left = ((isMobile ? e.touches[0].pageX : e.clientX) + offset[0]);
+                    let top = ((isMobile ? e.touches[0].pageY : e.clientY) + offset[1]);
+                    current.style.left = (left > 0 ? left : 0) + 'px';
+                    current.style.top = (top > 0 ? top : 0) + 'px';
+                }
             }
         }
-        this._ccanva.onmousemove = e2;
-        this._ccanva.ontouchmove = e3;
+        
+        this._ccanva.onmouseup = mouseup();
+        this._ccanva.ontouchend = mouseup();
+        this._ccanva.onmousemove = mousemove(false);
+        this._ccanva.ontouchmove = mousemove(true);
     }
     _parseBool=(value, _default = false)=>
     {
@@ -477,7 +445,7 @@ class OpCanva extends HTMLElement
     {
         return parseInt(window.getComputedStyle(element).getPropertyValue(key));
     }
-    _resizeXPositive=(preventUpdate=false)=>
+    _resizeXPositive=(preventUpdate=false, isMobile=false)=>
     {
         let offsetX = 0;
         let target = null;
@@ -487,9 +455,9 @@ class OpCanva extends HTMLElement
         {
             if (target)
             {
-                const {clientX} = event;
+                const clientX = (isMobile ? event.touches[0].pageX : event.clientX);
                 let x = (clientX - target.offsetLeft - offsetX);
-                if (x < 1) x = 1
+                if (x < 1) x = 1;
                 target.style.width = `${x}px`;
                 
                 if (this.resizingEvent)
@@ -502,27 +470,27 @@ class OpCanva extends HTMLElement
         }
         let closeDragElement = () => 
         {
-            this.removeEventListener('mouseup', closeDragElement);
-            this.removeEventListener('mousemove', elementDrag);
+            this.removeEventListener((isMobile ? 'touchend' : 'mouseup'), closeDragElement);
+            this.removeEventListener((isMobile ? 'touchmove' : 'mousemove'), elementDrag);
             if (target && !preventUpdate) this._updateItem(target);
             target = null;
             data = null;
         }
         let dragMouseDown = (event) => 
         {
-            event.preventDefault();
             event.stopPropagation();
+            event.preventDefault();
             target = event.target.parentElement;
             if (!data) data = this.getItem(target.getAttribute('id'));
 
-            const {clientX} = event;
+            const clientX = (isMobile ? event.touches[0].pageX : event.clientX);
             offsetX = (clientX - target.offsetLeft - this._getIntStyle(target, 'width'));
-            this.addEventListener('mouseup', closeDragElement);
-            this.addEventListener('mousemove', elementDrag);
+            this.addEventListener((isMobile ? 'touchend' : 'mouseup'), closeDragElement);
+            this.addEventListener((isMobile ? 'touchmove' : 'mousemove'), elementDrag);
         }
         return dragMouseDown;
     }
-    _resizeYPositive=(preventUpdate=false)=>
+    _resizeYPositive=(preventUpdate=false, isMobile=false)=>
     {
         let offsetY = 0;
         let target = null;
@@ -532,7 +500,7 @@ class OpCanva extends HTMLElement
         {
             if (target)
             {
-                const {clientY} = event;
+                const clientY = (isMobile ? event.touches[0].pageY : event.clientY);
                 let y = (clientY - target.offsetTop - offsetY);
                 if (y < 1) y = 1
                 target.style.height = `${y}px`;
@@ -547,10 +515,11 @@ class OpCanva extends HTMLElement
         }
         let closeDragElement = () => 
         {
-            this.removeEventListener('mouseup', closeDragElement);
-            this.removeEventListener('mousemove', elementDrag);
+            this.removeEventListener((isMobile ? 'touchend' : 'mouseup'), closeDragElement);
+            this.removeEventListener((isMobile ? 'touchmove' : 'mousemove'), elementDrag);
             if (target && !preventUpdate) this._updateItem(target);
             target = null;
+            data = null;
         }
         let dragMouseDown = (event) => 
         {
@@ -559,14 +528,14 @@ class OpCanva extends HTMLElement
             target = event.target.parentElement;
             if (!data) data = this.getItem(target.getAttribute('id'));
 
-            const {clientY} = event;
+            const clientY = (isMobile ? event.touches[0].pageY : event.clientY);
             offsetY = (clientY - target.offsetTop - this._getIntStyle(target, 'height'));
-            this.addEventListener('mouseup', closeDragElement);
-            this.addEventListener('mousemove', elementDrag);
+            this.addEventListener((isMobile ? 'touchend' : 'mouseup'), closeDragElement);
+            this.addEventListener((isMobile ? 'touchmove' : 'mousemove'), elementDrag);
         }
         return dragMouseDown;
     }
-    _resizeXNegative=(preventUpdate=false)=>
+    _resizeXNegative=(preventUpdate=false, isMobile=false)=>
     {
         let offsetX = 0;
         let startX = 0;
@@ -577,7 +546,7 @@ class OpCanva extends HTMLElement
 
         let elementDrag = (event) =>
         {
-            const {clientX} = event;
+            const clientX = (isMobile ? event.touches[0].pageX : event.clientX);
             let x = (clientX - offsetX);
             let w = (startW + startX - x);
             if (w < 1) w = 1;
@@ -598,10 +567,11 @@ class OpCanva extends HTMLElement
         }
         let closeDragElement = () => 
         {
-            this.removeEventListener('mouseup', closeDragElement);
-            this.removeEventListener('mousemove', elementDrag);
+            this.removeEventListener((isMobile ? 'touchend' : 'mouseup'), closeDragElement);
+            this.removeEventListener((isMobile ? 'touchmove' : 'mousemove'), elementDrag);
             if (target && !preventUpdate) this._updateItem(target);
             target = null;
+            data = null;
         }
         let dragMouseDown = (event) =>
         {
@@ -610,19 +580,19 @@ class OpCanva extends HTMLElement
             target = event.target.parentElement;
             if (!data) data = this.getItem(target.getAttribute('id'));
 
-            const {clientX} = event;
+            const clientX = (isMobile ? event.touches[0].pageX : event.clientX);
             startX = this._getIntStyle(target, 'left');
             startW = this._getIntStyle(target, 'width');
             offsetX = (clientX - startX);
             maxX = (startX + startW - 1);
 
-            this.addEventListener('mouseup', closeDragElement);
-            this.addEventListener('mousemove', elementDrag);
+            this.addEventListener((isMobile ? 'touchend' : 'mouseup'), closeDragElement);
+            this.addEventListener((isMobile ? 'touchmove' : 'mousemove'), elementDrag);
         }
 
         return dragMouseDown;
     }
-    _resizeYNegative=(preventUpdate=false)=>
+    _resizeYNegative=(preventUpdate=false, isMobile=false)=>
     {
         let offsetY = 0;
         let startY = 0;
@@ -633,7 +603,7 @@ class OpCanva extends HTMLElement
 
         let elementDrag = (event) =>
         {
-            const {clientY} = event;
+            const clientY = (isMobile ? event.touches[0].pageY : event.clientY);
             let y = (clientY - offsetY);
             let h = (startH + startY - y);
             if (h < 1) h = 1;
@@ -654,10 +624,11 @@ class OpCanva extends HTMLElement
         }
         let closeDragElement = () => 
         {
-            this.removeEventListener('mouseup', closeDragElement);
-            this.removeEventListener('mousemove', elementDrag);
+            this.removeEventListener((isMobile ? 'touchend' : 'mouseup'), closeDragElement);
+            this.removeEventListener((isMobile ? 'touchmove' : 'mousemove'), elementDrag);
             if (target && !preventUpdate) this._updateItem(target);
             target = null;
+            data = null;
         }
         let dragMouseDown = (event) =>
         {
@@ -666,14 +637,14 @@ class OpCanva extends HTMLElement
             target = event.target.parentElement;
             if (!data) data = this.getItem(target.getAttribute('id'));
 
-            const {clientY} = event;
+            const clientY = (isMobile ? event.touches[0].pageY : event.clientY);
             startY = this._getIntStyle(target, 'top');
             startH = this._getIntStyle(target, 'height');
             offsetY = (clientY - startY);
             maxY = (startY + startH - 1);
 
-            this.addEventListener('mouseup', closeDragElement);
-            this.addEventListener('mousemove', elementDrag);
+            this.addEventListener((isMobile ? 'touchend' : 'mouseup'), closeDragElement);
+            this.addEventListener((isMobile ? 'touchmove' : 'mousemove'), elementDrag);
         }
 
         return dragMouseDown;
@@ -690,166 +661,6 @@ class OpCanva extends HTMLElement
         const ly = (Number(element.getAttribute('equivalencely')) > 0 ? Number(element.getAttribute('equivalencely')) : 1);
         return (ly * (h > 0 ? h : 1));
     }
-    // _resizeXPositiveM=(preventUpdate=false)=>
-    // {
-    //     let offsetX = 0;
-    //     let target = null;
-
-    //     let elementDrag = (event) => 
-    //     {
-    //         if (target)
-    //         {
-    //             const {pageX} = event.touches[0];
-    //             let x = (pageX - target.offsetLeft - offsetX);
-    //             if (x < 1) x = 1
-    //             target.style.width = `${x}px`;
-    //         }
-    //     }
-    //     let closeDragElement = () => 
-    //     {
-    //         this.removeEventListener('touchend', closeDragElement);
-    //         this.removeEventListener('touchmove', elementDrag);
-    //         if (target && !preventUpdate) this._updateItem(target);
-    //         target = null;
-    //     }
-    //     let dragMouseDown = (event) => 
-    //     {
-    //         event.stopPropagation();
-    //         target = event.target.parentElement;
-
-    //         const {pageX} = event.touches[0];
-    //         offsetX = (pageX - target.offsetLeft - this._getIntStyle(target, 'width'));
-    //         this.addEventListener('touchend', closeDragElement);
-    //         this.addEventListener('touchmove', elementDrag);
-    //     }
-    //     return dragMouseDown;
-    // }
-    // _resizeYPositiveM=(preventUpdate=false)=>
-    // {
-    //     let offsetY = 0;
-    //     let target = null;
-        
-    //     let elementDrag = (event) => 
-    //     {
-    //         if (target)
-    //         {
-    //             const {clientY} = event;
-    //             let y = (clientY - target.offsetTop - offsetY);
-    //             if (y < 1) y = 1
-    //             target.style.height = `${y}px`;
-    //         }
-    //     }
-    //     let closeDragElement = () => 
-    //     {
-    //         this.removeEventListener('touchend', closeDragElement);
-    //         this.removeEventListener('touchmove', elementDrag);
-    //         if (target && !preventUpdate) this._updateItem(target);
-    //         target = null;
-    //     }
-    //     let dragMouseDown = (event) => 
-    //     {
-    //         event.stopPropagation();
-    //         target = event.target.parentElement;
-
-    //         const {clientY} = event;
-    //         offsetY = (clientY - target.offsetTop - this._getIntStyle(target, 'height'));
-    //         this.addEventListener('touchend', closeDragElement);
-    //         this.addEventListener('touchmove', elementDrag);
-    //     }
-    //     return dragMouseDown;
-    // }
-    // _resizeXNegativeM=(preventUpdate=false)=>
-    // {
-    //     let offsetX = 0;
-    //     let startX = 0;
-    //     let startW = 0;
-    //     let maxX = 0;
-    //     let target = null;
-
-    //     let elementDrag = (event) =>
-    //     {
-    //         const {clientX} = event;
-    //         let x = (clientX - offsetX);
-    //         let w = (startW + startX - x);
-    //         if (w < 1) w = 1;
-    //         if (x > maxX) x = maxX;
-            
-    //         if (target)
-    //         {
-    //             target.style.left = `${x}px`;
-    //             target.style.width = `${w}px`;
-    //         }
-    //     }
-    //     let closeDragElement = () => 
-    //     {
-    //         this.removeEventListener('touchend', closeDragElement);
-    //         this.removeEventListener('touchmove', elementDrag);
-    //         if (target && !preventUpdate) this._updateItem(target);
-    //         target = null;
-    //     }
-    //     let dragMouseDown = (event) =>
-    //     {
-    //         event.stopPropagation();
-    //         target = event.target.parentElement;
-
-    //         const {clientX} = event;
-    //         startX = this._getIntStyle(target, 'left');
-    //         startW = this._getIntStyle(target, 'width');
-    //         offsetX = (clientX - startX);
-    //         maxX = (startX + startW - 1);
-
-    //         this.addEventListener('touchend', closeDragElement);
-    //         this.addEventListener('touchmove', elementDrag);
-    //     }
-
-    //     return dragMouseDown;
-    // }
-    // _resizeYNegativeM=(preventUpdate=false)=>
-    // {
-    //     let offsetY = 0;
-    //     let startY = 0;
-    //     let startH = 0;
-    //     let maxY = 0;
-    //     let target = null;
-
-    //     let elementDrag = (event) =>
-    //     {
-    //         const {clientY} = event;
-    //         let y = (clientY - offsetY);
-    //         let h = (startH + startY - y);
-    //         if (h < 1) h = 1;
-    //         if (y > maxY) y = maxY;
-            
-    //         if (target)
-    //         {
-    //             target.style.top = `${y}px`;
-    //             target.style.height = `${h}px`;
-    //         }
-    //     }
-    //     let closeDragElement = () => 
-    //     {
-    //         this.removeEventListener('touchend', closeDragElement);
-    //         this.removeEventListener('touchmove', elementDrag);
-    //         if (target && !preventUpdate) this._updateItem(target);
-    //         target = null;
-    //     }
-    //     let dragMouseDown = (event) =>
-    //     {
-    //         event.stopPropagation();
-    //         target = event.target.parentElement;
-
-    //         const {clientY} = event;
-    //         startY = this._getIntStyle(target, 'top');
-    //         startH = this._getIntStyle(target, 'height');
-    //         offsetY = (clientY - startY);
-    //         maxY = (startY + startH - 1);
-
-    //         this.addEventListener('touchend', closeDragElement);
-    //         this.addEventListener('touchmove', elementDrag);
-    //     }
-
-    //     return dragMouseDown;
-    // }
 
     // ========== PRINT DATA
 
