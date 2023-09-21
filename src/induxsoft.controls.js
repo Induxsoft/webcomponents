@@ -825,6 +825,7 @@ class CheckList extends HTMLElement
     canEdit = null;
     canMove = null;
     canCheck = null;
+    canAdd = null;
     showPercents = null;
 
     onItemChanged = null;
@@ -871,6 +872,7 @@ class CheckList extends HTMLElement
             this.canEdit =      this._parseBool(this.getAttribute('can-edit'));
             this.canMove =      this._parseBool(this.getAttribute('can-move'));
             this.canCheck =     this._parseBool(this.getAttribute('can-check'), true);
+            this.canAdd =       this._parseBool(this.getAttribute('can-add'), true);
             this.showPercents = this._parseBool(this.getAttribute('show-percents'));
 
             this._containerwc = this._createFullElement('div', { id:'CL_container', class:'bordered d-flex flex-column' });
@@ -1011,6 +1013,8 @@ class CheckList extends HTMLElement
         this._footSection.innerHTML = ``;
         this._footHeader.classList.add('hide-element');
 
+        this._titleHeader.classList.toggle('disable-element', !this.canEdit);
+
         // New item
         let id = this._generateUUID()
         const newItem = this._createRowItem(null, { isNew: true, id: id});
@@ -1059,6 +1063,8 @@ class CheckList extends HTMLElement
             newItem.appendChild(newIcon);
             newItem.appendChild(newText);
             containerItem.appendChild(newItem);
+
+            if (!this.canAdd) containerItem.classList.add('hide-element');
 
             newText.addEventListener('blur', () => {
                 if (newText.value.trim() != ""){
