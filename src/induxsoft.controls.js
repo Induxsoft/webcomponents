@@ -176,6 +176,20 @@ class EditSelect extends HTMLElement
     {
         return this.getAttribute('value');
     }
+
+    reloadSelect()
+    {
+        const option = this.querySelectorAll('option');
+        const micopy = this.manualOption.cloneNode(true);
+
+        this.select.innerHTML = '';
+
+        if (option && option.length >= 1) 
+            option.forEach(opt => this.select.appendChild(opt));
+
+        this.manualOption = micopy;
+        this.select.appendChild(this.manualOption);
+    }
 }
 
 class InputKey extends HTMLElement
