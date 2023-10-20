@@ -2030,24 +2030,16 @@ class SafeInput extends HTMLElement
             this._btnEdit.classList.toggle('disable-element', ((this.getAttribute('disabled')??'') === 'true'));
             this._inputSf.setAttribute('disabled','true');
 
-
             this._btnEdit.addEventListener('click', () => {
                 this._startEdit();
                 this._showControlButtons(true);
             });
+            this._inputSf.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter')
+                    this._confirmEdit(contanr);    
+            });
             this._btnDone.addEventListener('click', async () => {
-                contanr.classList.add('waiting');
-                this.style.cursor = 'progress';
-                let res = await this._cancelChange();
-                if (res) {
-                    this._cancelEdit();
-                }
-                else {
-                    this._showControlButtons(false);
-                    if (this._inputHd) this._inputHd.value = this._inputSf.value;
-                }
-                contanr.classList.remove('waiting');
-                this.style.cursor = 'initial';
+                this._confirmEdit(contanr);
             });
             this._btnUndo.addEventListener('click', () => {
                 this._cancelEdit();
@@ -2177,6 +2169,21 @@ class SafeInput extends HTMLElement
     _startEdit=()=>
     {
         this._tempValue = (this._inputSf?.value ?? '');
+    }
+    _confirmEdit=async(contanr)=>
+    {
+        contanr.classList.add('waiting');
+        this.style.cursor = 'progress';
+        let res = await this._cancelChange();
+        if (res) {
+            this._cancelEdit();
+        }
+        else {
+            this._showControlButtons(false);
+            if (this._inputHd) this._inputHd.value = this._inputSf.value;
+        }
+        contanr.classList.remove('waiting');
+        this.style.cursor = 'initial';
     }
     _cancelEdit=()=>
     {
