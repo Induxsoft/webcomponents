@@ -226,6 +226,7 @@
             - type          Tipo de input [text,email,number,textarea,date,time,datetime,select] (def: text)
             - data-select   (opcional) Objeto de datos clave-valor que establecen las opciones del input cuando es de tipo select, ej: {"val1":"text1", "val2":"text2"}
             - name          (opcional) Nombre del elemento input
+            - placeholder   (opcional) Texto a mostrar en la caja de entrada (input).
             - hidden-input  (opcional) Define si se crea un elemento input oculto fuera el web component para ser tomado por formularios o selectores (def: false)
         -->
         <safe-input 
@@ -233,6 +234,7 @@
             type="text"
             name="nombre"
             value="Example value"
+            placeholder="Safe-Input"
             hidden-input="true">
         </safe-input>
     </div>

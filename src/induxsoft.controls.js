@@ -2148,6 +2148,9 @@ class SafeInput extends HTMLElement
             }
         }
 
+        if (this.getAttribute('placeholder'))
+            input.setAttribute('placeholder', this.getAttribute('placeholder'));
+
         if (input) input.value = (this.getAttribute('value') ?? '');
 
         if (this._parseBool(this.getAttribute('hidden-input')))
