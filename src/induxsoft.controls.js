@@ -2209,9 +2209,130 @@ class SafeInput extends HTMLElement
     }
 }
 
+class MediaList extends HTMLElement
+{
+    attributes = null;
+    data = [];
+    contanr = null;
+
+    canArrange = true;
+    canDrag = true;
+    canDrop = true;
+    canDelete = true;
+    highlightFirst = true;
+    mediaProp = '';
+    miniatureProp = '';
+
+    constructor() 
+    {
+        super();
+        document.addEventListener('DOMContentLoaded', () => this.attributes = this.getAttributeNames());
+    }
+
+    static get observedAttributes()
+    {
+        return  attributes;
+    }
+
+    attributeChangeCallback(property, oldValue, newValue)
+    {
+        if (newValue === oldValue) return;
+        this[property] = newValue;
+    }
+
+    connectedCallback()
+    {
+        document.addEventListener('DOMContentLoaded', () => 
+        {
+            const shadow = this.attachShadow({ mode: 'closed' });
+            const ppanel = this._createFullElement('div', { class: 'p-1 bordered' });
+            this.contanr = this._createFullElement('div', { id:'MediaList_contnr'});
+            shadow.innerHTML = `
+                <style>
+                    .bordered{ border: 1px solid #DDD; }
+                    .w-100{ width: 100%; } .h-100{ height: 100%; }
+                    .p-1{ padding: 4px; } .p-2{ padding: 8px; } .p-3{ padding: 12px; } .p-4{ padding: 16px; } .p-5{ padding: 32px; }
+                    .ps-1{ padding-left: 4px; }.ps-2{ padding-left: 8px; }.ps-3{ padding-left: 12px; }.ps-4{ padding-left: 16px; }.ps-5{ padding-left: 32px; }
+                    .pe-1{ padding-right: 4px; }.pe-2{ padding-right: 8px; }.pe-3{ padding-right: 12px; }.pe-4{ padding-right: 16px; }.pe-5{ padding-right: 32px; }
+                    
+                    #MediaList_contnr { width: 100%; min-width: 1rem; min-height: 1rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(1rem, 10rem)); grid-auto-rows: minmax(1rem, 10rem); }
+                    .img-item { background-repeat: no-repeat; background-size: contain; }
+                </style>
+            `;
+            ppanel.appendChild(this.contanr);
+            shadow.appendChild(ppanel);
+
+            if (this.hasAttribute('data') && this.getAttribute('data').trim()) {
+                try {
+                    this.setData(JSON.parse(this.getAttribute('data'))); }
+                catch(error) {
+                    alert('El valor del atributo "data" no contiene un formato JSON válido');
+                    this.data = [];
+                }
+            }
+            this.initProperties();
+            this._refreshView();
+        });
+    }
+    initProperties()
+    {
+        this.canArrange = this._parseBool((this.getAttribute('can-arrange') ?? 'true'), true);
+        this.canDrag = this._parseBool((this.getAttribute('can-drag') ?? 'true'), true);
+        this.canDrop = this._parseBool((this.getAttribute('can-drop') ?? 'true'), true);
+        this.canDelete = this._parseBool((this.getAttribute('can-delete') ?? 'true'), true);
+        this.highlightFirst = this._parseBool((this.getAttribute('highlight-first') ?? 'true'), true);
+        this.mediaProp = (this.getAttribute('media-prop') ?? 'url');
+        this.miniatureProp = (this.getAttribute('miniature-prop') ?? 'mini');
+    }
+    setData(data)
+    {
+        this.data = data;
+        this._refreshView();
+    }
+    _refreshView()
+    {
+        this.contanr.innerHTML = '';
+        if (this.data && this.data.length > 0)
+        {
+            this.data.forEach(media => 
+            {
+                const item = this._createFullElement('div', { class:'p-1 media-item', data: JSON.stringify(media)});
+                const imgi = this._createFullElement('div', { class:'w-100 h-100 img-item' });
+
+                item.onclick = () => { console.log(item.getAttribute('data')); };
+                
+                if (media[this.miniatureProp]) {
+                    imgi.style.backgroundImage = `url(${media[this.miniatureProp]})`;
+                }
+
+                item.appendChild(imgi);
+                this.contanr.appendChild(item);
+            });
+        }
+    }
+    /**
+     * @param {string} tagName Nombre de etiqueta.
+     * @param {object} attributes Objeto que representan los atributos del elemento, ej: {id:'miElement',class:'mi-element'}
+     * @returns Retorna un **nuevo elemento HTML**
+     */
+    _createFullElement(tagName="div", attributes={})
+    {
+        const elem = document.createElement(tagName);
+        const keys = Object.keys(attributes);
+        keys.forEach(key => elem.setAttribute(key, attributes[key]));
+        return elem;
+    }
+    _parseBool=(value, _default = false)=>
+    {
+        if (value) return (value.toString().toLowerCase() === 'true');
+        return _default;
+    }
+}
+
 customElements.define('edit-select', EditSelect);
 customElements.define('input-key', InputKey);
 customElements.define('check-list', CheckList);
 customElements.define('stack-edit', StackEdit);
 customElements.define('date-range', DateRange);
 customElements.define('safe-input', SafeInput);
+customElements.define('media-list', MediaList);

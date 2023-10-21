@@ -219,7 +219,7 @@
         </date-range>
     </div>
     <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD; padding-bottom: 32px; margin:4px;">
-        <h3>Safe input</h3>
+        <h3>Safe Input</h3>
         <!--
             [PARAMS: safe-input]
             ----------------------------------------------------------------------------------------------
@@ -237,6 +237,35 @@
             placeholder="Safe-Input"
             hidden-input="true">
         </safe-input>
+    </div>
+    <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD; padding-bottom: 32px; margin:4px;">
+        <h3>Media List</h3>
+        <!--
+            [PARAMS: media-list]
+            ----------------------------------------------------------------------------------------------
+            - data              (opcional): Datos de la lista (Ej: [{"url":"imagen.png", "mini":"miniimagen.png", ...}, ...] )
+            - can-arrange       (opcional): Pueden ordenar elementos (true/false, def: true)
+            - can-drag          (opcional): Pueden arrastrar elementos (true/false, def: true)
+            - can-drop          (opcional): Pueden colocar elementos (true/false, def: true)
+            - can-delete        (opcional): Pueden eliminar elementos (true/false, def: true)
+            - highlight-first   (opcional): Marcar el primer elemento (true/false, def: true)
+            - media-prop        (opcional): Nombre del campo que indica la ubicación del recurso (def: url)
+            - miniature-prop    (opcional): Nombre del campo que indica la ubicación de la miniatura del recurso (def: mini)
+        -->
+        <media-list
+            data='[
+                {"url":"https://induxsoft.net/img/test/img1.png", "mini":"https://induxsoft.net/img/test/img1.png"}, 
+                {"url":"https://induxsoft.net/img/test/img2.png", "mini":"https://induxsoft.net/img/test/img2.png"}, 
+                {"url":"https://induxsoft.net/img/test/img3.png", "mini":"https://induxsoft.net/img/test/img3.png"}
+            ]'
+            can-arrange="true"
+            can-drag="true"
+            can-drop="true"
+            can-delete="true"
+            highlight-first="true"
+            media-prop="url"
+            miniature-prop="mini">
+        </media-list>
     </div>
     <style>
         @media screen and (max-width: 600px) {
