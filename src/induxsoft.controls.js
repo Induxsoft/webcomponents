@@ -2214,6 +2214,8 @@ class MediaList extends HTMLElement
     attributes = null;
     data = [];
     contanr = null;
+    dragSrc = null;
+    _key_id = '__internal_id__';
 
     canArrange = true;
     canDrag = true;
@@ -2245,7 +2247,7 @@ class MediaList extends HTMLElement
         document.addEventListener('DOMContentLoaded', () => 
         {
             const shadow = this.attachShadow({ mode: 'closed' });
-            const ppanel = this._createFullElement('div', { class: 'p-1 bordered' });
+            const ppanel = this._createFullElement('div', { id:'MediaList_ppanel', class: 'p-3 bordered' });
             this.contanr = this._createFullElement('div', { id:'MediaList_contnr'});
             shadow.innerHTML = `
                 <style>
@@ -2255,8 +2257,12 @@ class MediaList extends HTMLElement
                     .ps-1{ padding-left: 4px; }.ps-2{ padding-left: 8px; }.ps-3{ padding-left: 12px; }.ps-4{ padding-left: 16px; }.ps-5{ padding-left: 32px; }
                     .pe-1{ padding-right: 4px; }.pe-2{ padding-right: 8px; }.pe-3{ padding-right: 12px; }.pe-4{ padding-right: 16px; }.pe-5{ padding-right: 32px; }
                     
-                    #MediaList_contnr { width: 100%; min-width: 1rem; min-height: 1rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(1rem, 10rem)); grid-auto-rows: minmax(1rem, 10rem); }
-                    .img-item { background-repeat: no-repeat; background-size: contain; }
+                    #MediaList_contnr { width: 100%; min-width: 1rem; min-height: 1rem; display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(1rem, 10rem)); grid-auto-rows: minmax(1rem, 10rem); }
+                    .media-item { transition: .5s; background-repeat: no-repeat; background-size: contain; position:relative; }
+                    .dragging { opacity:.3; }
+                    .over { border: 1px dashed; }
+                    .border-l { border-left: 1px solid red; }
+                    .border-r { border-right: 1px solid red; }
                 </style>
             `;
             ppanel.appendChild(this.contanr);
@@ -2270,11 +2276,31 @@ class MediaList extends HTMLElement
                     this.data = [];
                 }
             }
-            this.initProperties();
+            this._initProperties();
             this._refreshView();
         });
     }
-    initProperties()
+
+    // Internal Functions
+    _refreshView()
+    {
+        this.contanr.innerHTML = '';
+        if (this.data && this.data.length > 0)
+        {
+            this.data.forEach(item => 
+            {
+                const imgi = this._createFullElement('div', { class:'w-100 h-100 media-item', data: JSON.stringify(item), id: item[this._key_id]});
+                
+                if (item[this.miniatureProp]) {
+                    imgi.style.backgroundImage = `url(${item[this.miniatureProp]})`;
+                }
+
+                this.contanr.appendChild(imgi);
+            });
+            this._setItemEvents();
+        }
+    }
+    _initProperties()
     {
         this.canArrange = this._parseBool((this.getAttribute('can-arrange') ?? 'true'), true);
         this.canDrag = this._parseBool((this.getAttribute('can-drag') ?? 'true'), true);
@@ -2284,32 +2310,84 @@ class MediaList extends HTMLElement
         this.mediaProp = (this.getAttribute('media-prop') ?? 'url');
         this.miniatureProp = (this.getAttribute('miniature-prop') ?? 'mini');
     }
+    _setItemEvents()
+    {
+        let handleDragStart = (e) => {
+            console.log(1);
+            e.stopPropagation();
+            e.target.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('application/json', e.target.getAttribute('data'));
+        }
+        let handleDragOver = (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+
+            const rect = e.target.getBoundingClientRect();
+            const limitx = (rect.x + (rect.width / 2));
+            
+            let x = (e.clientX > limitx);
+
+            e.target.classList.toggle('border-l', !x);
+            e.target.classList.toggle('border-r', x);
+        }
+        let handleDragEnter = (e) => {
+            e.stopPropagation();
+            e.target.classList.add('over');
+        }
+        let handleDragLeave = (e) => {
+            e.stopPropagation();
+            e.target.classList.remove('over');
+            e.target.classList.remove('border-l');
+            e.target.classList.remove('border-r');
+        }
+        let handleDragEnd = (e) => {
+            e.stopPropagation();
+            e.target.classList.remove('over');
+            e.target.classList.remove('dragging');
+            e.target.classList.remove('border-l');
+            e.target.classList.remove('border-r');
+            this.dragSrc = null;
+        }
+        let handleDrop = (e) => {
+            e.stopPropagation();
+            let itemData = JSON.parse(e.dataTransfer.getData('application/json'));
+            console.log(itemData);
+            e.target.classList.remove('over');
+            e.target.classList.remove('dragging');
+            e.target.classList.remove('border-l');
+            e.target.classList.remove('border-r');
+            return false;
+        }
+
+        let items = this.contanr.querySelectorAll('.media-item');
+        
+        items.forEach(item => {
+            item.addEventListener('dragstart', (e) => handleDragStart(e));
+            item.addEventListener('dragover', handleDragOver);
+            item.addEventListener('dragenter', handleDragEnter);
+            item.addEventListener('dragleave', handleDragLeave);
+            item.addEventListener('dragend', handleDragEnd);
+            item.addEventListener('drop', handleDrop);
+        });
+    }
+
+    // Public Functions
     setData(data)
     {
         this.data = data;
+        if (this.data && this.data.length > 0) 
+            this.data.forEach(item => item[this._key_id] = (item[this._key_id] ?? this._generateUUID()));
         this._refreshView();
     }
-    _refreshView()
+    getData(withoutindex=true)
     {
-        this.contanr.innerHTML = '';
-        if (this.data && this.data.length > 0)
-        {
-            this.data.forEach(media => 
-            {
-                const item = this._createFullElement('div', { class:'p-1 media-item', data: JSON.stringify(media)});
-                const imgi = this._createFullElement('div', { class:'w-100 h-100 img-item' });
-
-                item.onclick = () => { console.log(item.getAttribute('data')); };
-                
-                if (media[this.miniatureProp]) {
-                    imgi.style.backgroundImage = `url(${media[this.miniatureProp]})`;
-                }
-
-                item.appendChild(imgi);
-                this.contanr.appendChild(item);
-            });
-        }
+        let data = JSON.parse(JSON.stringify(this.data));
+        if (withoutindex) data.forEach(item => delete item[this._key_id]);
+        return data;
     }
+
+    // Util Functions
     /**
      * @param {string} tagName Nombre de etiqueta.
      * @param {object} attributes Objeto que representan los atributos del elemento, ej: {id:'miElement',class:'mi-element'}
@@ -2326,6 +2404,14 @@ class MediaList extends HTMLElement
     {
         if (value) return (value.toString().toLowerCase() === 'true');
         return _default;
+    }
+    _generateUUID()
+    {
+        return 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+            const r = Math.random() * 16 | 0, 
+                v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
     }
 }
 
