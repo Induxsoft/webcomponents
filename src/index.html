@@ -238,7 +238,7 @@
             hidden-input="true">
         </safe-input>
     </div>
-    <div style="width: 40rem; padding: 8px 16px; border: 1px solid #DDD; padding-bottom: 32px; margin:4px;">
+    <div style="width: 60rem; padding: 8px 16px; border: 1px solid #DDD; padding-bottom: 32px; margin:4px;">
         <h3>Media List</h3>
         <!--
             [PARAMS: media-list]
@@ -253,6 +253,7 @@
             - miniature-prop    (opcional): Nombre del campo que indica la ubicación de la miniatura del recurso (def: mini)
         -->
         <media-list
+            id="micontrol9"
             data='[
                 {"url":"https://induxsoft.net/img/test/img1.png", "mini":"https://induxsoft.net/img/test/img1.png"}, 
                 {"url":"https://induxsoft.net/img/test/img2.png", "mini":"https://induxsoft.net/img/test/img2.png"}, 
@@ -267,11 +268,7 @@
             miniature-prop="mini">
         </media-list>
         <media-list
-            data='[
-                {"url":"https://induxsoft.net/img/test/img1.png", "mini":"https://induxsoft.net/img/test/img1.png"}, 
-                {"url":"https://induxsoft.net/img/test/img2.png", "mini":"https://induxsoft.net/img/test/img2.png"}, 
-                {"url":"https://induxsoft.net/img/test/img3.png", "mini":"https://induxsoft.net/img/test/img3.png"}
-            ]'
+            data=''
             can-arrange="true"
             can-drag="true"
             can-drop="true"

@@ -2224,6 +2224,8 @@ class MediaList extends HTMLElement
     highlightFirst = true;
     mediaProp = '';
     miniatureProp = '';
+    deleteOnDrop
+    removeOnMove = false;
 
     constructor() 
     {
@@ -2248,27 +2250,33 @@ class MediaList extends HTMLElement
         {
             const shadow = this.attachShadow({ mode: 'closed' });
             const ppanel = this._createFullElement('div', { id:'MediaList_ppanel', class: 'p-3 bordered' });
-            this.contanr = this._createFullElement('div', { id:'MediaList_contnr'});
+            this.contanr = this._createFullElement('div', { id:'MediaList_contnr' });
+            
             shadow.innerHTML = `
                 <style>
-                    .bordered{ border: 1px solid #DDD; }
+                    .bordered{ outline: 1px solid #DDD; }
                     .w-100{ width: 100%; } .h-100{ height: 100%; }
                     .p-1{ padding: 4px; } .p-2{ padding: 8px; } .p-3{ padding: 12px; } .p-4{ padding: 16px; } .p-5{ padding: 32px; }
                     .ps-1{ padding-left: 4px; }.ps-2{ padding-left: 8px; }.ps-3{ padding-left: 12px; }.ps-4{ padding-left: 16px; }.ps-5{ padding-left: 32px; }
                     .pe-1{ padding-right: 4px; }.pe-2{ padding-right: 8px; }.pe-3{ padding-right: 12px; }.pe-4{ padding-right: 16px; }.pe-5{ padding-right: 32px; }
                     
-                    #MediaList_contnr { width: 100%; min-width: 1rem; min-height: 1rem; display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(1rem, 10rem)); grid-auto-rows: minmax(1rem, 10rem); }
-                    .media-item { transition: .5s; background-repeat: no-repeat; background-size: contain; position:relative; }
-                    .dragging { opacity:.3; }
-                    .over { border: 1px dashed; }
-                    .border-l { border-left: 1px solid red; }
-                    .border-r { border-right: 1px solid red; }
+                    #MediaList_contnr { width: 100%; min-width: 1rem; min-height: 1rem; display: grid; gap:12px; padding: 8px 0; grid-template-columns: repeat(auto-fill, minmax(1rem, 10rem)); grid-auto-rows: minmax(1rem, 10rem); }
+                    .media-item { transition: .5s; background-repeat: no-repeat; background-size: contain; position:relative; position: relative; }
+                    .dragging { opacity:.3; outline: 2px solid #000; }
+                    .btn-delete { cursor:pointer; background-color: #FFF; opacity: .5; bottom: 8px; right: 8px; display:flex; align-items:center; }
+                    .btn-delete:hover { opacity: 1; outline: 1px solid #DDD; }
+                    .border-l { border-left: 8px solid #005CC8; }
+                    .border-r { border-right: 8px solid #005CC8; }
+                    .highlight { outline: 3px solid #005CC8; box-shadow: 2px 2px 6px #888; }
+                    .drag-container { background-color: #F5F5F5; border: 1px dashed; }
                 </style>
             `;
+
             ppanel.appendChild(this.contanr);
             shadow.appendChild(ppanel);
 
-            if (this.hasAttribute('data') && this.getAttribute('data').trim()) {
+            if (this.hasAttribute('data') && this.getAttribute('data').trim()) 
+            {
                 try {
                     this.setData(JSON.parse(this.getAttribute('data'))); }
                 catch(error) {
@@ -2276,29 +2284,49 @@ class MediaList extends HTMLElement
                     this.data = [];
                 }
             }
+
             this._initProperties();
             this._refreshView();
         });
     }
 
     // Internal Functions
-    _refreshView()
+    _refreshView(preserveElements=false)
     {
         this.contanr.innerHTML = '';
+
+        if (preserveElements) this.data = this.getData(false);
+        
         if (this.data && this.data.length > 0)
         {
-            this.data.forEach(item => 
-            {
-                const imgi = this._createFullElement('div', { class:'w-100 h-100 media-item', data: JSON.stringify(item), id: item[this._key_id]});
-                
-                if (item[this.miniatureProp]) {
-                    imgi.style.backgroundImage = `url(${item[this.miniatureProp]})`;
-                }
-
-                this.contanr.appendChild(imgi);
-            });
-            this._setItemEvents();
+            this.data.forEach(item => this.contanr.appendChild(this._createMediaItem(item)));
         }
+        this._setItemEvents();
+
+        if (this.highlightFirst && this.contanr.firstChild)
+            this.contanr.firstChild.classList.add('highlight');
+        
+    }
+    _createMediaItem(item)
+    {
+        item[this._key_id] = (item[this._key_id] ?? this._generateUUID());
+        const imgi = this._createFullElement('div', { class:'w-100 h-100 media-item bordered', data: JSON.stringify(item), id: item[this._key_id]});
+
+        if (this.canDelete)
+        {
+            let btnDelete = this._createFullElement('div', { class:'p-1 btn-delete', title:'Eliminar' });
+            btnDelete.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/></svg>';
+            imgi.appendChild(btnDelete);
+            btnDelete.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.contanr.removeChild(imgi);
+            });
+        }
+
+        if (item[this.miniatureProp])
+            imgi.style.backgroundImage = `url(${item[this.miniatureProp]})`;
+
+        return imgi;
     }
     _initProperties()
     {
@@ -2312,64 +2340,154 @@ class MediaList extends HTMLElement
     }
     _setItemEvents()
     {
-        let handleDragStart = (e) => {
-            console.log(1);
+        let _XPositionDragEvent = 0;
+
+        const handleClick = (e) => {
             e.stopPropagation();
+            console.log('click');
+        }
+        const handleDragStart = (e) => 
+        {
+            e.stopPropagation();
+
             e.target.classList.add('dragging');
             e.dataTransfer.effectAllowed = 'move';
             e.dataTransfer.setData('application/json', e.target.getAttribute('data'));
         }
-        let handleDragOver = (e) => {
+        const handleDragOver = (e) => 
+        {
             e.stopPropagation();
             e.preventDefault();
 
             const rect = e.target.getBoundingClientRect();
             const limitx = (rect.x + (rect.width / 2));
-            
+
             let x = (e.clientX > limitx);
+            _XPositionDragEvent = x;
 
             e.target.classList.toggle('border-l', !x);
             e.target.classList.toggle('border-r', x);
         }
-        let handleDragEnter = (e) => {
+        const handleDragEnter = (e) => 
+        {
             e.stopPropagation();
             e.target.classList.add('over');
         }
-        let handleDragLeave = (e) => {
+        const handleDragLeave = (e) => 
+        {
             e.stopPropagation();
-            e.target.classList.remove('over');
             e.target.classList.remove('border-l');
             e.target.classList.remove('border-r');
         }
-        let handleDragEnd = (e) => {
+        const handleDragEnd = (e) => 
+        {
             e.stopPropagation();
-            e.target.classList.remove('over');
+            
             e.target.classList.remove('dragging');
             e.target.classList.remove('border-l');
             e.target.classList.remove('border-r');
-            this.dragSrc = null;
         }
-        let handleDrop = (e) => {
+
+        const handleDrop = (e,dropInItem=true) => 
+        {
             e.stopPropagation();
-            let itemData = JSON.parse(e.dataTransfer.getData('application/json'));
-            console.log(itemData);
-            e.target.classList.remove('over');
+            
+            let itemData = null;
+            let jsonData = e.dataTransfer.getData('application/json')
+            try { itemData = JSON.parse(jsonData); }
+            catch(error) { console.log(jsonData); }
+
             e.target.classList.remove('dragging');
             e.target.classList.remove('border-l');
             e.target.classList.remove('border-r');
+            e.target.classList.remove('drag-container');
+
+            if (itemData)
+            {
+                // Obtenemos el item soltado si existe
+                let item = null;
+                this.contanr.querySelectorAll('.media-item').forEach(itm => { if (itm.id == itemData[this._key_id]) item = itm; });
+
+                // Si no existe lo creamos
+                if (!item){
+                    item = this._createMediaItem(itemData);
+                    setEvents(item);
+                }
+                else if(!this.canArrange)
+                {
+                    // Detenemos la operación para ordenación de items existentes
+                    return false;
+                }
+
+                // Agregamos el item al lado del overItem o como hijo si es el contenedor principal
+                if (dropInItem)
+                {
+                    if (_XPositionDragEvent) e.target.after(item);
+                    else e.target.before(item);
+                }
+                else
+                {
+                    e.target.appendChild(item);
+                }
+            }
+
+            if (this.highlightFirst)
+            {
+                this.contanr.childNodes.forEach(item => item.classList.remove('highlight'));
+                this.contanr.firstChild.classList.add('highlight');
+            }
+
             return false;
         }
 
-        let items = this.contanr.querySelectorAll('.media-item');
-        
-        items.forEach(item => {
-            item.addEventListener('dragstart', (e) => handleDragStart(e));
-            item.addEventListener('dragover', handleDragOver);
-            item.addEventListener('dragenter', handleDragEnter);
-            item.addEventListener('dragleave', handleDragLeave);
-            item.addEventListener('dragend', handleDragEnd);
-            item.addEventListener('drop', handleDrop);
+        const dropItem = (e) => { handleDrop(e,true) };
+        const dropMain = (e) => { handleDrop(e,false) };
+
+        const setEvents = (item) => 
+        {
+            item.addEventListener('dragstart',handleDragStart,false);
+            item.addEventListener('dragover',handleDragOver,false);
+            item.addEventListener('dragenter',handleDragEnter,false);
+            item.addEventListener('dragleave',handleDragLeave,false);
+            item.addEventListener('dragend',handleDragEnd,false);
+            item.addEventListener('drop',dropItem,false);
+            item.addEventListener('click',handleClick,false);
+
+            // item.ondragstart =  (this.canDrag ? handleDragStart : null);
+            // item.ondragover =  (this.canDrag ? handleDragOver: null);
+            // item.ondragenter =  (this.canDrag ? handleDragEnter: null);
+            // item.ondragleave =  (this.canDrag ? handleDragLeave: null);
+            // item.ondragend =  (this.canDrag ? handleDragEnd: null);
+            // item.ondrop =  (this.canDrop ? dropItem : null);
+            // item.onclick =  handleClick;
+        }
+
+        this.contanr.querySelectorAll('.media-item').forEach(item => {
+            setEvents(item);
         });
+
+        // Container
+        const handleDragOverCntainr  = (e) => 
+        {
+            e.stopPropagation();
+            e.preventDefault();
+            return false;
+        }
+        const handleDragEnterCntainr = (e) => 
+        {
+            e.stopPropagation();
+            e.target.classList.add('drag-container');
+        }
+        const handleDragLeaveCntainr = (e) =>
+        {
+            e.stopPropagation();
+            e.target.classList.remove('drag-container');
+        }
+
+        this.contanr.ondragover = (this.canDrag ? handleDragOverCntainr : null);
+        this.contanr.ondragenter = (this.canDrag ? handleDragEnterCntainr : null);
+        this.contanr.ondragleave = (this.canDrag ? handleDragLeaveCntainr : null);
+        this.contanr.ondrop = (this.canDrop ? dropMain : null);
     }
 
     // Public Functions
@@ -2382,9 +2500,33 @@ class MediaList extends HTMLElement
     }
     getData(withoutindex=true)
     {
-        let data = JSON.parse(JSON.stringify(this.data));
+        let data = [];
+        this.contanr.querySelectorAll('.media-item').forEach(element => data.push(JSON.parse(element.getAttribute('data'))));
         if (withoutindex) data.forEach(item => delete item[this._key_id]);
         return data;
+    }
+    addMedia(mediaData)
+    {
+        try
+        {
+            let itemData = (typeof(mediaData) == 'object' ? mediaData : JSON.parse(mediaData) );
+            this.contanr.appendChild(this._createMediaItem(itemData));
+            this._setItemEvents();
+        }
+        catch(error)
+        {
+            alert('No fué posible agregar el elemento, revise que los datos tengan un formato JSON válido\n\n');
+        }
+    }
+    removeMediaByIndex(index)
+    {
+        let items = this.contanr.querySelectorAll('.media-item');
+        
+        if (index <= items.length-1) {
+            items.forEach((item,i) => {
+                if (i == index) this.contanr.removeChild(item);
+            });
+        }
     }
 
     // Util Functions
