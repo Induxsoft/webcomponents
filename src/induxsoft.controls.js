@@ -2222,34 +2222,32 @@ class MediaList extends HTMLElement
     canDrop = true;
     canDelete = true;
     highlightFirst = true;
-    mediaProp = '';
-    miniatureProp = '';
+    mediaProp = 'url';
+    miniatureProp = 'mini';
     deleteOnDrop
-    removeOnMove = false;
+    removeOnMove = true;
+    backColorMedia = '#FFF';
 
     constructor() 
     {
         super();
         document.addEventListener('DOMContentLoaded', () => this.attributes = this.getAttributeNames());
     }
-
     static get observedAttributes()
     {
         return  attributes;
     }
-
     attributeChangeCallback(property, oldValue, newValue)
     {
         if (newValue === oldValue) return;
         this[property] = newValue;
     }
-
     connectedCallback()
     {
         document.addEventListener('DOMContentLoaded', () => 
         {
             const shadow = this.attachShadow({ mode: 'closed' });
-            const ppanel = this._createFullElement('div', { id:'MediaList_ppanel', class: 'p-3 bordered' });
+            const ppanel = this._createFullElement('div', { id:'MediaList_ppanel', class: 'p-1 bordered' });
             this.contanr = this._createFullElement('div', { id:'MediaList_contnr' });
             
             shadow.innerHTML = `
@@ -2260,15 +2258,18 @@ class MediaList extends HTMLElement
                     .ps-1{ padding-left: 4px; }.ps-2{ padding-left: 8px; }.ps-3{ padding-left: 12px; }.ps-4{ padding-left: 16px; }.ps-5{ padding-left: 32px; }
                     .pe-1{ padding-right: 4px; }.pe-2{ padding-right: 8px; }.pe-3{ padding-right: 12px; }.pe-4{ padding-right: 16px; }.pe-5{ padding-right: 32px; }
                     
-                    #MediaList_contnr { width: 100%; min-width: 1rem; min-height: 1rem; display: grid; gap:12px; padding: 8px 0; grid-template-columns: repeat(auto-fill, minmax(1rem, 10rem)); grid-auto-rows: minmax(1rem, 10rem); }
-                    .media-item { transition: .5s; background-repeat: no-repeat; background-size: contain; position:relative; position: relative; }
-                    .dragging { opacity:.3; outline: 2px solid #000; }
-                    .btn-delete { cursor:pointer; background-color: #FFF; opacity: .5; bottom: 8px; right: 8px; display:flex; align-items:center; }
-                    .btn-delete:hover { opacity: 1; outline: 1px solid #DDD; }
-                    .border-l { border-left: 8px solid #005CC8; }
-                    .border-r { border-right: 8px solid #005CC8; }
-                    .highlight { outline: 3px solid #005CC8; box-shadow: 2px 2px 6px #888; }
+                    #MediaList_contnr { width: 100%; min-width: 1rem; min-height: 1rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(1rem, 10rem)); grid-auto-rows: minmax(1rem, 10rem); }
+                    .media-item { border: 8px solid transparent; transition: .5s; position:relative; position: relative; }
+                    .dragging { border: 24px solid transparent; }
+                    .dragging .img { box-shadow: 4px 4px 8px 0 #DDD !important; }
+                    .btn-delete { cursor:pointer; position:absolute; background-color: #FFF; opacity: .3; bottom: 8px; right: 8px; display:flex; align-items:center; }
+                    .btn-delete:hover { opacity: 1; }
+                    .border-l { border-left: 24px solid transparent !important; border-top: 24px solid transparent !important; }
+                    .border-r { border-right: 24px solid transparent !important; border-bottom: 24px solid transparent !important; }
+                    .highlight { border-color: #E2F2FF; }
                     .drag-container { background-color: #F5F5F5; border: 1px dashed; }
+                    .img{ background-repeat: no-repeat; background-size: contain; background-position: center; background-color: #FFF; }
+                    .draggable-item { cursor: move; }
                 </style>
             `;
 
@@ -2293,10 +2294,9 @@ class MediaList extends HTMLElement
     // Internal Functions
     _refreshView(preserveElements=false)
     {
+        if (preserveElements) this.data = this.getData(false);
         this.contanr.innerHTML = '';
 
-        if (preserveElements) this.data = this.getData(false);
-        
         if (this.data && this.data.length > 0)
         {
             this.data.forEach(item => this.contanr.appendChild(this._createMediaItem(item)));
@@ -2310,7 +2310,10 @@ class MediaList extends HTMLElement
     _createMediaItem(item)
     {
         item[this._key_id] = (item[this._key_id] ?? this._generateUUID());
-        const imgi = this._createFullElement('div', { class:'w-100 h-100 media-item bordered', data: JSON.stringify(item), id: item[this._key_id]});
+        const imgi = this._createFullElement('div', { class:'w-100 h-100 img bordered'});
+
+        const container = this._createFullElement('div', { class:'media-item', draggable:'true', data: JSON.stringify(item), id: item[this._key_id] });
+        container.appendChild(imgi);
 
         if (this.canDelete)
         {
@@ -2319,14 +2322,20 @@ class MediaList extends HTMLElement
             imgi.appendChild(btnDelete);
             btnDelete.addEventListener('click', (e) => {
                 e.stopPropagation();
-                this.contanr.removeChild(imgi);
+                this.contanr.removeChild(container);
             });
         }
 
+        let img = '';
         if (item[this.miniatureProp])
-            imgi.style.backgroundImage = `url(${item[this.miniatureProp]})`;
+            img = (item[this.miniatureProp] ?? '');
+        if (img.trim() == '')
+            img = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="lightgray" class="bi bi-image-alt" viewBox="0 0 16 15"><path d="M7 2.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0zm4.225 4.053a.5.5 0 0 0-.577.093l-3.71 4.71-2.66-2.772a.5.5 0 0 0-.63.062L.002 13v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4.5l-4.777-3.947z"/></svg>';
 
-        return imgi;
+        imgi.style.backgroundImage = `url('${img}')`;
+        imgi.style.backgroundColor = this.backColorMedia;
+
+        return container;
     }
     _initProperties()
     {
@@ -2337,55 +2346,64 @@ class MediaList extends HTMLElement
         this.highlightFirst = this._parseBool((this.getAttribute('highlight-first') ?? 'true'), true);
         this.mediaProp = (this.getAttribute('media-prop') ?? 'url');
         this.miniatureProp = (this.getAttribute('miniature-prop') ?? 'mini');
+        this.backColorMedia = (this.getAttribute('back-color-media') ?? '#FFF');
     }
     _setItemEvents()
     {
         let _XPositionDragEvent = 0;
-
-        const handleClick = (e) => {
-            e.stopPropagation();
-            console.log('click');
+        const getTarget = (e) =>
+        {
+            let target = e.target;
+            if (!e.target.classList.contains('media-item'))
+                target = e.target.closest('.media-item');
+            return target;
         }
         const handleDragStart = (e) => 
         {
             e.stopPropagation();
 
-            e.target.classList.add('dragging');
+            let target = getTarget(e);
+            target.classList.add('dragging');
             e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('application/json', e.target.getAttribute('data'));
+            e.dataTransfer.setData('application/json', target.getAttribute('data'));
         }
         const handleDragOver = (e) => 
         {
             e.stopPropagation();
             e.preventDefault();
 
-            const rect = e.target.getBoundingClientRect();
+            let target = getTarget(e);
+            const rect = target.getBoundingClientRect();
             const limitx = (rect.x + (rect.width / 2));
 
             let x = (e.clientX > limitx);
             _XPositionDragEvent = x;
 
-            e.target.classList.toggle('border-l', !x);
-            e.target.classList.toggle('border-r', x);
+            target.classList.toggle('border-l', !x);
+            target.classList.toggle('border-r', x);
         }
         const handleDragEnter = (e) => 
         {
             e.stopPropagation();
-            e.target.classList.add('over');
+            let target = getTarget(e);
+            target.classList.add('over');
         }
         const handleDragLeave = (e) => 
         {
             e.stopPropagation();
-            e.target.classList.remove('border-l');
-            e.target.classList.remove('border-r');
+            let target = getTarget(e);
+            target.classList.remove('border-l');
+            target.classList.remove('border-r');
         }
         const handleDragEnd = (e) => 
         {
             e.stopPropagation();
-            
-            e.target.classList.remove('dragging');
-            e.target.classList.remove('border-l');
-            e.target.classList.remove('border-r');
+            let target = getTarget(e);
+            target.classList.remove('dragging');
+            target.classList.remove('border-l');
+            target.classList.remove('border-r');
+            // if (this.removeOnMove)
+            //     target.remove();
         }
 
         const handleDrop = (e,dropInItem=true) => 
@@ -2397,10 +2415,15 @@ class MediaList extends HTMLElement
             try { itemData = JSON.parse(jsonData); }
             catch(error) { console.log(jsonData); }
 
-            e.target.classList.remove('dragging');
-            e.target.classList.remove('border-l');
-            e.target.classList.remove('border-r');
-            e.target.classList.remove('drag-container');
+            let target = e.target;
+            if (dropInItem){
+                target = getTarget(e);
+            }
+            
+            target.classList.remove('dragging');
+            target.classList.remove('border-l');
+            target.classList.remove('border-r');
+            target.classList.remove('drag-container');
 
             if (itemData)
             {
@@ -2422,21 +2445,20 @@ class MediaList extends HTMLElement
                 // Agregamos el item al lado del overItem o como hijo si es el contenedor principal
                 if (dropInItem)
                 {
-                    if (_XPositionDragEvent) e.target.after(item);
-                    else e.target.before(item);
+                    if (_XPositionDragEvent) target.after(item);
+                    else target.before(item);
                 }
                 else
                 {
-                    e.target.appendChild(item);
+                    target.appendChild(item);
+                }
+
+                if (this.highlightFirst)
+                {
+                    this.contanr.childNodes.forEach(item => item.classList.remove('highlight'));
+                    this.contanr.firstChild.classList.add('highlight');
                 }
             }
-
-            if (this.highlightFirst)
-            {
-                this.contanr.childNodes.forEach(item => item.classList.remove('highlight'));
-                this.contanr.firstChild.classList.add('highlight');
-            }
-
             return false;
         }
 
@@ -2445,21 +2467,14 @@ class MediaList extends HTMLElement
 
         const setEvents = (item) => 
         {
-            item.addEventListener('dragstart',handleDragStart,false);
-            item.addEventListener('dragover',handleDragOver,false);
-            item.addEventListener('dragenter',handleDragEnter,false);
-            item.addEventListener('dragleave',handleDragLeave,false);
-            item.addEventListener('dragend',handleDragEnd,false);
-            item.addEventListener('drop',dropItem,false);
-            item.addEventListener('click',handleClick,false);
+            item.ondragstart =  (this.canDrag ? handleDragStart : null);
+            item.ondragover =  (this.canDrop ? handleDragOver: null);
+            item.ondragenter =  (this.canDrop ? handleDragEnter: null);
+            item.ondragleave =  handleDragLeave;
+            item.ondragend =  handleDragEnd;
+            item.ondrop =  (this.canDrop ? dropItem : null);
 
-            // item.ondragstart =  (this.canDrag ? handleDragStart : null);
-            // item.ondragover =  (this.canDrag ? handleDragOver: null);
-            // item.ondragenter =  (this.canDrag ? handleDragEnter: null);
-            // item.ondragleave =  (this.canDrag ? handleDragLeave: null);
-            // item.ondragend =  (this.canDrag ? handleDragEnd: null);
-            // item.ondrop =  (this.canDrop ? dropItem : null);
-            // item.onclick =  handleClick;
+            item.classList.toggle('draggable-item', this.canDrag);
         }
 
         this.contanr.querySelectorAll('.media-item').forEach(item => {
@@ -2484,9 +2499,9 @@ class MediaList extends HTMLElement
             e.target.classList.remove('drag-container');
         }
 
-        this.contanr.ondragover = (this.canDrag ? handleDragOverCntainr : null);
-        this.contanr.ondragenter = (this.canDrag ? handleDragEnterCntainr : null);
-        this.contanr.ondragleave = (this.canDrag ? handleDragLeaveCntainr : null);
+        this.contanr.ondragover = (this.canDrop ? handleDragOverCntainr : null);
+        this.contanr.ondragenter = (this.canDrop ? handleDragEnterCntainr : null);
+        this.contanr.ondragleave = handleDragLeaveCntainr;
         this.contanr.ondrop = (this.canDrop ? dropMain : null);
     }
 
@@ -2498,11 +2513,11 @@ class MediaList extends HTMLElement
             this.data.forEach(item => item[this._key_id] = (item[this._key_id] ?? this._generateUUID()));
         this._refreshView();
     }
-    getData(withoutindex=true)
+    getData(withoutid=true)
     {
         let data = [];
         this.contanr.querySelectorAll('.media-item').forEach(element => data.push(JSON.parse(element.getAttribute('data'))));
-        if (withoutindex) data.forEach(item => delete item[this._key_id]);
+        if (withoutid) data.forEach(item => delete item[this._key_id]);
         return data;
     }
     addMedia(mediaData)
@@ -2527,6 +2542,10 @@ class MediaList extends HTMLElement
                 if (i == index) this.contanr.removeChild(item);
             });
         }
+    }
+    refreshView()
+    {
+        this._refreshView(true);
     }
 
     // Util Functions

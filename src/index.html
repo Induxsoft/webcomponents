@@ -238,12 +238,15 @@
             hidden-input="true">
         </safe-input>
     </div>
-    <div style="width: 60rem; padding: 8px 16px; border: 1px solid #DDD; padding-bottom: 32px; margin:4px;">
-        <h3>Media List</h3>
+    <div style="width: 55rem; padding: 8px 16px; border: 1px solid #DDD; padding-bottom: 32px; margin:4px;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <h3>Media List</h3>
+            <button onclick="console.log(document.querySelector('#micontrol9').getData());" style="color: #888;background-color:#FFF;border:none;outline:1px solid #DDD;padding:4px 8px;cursor:pointer;">Data</button>
+        </div>
         <!--
             [PARAMS: media-list]
             ----------------------------------------------------------------------------------------------
-            - data              (opcional): Datos de la lista (Ej: [{"url":"imagen.png", "mini":"miniimagen.png", ...}, ...] )
+            - data              (opcional): Datos de la lista (ej: [{"url":"imagen.png", "mini":"miniimagen.png", ...}, ...] )
             - can-arrange       (opcional): Pueden ordenar elementos (true/false, def: true)
             - can-drag          (opcional): Pueden arrastrar elementos (true/false, def: true)
             - can-drop          (opcional): Pueden colocar elementos (true/false, def: true)
@@ -251,6 +254,7 @@
             - highlight-first   (opcional): Marcar el primer elemento (true/false, def: true)
             - media-prop        (opcional): Nombre del campo que indica la ubicación del recurso (def: url)
             - miniature-prop    (opcional): Nombre del campo que indica la ubicación de la miniatura del recurso (def: mini)
+            - back-color-media  (opcional): Color de fondo de los elementos media (ej: #FFF o white, def: #FFF)
         -->
         <media-list
             id="micontrol9"
@@ -263,11 +267,18 @@
             can-drag="true"
             can-drop="true"
             can-delete="true"
-            highlight-first="true"
+            highlight-first="false"
             media-prop="url"
             miniature-prop="mini">
         </media-list>
+    </div>
+    <div style="width: 55rem; padding: 8px 16px; border: 1px solid #DDD; padding-bottom: 32px; margin:4px;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <h3>Media List</h3>
+            <button onclick="console.log(document.querySelector('#micontrol10').getData());" style="color: #888;background-color:#FFF;border:none;outline:1px solid #DDD;padding:4px 8px;cursor:pointer;">Data</button>
+        </div>
         <media-list
+            id="micontrol10"
             data=''
             can-arrange="true"
             can-drag="true"
