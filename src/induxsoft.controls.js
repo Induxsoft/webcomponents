@@ -2258,7 +2258,7 @@ class MediaList extends HTMLElement
                     .ps-1{ padding-left: 4px; }.ps-2{ padding-left: 8px; }.ps-3{ padding-left: 12px; }.ps-4{ padding-left: 16px; }.ps-5{ padding-left: 32px; }
                     .pe-1{ padding-right: 4px; }.pe-2{ padding-right: 8px; }.pe-3{ padding-right: 12px; }.pe-4{ padding-right: 16px; }.pe-5{ padding-right: 32px; }
                     
-                    #MediaList_contnr { width: 100%; min-width: 1rem; min-height: 1rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(1rem, 10rem)); grid-auto-rows: minmax(1rem, 10rem); }
+                    #MediaList_contnr { width: 100%; min-width: 1rem; min-height: 5rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(1rem, 10rem)); grid-auto-rows: minmax(1rem, 10rem); }
                     .media-item { border: 8px solid transparent; transition: .5s; position:relative; position: relative; }
                     .dragging { border: 24px solid transparent; }
                     .dragging .img { box-shadow: 4px 4px 8px 0 #DDD !important; }
