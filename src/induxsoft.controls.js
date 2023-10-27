@@ -46,7 +46,7 @@ class EditSelect extends HTMLElement
             this.inputh = document.createElement('input');
 
             this.select.classList.add('induxsoft-form-select');
-
+            contnr.setAttribute('id', 'EditSelect_container');
             this.inputh.setAttribute('type', 'hidden');
             this.inputh.setAttribute('name', (this.getAttribute('name')??''));
 
@@ -2076,6 +2076,8 @@ class SafeInput extends HTMLElement
                     .induxsoft-form-select:disabled, .induxsoft-form-select[readonly] { background-color: #e9ecef; opacity: 1; }
                     .induxsoft-buttons{ font-weight: 400;line-height: 1.5;color: #212529;text-align: center;text-decoration: none;vertical-align: middle;cursor: pointer;-webkit-user-select: none;-moz-user-select: none;user-select: none;background-color: #FFF;outline:1px solid #ced4da;border: none;padding: 0.375rem 0.75rem;font-size: 1rem;transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; }
                     .induxsoft-buttons:hover{ color: #212529;background-color: #F5F5F5; }
+
+                    ` + (this.getAttribute('control-styles') ?? '') + `
                 </style>
             `
 
