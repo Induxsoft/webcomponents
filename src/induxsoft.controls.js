@@ -12,6 +12,7 @@ class EditSelect extends HTMLElement
     inputh = null;
     manualOption = null;
     manualInput = null;
+    onChanging = null;
 
     // Inicializar el HTMLElement padre
     constructor() 
@@ -170,6 +171,9 @@ class EditSelect extends HTMLElement
             this.manualInput.style.zIndex = -1;
             this.select.setAttribute('text-value', this.select.options[this.select.selectedIndex].textContent); 
         }
+
+        if (this.onChanging)
+            this.onChanging();
     }
 
     getValue()
