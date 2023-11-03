@@ -238,7 +238,7 @@
             hidden-input="true">
         </safe-input>
     </div>
-    <div style="width: 55rem; padding: 8px 16px; border: 1px solid #DDD; padding-bottom: 32px; margin:4px;">
+    <div style="width: 30rem; padding: 8px 16px; border: 1px solid #DDD; padding-bottom: 32px; margin:4px;">
         <div style="display: flex; gap: 8px; align-items: center;">
             <h3>Media List</h3>
             <button onclick="console.log(document.querySelector('#micontrol9').getData());" style="color: #888;background-color:#FFF;border:none;outline:1px solid #DDD;padding:4px 8px;cursor:pointer;">Data</button>
@@ -255,6 +255,8 @@
             - media-prop        (opcional): Nombre del campo que indica la ubicación del recurso (def: url)
             - miniature-prop    (opcional): Nombre del campo que indica la ubicación de la miniatura del recurso (def: mini)
             - back-color-media  (opcional): Color de fondo de los elementos media (ej: #FFF o white, def: #FFF)
+            - outline-selected  (opcional): Remarcar el elemento seleccionado (true/false, def: false)
+            - max-size-media    (opcional): Valor que se aplica al alto y ancho máximo de los elementos (ej: 12rem, def: 8rem)
         -->
         <media-list
             id="micontrol9"
@@ -267,7 +269,7 @@
             can-drag="true"
             can-drop="true"
             can-delete="true"
-            highlight-first="false"
+            highlight-first="true"
             media-prop="url"
             miniature-prop="mini">
         </media-list>
