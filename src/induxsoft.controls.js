@@ -2233,6 +2233,7 @@ class MediaList extends HTMLElement
     deleteOnDrop
     removeOnMove = true;
     backColorMedia = '#FFF';
+    onClicking = null;
 
     constructor() 
     {
@@ -2359,10 +2360,16 @@ class MediaList extends HTMLElement
         let _XPositionDragEvent = 0;
         const getTarget = (e) =>
         {
-            let target = e.target;
+            let target = e.currentTarget;
             if (!e.target.classList.contains('media-item'))
                 target = e.target.closest('.media-item');
             return target;
+        }
+        const handleClick = (e) =>
+        {
+            e.stopPropagation();
+            let target = getTarget(e);
+            if (this.onClicking) this.onClicking(JSON.parse(target.getAttribute('data')));
         }
         const handleDragStart = (e) => 
         {
@@ -2479,6 +2486,7 @@ class MediaList extends HTMLElement
             item.ondragleave =  handleDragLeave;
             item.ondragend =  handleDragEnd;
             item.ondrop =  (this.canDrop ? dropItem : null);
+            item.onclick = handleClick;
 
             item.classList.toggle('draggable-item', this.canDrag);
         }
