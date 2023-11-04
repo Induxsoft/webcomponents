@@ -2358,8 +2358,8 @@ class MediaList extends HTMLElement
         this.mediaProp = (this.getAttribute('media-prop') ?? 'url');
         this.miniatureProp = (this.getAttribute('miniature-prop') ?? 'mini');
         this.backColorMedia = (this.getAttribute('back-color-media') ?? '#FFF');
-        this.outlineSelected = this._parseBool((this.getAttribute('outline-selected') ?? 'true'), true);
-        let maxsize = (this.getAttribute('max-size-media') ?? '')
+        this.outlineSelected = this._parseBool((this.getAttribute('outline-selected') ?? 'false'), false);
+        let maxsize = (this.getAttribute('max-size-media') ?? '');
         this.maxSizeMedia = (maxsize.trim() != '' ? maxsize.trim() : '8rem');
     }
     _setItemEvents()
