@@ -4,6 +4,7 @@ class EditTable extends HTMLElement
     _table = null;
     _shadow = null;
     _current = null;
+    _temp_dt = null;
     
     constructor() 
     {
@@ -641,6 +642,13 @@ class EditTable extends HTMLElement
     PagOffSet = 10; //Desplazamiento con AvPag PrevPag
     DataArray = []; //Contiene un array asociado a las filas
     ColumnsDefaultType = this.EdiTable.Const.Columns.Types.Text;
+    
+    ShowAsTree = true;
+    TreeOptions = {};
+    Key = "id";
+    ParentKey = "idp";
+    Childs = "__items";
+    
     CSS = {
         Cell:"EdiTable-Cell",
         RowSelected: "EdiTable-Row-Selected"
@@ -1506,6 +1514,102 @@ class EditTable extends HTMLElement
             if (this.AutoAddRow)
                 this.AddRow();
         }
+    }
+
+    // ========================= NEW FUNCTIONS
+
+    _refreshTable=()=>
+    {
+        this._initTreeValues();
+        let rows = this.TRCount();
+        for (let i = 0; i < rows; i++)
+            this.UpdateRow(i);
+    }
+    _initTreeValues=()=>
+    {
+        let v = (this.getAttribute('show-tree') ?? '').trim();
+        this.ShowAsTree = (v == 'true');
+
+        v = (this.getAttribute('key') ?? '').trim();
+        this.Key = (v != '' ? v : this.Key);
+        
+        v = (this.getAttribute('parentkey') ?? '').trim();
+        this.ParentKey = (v != '' ? v : this.ParentKey);
+
+        v = (this.getAttribute('childs-field') ?? '').trim();
+        this.Childs = (v != '' ? v : this.Childs);
+    }
+    _getTreeOptions=()=>
+    {
+        if (!this.TreeOptions || Object.keys(this.TreeOptions) < 1) 
+        {
+            this.TreeOptions = {
+                key: this.Key,
+                parentkey: this.ParentKey,
+                childs: this.Childs
+            }
+        }
+        return this.TreeOptions;
+    }
+    _moveData=(data, list, options)=>
+    {
+        let moved = false;
+
+        if (list && list.length > 0)
+        {
+            list.forEach(dt => 
+            {
+                let childs = (dt[options.childs] ?? []);
+                if ((data[options.parentkey] ?? '|') == (dt[options.key] ?? '_')) 
+                {
+                    let copy = JSON.parse(JSON.stringify(data));
+                    this._deleteData(data, this._temp_dt, options);
+                    
+                    childs.push(copy);
+                    dt[options.childs] = childs;
+                    moved = true;
+                }
+                if (!moved && childs.length > 0) {
+                    this._moveData(data, childs, options);
+                }
+            });
+        }
+    }
+    _deleteData=(data, list, options) =>
+    {
+        let deleted = false;
+
+        list.forEach((dt, idx) => 
+        {
+            if (!deleted)
+            {
+                if ((data[options.key] ?? '|') == (dt[options.key] ?? '_'))
+                {
+                    list.splice(idx, 1);
+                    deleted = true;
+                }
+
+                let childs = (dt[options.childs] ?? []);
+
+                if (!deleted && childs.length > 0){
+                    this._deleteData(data, childs, options);
+                }
+            }
+        });
+    }
+
+    TreeArray=(dataArray,treeOptions=null)=>
+    {
+        if (!treeOptions) treeOptions = this._getTreeOptions();
+        this._temp_dt = JSON.parse(JSON.stringify(dataArray));
+
+        if (this._temp_dt || this._temp_dt.length > 1)
+        {
+            dataArray.forEach((dt,i) => {
+                this._moveData(dt, this._temp_dt, treeOptions);
+            });
+        }
+        return this._temp_dt;
     }
 }
 

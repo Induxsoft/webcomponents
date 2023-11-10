@@ -2230,7 +2230,6 @@ class MediaList extends HTMLElement
     highlightFirst = true;
     mediaProp = 'url';
     miniatureProp = 'mini';
-    deleteOnDrop
     removeOnMove = true;
     backColorMedia = '#FFF';
     outlineSelected = false;
