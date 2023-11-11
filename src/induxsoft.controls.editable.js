@@ -90,7 +90,12 @@ class EditTable extends HTMLElement
                     .Editable-Input-Select{
                         display: block;width: 100%;padding: 0.375rem 2.25rem 0.375rem 0.75rem;-moz-padding-start: calc(0.75rem - 3px);font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");background-repeat: no-repeat;background-position: right 0.75rem center;background-size: 16px 12px;border: none;outline:1px solid #ced4da;-webkit-appearance: none;-moz-appearance: none;appearance: none;
                     }
-
+                    .haschild td:first-of-type {
+                        padding-left: 2rem;
+                    }
+                    .haschild td:first-of-type::before {
+                        content:' \\23F5';
+                    }
                     .sizable-border {
                         position: absolute; 
                         top: 0; 
@@ -127,7 +132,7 @@ class EditTable extends HTMLElement
             this.innerHTML = '';
             this._shadow.appendChild(container1);
             
-            
+            this._initTreeValues();
             
             this.Initialize(this._table.getAttribute('id'));
             this._processAtributesColumn();
@@ -1516,11 +1521,13 @@ class EditTable extends HTMLElement
         }
     }
 
-    // ========================= NEW FUNCTIONS
+    // ========================= SORT FUNCTIONS
+    
+    _TreeValueIndent = 2;
+    _TreeUnitIndent = 'rem';
 
     _refreshTable=()=>
     {
-        this._initTreeValues();
         let rows = this.TRCount();
         for (let i = 0; i < rows; i++)
             this.UpdateRow(i);
@@ -1551,65 +1558,123 @@ class EditTable extends HTMLElement
         }
         return this.TreeOptions;
     }
-    _moveData=(data, list, options)=>
+    _printTreeData=()=>
     {
-        let moved = false;
+        this.SetTree(this.GetTree());
+        this._printRows();
+    }
+    _printRows=()=>
+    {
+        const thead = this._table.querySelector('thead');
+        const tbody = this._table.querySelector('tbody');
 
-        if (list && list.length > 0)
+        tbody.innerHTML = '';
+
+        if (this.DataArray && this.DataArray.length > 0 && thead.hasChildNodes())
         {
-            list.forEach(dt => 
-            {
-                let childs = (dt[options.childs] ?? []);
-                if ((data[options.parentkey] ?? '|') == (dt[options.key] ?? '_')) 
-                {
-                    let copy = JSON.parse(JSON.stringify(data));
-                    this._deleteData(data, this._temp_dt, options);
-                    
-                    childs.push(copy);
-                    dt[options.childs] = childs;
-                    moved = true;
-                }
-                if (!moved && childs.length > 0) {
-                    this._moveData(data, childs, options);
-                }
-            });
+            this.DataArray.forEach(data => {
+                const tr = this._createFullElement('tr');
+                thead.querySelectorAll('th').forEach(th => {
+                    const td = this._createFullElement('td', { class:'EdiTable-Cell' });
+                    Object.keys(data).forEach(key => {
+                        if (td.textContent == '' && (th.getAttribute('field') == key || th.getAttribute('keyfield') == key))
+                            td.textContent = data[key];
+                    });
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });  
         }
-    }
-    _deleteData=(data, list, options) =>
-    {
-        let deleted = false;
 
-        list.forEach((dt, idx) => 
+        if (this.ShowAsTree)
         {
-            if (!deleted)
-            {
-                if ((data[options.key] ?? '|') == (dt[options.key] ?? '_'))
-                {
-                    list.splice(idx, 1);
-                    deleted = true;
-                }
+            this._addOrderableEventRows();
+            this._short_rows();
+        }
 
-                let childs = (dt[options.childs] ?? []);
-
-                if (!deleted && childs.length > 0){
-                    this._deleteData(data, childs, options);
-                }
-            }
-        });
+        this.Initialize(this._table.getAttribute('id'));
     }
+    _addOrderableEventRows=()=>
+    {
+        const rows = this._table.querySelectorAll('tbody tr');
+    }
+    _short_rows=()=>
+    {
+        const rows = this._table.querySelectorAll('tbody tr');
+    }
+    
 
-    TreeArray=(dataArray,treeOptions=null)=>
+    TreeArray=(dataArray, treeOptions=null)=>
     {
         if (!treeOptions) treeOptions = this._getTreeOptions();
-        this._temp_dt = JSON.parse(JSON.stringify(dataArray));
-
-        if (this._temp_dt || this._temp_dt.length > 1)
+        
+        const positionObj = (list=[], data={}) => 
         {
-            dataArray.forEach((dt,i) => {
-                this._moveData(dt, this._temp_dt, treeOptions);
+            let parentObj = null;
+            let sourcData = null;
+
+            const _search = listObj => 
+            {
+                return listObj.some((obj, idx) =>  {
+                    if (data[treeOptions.parentkey] == (obj[treeOptions.key]??'_'))
+                        parentObj = obj;
+                    else if ((data[treeOptions.key] ?? '|') == (obj[treeOptions.key] ?? '_'))
+                        sourcData = { listObj, idx };
+                    return ((parentObj && sourcData) || _search((obj[treeOptions.childs]??[])));
+                });
+            }
+            
+            if (!_search(list)) return;
+
+            const parentChilds = (parentObj[treeOptions.childs]??[]);
+            parentChilds.push( ...sourcData.listObj.splice(sourcData.idx, 1) );
+            parentObj[treeOptions.childs] = parentChilds;
+        }
+
+        if (dataArray && dataArray.length > 0)
+        {
+            let copyArray = JSON.parse(JSON.stringify(dataArray));
+
+            copyArray.forEach(data => {
+                if (data[treeOptions.parentkey] != undefined) 
+                    positionObj(dataArray, data);
             });
         }
-        return this._temp_dt;
+
+        return dataArray;
+    }
+    TableArray=(treeArray, treeOptions=null)=>
+    {
+        if (!treeOptions) treeOptions = this._getTreeOptions();
+        let newArray = [];
+
+        if (treeArray && treeArray.length > 0)
+        {
+            const moveToFirstLevel = listObj => 
+            {
+                listObj.forEach(obj => {
+                    let childsObj = JSON.parse(JSON.stringify((obj[treeOptions.childs]??[])));
+                    newArray.push(obj);
+                    if (childsObj.length > 0) {
+                        delete obj[treeOptions.childs];
+                        moveToFirstLevel(childsObj);
+                    }
+                });
+            }
+
+            moveToFirstLevel(treeArray);
+        }
+        return newArray;
+    }
+    SetTree=(treeData, treeOptions=null)=>
+    {
+        if (treeOptions) this.TreeOptions = treeOptions;
+        if (treeData && treeData.length > 0)
+            this.DataArray = this.TableArray(treeData, this.TreeOptions);
+    }
+    GetTree=(treeOptions)=>
+    {
+        return this.TreeArray(this.DataArray, treeOptions);
     }
 }
 

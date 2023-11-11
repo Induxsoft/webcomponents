@@ -146,10 +146,14 @@
 
                 [PARAMS:edit-th]
                 ----------------------------------------------------------------------------------------------
-                - type      (opcional): Tipo de celda: Text,Number,Date,DateTime,Memo,Check,Select,Custom,NoEditable (def:Text)
-                - field     (opcional): Nombre del campo donde se guardará el valor de la celda
-                - default   (opcional): Valor por defecto de la celda al iniciarse
-                - options   (opcional): Datos de las opciones de una celda tipo Select (ej: {"a":"Opción 1","b":"Opción 2","c":"Opción 3"})
+                - type          (opcional): Tipo de celda: Text,Number,Date,DateTime,Memo,Check,Select,Custom,NoEditable (def:Text)
+                - field         (opcional): Nombre del campo donde se guardará el valor de la celda
+                - default       (opcional): Valor por defecto de la celda al iniciarse
+                - options       (opcional): Datos de las opciones de una celda tipo Select (ej: {"a":"Opción 1","b":"Opción 2","c":"Opción 3"})
+                - show-tree     (opcional): Establece la vista de la tabla en arbol (true/false, def: false)
+                - parentkey     (opcional): Campo que contiene el identificador de la fila padre (def: idp)
+                - key           (opcional): Campo que contiene el identificador de la fila (def: id)
+                - childs-field  (opcional): Campo que almacena una lista de filas hijas (def: __items)
             -->
             <edit-table id="micontrol5" style="width: 100%;">
                 <edit-thead>
