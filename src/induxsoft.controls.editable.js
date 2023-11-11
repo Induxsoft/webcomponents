@@ -96,6 +96,9 @@ class EditTable extends HTMLElement
                     .haschild td:first-of-type::before {
                         content:' \\23F5';
                     }
+                    .haschild td:first-of-type::before:hover {
+                        background-color: red;
+                    }
                     .sizable-border {
                         position: absolute; 
                         top: 0; 
@@ -104,7 +107,7 @@ class EditTable extends HTMLElement
                         cursor: col-resize;
                         background-color: transparent;
                     }
-
+                    .hidde-row{ display: none; }
                     .induxsoft-form-control{border: none; outline:1px solid #ced4da;display: block;width: 100%;padding: 0.375rem 0.75rem !important;font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-clip: padding-box;appearance: none;transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
                     }
                     .induxsoft-form-control:disabled, .induxsoft-form-control[readonly] {background-color: #e9ecef;opacity: 1;
@@ -1523,7 +1526,7 @@ class EditTable extends HTMLElement
 
     // ========================= SORT FUNCTIONS
     
-    _TreeValueIndent = 2;
+    _TreeValueIndent = 1;
     _TreeUnitIndent = 'rem';
 
     _refreshTable=()=>
@@ -1569,11 +1572,14 @@ class EditTable extends HTMLElement
         const tbody = this._table.querySelector('tbody');
 
         tbody.innerHTML = '';
+        let treeArray = this.TreeArray(JSON.parse(JSON.stringify(this.DataArray)));
+        let dataArray = this.TableArray(treeArray, null, false);
 
-        if (this.DataArray && this.DataArray.length > 0 && thead.hasChildNodes())
+        if (dataArray && dataArray.length > 0 && thead.hasChildNodes())
         {
-            this.DataArray.forEach(data => {
-                const tr = this._createFullElement('tr');
+            let treeOptions = this._getTreeOptions();
+            dataArray.forEach(data => {
+                const tr = this._createFullElement('tr', { id: (data[treeOptions.key]??''), parent: (data[treeOptions.parentkey]??'') });
                 thead.querySelectorAll('th').forEach(th => {
                     const td = this._createFullElement('td', { class:'EdiTable-Cell' });
                     Object.keys(data).forEach(key => {
@@ -1582,6 +1588,7 @@ class EditTable extends HTMLElement
                     });
                     tr.appendChild(td);
                 });
+                tr.firstChild.style.paddingLeft = `${this._TreeValueIndent*Number(data['__level__']??0)}${this._TreeUnitIndent}`;
                 tbody.appendChild(tr);
             });  
         }
@@ -1589,7 +1596,6 @@ class EditTable extends HTMLElement
         if (this.ShowAsTree)
         {
             this._addOrderableEventRows();
-            this._short_rows();
         }
 
         this.Initialize(this._table.getAttribute('id'));
@@ -1598,11 +1604,19 @@ class EditTable extends HTMLElement
     {
         const rows = this._table.querySelectorAll('tbody tr');
     }
-    _short_rows=()=>
+    _getCurrentRow()
     {
-        const rows = this._table.querySelectorAll('tbody tr');
+        const td = this.CurrentTd();
+        if (td)
+            return td.parentElement;
+        return null;
     }
-    
+    _getChildRows(row)
+    {
+        let parent_id = (row.getAttribute('id')??'___');
+        const child_rows = this._table.querySelectorAll(`tr[parent='${parent_id}']`);
+        return child_rows;
+    }
 
     TreeArray=(dataArray, treeOptions=null)=>
     {
@@ -1643,21 +1657,25 @@ class EditTable extends HTMLElement
 
         return dataArray;
     }
-    TableArray=(treeArray, treeOptions=null)=>
+    TableArray=(treeArray, treeOptions=null, withoutlevel=true)=>
     {
         if (!treeOptions) treeOptions = this._getTreeOptions();
         let newArray = [];
+        let level = -1;
 
         if (treeArray && treeArray.length > 0)
         {
             const moveToFirstLevel = listObj => 
             {
+                level++;
                 listObj.forEach(obj => {
                     let childsObj = JSON.parse(JSON.stringify((obj[treeOptions.childs]??[])));
                     newArray.push(obj);
+                    if (!withoutlevel) obj['__level__']=level;
                     if (childsObj.length > 0) {
                         delete obj[treeOptions.childs];
                         moveToFirstLevel(childsObj);
+                        level--;
                     }
                 });
             }
@@ -1675,6 +1693,40 @@ class EditTable extends HTMLElement
     GetTree=(treeOptions)=>
     {
         return this.TreeArray(this.DataArray, treeOptions);
+    }
+    RowIndentation=(row, treeOptions=null)=>
+    {
+        let treeArray = this.TreeArray(JSON.parse(JSON.stringify(this.DataArray)));
+        let dataArray = this.TableArray(treeArray, null, false);
+        
+
+    }
+
+    ExpandRow()
+    {
+        const removeHidde = rows =>{
+            if (rows && rows.length > 0) {
+                rows.forEach(r => {
+                    r.classList.remove('hidde-row');
+                    removeHidde(this._getChildRows(r));
+                });
+            }
+        }
+        const rows = this._getChildRows(this._getCurrentRow());
+        removeHidde(rows);
+    }
+    CollapseRow()
+    {
+        const removeHidde = rows =>{
+            if (rows && rows.length > 0) {
+                rows.forEach(r => {
+                    r.classList.add('hidde-row');
+                    removeHidde(this._getChildRows(r));
+                });
+            }
+        }
+        const rows = this._getChildRows(this._getCurrentRow());
+        removeHidde(rows);
     }
 }
 
