@@ -35,7 +35,7 @@ class EditTable extends HTMLElement
                         width: 100%;
                         height: 100%;
                         text-align: left;
-                        background-color: rgba(255,255,255,.5);
+                        background-color: rgba(255,255,255,.7);
                         cursor: text;
                         border: 1px solid #FFF;
                         border-radius: 3px;
@@ -73,6 +73,7 @@ class EditTable extends HTMLElement
                         outline: 1px solid #DDD;
                         font-weight: normal;
                         position: relative;
+                        cursor: pointer;
                     }
                     .Editable-Input-Number,
                     .Editable-Input-Text, 
@@ -107,6 +108,9 @@ class EditTable extends HTMLElement
                         cursor: col-resize;
                         background-color: transparent;
                     }
+                    .cell-collapsable { display: flex; gap: 2px; }
+                    .collapse-btn { height: 100%; cursor: pointer; }
+                    .cell-content { width: 100%; }
                     .hidde-row{ display: none; }
                     .induxsoft-form-control{border: none; outline:1px solid #ced4da;display: block;width: 100%;padding: 0.375rem 0.75rem !important;font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-clip: padding-box;appearance: none;transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
                     }
@@ -136,10 +140,13 @@ class EditTable extends HTMLElement
             this._shadow.appendChild(container1);
             
             this._initTreeValues();
-            
+            if (this.ShowAsTree)
+                this._printTreeData();
+
             this.Initialize(this._table.getAttribute('id'));
             this._processAtributesColumn();
             this._resizableGrid(this._table);
+            this._setSortEvent();
         });
     }
 
@@ -264,7 +271,11 @@ class EditTable extends HTMLElement
     _addSizableFunction=(element)=>
     {
         var pageX,curCol,nxtCol,curColWidth,nxtColWidth;
+
+        element.onclick = (e) => { e.stopPropagation(); }
+        
         element.addEventListener('mousedown', (e) => {
+            e.stopPropagation();
             curCol = e.target.parentElement;
             nxtCol = curCol.nextElementSibling;
             pageX = e.pageX;
@@ -273,14 +284,16 @@ class EditTable extends HTMLElement
                 nxtColWidth = nxtCol.offsetWidth
         });
         document.addEventListener('mousemove', (e) => {
-        if (curCol) {
-            var diffX = e.pageX - pageX;
-            if (nxtCol)
-                nxtCol.style.width = (nxtColWidth - (diffX))+'px';
-            curCol.style.width = (curColWidth + diffX)+'px';
-        }
+            e.stopPropagation();
+            if (curCol) {
+                var diffX = e.pageX - pageX;
+                if (nxtCol)
+                    nxtCol.style.width = (nxtColWidth - (diffX))+'px';
+                curCol.style.width = (curColWidth + diffX)+'px';
+            }
         });
         document.addEventListener('mouseup', (e) => { 
+            e.stopPropagation();
             curCol,nxtCol = undefined;
             nxtCol = undefined;
             pageX = undefined;
@@ -300,6 +313,19 @@ class EditTable extends HTMLElement
         if (!this._current || setnew)
             this._current = Object.assign({}, this);
         return this._current;
+    }
+    _setSortEvent=()=>
+    {
+        const fields = this._table.querySelectorAll('th');
+        fields.forEach(field => {
+            let par = 0;
+            field.onclick = e => {
+                e.stopPropagation();
+                par++;
+                this.Sort(this.DataArray, (field.getAttribute('field')??''), (par%2==0));
+                this._printRows();
+            };
+        });
     }
 
     // ========================= EDITABLE FUNCTIONS
@@ -476,7 +502,7 @@ class EditTable extends HTMLElement
                         break;
                     case "F2":
                         setTimeout(function(){
-                            _current.StartEdit(selector.parentElement,"");
+                            _current.StartEdit(selector.closest('td'),"");
                         },1);
                         break;
                     case "Delete":
@@ -484,27 +510,27 @@ class EditTable extends HTMLElement
                         if (!e.ctrlKey)
                         {
                             setTimeout(function(){
-                                _current.StartEdit(selector.parentElement,"",true);
+                                _current.StartEdit(selector.closest('td'),"",true);
                             },1);
                         }
                         break;
                     case "ArrowUp":
-                        _current.NavUp(selector.parentElement);
+                        _current.NavUp(selector.closest('td'));
                         break;
                     case "ArrowLeft":
-                        _current.NavLeft(selector.parentElement);
+                        _current.NavLeft(selector.closest('td'));
                         break;
                     case "ArrowRight":
-                        _current.NavRight(selector.parentElement);
+                        _current.NavRight(selector.closest('td'));
                         break;
                     case "ArrowDown":
-                    _current.NavDown(selector.parentElement);
+                    _current.NavDown(selector.closest('td'));
                         break;
                     default:
                         if (e.key.trim().length==1)
                         {
                             setTimeout(function(){
-                                _current.StartEdit(selector.parentElement,e.key);
+                                _current.StartEdit(selector.closest('td'),e.key);
                             },1);
                         }
                         break;
@@ -521,33 +547,33 @@ class EditTable extends HTMLElement
                 switch(e.key)
                 {
                     case "ArrowUp":
-                        _current.NavUp(input.parentElement);
+                        _current.NavUp(input.closest('td'));
                         e.stopPropagation();
                         break;
                     case "Escape":
-                        _current.CancelEdit(input.parentElement);
+                        _current.CancelEdit(input.closest('td'));
                         e.stopPropagation();
                         break
                     case "Enter":
-                        _current.NavRight(input.parentElement);
+                        _current.NavRight(input.closest('td'));
                         e.stopPropagation();
                         break;
                     case "ArrowLeft":
                         if (input.selectionStart==0 || input.getAttribute('type').toLowerCase()=="checkbox")
                         {
-                            _current.NavLeft(input.parentElement);
+                            _current.NavLeft(input.closest('td'));
                             e.stopPropagation();
                         }
                         break;
                     case "ArrowRight":
                         if (input.selectionStart==input.value.length || input.getAttribute("type").toLowerCase()=="checkbox")
                         {
-                            _current.NavRight(input.parentElement);
+                            _current.NavRight(input.closest('td'));
                             e.stopPropagation();
                         }
                         break;
                     case "ArrowDown":
-                        _current.NavDown(input.parentElement);
+                        _current.NavDown(input.closest('td'));
                         e.stopPropagation();
                         break;
                 }
@@ -560,27 +586,27 @@ class EditTable extends HTMLElement
                 switch(e.key)
                 {
                     case "Escape":
-                        _current.CancelEdit(input.parentElement);
+                        _current.CancelEdit(input.closest('td'));
                         e.stopPropagation();
                         break
                     case "Enter":
                         if (e.ctrlKey)
                         {
-                            _current.NavRight(input.parentElement);
+                            _current.NavRight(input.closest('td'));
                             e.stopPropagation();
                         }
                         break;
                     case "ArrowLeft":
                         if (input.selectionStart==0)
                         {
-                            _current.NavLeft(input.parentElement);
+                            _current.NavLeft(input.closest('td'));
                             e.stopPropagation();
                         }
                         break;
                     case "ArrowRight":
                         if (input.selectionStart==input.value.length)
                         {
-                            _current.NavRight(input.parentElement);
+                            _current.NavRight(input.closest('td'));
                             e.stopPropagation();
                         }
                         break;
@@ -594,22 +620,22 @@ class EditTable extends HTMLElement
                 switch(e.key)
                 {
                     case "Escape":
-                        _current.CancelEdit(input.parentElement);
+                        _current.CancelEdit(input.closest('td'));
                         e.stopPropagation();
                         break
                     case "Enter":
                         if (e.ctrlKey)
                         {
-                            _current.NavRight(input.parentElement);
+                            _current.NavRight(input.closest('td'));
                             e.stopPropagation();
                         }
                         break;
                     case "ArrowLeft":
-                        _current.NavLeft(input.parentElement);
+                        _current.NavLeft(input.closest('td'));
                         e.stopPropagation();
                         break;
                     case "ArrowRight":
-                        _current.NavRight(input.parentElement);
+                        _current.NavRight(input.closest('td'));
                         e.stopPropagation();
                         break;
                 }
@@ -818,7 +844,8 @@ class EditTable extends HTMLElement
             if (this.Columns[i]!=undefined)
             {
                 if (this.Columns[i].field!=undefined)
-                    tds[i].innerHTML = (this.DataArray[row][this.Columns[i].field] ?? '');
+                    this.SetTdValue(tds[i], (this.DataArray[row][this.Columns[i].field] ?? ''));
+                    //tds[i].innerHTML = (this.DataArray[row][this.Columns[i].field] ?? '');
             }
         }
 
@@ -861,7 +888,8 @@ class EditTable extends HTMLElement
                     }
                     else
                     {
-                        this.UpdateDataMember(row,this.Columns[i].field,tds[i].innerHTML);
+                        //this.UpdateDataMember(row,this.Columns[i].field,tds[i].innerHTML);
+                        this.UpdateDataMember(row,this.Columns[i].field,this.GetTdValue(tds[i]));
                     }
                 }
             }
@@ -1041,7 +1069,7 @@ class EditTable extends HTMLElement
         if (selector==null)
             return null;
 
-        return selector.parentElement;
+        return selector.closest('td');
         
     }
     /**
@@ -1227,25 +1255,32 @@ class EditTable extends HTMLElement
         switch(columnDef.type)
         {
             case this.EdiTable.Const.Columns.Types.Memo:
-                td.innerHTML = this.EdiTable.Const.HTML.Inputs.Memo;
+                //td.innerHTML = this.EdiTable.Const.HTML.Inputs.Memo;
+                this.SetTdValue(td, this.EdiTable.Const.HTML.Inputs.Memo);
                 break;
             case this.EdiTable.Const.Columns.Types.Date:
-                td.innerHTML = this.EdiTable.Const.HTML.Inputs.Date;
+                //td.innerHTML = this.EdiTable.Const.HTML.Inputs.Date;
+                this.SetTdValue(td, this.EdiTable.Const.HTML.Inputs.Date);
                 break;
             case this.EdiTable.Const.Columns.Types.DateTime:
-                td.innerHTML = this.EdiTable.Const.HTML.Inputs.DateTime;
+                //td.innerHTML = this.EdiTable.Const.HTML.Inputs.DateTime;
+                this.SetTdValue(td, this.EdiTable.Const.HTML.Inputs.DateTime);
                 break;
             case this.EdiTable.Const.Columns.Types.Select:
-                td.innerHTML = this.EdiTable.Const.HTML.Inputs.Select;
+                //td.innerHTML = this.EdiTable.Const.HTML.Inputs.Select;
+                this.SetTdValue(td, this.EdiTable.Const.HTML.Inputs.Select);
                 break;
             case this.EdiTable.Const.Columns.Types.Check:
-                td.innerHTML = this.EdiTable.Const.HTML.Inputs.Check;
+                //td.innerHTML = this.EdiTable.Const.HTML.Inputs.Check;
+                this.SetTdValue(td, this.EdiTable.Const.HTML.Inputs.Check);
                 break;
             case this.EdiTable.Const.Columns.Types.Number:
-                td.innerHTML = this.EdiTable.Const.HTML.Inputs.Number;
+                //td.innerHTML = this.EdiTable.Const.HTML.Inputs.Number;
+                this.SetTdValue(td, this.EdiTable.Const.HTML.Inputs.Number);
                 break;
             case this.EdiTable.Const.Columns.Types.Text:
-                td.innerHTML = this.EdiTable.Const.HTML.Inputs.Text;
+                //td.innerHTML = this.EdiTable.Const.HTML.Inputs.Text;
+                this.SetTdValue(td, this.EdiTable.Const.HTML.Inputs.Text);
                 break;
         }
         let input=this.EdiTable.GetInput();
@@ -1347,7 +1382,8 @@ class EditTable extends HTMLElement
         if (eventArgs.cancel)
             return false;
         
-        td.innerHTML = eventArgs.text;
+        //td.innerHTML = eventArgs.text;
+        this.SetTdValue(td, eventArgs.text);
         this.UpdateDataMember(this.RowIndexOfTd(td),columnDef.field,eventArgs.text);
 
         return true;
@@ -1371,7 +1407,8 @@ class EditTable extends HTMLElement
 
             if (this["temp_html"]!=undefined && this.EdiTable.focusedTable==this._getCurren())
             {
-                td.innerHTML = this["temp_html"];
+                //td.innerHTML = this["temp_html"];
+                this.SetTdValue(td, this["temp_html"]);
             }
 
             this.CellFocus(td);
@@ -1400,7 +1437,7 @@ class EditTable extends HTMLElement
         {
             if (this.EdiTable.focusedTable!=null)
             {
-                if (!this.EdiTable.focusedTable.ConfirmEdit(input.parentElement)) return;
+                if (!this.EdiTable.focusedTable.ConfirmEdit(input.closest('td'))) return;
             }
             else
                 input.remove();
@@ -1408,28 +1445,31 @@ class EditTable extends HTMLElement
 
         if (selector!=undefined)
         {
-            selector.parentElement.innerHTML = selector.innerHTML;
+            //selector.closest('td').innerHTML = selector.innerHTML;
+            this.SetTdValue(selector.closest('td'), selector.innerHTML);
             if (this.EdiTable.focusedTable!=null)
             {
-                this.LeaveCell(selector.parentElement);
+                this.LeaveCell(selector.closest('td'));
             }
 
             selector.remove();
         }
         
-        let txt=td.innerHTML;
-        td.innerHTML = this.EdiTable.Const.HTML.Selector;
+        //let txt=td.innerHTML;
+        let txt=this.GetTdValue(td);
+        //td.innerHTML = this.EdiTable.Const.HTML.Selector;
+        this.SetTdValue(td,this.EdiTable.Const.HTML.Selector );
         
         selector=this.EdiTable.GetSelector();
         selector.innerHTML = txt;
         this.EdiTable.focusedTable=this._getCurren(true);
 
         selector.focus();
-        this.EnterCell(selector.parentElement);
+        this.EnterCell(selector.closest('td'));
 
         const clickFunc = (e) => {
             e.stopPropagation();
-            this.StartEdit(selector.parentElement,"");  
+            this.StartEdit(selector.closest('td'),"");  
         }
         selector.removeEventListener('click', clickFunc);
         selector.addEventListener('click', clickFunc);
@@ -1524,10 +1564,37 @@ class EditTable extends HTMLElement
         }
     }
 
+    GetTdHtml=(td)=>
+    {
+        // const cellContent = td.querySelector('div[iscellcontent=true]');
+        // if (cellContent)
+        //     cellContent.innerHTML = '@value';
+        // else
+        //     td.innerHTML = '@value';
+        return td.innerHTML;
+    }
+    GetTdValue=(td)=>
+    {
+        const cellContent = td.querySelector('div[iscellcontent=true]');
+        if (cellContent)
+            return cellContent.innerHTML
+        return td.innerHTML;
+    }
+    SetTdValue=(td, value)=>
+    {
+        const cellContent = td.querySelector('div[iscellcontent=true]');
+        if (cellContent)
+        {
+            cellContent.innerHTML = value;
+            return;
+        }
+        td.innerHTML = value;
+    }
     // ========================= SORT FUNCTIONS
     
     _TreeValueIndent = 1;
     _TreeUnitIndent = 'rem';
+    _expandOnStart = false;
 
     _refreshTable=()=>
     {
@@ -1563,7 +1630,8 @@ class EditTable extends HTMLElement
     }
     _printTreeData=()=>
     {
-        this.SetTree(this.GetTree());
+        if (this.ShowAsTree) this.SetTree(this.GetTree());
+        else this.TableArray(this.DataArray);
         this._printRows();
     }
     _printRows=()=>
@@ -1572,46 +1640,87 @@ class EditTable extends HTMLElement
         const tbody = this._table.querySelector('tbody');
 
         tbody.innerHTML = '';
-        let treeArray = this.TreeArray(JSON.parse(JSON.stringify(this.DataArray)));
-        let dataArray = this.TableArray(treeArray, null, false);
+        let dataArray = this.DataArray;
+
+        if (this.ShowAsTree)
+        {
+            let treeArray = this.TreeArray(JSON.parse(JSON.stringify(this.DataArray)));
+            dataArray = this.TableArray(treeArray, null, false);
+        }
 
         if (dataArray && dataArray.length > 0 && thead.hasChildNodes())
         {
             let treeOptions = this._getTreeOptions();
-            dataArray.forEach(data => {
-                const tr = this._createFullElement('tr', { id: (data[treeOptions.key]??''), parent: (data[treeOptions.parentkey]??'') });
-                thead.querySelectorAll('th').forEach(th => {
+            
+            dataArray.forEach(data => 
+            {
+                const tr = this._createFullElement('tr', { id: (data[treeOptions.key]??''), parent: (data[treeOptions.parentkey]??''), indent: (data['__level__']??0) });
+                let firstAdded = false;
+                
+                thead.querySelectorAll('th').forEach(th => 
+                {
                     const td = this._createFullElement('td', { class:'EdiTable-Cell' });
-                    Object.keys(data).forEach(key => {
-                        if (td.textContent == '' && (th.getAttribute('field') == key || th.getAttribute('keyfield') == key))
-                            td.textContent = data[key];
-                    });
+
+                    if (!firstAdded && this.ShowAsTree)
+                    {
+                        const content = this._createFullElement('div', { iscellcontent:'true', class:'cell-content' });
+                        Object.keys(data).forEach(key => {
+                            if (td.textContent == '' && (th.getAttribute('field') == key || th.getAttribute('keyfield') == key))
+                                content.innerHTML = data[key];
+                        });
+                        td.appendChild(content);
+                        firstAdded = true;
+                    }
+                    else
+                    {
+                        Object.keys(data).forEach(key => {
+                            if (td.textContent == '' && (th.getAttribute('field') == key || th.getAttribute('keyfield') == key))
+                                td.innerHTML = data[key];
+                        });
+                    }
                     tr.appendChild(td);
                 });
-                tr.firstChild.style.paddingLeft = `${this._TreeValueIndent*Number(data['__level__']??0)}${this._TreeUnitIndent}`;
+
+                if (this.ShowAsTree)
+                {
+                    const expand = this._createFullElement('span', { class:'collapse-btn', expanded: this._expandOnStart });
+                    expand.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16"><path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg>'
+                    
+                    const td = tr.firstChild;                    
+                    td.classList.add('cell-collapsable');
+                    let ident = Number(data['__level__']??0);
+
+                    this.RowIndent(td, ident);
+                    if(data['__havechilds__']) td.prepend(expand);
+                    else this.RowIndent(td, ident+.5);
+
+                    expand.onclick = e => {
+                        e.stopPropagation();
+                        if (expand.getAttribute('expanded') == 'true')
+                            this.CollapseRow(tr);
+                        else
+                            this.ExpandRow(tr);
+                    }
+                    if (!this._expandOnStart) {
+                        expand.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-caret-right-fill" viewBox="0 0 16 16"><path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/></svg>';
+                        if (ident > 0) {
+                            tr.classList.add('hidde-row');
+                            expand.setAttribute('expanded','false');
+                        }
+                    }
+                }
+
                 tbody.appendChild(tr);
             });  
         }
 
-        if (this.ShowAsTree)
-        {
-            this._addOrderableEventRows();
-        }
-
         this.Initialize(this._table.getAttribute('id'));
     }
-    _addOrderableEventRows=()=>
+    _getCurrentRow=()=>
     {
-        const rows = this._table.querySelectorAll('tbody tr');
+        return this.TrOfTd(this.CurrentTd());
     }
-    _getCurrentRow()
-    {
-        const td = this.CurrentTd();
-        if (td)
-            return td.parentElement;
-        return null;
-    }
-    _getChildRows(row)
+    _getChildRows=(row)=>
     {
         let parent_id = (row.getAttribute('id')??'___');
         const child_rows = this._table.querySelectorAll(`tr[parent='${parent_id}']`);
@@ -1657,7 +1766,7 @@ class EditTable extends HTMLElement
 
         return dataArray;
     }
-    TableArray=(treeArray, treeOptions=null, withoutlevel=true)=>
+    TableArray=(treeArray, treeOptions=null, treeInfo=true)=>
     {
         if (!treeOptions) treeOptions = this._getTreeOptions();
         let newArray = [];
@@ -1671,7 +1780,10 @@ class EditTable extends HTMLElement
                 listObj.forEach(obj => {
                     let childsObj = JSON.parse(JSON.stringify((obj[treeOptions.childs]??[])));
                     newArray.push(obj);
-                    if (!withoutlevel) obj['__level__']=level;
+                    if (!treeInfo) {
+                        obj['__level__']=level;
+                        obj['__havechilds__']=((obj[treeOptions.childs]??[]).length > 0);
+                    }
                     if (childsObj.length > 0) {
                         delete obj[treeOptions.childs];
                         moveToFirstLevel(childsObj);
@@ -1696,37 +1808,99 @@ class EditTable extends HTMLElement
     }
     RowIndentation=(row, treeOptions=null)=>
     {
-        let treeArray = this.TreeArray(JSON.parse(JSON.stringify(this.DataArray)));
-        let dataArray = this.TableArray(treeArray, null, false);
-        
-
+        if (!row) return null;
+        return Number((row.getAttribute('indent') ?? 0));
+    }
+    RowIndent=(row, indent, treeOptions=null)=>
+    {
+        if (!row) return;
+        if (!treeOptions) treeOptions = this._getTreeOptions();
+        row.style.paddingLeft = `${this._TreeValueIndent*Number(indent)}${this._TreeUnitIndent}`;
     }
 
-    ExpandRow()
+    ExpandRow(row)
     {
+        if (!row) return;
+
+        const btnCollapse = row.querySelector('span.collapse-btn')
+        if (btnCollapse) {
+            btnCollapse.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16"><path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg>';
+            btnCollapse.setAttribute('expanded', 'true');
+        }
+
         const removeHidde = rows =>{
             if (rows && rows.length > 0) {
                 rows.forEach(r => {
                     r.classList.remove('hidde-row');
-                    removeHidde(this._getChildRows(r));
+                    // const btnCollapse = r.querySelector('span.collapse-btn')
+                    // if (btnCollapse) {
+                    //     btnCollapse.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16"><path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg>';
+                    //     btnCollapse.setAttribute('expanded', 'true');
+                    // }
+                    //removeHidde(this._getChildRows(r));
                 });
             }
         }
-        const rows = this._getChildRows(this._getCurrentRow());
+        const rows = this._getChildRows(row);
         removeHidde(rows);
     }
-    CollapseRow()
+    CollapseRow(row)
     {
+        if (!row) return;
+
+        const btnCollapse = row.querySelector('span.collapse-btn')
+        if (btnCollapse) {
+            btnCollapse.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-caret-right-fill" viewBox="0 0 16 16"><path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/></svg>';
+            btnCollapse.setAttribute('expanded', 'false');
+        }
+
         const removeHidde = rows =>{
             if (rows && rows.length > 0) {
                 rows.forEach(r => {
                     r.classList.add('hidde-row');
+                    const btnCollapse = r.querySelector('span.collapse-btn')
+                    if (btnCollapse) {
+                        btnCollapse.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-caret-right-fill" viewBox="0 0 16 16"><path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/></svg>';
+                        btnCollapse.setAttribute('expanded', 'false');
+                    }
                     removeHidde(this._getChildRows(r));
                 });
             }
         }
-        const rows = this._getChildRows(this._getCurrentRow());
+        const rows = this._getChildRows(row);
         removeHidde(rows);
+    }
+
+    Sort=(dataArray, field, desc=false)=>
+    {
+        if (dataArray && dataArray.length > 0)
+        {
+            dataArray.sort((a,b) => 
+            {
+                let valA = (a[field]??'');
+                let valB = (b[field]??'');
+
+                let numb = (typeof valA === 'number' && typeof valB === 'number');
+
+                if (numb)
+                {
+                    if (!desc)
+                        return (valA > valB ? 1 : valA < valB ? -1 : 0);
+                    else
+                        return (valB > valA ? 1 : valB < valA ? -1 : 0);
+                }
+                else
+                {
+                    valA = valA.toString().toUpperCase();
+                    valB = valB.toString().toUpperCase();
+
+                    if (!desc)
+                        return (valA > valB ? 1 : valA < valB ? -1 : 0);
+                    else
+                        return (valB > valA ? 1 : valB < valA ? -1 : 0);
+                }
+            });
+        }
     }
 }
 
