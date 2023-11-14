@@ -33,7 +33,8 @@
             - data-key              (required): Establece el campo a guardar al seleccionar un registro
             - data-search           (required): Establece el campo a considerar en la busqueda de un registro
             - data-text             (optional): Establece el campo a mostrar en la descripción del registro seleccionado
-            - data-value            (optional): Establece los datos a usar en la selección de registros (ej: [{sys_pk:1,codigo:'001',nombre:'Bob'}, ...])
+            - data-value            (optional): Esteblece el valor inicial del componente
+            - data-source-array     (opcional): Establece los datos a usar en la selección de registros (ej: [{sys_pk:1,codigo:'001',nombre:'Bob'}, ...])
             - data-source           (optional): Establece el endpoint para la obtención de registros
             - columns               (opcional): Establece los campos a mostrar en la tabla de resultados de busqueda (ej: "codigo,nombre", def: valores de todos los campos)
             - colcaptions           (opcional): Establece los encabezados de la tabla de resultados de busqueda (ej: "Código, Nombre", def: nombre de todos los campos)
@@ -59,7 +60,8 @@
             data-key="sys_pk"
             data-search="codigo"
             data-text="nombre"
-            data-value='[{"sys_pk":1, "codigo":"001", "nombre":"Bob"}]'
+            data-value='{"sys_pk":1, "codigo":"001", "nombre":"Bob"}'
+            data-source-array='[{"sys_pk":1, "codigo":"001", "nombre":"Bob"}]'
             data-source=""
             columns="codigo,nombre"
             colcaptions="Código,Nombre"

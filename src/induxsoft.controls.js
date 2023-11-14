@@ -539,6 +539,16 @@ class InputKey extends HTMLElement
             shadow.appendChild(container3);
             shadow.appendChild(container4);
             this.after(this.inputv);
+
+            if (this.hasAttribute('data-value'))
+            {
+                try{
+                    let initvalue = JSON.parse(this.getAttribute('data-value')??'{}');
+                    this.setValue(initvalue);
+                }catch{
+                    alert('El valor del atributo "data-value" tiene un formato JSON inválido');
+                }
+            }
         });
     }
     /**
@@ -659,10 +669,10 @@ class InputKey extends HTMLElement
                     alert("Ocurrió un error al invocar el servicio.\n\n" + dataFail);
                 });
             }
-            else if(this.hasAttribute('data-value') && this.getAttribute('data-value').trim() != '')
+            else if(this.hasAttribute('data-source-array') && this.getAttribute('data-source-array').trim() != '')
             {
-                try{ this.data = JSON.parse(this.getAttribute('data-value')); }
-                catch{ alert('El valor del atributo "data-value" tiene un formato JSON inválido'); }
+                try{ this.data = JSON.parse(this.getAttribute('data-source-array')); }
+                catch{ alert('El valor del atributo "data-source-array" tiene un formato JSON inválido'); }
                 if (id && this.data){
                     this.data = this.data.filter(data => data[this.getAttribute('data-search')].includes(id));
                 }
@@ -701,7 +711,7 @@ class InputKey extends HTMLElement
     setValue(value={})
     {
         this.accept_data = value;
-        
+
         if(!this.accept_data || Object.entries(this.accept_data).length <= 0)
         {
             this.input_search_container.value = '';
