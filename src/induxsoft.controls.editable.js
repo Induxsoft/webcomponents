@@ -91,6 +91,17 @@ class EditTable extends HTMLElement
                     .Editable-Input-Select{
                         display: block;width: 100%;padding: 0.375rem 2.25rem 0.375rem 0.75rem;-moz-padding-start: calc(0.75rem - 3px);font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");background-repeat: no-repeat;background-position: right 0.75rem center;background-size: 16px 12px;border: none;outline:1px solid #ced4da;-webkit-appearance: none;-moz-appearance: none;appearance: none;
                     }
+                    .EdiTable-Button{
+                        padding: 2px;
+                        background-color: transparent;
+                        color: inherit;
+                        border: 0;
+                        cursor: pointer;
+                        position: absolute;
+                        right: 6px;
+                        top: 2px;
+                        bottom: 0;
+                    }
                     .haschild td:first-of-type {
                         padding-left: 2rem;
                     }
@@ -108,10 +119,14 @@ class EditTable extends HTMLElement
                         cursor: col-resize;
                         background-color: transparent;
                     }
+
+                    .tr-border-bottom td{ transition: border .2s; border-bottom: 6px solid #000; }
+                    .dragging{ background-color: #000 !important; color: #FFF !important; }
                     .cell-collapsable { display: flex; gap: 2px; }
                     .collapse-btn { height: 100%; cursor: pointer; }
                     .cell-content { width: 100%; }
                     .hidde-row{ display: none; }
+
                     .induxsoft-form-control{border: none; outline:1px solid #ced4da;display: block;width: 100%;padding: 0.375rem 0.75rem !important;font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-clip: padding-box;appearance: none;transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
                     }
                     .induxsoft-form-control:disabled, .induxsoft-form-control[readonly] {background-color: #e9ecef;opacity: 1;
@@ -140,6 +155,7 @@ class EditTable extends HTMLElement
             this._shadow.appendChild(container1);
             
             this._initTreeValues();
+
             if (this.ShowAsTree)
                 this._printTreeData();
 
@@ -147,6 +163,9 @@ class EditTable extends HTMLElement
             this._processAtributesColumn();
             this._resizableGrid(this._table);
             this._setSortEvent();
+
+            if (this.hasAttribute('btn-options') && this.getAttribute('btn-options') == 'true')
+                this.BtnOptions = true;
         });
     }
 
@@ -273,7 +292,7 @@ class EditTable extends HTMLElement
         var pageX,curCol,nxtCol,curColWidth,nxtColWidth;
 
         element.onclick = (e) => { e.stopPropagation(); }
-        
+
         element.addEventListener('mousedown', (e) => {
             e.stopPropagation();
             curCol = e.target.parentElement;
@@ -322,9 +341,147 @@ class EditTable extends HTMLElement
             field.onclick = e => {
                 e.stopPropagation();
                 par++;
-                this.Sort(this.DataArray, (field.getAttribute('field')??''), (par%2==0));
+                if (this.ShowAsTree)
+                {
+                    let options = this._getTreeOptions();
+                    this.GetTree(options);
+                    this.SortTree(this.DataArray, (field.getAttribute('field')??''), (par%2==0), options);
+                    this.SetTree(this.DataArray, options);
+                }
+                else
+                {
+                    this.Sort(this.DataArray, (field.getAttribute('field')??''), (par%2==0));
+                }
                 this._printRows();
             };
+        });
+    }
+    _moveData(sourceData, targetData, moveAsChild=false)
+    {
+        let treeOptions = this._getTreeOptions();
+        
+        let source = null;
+        let target = null;
+
+        const _search = (listObj) => 
+        {
+            return listObj.some((obj, idx) => 
+            {
+                if (sourceData[treeOptions.key] == (obj[treeOptions.key]??'_')) 
+                    source = { listObj, idx };
+                else if (targetData[treeOptions.key] == (obj[treeOptions.key] ?? '_')) 
+                    target = { obj, listObj, idx };
+                return ((source && target) || _search((obj[treeOptions.childs]??[])));
+            });
+        }
+        
+        this.GetTree(treeOptions);
+        if (!_search(this.DataArray)) {
+            this.SetTree(this.DataArray, treeOptions);
+            return;
+        }
+        
+        let sameLevel = (source.listObj == target.listObj);
+        let notaddidx = (sameLevel && source.idx <= target.idx);
+        
+        if (!moveAsChild)
+        {
+            let data = source.listObj.splice(source.idx, 1)[0];
+            data[treeOptions.parentkey] = target.obj[treeOptions.parentkey];
+            target.listObj.splice(target.idx + (notaddidx ? 0 : 1), 0, data);
+        }
+        else
+        {
+            const parentChilds = (target.obj[treeOptions.childs]??[]);
+            let data = source.listObj.splice(source.idx, 1)[0];
+            data[treeOptions.parentkey] = target.obj[treeOptions.key]
+            parentChilds.push(data);
+            target.obj[treeOptions.childs] = parentChilds;
+        }
+
+        this.SetTree(this.DataArray, treeOptions);
+    }
+    _setMoveEvent=()=>
+    {
+        const getTarget = (e) =>
+        {
+            let target = e.currentTarget;
+            if (target.tagName != 'TR') target = e.target.closest('tr');
+            return target;
+        }
+        const handleDragStart = (e) => 
+        {
+            e.stopPropagation();
+
+            let target = getTarget(e);
+            target.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+
+            const indexRow = this._getRowIndex(target);
+            const data = (this.DataArray[indexRow] ?? {});
+
+            e.dataTransfer.setData('application/json', JSON.stringify(data));
+        }
+        const handleDragOver = (e) => 
+        {
+            e.stopPropagation();
+            e.preventDefault();
+            let target = getTarget(e);
+            target.classList.add('tr-border-bottom');
+        }
+        const handleDragEnter = (e) => 
+        {
+            e.stopPropagation();
+            let target = getTarget(e);
+            target.classList.add('tr-border-bottom');
+        }
+        const handleDragLeave = (e) => 
+        {
+            e.stopPropagation();
+            let target = getTarget(e);
+            target.classList.remove('tr-border-bottom');
+        }
+        const handleDragEnd = (e) => 
+        {
+            e.stopPropagation();
+            let target = getTarget(e);
+            target.classList.remove('dragging');
+            target.classList.remove('tr-border-bottom');
+        }
+
+        const handleDrop = (e) => 
+        {
+            e.stopPropagation();
+            let target = getTarget(e);
+            let sourceData = JSON.parse(e.dataTransfer.getData('application/json'));
+            
+            target.classList.remove('dragging');
+            target.classList.remove('tr-border-bottom');
+
+            if (sourceData && Object.keys(sourceData).length > 0)
+            {
+                let targetData = this.DataArray[this._getRowIndex(target)];
+                if (targetData)
+                {
+                    this._moveData(sourceData, targetData);
+                    this._printRows();
+                }
+            }
+            
+            return false;
+        }
+
+        const trs = this._table.querySelectorAll('tbody tr');
+
+        trs.forEach(tr => 
+        {
+            tr.setAttribute('draggable', 'true');
+            tr.ondragstart =  handleDragStart;
+            tr.ondragover =  handleDragOver;
+            tr.ondragenter =  handleDragEnter;
+            tr.ondragleave =  handleDragLeave;
+            tr.ondragend =  handleDragEnd;
+            tr.ondrop =  handleDrop;
         });
     }
 
@@ -334,6 +491,7 @@ class EditTable extends HTMLElement
         Const : {
             HTML:{
                 Selector:'<button id="__table_selector" class="EdiTable-Selector"></button>',
+                Button:'<button id="__table_button" class="EdiTable-Button"></button>',
                 Inputs:{
                     "Text":'<input type="text" id="__table_input" class="Editable-Input-Text"/>',
                     "Number":'<input type="number" id="__table_input" class="Editable-Input-Number"/>',
@@ -376,7 +534,8 @@ class EditTable extends HTMLElement
                 RowAdded:"rowadded"
             },
             SelectorId:"__table_selector",
-            InputId:"__table_input"
+            InputId:"__table_input",
+            ButtonOptionId:"__table_button"
         },
         focusedTable:null,
         Converts:{
@@ -411,6 +570,10 @@ class EditTable extends HTMLElement
         GetSelector:function()
         {
             return this._shadow.querySelector("#"+this.EdiTable.Const.SelectorId);
+        }.bind(this),
+        GetButtonOption:function()
+        {
+            return this._shadow.querySelector("#"+this.EdiTable.Const.ButtonOptionId);
         }.bind(this),
         GetInput:function()
         {
@@ -682,6 +845,8 @@ class EditTable extends HTMLElement
     Key = "id";
     ParentKey = "idp";
     Childs = "__items";
+    BtnOptions = false;
+    BtnOptionsOnClick = null;
     
     CSS = {
         Cell:"EdiTable-Cell",
@@ -1084,7 +1249,7 @@ class EditTable extends HTMLElement
         if (td==null)
             return null;
         
-        return td.parentElement;
+        return td.closest('tr');
     }
     /**
      * @param {HTMLTableCellElement} td Referencia a un elemento *td* de la tabla.
@@ -1098,7 +1263,7 @@ class EditTable extends HTMLElement
         if (td==null)
             return -1;
         
-        return this._getRowIndex(td.parentElement);
+        return this._getRowIndex(td.closest('tr'));
     }
     /**
      * @returns Retorna el **índice** de la fila *tr* de la celda *td* actualmente seleccionada, -1 si no hay niguna celda selccionada.
@@ -1109,7 +1274,7 @@ class EditTable extends HTMLElement
         if (current_td==null)
             return -1;
         
-        return this._getRowIndex(current_td.parentElement);
+        return this._getRowIndex(current_td.closest('tr'));
     }
     /**
      * 
@@ -1458,8 +1623,27 @@ class EditTable extends HTMLElement
         //let txt=td.innerHTML;
         let txt=this.GetTdValue(td);
         //td.innerHTML = this.EdiTable.Const.HTML.Selector;
-        this.SetTdValue(td,this.EdiTable.Const.HTML.Selector );
+        let button = '';
+        if (this.BtnOptions) button = this.EdiTable.Const.HTML.Button;
+        this.SetTdValue(td,this.EdiTable.Const.HTML.Selector+button);
         
+        let options = this.EdiTable.GetButtonOption();
+        if (options)
+        {
+            options.innerHTML = ((this.getAttribute('btn-options-inner')??'').trim() != '' ?
+            this.getAttribute('btn-options-inner'):
+            '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16"><path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg>');
+            if (this.BtnOptionsOnClick)
+            {
+                options.onclick = (e) => {
+                    e.stopPropagation();
+                    let rowIndex = this.RowIndexOfTd(td);
+                    let colIndex = this.ColIndexOfTd(td);
+                    this.BtnOptionsOnClick(rowIndex, colIndex);
+                }
+            }
+        }
+
         selector=this.EdiTable.GetSelector();
         selector.innerHTML = txt;
         this.EdiTable.focusedTable=this._getCurren(true);
@@ -1477,9 +1661,9 @@ class EditTable extends HTMLElement
         this.EdiTable.SetSelectorKeyEventHandler(selector, this._getCurren());
         if (this.CSS.RowSelected)
         {
-            let trs = td.parentElement.parentElement.querySelectorAll('tr');
+            let trs = td.closest('tr').parentElement.querySelectorAll('tr');
             if (trs && trs.length > 0) trs.forEach(tr => tr.classList.remove(this.CSS.RowSelected));
-            td.parentElement.classList.add(this.CSS.RowSelected);
+            td.closest('tr').classList.add(this.CSS.RowSelected);
         }
     }
     /**
@@ -1639,6 +1823,14 @@ class EditTable extends HTMLElement
         const thead = this._table.querySelector('thead');
         const tbody = this._table.querySelector('tbody');
 
+        const trs = tbody.querySelectorAll('tr');
+        let rowsExpanded = [];
+
+        trs.forEach(r => {
+            if (r.querySelector('span[expanded=true]') && (r.getAttribute('id')??''))
+                rowsExpanded.push(r.getAttribute('id'));
+        });
+
         tbody.innerHTML = '';
         let dataArray = this.DataArray;
 
@@ -1689,10 +1881,10 @@ class EditTable extends HTMLElement
                     const td = tr.firstChild;                    
                     td.classList.add('cell-collapsable');
                     let ident = Number(data['__level__']??0);
-
+                    tr.setAttribute('indent', ident);
                     this.RowIndent(td, ident);
                     if(data['__havechilds__']) td.prepend(expand);
-                    else this.RowIndent(td, ident+.5);
+                    else this.RowIndent(td, ident+.7);
 
                     expand.onclick = e => {
                         e.stopPropagation();
@@ -1713,8 +1905,12 @@ class EditTable extends HTMLElement
                 tbody.appendChild(tr);
             });  
         }
-
+        rowsExpanded.forEach(trId => {
+            const tr = tbody.querySelector('#'+trId);
+            if (tr) this.ExpandRow(tr);
+        });
         this.Initialize(this._table.getAttribute('id'));
+        if (this.ShowAsTree) this._setMoveEvent();
     }
     _getCurrentRow=()=>
     {
@@ -1882,25 +2078,46 @@ class EditTable extends HTMLElement
 
                 let numb = (typeof valA === 'number' && typeof valB === 'number');
 
-                if (numb)
-                {
-                    if (!desc)
-                        return (valA > valB ? 1 : valA < valB ? -1 : 0);
-                    else
-                        return (valB > valA ? 1 : valB < valA ? -1 : 0);
-                }
-                else
-                {
+                if (!numb) {
                     valA = valA.toString().toUpperCase();
                     valB = valB.toString().toUpperCase();
-
-                    if (!desc)
-                        return (valA > valB ? 1 : valA < valB ? -1 : 0);
-                    else
-                        return (valB > valA ? 1 : valB < valA ? -1 : 0);
                 }
+
+                if (!desc) return (valA > valB ? 1 : valA < valB ? -1 : 0);
+                else return (valB > valA ? 1 : valB < valA ? -1 : 0);
             });
         }
+    }
+    SortTree=(treeArray,field,desc, treeOptions=null)=>
+    {
+        if (!treeOptions) treeOptions = this._getTreeOptions();
+
+        const sortData = (list) => 
+        {
+            if (list && list.length > 0)
+            {
+                list.sort((a,b) => 
+                {
+                    if ((a[treeOptions.childs]??[]).length > 0) { sortData(a[treeOptions.childs]); }
+                    if ((b[treeOptions.childs]??[]).length > 0) { sortData(b[treeOptions.childs]); }
+
+                    let valA = (a[field]??'');
+                    let valB = (b[field]??'');
+
+                    let numb = (typeof valA === 'number' && typeof valB === 'number');
+
+                    if (!numb) {
+                        valA = valA.toString().toUpperCase();
+                        valB = valB.toString().toUpperCase();
+                    }
+
+                    if (!desc) return (valA > valB ? 1 : valA < valB ? -1 : 0);
+                    else return (valB > valA ? 1 : valB < valA ? -1 : 0);
+                });
+            }
+        }
+
+        sortData(treeArray);
     }
 }
 
