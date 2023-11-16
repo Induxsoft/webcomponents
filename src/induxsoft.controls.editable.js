@@ -58,7 +58,10 @@ class EditTable extends HTMLElement
                         color: #FFF !important;
                     }
                     
-                    table{ width: 100%; font-size: 1rem; }
+                    table{ width: 100%; font-size: 1rem; border-spacing: 1px; }
+                    tbody tr {
+                        position: relative;
+                    }
                     tbody tr:hover {
                         background-color: #F5F5F5;
                     }
@@ -94,7 +97,7 @@ class EditTable extends HTMLElement
                     .EdiTable-Button{
                         padding: 2px;
                         background-color: transparent;
-                        color: inherit;
+                        color: #3D75DD;
                         border: 0;
                         cursor: pointer;
                         position: absolute;
@@ -120,12 +123,38 @@ class EditTable extends HTMLElement
                         background-color: transparent;
                     }
 
-                    .tr-border-bottom td{ transition: border .2s; border-bottom: 6px solid #000; }
-                    .dragging{ background-color: #000 !important; color: #FFF !important; }
-                    .cell-collapsable { display: flex; gap: 2px; }
-                    .collapse-btn { height: 100%; cursor: pointer; }
-                    .cell-content { width: 100%; }
+                    .tr-border-bottom td{ 
+                        transition: border .1s; 
+                        border-bottom: 6px solid #888; 
+                        outline: 0;
+                    }
+                    
+                    .icon-child div::before{ 
+                        content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='%23555' class='bi bi-indent' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M3 8a.5.5 0 0 1 .5-.5h6.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H3.5A.5.5 0 0 1 3 8Z'/%3E%3Cpath fill-rule='evenodd' d='M12.5 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5Z'/%3E%3C/svg%3E");
+                        /* content: 'Children';
+                        font-size: .8rem;
+                        font-weight: 500;
+                        color: #888; */
+                        background-color: inherit;
+                        z-index:1000000; 
+                        position: absolute; 
+                        left: 2px;
+                        top: 4px;
+                        padding: 2px 4px 0 4px;
+                        display:flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                    .bg-child {
+                        background-color: #F5F5F5 !important;
+                        color: #000 !important;
+                    }
+                    .dragging{ background-color: #EDEDED !important; color: #000 !important; border: 0 !important; outline: 0 !important; }
+                    .cell-collapsable {  }
+                    .collapse-btn { cursor: pointer; }
+                    .cell-content { width: 100%; height: 100%; display: flex; align-items: center; }
                     .hidde-row{ display: none; }
+                    .container-cell-content { display: flex; gap:2px; width:-webkit-fill-available; height: 100%; align-items: center;}
 
                     .induxsoft-form-control{border: none; outline:1px solid #ced4da;display: block;width: 100%;padding: 0.375rem 0.75rem !important;font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-clip: padding-box;appearance: none;transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
                     }
@@ -163,9 +192,6 @@ class EditTable extends HTMLElement
             this._processAtributesColumn();
             this._resizableGrid(this._table);
             this._setSortEvent();
-
-            if (this.hasAttribute('btn-options') && this.getAttribute('btn-options') == 'true')
-                this.BtnOptions = true;
         });
     }
 
@@ -327,6 +353,13 @@ class EditTable extends HTMLElement
         if (tbody) tbody.querySelectorAll('tr').forEach((_tr, i) => { if (_tr === tr) index = i });
         return index;
     }
+    _getVisibleRowIndex=(tr)=>
+    {
+        let index = -1;
+        let tbody = tr?.parentElement;
+        if (tbody) tbody.querySelectorAll('tr:not(.hidde-row)').forEach((_tr, i) => { if (_tr === tr) index = i });
+        return index;
+    }
     _getCurren=(setnew=false)=>
     {
         if (!this._current || setnew)
@@ -356,69 +389,95 @@ class EditTable extends HTMLElement
             };
         });
     }
-    _moveData(sourceData, targetData, moveAsChild=false)
+    _moveData(sourceData, targetData, moveAsChild=false, treeOptions=null)
     {
-        let treeOptions = this._getTreeOptions();
+        if (!treeOptions) treeOptions = this._getTreeOptions();
+
+        if ((sourceData[treeOptions.key]??'_') === (targetData[treeOptions.key]??'|')) return;
         
         let source = null;
         let target = null;
+        let isChil = false;
 
-        const _search = (listObj) => 
+        const search = l => 
         {
-            return listObj.some((obj, idx) => 
+            return l.some((obj, idx) => 
             {
                 if (sourceData[treeOptions.key] == (obj[treeOptions.key]??'_')) 
-                    source = { listObj, idx };
+                    source = { obj, l, idx };
                 else if (targetData[treeOptions.key] == (obj[treeOptions.key] ?? '_')) 
-                    target = { obj, listObj, idx };
-                return ((source && target) || _search((obj[treeOptions.childs]??[])));
+                    target = { obj, l, idx };
+                return ((source && target) || search((obj[treeOptions.childs]??[])));
+            });
+        }
+
+        const targetChild = l => 
+        {
+            return l.some(obj => 
+            {
+                if (targetData[treeOptions.key] == (obj[treeOptions.key] ?? '_')){
+                    isChil = true;
+                    console.log('Can not add a parent row like child row');
+                }
+                return (isChil || targetChild((obj[treeOptions.childs]??[])));
             });
         }
         
-        this.GetTree(treeOptions);
-        if (!_search(this.DataArray)) {
-            this.SetTree(this.DataArray, treeOptions);
-            return;
-        }
-        
-        let sameLevel = (source.listObj == target.listObj);
-        let notaddidx = (sameLevel && source.idx <= target.idx);
-        
-        if (!moveAsChild)
+        try
         {
-            let data = source.listObj.splice(source.idx, 1)[0];
-            data[treeOptions.parentkey] = target.obj[treeOptions.parentkey];
-            target.listObj.splice(target.idx + (notaddidx ? 0 : 1), 0, data);
-        }
-        else
-        {
-            const parentChilds = (target.obj[treeOptions.childs]??[]);
-            let data = source.listObj.splice(source.idx, 1)[0];
-            data[treeOptions.parentkey] = target.obj[treeOptions.key]
-            parentChilds.push(data);
-            target.obj[treeOptions.childs] = parentChilds;
-        }
+            this.GetTree(treeOptions);
 
-        this.SetTree(this.DataArray, treeOptions);
+            if(search(this.DataArray) && !targetChild((source?.obj[treeOptions.childs]??[])))
+            {
+                let sameLevel = (source.l == target.l);
+                let notaddidx = (sameLevel && source.idx <= target.idx);
+                
+                if (!moveAsChild)
+                {
+                    let data = source.l.splice(source.idx, 1)[0];
+                    data[treeOptions.parentkey] = target.obj[treeOptions.parentkey];
+                    target.l.splice(target.idx + (notaddidx ? 0 : 1), 0, data);
+                }
+                else
+                {
+                    const parentChilds = (target.obj[treeOptions.childs]??[]);
+                    let data = source.l.splice(source.idx, 1)[0];
+                    data[treeOptions.parentkey] = target.obj[treeOptions.key]
+                    parentChilds.unshift(data);
+                    target.obj[treeOptions.childs] = parentChilds;
+                }
+            }
+        }
+        catch(error)
+        {
+            console.log(error);
+        }
+        finally 
+        {
+            this.SetTree(this.DataArray, treeOptions);
+        }
     }
     _setMoveEvent=()=>
     {
-        const getTarget = (e) =>
+        let asChild = false;
+
+        const getTr = (e) =>
         {
-            let target = e.currentTarget;
-            if (target.tagName != 'TR') target = e.target.closest('tr');
-            return target;
+            let tr = e.currentTarget;
+            if (tr.tagName != 'TR') tr = e.target.closest('tr');
+            return tr;
         }
         const handleDragStart = (e) => 
         {
             e.stopPropagation();
 
-            let target = getTarget(e);
-            target.classList.add('dragging');
+            let tr = getTr(e);
+            tr.classList.add('dragging');
             e.dataTransfer.effectAllowed = 'move';
 
-            const indexRow = this._getRowIndex(target);
+            const indexRow = this._getRowIndex(tr);
             const data = (this.DataArray[indexRow] ?? {});
+            asChild = false;
 
             e.dataTransfer.setData('application/json', JSON.stringify(data));
         }
@@ -426,44 +485,60 @@ class EditTable extends HTMLElement
         {
             e.stopPropagation();
             e.preventDefault();
-            let target = getTarget(e);
-            target.classList.add('tr-border-bottom');
+            
+            let tr = getTr(e);
+
+            let td = tr.firstChild;
+            let cr = td.getBoundingClientRect();
+            let lx = (cr.x + (cr.width / 2));
+
+            asChild = (e.clientX > lx);
+
+            tr.classList.add('tr-border-bottom');
+            tr.classList.toggle('icon-child', asChild);
+            tr.classList.toggle('bg-child', asChild);
         }
         const handleDragEnter = (e) => 
         {
             e.stopPropagation();
-            let target = getTarget(e);
-            target.classList.add('tr-border-bottom');
+            let tr = getTr(e);
+            tr.classList.add('tr-border-bottom');
         }
         const handleDragLeave = (e) => 
         {
             e.stopPropagation();
-            let target = getTarget(e);
-            target.classList.remove('tr-border-bottom');
+            let tr = getTr(e);
+            tr.classList.remove('tr-border-bottom');
+            tr.classList.remove('icon-child');
+            tr.classList.remove('bg-child');
         }
         const handleDragEnd = (e) => 
         {
             e.stopPropagation();
-            let target = getTarget(e);
-            target.classList.remove('dragging');
-            target.classList.remove('tr-border-bottom');
+            let tr = getTr(e);
+            tr.classList.remove('dragging');
+            tr.classList.remove('tr-border-bottom');
+            tr.classList.remove('icon-child');
+            tr.classList.remove('bg-child');
         }
 
         const handleDrop = (e) => 
         {
             e.stopPropagation();
-            let target = getTarget(e);
+            let tr = getTr(e);
             let sourceData = JSON.parse(e.dataTransfer.getData('application/json'));
             
-            target.classList.remove('dragging');
-            target.classList.remove('tr-border-bottom');
+            tr.classList.remove('dragging');
+            tr.classList.remove('tr-border-bottom');
+            tr.classList.remove('icon-child');
+            tr.classList.remove('bg-child');
 
             if (sourceData && Object.keys(sourceData).length > 0)
             {
-                let targetData = this.DataArray[this._getRowIndex(target)];
+                let targetData = this.DataArray[this._getRowIndex(tr)];
                 if (targetData)
                 {
-                    this._moveData(sourceData, targetData);
+                    this._moveData(sourceData, targetData, asChild);
                     this._printRows();
                 }
             }
@@ -634,6 +709,7 @@ class EditTable extends HTMLElement
         SetSelectorKeyEventHandler:function(selector, _current)
         {
             const funct = (e) => {
+                e.preventDefault();
                 switch(e.key)
                 {
                     case "Home":
@@ -845,8 +921,7 @@ class EditTable extends HTMLElement
     Key = "id";
     ParentKey = "idp";
     Childs = "__items";
-    BtnOptions = false;
-    BtnOptionsOnClick = null;
+    ButtonOnClick = null;
     
     CSS = {
         Cell:"EdiTable-Cell",
@@ -1357,7 +1432,7 @@ class EditTable extends HTMLElement
         return columnDef;
     }
     /**
-     * @param {Number} td índice de la celda *td*.
+     * @param {Number} td Referencia a un elemento *td* de la tabla.
      * @returns Retorna información del **objeto** de la columna *td* especificada.
      */
     GetColumnDefOfTd=(td)=>
@@ -1619,27 +1694,32 @@ class EditTable extends HTMLElement
 
             selector.remove();
         }
-        
-        //let txt=td.innerHTML;
+
         let txt=this.GetTdValue(td);
-        //td.innerHTML = this.EdiTable.Const.HTML.Selector;
+        //let txt=td.innerHTML;
+
         let button = '';
-        if (this.BtnOptions) button = this.EdiTable.Const.HTML.Button;
+        let coldef = this.GetColumnDefOfTd(td);
+
+        if (coldef && (coldef['button'] ?? '') == 'true') button = this.EdiTable.Const.HTML.Button;
         this.SetTdValue(td,this.EdiTable.Const.HTML.Selector+button);
+        //td.innerHTML = this.EdiTable.Const.HTML.Selector;
         
-        let options = this.EdiTable.GetButtonOption();
-        if (options)
+        let btn = this.EdiTable.GetButtonOption();
+        
+        if (btn)
         {
-            options.innerHTML = ((this.getAttribute('btn-options-inner')??'').trim() != '' ?
-            this.getAttribute('btn-options-inner'):
-            '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16"><path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg>');
-            if (this.BtnOptionsOnClick)
+            btn.innerHTML = ((coldef['buttondata']??'').trim() != '' ?
+                coldef['buttondata']:
+                '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16"><path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg>');
+            
+            if (this.ButtonOnClick)
             {
-                options.onclick = (e) => {
+                btn.onclick = (e) => {
                     e.stopPropagation();
                     let rowIndex = this.RowIndexOfTd(td);
                     let colIndex = this.ColIndexOfTd(td);
-                    this.BtnOptionsOnClick(rowIndex, colIndex);
+                    this.ButtonOnClick(rowIndex, colIndex, coldef);
                 }
             }
         }
@@ -1675,7 +1755,7 @@ class EditTable extends HTMLElement
         let active_cell_index=active_cell.cellIndex;
         let parent_tr = active_cell.parentElement;
         let parent_tbody = active_cell.parentElement.parentElement;
-        let target_tr = parent_tbody?.querySelectorAll(this.EdiTable.Const.HTML.TR)[(this._getRowIndex(parent_tr) - 1)];
+        let target_tr = parent_tbody?.querySelectorAll(this.EdiTable.Const.HTML.TR+":not(.hidde-row)")[(this._getVisibleRowIndex(parent_tr) - 1)];
         let target_cell = target_tr?.querySelectorAll(this.EdiTable.Const.HTML.TD)[active_cell_index];
         if( this._getRowIndex(parent_tr) != 0 ) 
             this.CellFocus(target_cell);
@@ -1737,7 +1817,7 @@ class EditTable extends HTMLElement
         let active_cell_index=active_cell.cellIndex;
         let parent_tr = active_cell.parentElement;
         let parent_tbody = active_cell.parentElement.parentElement;
-        let target_tr = parent_tbody?.querySelectorAll(this.EdiTable.Const.HTML.TR)[(this._getRowIndex(parent_tr) + 1)];
+        let target_tr = parent_tbody?.querySelectorAll(this.EdiTable.Const.HTML.TR+":not(.hidde-row)")[(this._getVisibleRowIndex(parent_tr) + 1)];
         let target_cell = target_tr?.querySelectorAll(this.EdiTable.Const.HTML.TD)[active_cell_index];
         if( target_tr!=undefined) 
             this.CellFocus(target_cell);
@@ -1848,19 +1928,21 @@ class EditTable extends HTMLElement
             {
                 const tr = this._createFullElement('tr', { id: (data[treeOptions.key]??''), parent: (data[treeOptions.parentkey]??''), indent: (data['__level__']??0) });
                 let firstAdded = false;
-                
+                let container = null;
                 thead.querySelectorAll('th').forEach(th => 
                 {
                     const td = this._createFullElement('td', { class:'EdiTable-Cell' });
 
                     if (!firstAdded && this.ShowAsTree)
                     {
+                        container = this._createFullElement('div', { class:'container-cell-content' })
                         const content = this._createFullElement('div', { iscellcontent:'true', class:'cell-content' });
+                        container.appendChild(content);
                         Object.keys(data).forEach(key => {
                             if (td.textContent == '' && (th.getAttribute('field') == key || th.getAttribute('keyfield') == key))
                                 content.innerHTML = data[key];
                         });
-                        td.appendChild(content);
+                        td.appendChild(container);
                         firstAdded = true;
                     }
                     else
@@ -1882,9 +1964,9 @@ class EditTable extends HTMLElement
                     td.classList.add('cell-collapsable');
                     let ident = Number(data['__level__']??0);
                     tr.setAttribute('indent', ident);
-                    this.RowIndent(td, ident);
-                    if(data['__havechilds__']) td.prepend(expand);
-                    else this.RowIndent(td, ident+.7);
+                    this._setIndent(td, ident);
+                    if(data['__havechilds__'] && container) container.prepend(expand);
+                    else this._setIndent(td, ident+.7);
 
                     expand.onclick = e => {
                         e.stopPropagation();
@@ -1911,6 +1993,11 @@ class EditTable extends HTMLElement
         });
         this.Initialize(this._table.getAttribute('id'));
         if (this.ShowAsTree) this._setMoveEvent();
+    }
+    _setIndent=(td, indent=0)=>
+    {
+        if (!td) return;
+        td.style.paddingLeft = `${this._TreeValueIndent*Number(indent)}${this._TreeUnitIndent}`;
     }
     _getCurrentRow=()=>
     {
@@ -2007,11 +2094,51 @@ class EditTable extends HTMLElement
         if (!row) return null;
         return Number((row.getAttribute('indent') ?? 0));
     }
-    RowIndent=(row, indent, treeOptions=null)=>
+    RowIndent=(row, inFront=true, treeOptions=null)=>
     {
         if (!row) return;
         if (!treeOptions) treeOptions = this._getTreeOptions();
-        row.style.paddingLeft = `${this._TreeValueIndent*Number(indent)}${this._TreeUnitIndent}`;
+
+        const indexRow = this._getRowIndex(row);
+        let sourceData = this.DataArray[indexRow];
+        let targetData = null;
+
+        if (!sourceData) return;
+
+        if (inFront)
+        {
+            // Obtener el hermano superior
+            let flag = false;
+            const search = (list) => 
+            {
+                return list.some((obj, idx) => 
+                {
+                    if (sourceData[treeOptions.key] == (obj[treeOptions.key]??'_')) {
+                        flag = true;
+                        targetData = list[idx-1];
+                    }
+                    return (flag || search((obj[treeOptions.childs]??[])));
+                });
+            }
+
+            this.GetTree(treeOptions);
+            let match = search(this.DataArray);
+            this.SetTree(this.DataArray, treeOptions);
+
+            if (!match) return;
+        }
+        else
+        {
+            // Obtener el padre
+            targetData = this.DataArray.find(d => (d[treeOptions.key] ?? '_') == (sourceData[treeOptions.parentkey] ?? '|'));
+            if (!targetData) return;
+        }
+
+        if (sourceData && targetData)
+        {
+            this._moveData(sourceData, targetData, inFront, treeOptions);
+            this._printRows();
+        }
     }
 
     ExpandRow(row)
