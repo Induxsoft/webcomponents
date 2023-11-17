@@ -192,6 +192,7 @@ class EditTable extends HTMLElement
             this._processAtributesColumn();
             this._resizableGrid(this._table);
             this._setSortEvent();
+            this._processTds();
         });
     }
 
@@ -391,10 +392,25 @@ class EditTable extends HTMLElement
     }
     _moveData(sourceData, targetData, moveAsChild=false, treeOptions=null)
     {
-        if (!treeOptions) treeOptions = this._getTreeOptions();
+        let success = false;
 
-        if ((sourceData[treeOptions.key]??'_') === (targetData[treeOptions.key]??'|')) return;
-        
+        var eventArgs = {
+            source: sourceData,
+            target: targetData,
+            child: moveAsChild,
+            sender:this._getCurren(),
+            cancel:false
+        };
+
+        if (this.Events[this.EdiTable.Const.Events.BeforeMoveRow]!=undefined)
+            this.Events[this.EdiTable.Const.Events.BeforeMoveRow](eventArgs);
+
+        if (eventArgs.cancel)
+            return success;
+
+        if (!treeOptions) treeOptions = this._getTreeOptions();
+        if ((sourceData[treeOptions.key]??'_') === (targetData[treeOptions.key]??'|')) return success;
+
         let source = null;
         let target = null;
         let isChil = false;
@@ -446,16 +462,23 @@ class EditTable extends HTMLElement
                     parentChilds.unshift(data);
                     target.obj[treeOptions.childs] = parentChilds;
                 }
+                success = true;
             }
         }
         catch(error)
         {
             console.log(error);
+            success = false
         }
         finally 
         {
+            if (success && this.Events[this.EdiTable.Const.Events.RowMoved]!=undefined)
+                this.Events[this.EdiTable.Const.Events.RowMoved](eventArgs);
+
             this.SetTree(this.DataArray, treeOptions);
         }
+
+        return success;
     }
     _setMoveEvent=()=>
     {
@@ -477,6 +500,7 @@ class EditTable extends HTMLElement
 
             const indexRow = this._getRowIndex(tr);
             const data = (this.DataArray[indexRow] ?? {});
+            this._resolveKey(data);
             asChild = false;
 
             e.dataTransfer.setData('application/json', JSON.stringify(data));
@@ -538,8 +562,9 @@ class EditTable extends HTMLElement
                 let targetData = this.DataArray[this._getRowIndex(tr)];
                 if (targetData)
                 {
-                    this._moveData(sourceData, targetData, asChild);
-                    this._printRows();
+                    this._resolveKey(targetData);
+                    if (this._moveData(sourceData, targetData, asChild))
+                        this._printRows();
                 }
             }
             
@@ -557,6 +582,28 @@ class EditTable extends HTMLElement
             tr.ondragleave =  handleDragLeave;
             tr.ondragend =  handleDragEnd;
             tr.ondrop =  handleDrop;
+        });
+    }
+    _generateUUID=()=>
+    {
+        return 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+            const r = Math.random() * 16 | 0, 
+                v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
+    _resolveKey=(data)=>
+    {
+        let treeOptions = this._getTreeOptions();
+        if (data[treeOptions.key] === undefined) data[treeOptions.key] = this._generateUUID();
+    }
+    _processTds=()=>
+    {
+        let tds = this._table.querySelectorAll('tbody td');
+        tds.forEach(td => {
+            let coldef =  this.GetColumnDefOfTd(td);
+            td.style.textAlign = (coldef?.textalign??'');
+            if (this.onTdPaint) this.onTdPaint(td, this.RowIndexOfTd(td), this.ColIndexOfTd(td), (coldef?.field??''));
         });
     }
 
@@ -606,7 +653,9 @@ class EditTable extends HTMLElement
                 BeforeUpdateCell:"beforeupdatecell",
                 BeforeSetInput:"beforesetinput",
                 FieldUpdated:"fieldupdated",
-                RowAdded:"rowadded"
+                RowAdded:"rowadded",
+                BeforeMoveRow:"beforemoverow",
+                RowMoved:"rowmoved"
             },
             SelectorId:"__table_selector",
             InputId:"__table_input",
@@ -922,6 +971,7 @@ class EditTable extends HTMLElement
     ParentKey = "idp";
     Childs = "__items";
     ButtonOnClick = null;
+    onTdPaint = null;
     
     CSS = {
         Cell:"EdiTable-Cell",
@@ -1219,6 +1269,8 @@ class EditTable extends HTMLElement
                 td.removeEventListener('click', clickFunct);
                 td.addEventListener('click', clickFunct);
             });
+
+            this._setMoveEvent();
 
             if (!nofocus)
                 this.CellFocus(nr.cells[0]);
@@ -1988,12 +2040,14 @@ class EditTable extends HTMLElement
             });  
         }
         rowsExpanded.forEach(trId => {
-            const tr = tbody.querySelector('#'+trId);
+            const tr = tbody.querySelector(`tr[id='${trId}']`);
             if (tr) this.ExpandRow(tr);
         });
         this.Initialize(this._table.getAttribute('id'));
         if (this.ShowAsTree) this._setMoveEvent();
+        this._processTds();
     }
+
     _setIndent=(td, indent=0)=>
     {
         if (!td) return;
@@ -2136,8 +2190,8 @@ class EditTable extends HTMLElement
 
         if (sourceData && targetData)
         {
-            this._moveData(sourceData, targetData, inFront, treeOptions);
-            this._printRows();
+            if(this._moveData(sourceData, targetData, inFront, treeOptions))
+                this._printRows();
         }
     }
 
