@@ -135,11 +135,12 @@ class EditTable extends HTMLElement
                         font-size: .8rem;
                         font-weight: 500;
                         color: #888; */
-                        background-color: inherit;
+                        background-color: inherit !important;
                         z-index:1000000; 
                         position: absolute; 
                         left: 2px;
                         top: 4px;
+                        bottom: 0;
                         padding: 2px 4px 0 4px;
                         display:flex;
                         align-items: center;
@@ -192,7 +193,6 @@ class EditTable extends HTMLElement
             this._processAtributesColumn();
             this._resizableGrid(this._table);
             this._setSortEvent();
-            this._processTds();
         });
     }
 
@@ -227,15 +227,22 @@ class EditTable extends HTMLElement
 
         if (this.DataArray && this.DataArray.length > 0 && thead.hasChildNodes() && !tbody.hasChildNodes())
         {
-            this.DataArray.forEach(data => {
+            this.DataArray.forEach((data, idx) => {
                 const tr = this._createFullElement('tr');
                 thead.querySelectorAll('th').forEach(th => {
+                    let coldef = this._getColdefByTh(th);
                     const td = this._createFullElement('td', { class:'EdiTable-Cell' });
                     Object.keys(data).forEach(key => {
-                        if (td.textContent == '' && (th.getAttribute('field') == key || th.getAttribute('keyfield') == key))
-                            td.textContent = data[key];
+                        if (td.textContent == '' && (th.getAttribute('field') == key || th.getAttribute('keyfield') == key)){
+                            let value = data[key];
+                            if (this._withFormat(coldef, value))
+                                value = this._aplyFormat(coldef, value);
+                            td.textContent = value;
+                        }
                     });
                     tr.appendChild(td);
+                    td.style.textAlign = (coldef?.textalign??'');
+                    if (this.onTdPaint) this.onTdPaint(td, idx, this.ColIndexOfTd(td), (coldef?.field??''));
                 });
                 tbody.appendChild(tr);
             });  
@@ -244,6 +251,13 @@ class EditTable extends HTMLElement
         table.appendChild(thead);
         table.appendChild(tbody);
         return table;
+    }
+    _getColdefByTh=(th)=>
+    {
+        let def = {};
+        if (th && th.hasAttributes())
+            th.getAttributeNames().forEach(attrName => def[attrName] = th.getAttribute(attrName));
+        return def
     }
     _replaceTagNameElement=(element, tagName)=>
     {
@@ -597,14 +611,24 @@ class EditTable extends HTMLElement
         let treeOptions = this._getTreeOptions();
         if (data[treeOptions.key] === undefined) data[treeOptions.key] = this._generateUUID();
     }
-    _processTds=()=>
+    _format=(number, decimals=0, thousandSeparator=false)=>
     {
-        let tds = this._table.querySelectorAll('tbody td');
-        tds.forEach(td => {
-            let coldef =  this.GetColumnDefOfTd(td);
-            td.style.textAlign = (coldef?.textalign??'');
-            if (this.onTdPaint) this.onTdPaint(td, this.RowIndexOfTd(td), this.ColIndexOfTd(td), (coldef?.field??''));
-        });
+        const roundedNumber = number.toFixed(decimals);
+        let integerPart = '', fractionalPart = '';
+        
+        if (decimals == 0) {
+            integerPart = roundedNumber;
+            decimalSeparator = '';
+        } else {
+            let numberParts = roundedNumber.split('.');
+            integerPart = numberParts[0];
+            fractionalPart = numberParts[1];
+        }
+
+        if (thousandSeparator)
+            integerPart = integerPart.replace(/(\d)(?=(\d{3})+(?!\d))/g, `$1${this.NumFormat.thousands}`);
+
+        return `${integerPart}${this.NumFormat.decimals}${fractionalPart}`;
     }
 
     // ========================= EDITABLE FUNCTIONS
@@ -972,6 +996,10 @@ class EditTable extends HTMLElement
     Childs = "__items";
     ButtonOnClick = null;
     onTdPaint = null;
+    NumFormat = {
+        thousands:",",
+        decimals:"."
+    }
     
     CSS = {
         Cell:"EdiTable-Cell",
@@ -1891,20 +1919,51 @@ class EditTable extends HTMLElement
     }
     GetTdValue=(td)=>
     {
+        let value = td.innerHTML;
         const cellContent = td.querySelector('div[iscellcontent=true]');
+        
         if (cellContent)
-            return cellContent.innerHTML
-        return td.innerHTML;
+            value = cellContent.innerHTML
+
+        let coldef = this.GetColumnDefOfTd(td);
+        if (this._withFormat(coldef, value))
+            value = value.replace(/[^0-9.]+/g, "");
+        
+        return value;
     }
     SetTdValue=(td, value)=>
     {
+        let coldef = this.GetColumnDefOfTd(td);
+        if (this._withFormat(coldef, value))
+            value = this._aplyFormat(coldef, value);
+
         const cellContent = td.querySelector('div[iscellcontent=true]');
         if (cellContent)
         {
             cellContent.innerHTML = value;
             return;
         }
+
         td.innerHTML = value;
+    }
+    _withFormat(coldef, value)
+    {
+        value = value.toString();
+        return (value
+            && !value.includes('__table_selector') 
+            && !value.includes('__table_input') 
+            && coldef 
+            && coldef.type.toLowerCase() == 'number' 
+            && (coldef.format??'') == 'true');
+    }
+    _aplyFormat(coldef, value)
+    {
+        let decimals = Number(coldef.decs??0);
+        let thousand = ((coldef.thousandssep??'false') == 'true');
+        value = this._format(Number(value), decimals, thousand);
+        value = `${(coldef.prefix??'')}${value}`;
+        value = `${value}${(coldef.sufix??'')}`;
+        return value;
     }
     // ========================= SORT FUNCTIONS
     
@@ -1976,13 +2035,14 @@ class EditTable extends HTMLElement
         {
             let treeOptions = this._getTreeOptions();
             
-            dataArray.forEach(data => 
+            dataArray.forEach((data, idx) => 
             {
                 const tr = this._createFullElement('tr', { id: (data[treeOptions.key]??''), parent: (data[treeOptions.parentkey]??''), indent: (data['__level__']??0) });
                 let firstAdded = false;
                 let container = null;
                 thead.querySelectorAll('th').forEach(th => 
                 {
+                    let coldef = this._getColdefByTh(th);
                     const td = this._createFullElement('td', { class:'EdiTable-Cell' });
 
                     if (!firstAdded && this.ShowAsTree)
@@ -1991,8 +2051,12 @@ class EditTable extends HTMLElement
                         const content = this._createFullElement('div', { iscellcontent:'true', class:'cell-content' });
                         container.appendChild(content);
                         Object.keys(data).forEach(key => {
-                            if (td.textContent == '' && (th.getAttribute('field') == key || th.getAttribute('keyfield') == key))
-                                content.innerHTML = data[key];
+                            if (td.textContent == '' && (th.getAttribute('field') == key || th.getAttribute('keyfield') == key)){
+                                let value = data[key];
+                                if (this._withFormat(coldef, value))
+                                    value = this._aplyFormat(coldef, value);
+                                    content.innerHTML = value;
+                            }
                         });
                         td.appendChild(container);
                         firstAdded = true;
@@ -2000,11 +2064,17 @@ class EditTable extends HTMLElement
                     else
                     {
                         Object.keys(data).forEach(key => {
-                            if (td.textContent == '' && (th.getAttribute('field') == key || th.getAttribute('keyfield') == key))
-                                td.innerHTML = data[key];
+                            if (td.textContent == '' && (th.getAttribute('field') == key || th.getAttribute('keyfield') == key)) {
+                                let value = data[key];
+                                if (this._withFormat(coldef, value))
+                                    value = this._aplyFormat(coldef, value);
+                                td.innerHTML = value;
+                            }
                         });
                     }
                     tr.appendChild(td);
+                    td.style.textAlign = (coldef?.textalign??'');
+                    if (this.onTdPaint) this.onTdPaint(td, idx, this.ColIndexOfTd(td), (coldef?.field??''));
                 });
 
                 if (this.ShowAsTree)
@@ -2045,7 +2115,6 @@ class EditTable extends HTMLElement
         });
         this.Initialize(this._table.getAttribute('id'));
         if (this.ShowAsTree) this._setMoveEvent();
-        this._processTds();
     }
 
     _setIndent=(td, indent=0)=>
