@@ -264,3 +264,221 @@ ___
     </edit-thead>
 </edit-table>
 ```
+
+___
+
+<a name="OpCanva"></a>
+
+## OpCanva
+
+#### Propiedades:
+
+ - **scale**: (number, def:354) Valor numérico que representa la proporción de las dimensiones reales de un objeto a la representación gráfica del canva.
+ - **dpi**: (number, def:96) Valor numérico que representa la densidad de pixeles por pulgada en el canva.
+ - **zoom**: (number, def:100) Valor numérico que define el % de acercamiento o alejamiento de los objetos del canva.
+ - **design**: (bool, def:true) Valor booleano que define si se podrá mover y redimensionar los objetos del canva.
+ - **unit**: (text, def: cm) Unidad de medida para representar objetos dentro del canva ["cm","m","in","ft","yd"].
+ - **fit**: (number. def:1) Valor numérico que representa el ajuste de posición y tamaño de los objetos del canva.
+ - **lx**: (number, def:5000) Establece la longitud en 'X' o ancho del canva.
+ - **ly**: (number, def:2500) Establece la longitud en 'Y' o alto del canva.
+ - **backgroundColor**: (text/css, def:#FFF) Color de fondo del canva.
+ - **backgroundPic**: (text, def:none) URL de una imagen para visualizarse como el fondo del canva.
+ - **data**: (Array obj) Datos de los objetos del canva.
+ - **clickEvent**: Se dispara cuando se hace clic en un elemento del canva, envía como parámetro los datos del elemento.
+ - **resizingEvent** Se dispara cuando se redimensiona un elemento del canva, envía como parámetro los datos del elemento, la dimensión en alto y la dimensión en ancho.
+
+#### Métodos:
+ - **setData(data)**: Establece los valores de los elementos del canva.
+   - data: (Array obj) Valor a establecer.
+ - **getData()**: Retorna los datos de los elementos del canva.
+ - **getItem(id)**: Retorna los datos del elemento especificado.
+   - id: (number) identificador del elemento.
+ - **addItem(obj)**: Agrega un elemento al canva.
+   - obj: (object) Datos del elemento a agregar.
+ - **removeItem(id)**: Eliminar un elemento del canva.
+   - id: (number) Identificador del elemento.
+ - **setScale(scale, refreshView = true)** Establece la escala del canva.
+   - scale (number) valor de escala.
+   - refreshView (bool) indica si se refresca la vista del canva.
+ - **getScale()** Obtiene la escala del canva.
+ - **setDpi(dpi, refreshView = true)** Establece el dpi del canva.
+   - dpi (number) valor del dpi.
+   - refreshView (bool) indica si se refresca la vista del canva.
+ - **getDpi()** Obtiene el valor de dpi del canva.
+ - **setUnit(unitSymbol, refreshView = true)** Establece la unidad de medida del canva.
+   - unitSymbol (text) valor de la lista de unidades disponibles: ["cm","m","in","ft","yd"].
+   - refreshView (bool) indica si se refresca la vista del canva.
+ - **getUnit()** Obtiene la unidad de medida establecida en el canva.
+ - **setZoom(z, refreshView = true)** Establece el valor del zoom del canva.
+   - z (number) valor del zoom
+   - refreshView (bool) indica si se refresca la vista del canva.
+ - **getZoom()** Obtiene el valor establecido de zoom del canva.
+ - **setFit(fit, refreshView = true)** Establece el valor de ajuste de posición y tamaño de los elementos del canva.
+   - fit (number) valor de ajuste
+   - refreshView (bool) indica si se refresca la vista del canva.
+ - **getFit()** Obtiene el valor establecido del fit.
+ - **setLXY(lx,ly, refreshView = true)** Establece el alto y ancho del contenedor de los elementos del canva.
+   - lx (number) valor en ancho.
+   - ly (number) valor en alto.
+   - refreshView (bool) indica si se refresca la vista del canva.
+ - **getLX()** Obtien el valor en ancho del contenedor de elementos del canva.
+ - **getLY** Obtiene el valor en alto del contenedor de elementos del canva.
+
+#### Atributos del componente:
+ - **scale**: (number - opcional) Valor numérico que representa la proporción de las dimensiones reales de un objeto a la representación gráfica del canva (def: 354).
+ - **dpi**: (number - opcional) Valor numérico que representa la densidad de pixeles por pulgada en el canva (def: 96).
+ - **zoom**: (number - opcional) Valor numérico que define el % de acercamiento o alejamiento de los objetos del canva (def: 100).
+ - **design**: (bool - opcional) Valor booleano que define si se podrá mover y redimensionar los objetos del canva (def: true).
+ - **unit**: (text) Unidad de medida para representar objetos dentro del canva ["cm","m","in","ft","yd"] (def: cm).
+ - **fit** (number - opcional) Valor numérico que representa el ajuste de posición y tamaño de los objetos del canva (def: 1).
+ - **lx** (number - opcional) Establece la longitud en 'X' o ancho del canva (def: 5000).
+ - **ly** (number - opcional) Establece la longitud en 'Y' o alto del canva (def: 2500)
+ - **background-color** (text/css - opcional) Color de fondo del canva (def: #FFF). 
+ - **background-pic** (text- opcional) URL de una imagen para visualizarse como el fondo del canva.
+ - **data** (text/json - opcional) Datos de los objetos del canva.
+
+#### Ejemplo:
+
+```
+<op-canva
+    id="micontrol6"
+    scale="354"
+    dpi="96"
+    zoom="100"
+    design="true"
+    unit="m"
+    fit="1"
+    lx="50"
+    ly="25"
+    background-color="#F5F5F5"
+    background-pic=""
+    data='[{"x":4,"y":4,"lx":20,"ly":10,"id":"556d852dbee9486ab432eb04411a2df5","overlapping":true,"locked":false,"sizable":true,"html":"<h4>HTML1</h4>","title":"My Title1","subtitle":"Subtitle text1","caption-a":"A1","caption-b":"B1","caption-c":"C1","caption-d":"D1","background-color":"green","background-image":"","color":"#FFF"},
+    {"x":13,"y":10,"lx":15,"ly":8,"id":"556d852dbee9486ab432eb04411a2df6","overlapping":false,"locked":false,"sizable":true,"html":"<h4>HTML2</h4>","title":"My Title2","subtitle":"Subtitle text2","caption-a":"A2","caption-b":"B2","caption-c":"C2","caption-d":"D2","background-color":"#FFF","color":"#555"}]'>
+</op-canva>
+```
+
+___
+
+<a name="DateRange"></a>
+
+## DateRange
+
+#### Métodos:
+- **setData(obj)**: Establece el valor de la fecha inicial y final.
+   - obj: (Object) Valor a establecer.
+- **getData()**: Retorna el valor de la fecha inicial y final.
+
+#### Atributos del componente:
+ - **hidden-input-name-start**: (text - opcional) Nombre del elemento input que guardará el valor de la fecha inicial.
+ - **hidden-input-name-end**: (text - opcional) Nombre del elemento input que guardará el valor de la fecha final.
+ - **start**: (text - opcional) Fecha inicial en formato: YYYY-mm-dd.
+ - **end**: (text - opcional) Fecha final en formato: YYYY-mm-dd
+ - **data**: (text/json - opcional) JSON con la información de fecha final e inicial, ej: {"start":"2023-01-01","end":"2023-12-31"}
+
+#### Ejemplo:
+
+```
+<date-range
+    id="micontrol7"
+    hidden-input-name-start="dt_start"
+    hidden-input-name-end="dt_end"
+    start=""
+    end=""
+    data='{"start":"2023-01-01","end":"2023-12-31"}'>
+</date-range>
+```
+
+
+___
+
+<a name="SafeInput"></a>
+
+## SafeInput
+
+#### Propiedades:
+
+ - **onChanging**: Se dispara al confirmar la edición del input, envía como parámetro el valor anterior y el nuevo valor del input, Si se establece se deberá retornar una promesa que devuelva en resolve un valor booleano que indica que se cancela la edición si es true, y se confirma la edición si es false.
+
+#### Métodos:
+- Sin métodos
+
+#### Atributos del componente:
+ - **type**: (text - opcional) Tipo de input [text,email,number,textarea,date,time,datetime,select] (def: text).
+ - **data-select**: (text/json - opcional) Objeto de datos clave-valor que establecen las opciones del input cuando es de tipo select, ej: {"val1":"text1", "val2":"text2"}.
+ - **name**: (text - opcional) Nombre del elemento input.
+ - **placeholder**: (text - opcional) Texto a mostrar en la caja de entrada (input).
+ - **hidden-input**: (bool - opcional) Define si se crea un elemento input oculto fuera el web component para ser tomado por formularios o selectores (def: false).
+
+#### Ejemplo:
+
+```
+<safe-input 
+    id="micontrol8"
+    type="text"
+    input-name="nombre"
+    value="Example value"
+    placeholder="Safe-Input"
+    hidden-input="true">
+</safe-input>
+```
+
+
+___
+
+<a name="MediaList"></a>
+
+## MediaList
+
+#### Propiedades:
+
+ - **canArrange**: Pueden ordenar elementos (true/false, def: true)
+ - **canDrag**: Pueden arrastrar elementos (true/false, def: true)
+ - **canDrop**: Pueden colocar elementos (true/false, def: true)
+ - **canDelete**: Pueden eliminar elementos (true/false, def: true)
+ - **highlightFirst**: Marcar el primer elemento (true/false, def: true)
+ - **mediaProp**: Nombre del campo que indica la ubicación del recurso (def: url)
+ - **miniatureProp**: Nombre del campo que indica la ubicación de la miniatura del recurso (def: mini)
+ - **backColorMedia**: Color de fondo de los elementos media (ej: #FFF o white, def: #FFF)
+ - **outlineSelected**: Remarcar el elemento seleccionado (true/false, def: false)
+ - **maxSizeMedia**: Valor que se aplica al alto y ancho máximo de los elementos (ej: 12rem, def: 8rem)
+ - **onClicking**: Se dispara al hacer click sobre un elemento de la lista, envía como parámetro los datos del elemento.
+
+#### Métodos:
+ - **setData(data)**: Establece los valores de los elementos de la lista.
+   - data: (Array obj) Valores a establecer.
+ - **getData(withoutid=true)**: Retorna los datos de los elementos de la lista.
+   - withoutid: (bool) Indica si el valor devuelto por la función retornará el id de cada elemento.
+ - **addMedia(mediaData)**: Agrega un elemento a la lista
+   - mediaData: (obj) Datos del elemento a agregar.
+ - **removeMediaByIndex(index)**: Elimina un elemento de la lista.
+   - index: (number) Indice del elemento a eliminar.
+ - **refreshView()**: Actualiza la vista de lista.
+
+#### Atributos del componente:
+ - **data**: (opcional): Datos de la lista (ej: [{"url":"imagen.png", "mini":"miniimagen.png", ...}, ...] ).
+ - **can-arrange**: (opcional): Pueden ordenar elementos (true/false, def: true)
+ - **can-drag**: (opcional): Pueden arrastrar elementos (true/false, def: true)
+ - **can-drop**: (opcional): Pueden colocar elementos (true/false, def: true)
+ - **can-delete**: (opcional): Pueden eliminar elementos (true/false, def: true)
+ - **highlight-first**: (opcional): Marcar el primer elemento (true/false, def: true)
+ - **media-prop**: (opcional): Nombre del campo que indica la ubicación del recurso (def: url)
+ - **miniature-prop**: (opcional): Nombre del campo que indica la ubicación de la miniatura del recurso (def: mini)
+ - **back-color-media**: (opcional): Color de fondo de los elementos media (ej: #FFF o white, def: #FFF)
+ - **outline-selected**: (opcional): Remarcar el elemento seleccionado (true/false, def: false)
+ - **max-size-media**: (opcional): Valor que se aplica al alto y ancho máximo de los elementos (ej: 12rem, def: 8rem)
+
+#### Ejemplo:
+
+```
+<media-list
+    id="micontrol9"
+    data='[{"url":"", "mini":""}]'
+    can-arrange="true"
+    can-drag="true"
+    can-drop="true"
+    can-delete="true"
+    highlight-first="true"
+    media-prop="url"
+    miniature-prop="mini">
+</media-list>
+```
