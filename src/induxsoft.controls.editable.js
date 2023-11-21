@@ -1009,10 +1009,10 @@ class EditTable extends HTMLElement
     {
         let tds = this._shadow.querySelectorAll(this.EdiTable.Const.HTML.TABLE+"#"+tableId+" "+this.EdiTable.Const.HTML.TD);
         tds.forEach(td => {
-            td.addEventListener('click', (e) => {
+            td.onclick = e => {
                 e.stopPropagation();
                 this.CellFocus(td);
-            });
+            }
         });
         this["tableId"]=tableId;
     }
