@@ -332,10 +332,11 @@ class EditTable extends HTMLElement
     {
         var pageX,curCol,nxtCol,curColWidth,nxtColWidth;
 
-        element.onclick = (e) => { e.stopPropagation(); }
+        element.onclick = (e) => { e.stopPropagation(); e.preventDefault(); }
 
         element.addEventListener('mousedown', (e) => {
             e.stopPropagation();
+            e.preventDefault();
             curCol = e.target.parentElement;
             nxtCol = curCol.nextElementSibling;
             pageX = e.pageX;
