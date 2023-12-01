@@ -389,7 +389,7 @@ class InputKey extends HTMLElement
                 this.input_search_container.focus();
             });
             this.input_search_container.addEventListener('blur', (e) => {
-                if (container2.classList.contains('hide-element'))
+                if (this.container2.classList.contains('hide-element'))
                 {
                     if (!this.input_search_container.value.trim())
                     {

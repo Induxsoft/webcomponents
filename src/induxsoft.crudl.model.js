@@ -1,6 +1,6 @@
-var model =
+var InduxsoftCrudlModel =
 {
-	async invoke_service(url, data = null, success, fail, method = 'GET', reload = true, async = true, autorizations = '', formdata = false) 
+	async InvokeService(url, data, success, fail, method = 'GET', reload = true, async = true, autorizations = '', formdata = false) 
 	{
 		let fetchData = {
 			method: method,
@@ -65,7 +65,7 @@ var model =
 			});
 		}
 	},
-	url_replace(url, params)
+	UrlReplace(url, params)
 	{
 		let url_sect = url.split('?');
 		let url_base = url_sect[0];
@@ -90,7 +90,7 @@ var model =
 		url_new += new_parms;
 		return url_new;
 	},
-	delete(pk) {
+	Delete(pk) {
 		var res = confirm("¿Desea eliminar la fila?");
 		if (!res) return;
 
@@ -100,6 +100,7 @@ var model =
 			},
 			function (error) {
 				alert(error.message ?? error);
-			}, "DELETE", false);
+			}, "DELETE", false
+		);
 	}
 }
