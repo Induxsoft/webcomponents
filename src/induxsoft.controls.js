@@ -207,6 +207,7 @@ class InputKey extends HTMLElement
     head_tables_container2 = null;
     body_tables_container2 = null;
     columns = null;
+    container2 = null;
     colcaptions = null;
     inputv = null;
     input_search_container = null;
@@ -214,6 +215,7 @@ class InputKey extends HTMLElement
     input_description_container = null;
     accept_footer_container2 = null;
     change_event = null;
+    onBeforeSearch = null;
 
     constructor() 
     {
@@ -274,7 +276,7 @@ class InputKey extends HTMLElement
 
             //=============== 2 SECTION [ SEARCH AND SELECT ELEMENT ]
 
-            const container2 = this.createFullElement('div', {id:'container2', class:'hide-element modal-backdrop'});
+            this.container2 = this.createFullElement('div', {id:'container2', class:'hide-element modal-backdrop'});
             const search_container2 = this.createFullElement('div', {id:'search_container2', class:'bg-white modal-container'});
             const header_section_container2 = this.createFullElement('div', {id:'header_section_container2', class:'d-flex modal-section modal-section-header'});
             const search_section_container2 = this.createFullElement('div', {id:'search_section_container2', class:'d-flex p-2 modal-section'});
@@ -318,7 +320,7 @@ class InputKey extends HTMLElement
             search_container2.appendChild(search_section_container2);
             search_container2.appendChild(tables_section_container2);
             search_container2.appendChild(footer_section_container2);
-            container2.appendChild(search_container2);
+            this.container2.appendChild(search_container2);
 
             //=============== 3 SECTION [ ADD ELEMENT ]
 
@@ -361,19 +363,16 @@ class InputKey extends HTMLElement
             //=============== EVENTS
 
             button_search_container.addEventListener('click', () => {
-                this.setDataSource(this.input_search_container.value).then(()=>{
-                    this.setDataInputSearch2();
-                    this.search(container2, false);
-                });
+                this._search(false);
             });
             this.input_description_container.addEventListener('dblclick', () => {
                 button_search_container.click();
             })
             close_header_container2.addEventListener('click', () => {
-                container2.classList.add('hide-element');
+                this.container2.classList.add('hide-element');
             });
             close2_footer_container2.addEventListener('click', () => {
-                container2.classList.add('hide-element');
+                this.container2.classList.add('hide-element');
                 this.setValue(this.accept_data);
             });
             this.accept_footer_container2.addEventListener('click', () => {
@@ -383,7 +382,7 @@ class InputKey extends HTMLElement
                     return;
                 }
                 this.setValue(this.record_selected);
-                container2.classList.add('hide-element');
+                this.container2.classList.add('hide-element');
             });
             this.input_search_container.addEventListener('click', () => {
                 this.input_search_container.select();
@@ -398,10 +397,7 @@ class InputKey extends HTMLElement
                     }
                     else if (!this.accept_data || Object.keys(this.accept_data).length < 1)
                     {
-                        this.setDataSource(this.input_search_container.value).then(()=>{
-                            this.input_search_container2.value = this.input_search_container.value;
-                            this.search(container2, true);
-                        });
+                        this._search();
                     }
                     else if (this.accept_data && (this.accept_data[this.getAttribute('data-search') ?? '']) != this.input_search_container.value)
                     {
@@ -413,23 +409,20 @@ class InputKey extends HTMLElement
                 if (e.key === 'Enter' && this.input_search_container.value == "")
                     this.clear();
                 else if (e.key === 'Enter')
-                    this.setDataSource(this.input_search_container.value).then(()=>{
-                        this.input_search_container2.value = this.input_search_container.value;
-                        this.search(container2, true);
-                    });
+                    this._search();
                 else if (e.key === 'Escape')
                     this.input_search_container.blur();
             });
             button_search_container2.addEventListener('click', () => {
-                this.searchButton(container2);
+                this.searchButton(this.container2);
             });
             this.input_search_container2.addEventListener('keyup', (e) => {
                 if (e.key === 'Enter')
-                    this.searchButton(container2);
+                    this.searchButton(this.container2);
             });
             search_container2.addEventListener('keyup', (e) => {
                 if (e.key === 'Escape')
-                    container2.classList.add('hide-element');
+                    this.container2.classList.add('hide-element');
             });
             button_add_container.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -535,7 +528,7 @@ class InputKey extends HTMLElement
             `;
 
             shadow.appendChild(container);
-            shadow.appendChild(container2);
+            shadow.appendChild(this.container2);
             shadow.appendChild(container3);
             shadow.appendChild(container4);
             this.after(this.inputv);
@@ -661,7 +654,11 @@ class InputKey extends HTMLElement
         return new Promise(resolve => {
             if (url && id.trim() != "")
             {
-                this.request(url.replace('@search', id), (dataSuccess) => {
+                let surl = url.replace('@search', id);
+                if (this.onBeforeSearch) {
+                    surl = this.onBeforeSearch(surl);
+                }
+                this.request(surl, (dataSuccess) => {
                     this.data = dataSuccess;
                     this.findValue(id);
                     resolve();
@@ -741,7 +738,7 @@ class InputKey extends HTMLElement
     }
     /**
      * Abre la tabla de busqueda
-     * @param {HTMLElement} container2 Referencia del contenedor principal de la tabla de búsqueda
+     * @param {HTMLElement} this.container2 Referencia del contenedor principal de la tabla de búsqueda
      * @param {Boolean} autoselect Define la selección automática de un elemento al lanzarse la búsqueda y encontrarse una sola coincidencia.
      */
     search(container2, autoselect=false)
@@ -753,7 +750,7 @@ class InputKey extends HTMLElement
         else
         {
             this.printTableData();
-            container2.classList.remove('hide-element');
+            this.container2.classList.remove('hide-element');
             if(!this.data || this.data.length <= 0)
             {
                 this.input_search_container2.select();
@@ -767,7 +764,7 @@ class InputKey extends HTMLElement
     }
     /**
      * Lanza la búsqueda de un elemento.
-     * @param {HTMLElement} container2 Referencia del contenedor principal de la tabla de búsqueda.
+     * @param {HTMLElement} this.container2 Referencia del contenedor principal de la tabla de búsqueda.
      */
     searchButton(container2)
     {
@@ -840,6 +837,28 @@ class InputKey extends HTMLElement
         .catch(error => {
             fail(error.message);
         })
+    }
+    _search(autoselect=true)
+    {
+        if (autoselect)
+        {
+            this.setDataSource(this.input_search_container.value).then(()=>{
+                this.input_search_container2.value = this.input_search_container.value;
+                this.search(this.container2, true);
+            });
+        }
+        else
+        {
+            this.setDataSource(this.input_search_container.value).then(()=>{
+                this.setDataInputSearch2();
+                this.search(this.container2, false);
+            });
+        }
+    }
+    searchText(text,autoselect=true)
+    {
+        this.input_search_container.value = text;
+        this._search(autoselect);
     }
 }
 

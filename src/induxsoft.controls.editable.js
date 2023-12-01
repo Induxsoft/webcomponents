@@ -840,7 +840,10 @@ class EditTable extends HTMLElement
                         _current.NavRight(selector.closest('td'));
                         break;
                     case "ArrowDown":
-                    _current.NavDown(selector.closest('td'));
+                        _current.NavDown(selector.closest('td'));
+                        break;
+                    case "F4":
+                        _current.showInputKey(selector.closest('td'), '', false);
                         break;
                     default:
                         if (e.key.trim().length==1)
@@ -1714,6 +1717,12 @@ class EditTable extends HTMLElement
         
         if (eventArgs.cancel)
             return false;
+
+        if (columnDef.type == 'Text' && columnDef.inputkey)
+        {
+            this.showInputKey(td, eventArgs.text);
+            return true;
+        }
         
         //td.innerHTML = eventArgs.text;
         this.SetTdValue(td, eventArgs.text);
@@ -1813,6 +1822,10 @@ class EditTable extends HTMLElement
         
         if (btn)
         {
+            btn.onclick = (e) => {
+                e.stopPropagation();
+                this.showInputKey(td, '', false);
+            }
             btn.innerHTML = ((coldef['buttondata']??'').trim() != '' ?
                 coldef['buttondata']:
                 '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16"><path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg>');
@@ -2392,6 +2405,17 @@ class EditTable extends HTMLElement
         }
 
         sortData(treeArray);
+    }
+
+    setInputKey(column, inputkey)
+    {
+        let coldef = this.Columns.find(c => c.field == column)
+        coldef['inputkey'] = inputkey;
+    }
+    showInputKey=(td, searchText='', autoselect=true)=>
+    {
+        let coldef = this.GetColumnDefOfTd(td);
+        if (coldef && coldef.inputkey) coldef.inputkey.searchText(searchText, autoselect);
     }
 }
 

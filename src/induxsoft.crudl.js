@@ -1,91 +1,105 @@
-var model=
+var model =
 {
-	invoke_service:function(url,params,callback_success, callback_fail, http_method,reload=true,async=true,autorizations="",formdata=false) 
+	async invoke_service(url, data = null, success, fail, method = 'GET', reload = true, async = true, autorizations = '', formdata = false) 
 	{
-          if (!http_method) http_method="POST";
+		let fetchData = {
+			method: method,
+			mode: 'cors',
+			headers: {
+				'Access-Control-Allow-Origin': '*'
+			}
+		}
 
-            request={
-              type: http_method,
-              url: url,
-              contentType:"application/json;charset=utf-8;",
-              async:async,
-              crossDomain: true,
-             
-              success: function(r, textStatus, xhr){
-                  if(http_method=="DELETE" && (r==null || r=="undefined"))
-                  {
-                    callback_success(r)
-                    return;
-                  }
-                  var res = JSON.parse(JSON.stringify(r));
+		if (autorizations) fetchData.headers['Authorization'] = autorizations;
+		
+		if (data) {
+			if (formdata)
+				fetchData['body'] = data;
+			else {
+				fetchData.headers['Content-Type'] = 'application/json';
+				fetchData['body'] = JSON.stringify(data);
+			}
+		}
 
-                  if (res.success??false)
-                  {
-                      if (callback_success)
-                          callback_success(res.data);
-                  }
-                  else if(!res.success && res.success!=null && res.success!=undefined)
-                  {
-                    if (callback_fail)
-                            callback_fail(res);
-                  }
-                  else
-                  {
-                    if (xhr.status>=200 && xhr.status<300)
-                    {
-                      if(callback_success)callback_success(r)
-                    }
-                    else
-                    {
-                      if (callback_fail)
-                            callback_fail(res);
-                    }
+		const resHandler = res => {
+			if (method.toUpperCase() == "DELETE" && (res == null || res == 'undefined')) {
+				success(res);
+			}
+			else {
+				const isJson = res.headers.get('content-type')?.includes('application/json');
+				if (isJson) {
+					res.json().then(json => {
+						if (json.success && success) {
+							success(json.data ?? json);
+						}
+						else if (!json.success && json.success != null && res.success != undefined && fail) {
+							fail(json);
+						}
+						else {
+							if (res.status >= 200 && res.status < 300 && success) {
+								success(json);
+							}
+							else {
+								if (fail) fail(json);
+							}
+						}
+					}).catch(error => success(error));
+				}
+				else {
+					success(res);
+				}
+			}
 
-                      
-                  }
-              },
-              error: function(r){
-                if (callback_fail)
-                            callback_fail(JSON.stringify(r));
-                  // util.messageBox("Ocurrió un error al invocar el servicio.\n\r"+ JSON.stringify(r));
-              }
-          };
+			if (reload)
+				window.location.reload();
+		}
 
-          if(autorizations)
-          {
-            request.headers={'Authorization':autorizations};
-          }
+		if (async) {
+			await fetch(url, fetchData).then(resHandler).catch(error => {
+				if (fail) fail(error.message ?? JSON.stringify(error));
+			});
+		}
+		else {
+			fetch(url, fetchData).then(resHandler).catch(error => {
+				if (fail) fail(error.message ?? JSON.stringify(error));
+			});
+		}
+	},
+	url_replace(url, params)
+	{
+		let url_sect = url.split('?');
+		let url_base = url_sect[0];
+		let url_prms = '';
+		let url_new = url_base;
+		let new_parms = '';
 
-          if(formdata)
-          {
-            request.processData=false;
-            request.contentType=false;
-            request.data=params;
-          }
-          if (params && !formdata)
-          {
-            request.dataType="json";
-            request.data=JSON.stringify(params);
-          }
-         
-          $.ajax(request).always(function(){
-              if(reload)
-                  location.reload();
-          });
-    },
-  delete(pk)
-  {
-      var res=confirm("¿Desea eliminar la fila?");
-      if(!res)return;
+		if (url_sect.length > 0) url_prms = url_sect[1];
+		if (!params) params = {};
 
-      model.invoke_service("./"+pk+"/",null,
-      function(data)
-      {
-          window.location.reload();
-      },
-      function(error)
-      {
-          alert(error.message ?? error);
-      },"DELETE",false);
-  }
+		if (url_prms != '')
+		{
+			let keyvalues = url_prms.split('&');
+			keyvalues.forEach((kv,i) => {
+				let kvl = kv.split('=');
+				let key = kvl[0];
+				let val = (params[key] ?? (kvl.length > 0 ? kvl[1] : ''));
+				new_parms += (i==0?'?':'&') + key + '=' + val;
+			});
+		}
+
+		url_new += new_parms;
+		return url_new;
+	},
+	delete(pk) {
+		var res = confirm("¿Desea eliminar la fila?");
+		if (!res) return;
+
+		model.invoke_service("./" + pk + "/", null,
+			function (data) {
+				window.location.reload();
+			},
+			function (error) {
+				alert(error.message ?? error);
+			}, "DELETE", false);
+	}
 }
