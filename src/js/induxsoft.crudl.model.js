@@ -94,7 +94,7 @@ var InduxsoftCrudlModel =
 		var res = confirm("¿Desea eliminar la fila?");
 		if (!res) return;
 
-		model.invoke_service("./" + pk + "/", null,
+		this.InvokeService("./" + pk + "/", null,
 			function (data) {
 				window.location.reload();
 			},
