@@ -1,0 +1,11 @@
+# $ = Recursos estáticos
+# ! = Paquetes
+
+*: /!/{_pack}/{_program}/{_entity_id}/{_view?}/ > /packs/{_pack}/entry-point.dkl
+*: /!/{_pack}/{_program}/{_entity_id?}/ > /packs/{_pack}/entry-point.dkl
+
+*: /$/{_pack}/{_level1}/{_level2}/{_resource} > /packs/{_pack}/_static/{_level1}/{_level2}/{_resource}
+*: /$/{_pack}/{_level1}/{_resource} > /packs/{_pack}/_static/{_level1}/{_resource}
+*: /$/{_pack}/{_resource} > /packs/{_pack}/_static/{_resource}
+
+*: / > /packs/webshell/index.dkl

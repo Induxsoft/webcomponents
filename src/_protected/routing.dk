@@ -1,0 +1,14 @@
+#include "dkli.dkh"
+#!
+module "routing.dk"
+{
+    #include "functions.dkh"
+
+	document_path:@http_request<"document_path">
+	ref keys=list.create_from_fields(@@(@http_request,"&http_context/request/get"))
+	for i=0;i<@count(keys)
+	{
+		document_path=replace(document_path,"{"+list.str(keys,i)+"}",@@(@http_request,"$http_context/request/get/"+list.str(keys,i)))
+	}
+	@http_request<"document_path"> : document_path
+}
