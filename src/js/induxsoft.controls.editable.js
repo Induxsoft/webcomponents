@@ -816,6 +816,7 @@ class EditTable extends HTMLElement
                     case "Insert":
                         if (_current.AutoDelRow && e.ctrlKey) _current.InsertRow(_current.CurrentRowIndex());
                         break;
+                    case "Enter":
                     case "F2":
                         setTimeout(function(){
                             _current.StartEdit(selector.closest('td'),"");
