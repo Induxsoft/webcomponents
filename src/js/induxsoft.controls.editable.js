@@ -234,7 +234,7 @@ class EditTable extends HTMLElement
                     let coldef = this._getColdefByTh(th);
                     const td = this._createFullElement('td', { class:'EdiTable-Cell' });
                     Object.keys(data).forEach(key => {
-                        if (td.textContent == '' && (th.getAttribute('field') == key || th.getAttribute('keyfield') == key)){
+                        if (td.textContent == '' && (th.getAttribute('field') == key)){
                             let value = data[key];
                             if (this._withFormat(coldef, value))
                                 value = this._aplyFormat(coldef, value);
