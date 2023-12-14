@@ -531,7 +531,8 @@ class InputKey extends HTMLElement
             shadow.appendChild(this.container2);
             shadow.appendChild(container3);
             shadow.appendChild(container4);
-            this.after(this.inputv);
+            
+            if (this._parseBool((this.getAttribute('hidden-input')??''), true)) this.after(this.inputv);
 
             if (this.hasAttribute('data-value'))
             {
@@ -859,6 +860,11 @@ class InputKey extends HTMLElement
     {
         this.input_search_container.value = text;
         this._search(autoselect);
+    }
+    _parseBool=(value, _default = false)=>
+    {
+        if (value) return (value.toString().toLowerCase() === 'true');
+        return _default;
     }
 }
 
