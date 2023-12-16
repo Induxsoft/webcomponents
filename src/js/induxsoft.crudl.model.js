@@ -1,6 +1,6 @@
 var InduxsoftCrudlModel =
 {
-	async InvokeService(url, data, success, fail, method = 'GET', reload = true, async = true, autorizations = '', formdata = false) 
+	async InvokeService(url, data, success, fail, method='GET', reload=true, async=true, autorizations='', formdata=false, beforeFetch=null) 
 	{
 		let fetchData = {
 			method: method,
@@ -53,6 +53,8 @@ var InduxsoftCrudlModel =
 			if (reload)
 				window.location.reload();
 		}
+
+		if (beforeFetch) beforeFetch(fetchData);
 
 		if (async) {
 			await fetch(url, fetchData).then(resHandler).catch(error => {

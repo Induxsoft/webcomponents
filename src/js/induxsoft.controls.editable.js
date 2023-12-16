@@ -34,7 +34,7 @@ class EditTable extends HTMLElement
                     .EdiTable-Selector{
                         width: 100%;
                         height: 100%;
-                        text-align: left;
+                        text-align: inherit;
                         background-color: rgba(255,255,255,.7);
                         cursor: text;
                         border: 1px solid #FFF;
