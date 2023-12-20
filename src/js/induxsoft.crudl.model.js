@@ -32,7 +32,7 @@ var InduxsoftCrudlModel =
 						if (json.success && success) {
 							success(json.data ?? json);
 						}
-						else if (!json.success && json.success != null && res.success != undefined && fail) {
+						else if (!json.success && json.success != null && json.success != undefined && fail) {
 							fail(json);
 						}
 						else {
