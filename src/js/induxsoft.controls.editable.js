@@ -40,7 +40,7 @@ class EditTable extends HTMLElement
                         border: 1px solid #FFF;
                         border-radius: 3px;
                         outline: none;
-                        padding: 3px;
+                        color: #000;
                     }
                     .EdiTable-Input-Check{
                         height: 100%;
@@ -48,9 +48,9 @@ class EditTable extends HTMLElement
                     .EdiTable-Cell
                     {
                         height: 1.4rem;
-                        padding: 4px;
                         outline: 1px solid #EDEDED;
                         position: relative;
+                        padding: 4px;
                     }
                     .EdiTable-Row-Selected
                     {
@@ -169,6 +169,8 @@ class EditTable extends HTMLElement
                     .induxsoft-form-select {display: block;width: 100%;padding: 0.375rem 2.25rem 0.375rem 0.75rem !important;-moz-padding-start: calc(0.75rem - 3px);font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");background-repeat: no-repeat;background-position: right 0.75rem center;background-size: 16px 12px;border: none;outline:1px solid #ced4da;-webkit-appearance: none;-moz-appearance: none;appearance: none;
                     }
 
+                    .transparent{ background-color: transparent !important; border: none !important; outline: none !important; color: inherit !important; }
+                    a{ color: inherit; }
                     ` + (this.getAttribute('control-styles') ?? '') + `
                 </style>
             `;
@@ -194,6 +196,11 @@ class EditTable extends HTMLElement
             this._processAtributesColumn();
             this._resizableGrid(this._table);
             this._setSortEvent();
+            this._setMoveEvent();
+            this._initOtherValues();
+
+            // Si no se ha proporcionado el atributo data para el dataArray se genera a partir del contenido de la tabla
+            if (this.DataArray.length < 1) this.UpdateData();
         });
     }
 
@@ -221,7 +228,7 @@ class EditTable extends HTMLElement
             tbody.querySelectorAll('tr').forEach(tr => {
                 tr.querySelectorAll('edit-td').forEach(editTd => {
                     editTd.classList.add('EdiTable-Cell');
-                    editTd.replaceWith(this._replaceTagNameElement(editTd, 'td'))
+                    editTd.replaceWith(this._replaceTagNameElement(editTd, 'td'));
                 });
             });
         }
@@ -238,7 +245,7 @@ class EditTable extends HTMLElement
                             let value = data[key];
                             if (this._withFormat(coldef, value))
                                 value = this._aplyFormat(coldef, value);
-                            td.textContent = value;
+                            td.innerHTML = value;
                         }
                     });
                     tr.appendChild(td);
@@ -634,13 +641,18 @@ class EditTable extends HTMLElement
 
         return `${integerPart}${this.NumFormat.decimals}${fractionalPart}`;
     }
+    _initOtherValues()
+    {
+        if (this.hasAttribute('hidde-selector')) this.hiddeSelector = (this.getAttribute('hidde-selector')=='true');
+        if (this.hasAttribute('hide-row-selector')) this.hiddeRowSelector = (this.getAttribute('hide-row-selector')=='true');
+    }
 
     // ========================= EDITABLE FUNCTIONS
     
     _EdiTable = () => { return {
         Const : {
             HTML:{
-                Selector:'<button id="__table_selector" class="EdiTable-Selector"></button>',
+                Selector:'<div id="__table_selector" class="EdiTable-Selector" tabindex="0"></div>',
                 Button:'<button id="__table_button" class="EdiTable-Button"></button>',
                 Inputs:{
                     "Text":'<input type="text" id="__table_input" class="Editable-Input-Text"/>',
@@ -1011,6 +1023,8 @@ class EditTable extends HTMLElement
         thousands:",",
         decimals:"."
     }
+    hiddeSelector = false;
+    hiddeRowSelector = false;
     
     CSS = {
         Cell:"EdiTable-Cell",
@@ -1217,7 +1231,7 @@ class EditTable extends HTMLElement
             {
                 if (this.Columns[i].field!=undefined)
                 {
-                    if (tds[i]==this.CurrentTd()[0])
+                    if (tds[i]==this.CurrentTd())
                     {
                         if (!this.Editing)
                         {
@@ -1802,7 +1816,6 @@ class EditTable extends HTMLElement
 
         if (selector!=undefined)
         {
-            //selector.closest('td').innerHTML = selector.innerHTML;
             this.SetTdValue(selector.closest('td'), selector.innerHTML);
             if (this.EdiTable.focusedTable!=null)
             {
@@ -1846,6 +1859,7 @@ class EditTable extends HTMLElement
         }
 
         selector=this.EdiTable.GetSelector();
+        selector.classList.toggle('transparent', this.hiddeSelector);
         selector.innerHTML = txt;
         this.EdiTable.focusedTable=this._getCurren(true);
 
@@ -1864,7 +1878,7 @@ class EditTable extends HTMLElement
         {
             let trs = td.closest('tr').parentElement.querySelectorAll('tr');
             if (trs && trs.length > 0) trs.forEach(tr => tr.classList.remove(this.CSS.RowSelected));
-            td.closest('tr').classList.add(this.CSS.RowSelected);
+            if(!this.hiddeRowSelector) td.closest('tr').classList.add(this.CSS.RowSelected);
         }
     }
     /**
@@ -1984,7 +1998,6 @@ class EditTable extends HTMLElement
             cellContent.innerHTML = value;
             return;
         }
-
         td.innerHTML = value;
     }
     _withFormat(coldef, value)
@@ -2158,7 +2171,7 @@ class EditTable extends HTMLElement
             if (tr) this.ExpandRow(tr);
         });
         this.Initialize(this._table.getAttribute('id'));
-        if (this.ShowAsTree) this._setMoveEvent();
+        this._setMoveEvent();
     }
 
     _setIndent=(td, indent=0)=>
