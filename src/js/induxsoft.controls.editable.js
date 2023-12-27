@@ -1012,7 +1012,7 @@ class EditTable extends HTMLElement
     ColumnsDefaultType = this.EdiTable.Const.Columns.Types.Text;
     
     ShowAsTree = true;
-    CanMoveRow = true;
+    CanMoveRow = false;
     TreeOptions = {};
     Key = "id";
     ParentKey = "idp";
@@ -2036,7 +2036,7 @@ class EditTable extends HTMLElement
         let v = (this.getAttribute('show-tree') ?? '').trim();
         this.ShowAsTree = (v == 'true');
 
-        v = (this.getAttribute('can-move-row') ?? 'true').trim();
+        v = (this.getAttribute('can-move-row') ?? (this.ShowAsTree ? 'true' : 'false')).trim();
         this.CanMoveRow = (v == 'true');
 
         v = (this.getAttribute('key') ?? '').trim();

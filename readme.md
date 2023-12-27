@@ -2,11 +2,15 @@
 
 Descripción de las funciones y propiedades de los Web Components:
 
-- **[EditSelect](#CheckList)** (Input select editable)
+- **[EditSelect](#EditSelect)** (Input select editable)
 - **[InputKey](#InputKey)** (Control de búsqueda y selección de datos)
 - **[CheckList](#CheckList)** (Lista de verificación)
 - **[StackEdit](#StackEdit)** (Pila de elementos ordenables)
 - **[EditTable](#EditTable)** (Tabla editable)
+- **[OpCanva](#OpCanva)** (Editor de elementos de un plano)
+- **[DateRange](#DateRange)** (Controles de rango de fechas)
+- **[SafeInput](#SafeInput)** (Entrada con validación personalizada)
+- **[MediaList](#MediaList)** (Lista de archivos multimedia)
 ___
 
 <a name="EditSelect"></a>
@@ -222,6 +226,17 @@ ___
  - **DataArray**: (Array obj) Array de objetos asociado a las filas.
  - **ColumnsDefaultType**: (text, def:"Text") Disponibles: Text, Number, Date, DateTime, Memo, Check, Select, Custom, NoEditable
  - **Columns**: (Array obj) Array de objetos con información de las filas.
+ - **ShowAsTree**: (bool, def:false) Establece la vista de la tabla en arbol.
+ - **CanMoveRow**: (bool, def:false, si ShowAsTree es true def: true) Establece que las filas puedan ser movidas de posición.
+ - **TreeOptions**: (obj) Objeto de configuración de los campos a considerar para las operaciones de la vista en arbol. Si no se establece se inicia con las propiedades asignadas o por defecto de (Key, ParentKey y Childs).
+ - **Key**: (text, def: "id") Campo que contiene el identificador de la fila.
+ - **ParentKey**: (text, def: "idp") Campo que contiene el identificador de la fila padre.
+ - **Childs**: (text, def: "__items") Campo que almacena una lista de filas hijas.
+ - **ButtonOnClick**: Se dispara cuando se da click en el botón creado por la propiedad button en el atributo de las columna.
+ - **onTdPaint**: Se dispara al crearse el elemento td de la fila.
+ - **NumFormat**: (obj) Objeto con la configuración de caracter para la separación de miles y decimales para columnas con el atributo format en true.
+ - **hiddeSelector**: (bool, def: false) Oculta el selector de edición de la celda.
+ - **hiddeRowSelector**: (bool, def: false) Oculta el selector de selección de la fila.
 
 #### Métodos:
  - **DeleteCurrentRow()**: Elimina la fila seleccionada.
@@ -244,12 +259,27 @@ ___
 #### Atributos del componente:
  - **data**: (opcional) datos de la tabla (ej: [{"title1":"value1"},...]).
  - **control-styles**: (opcional) Establece los estilos personalizados que se le aplicarán al control (ej: input{border:1px solid red;}).
+ - **show-tree**: (opcional): Establece la vista de la tabla en arbol (true/false, def: false).
+ - **parentkey**: (opcional): Campo que contiene el identificador de la fila padre (def: idp).
+ - **key**: (opcional): Campo que contiene el identificador de la fila (def: id).
+ - **childs-field**: (opcional): Campo que almacena una lista de filas hijas (def: __items).
+ - **can-move-row**: (opcional): Establece que las filas puedan ser movidas (true/false, def: false, si show-tree es true def: true).
+ - **hidde-selector**: (opcional): Oculta el selector de edición de la celda (true/false, def: false).
+ - **hide-row-selector**: (opcional): Oculta el selector de selección de la fila (true/false, def: false).
 
 #### Atributos de las columnas del componente:
  - **type**: (opcional, def: Text) Tipo de celda: Text,Number,Date,DateTime,Memo,Check,Select,Custom,NoEditable (def:Text).
  - **field**: (opcional) Nombre del campo donde se guardará el valor de la celda.
  - **default**: (opcional) Valor por defecto de la celda al iniciarse.
  - **options**: (opcional) Datos de las opciones de una columna de tipo Select (ej: {"a":"Opción 1","b":"Opción 2","c":"Opción 3"}).
+ - **button**: (opcional): Muestra un botón de función personalizada en la celda de la columna indicada (true/false, def:false).
+ - **buttondata**: (opcional): Contenido HTML del botón de función personalizada (def: svg/icon(...)).
+ - **textalign**: (opcional): Establece la alineación del texto de la columna (ej: "start/left, center, end/right").
+ - **format**: (opcional): Establece el formateo de números para columnas de tipo Number y NoEditable (true/false, def: false).
+ - **decs**: (opcional): Cantidad de decimales a redondear cuando el atributo format es true.
+ - **prefix**: (opcional): Prefijo del contenido de la celda cuando el atributo format es true (ej: $).
+ - **sufix**: (opcional): Sufijo del contenido de la celda cuando el atributo format es true (ej: MXN).
+ - **thousandssep**: (opcional): Establece la separación de miles cuando el atributo format es true (true/false, def: false).
 
 #### Ejemplo:
 ```
