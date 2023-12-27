@@ -146,10 +146,12 @@
                 ----------------------------------------------------------------------------------------------
                 - data              (opcional): datos de la tabla (ej: [{"title1":"value1"},...])
                 - control-styles    (opcional): Establece los estilos personalizados que se le aplicarán al control (ej: input{border:1px solid red;})
-                - show-tree     (opcional): Establece la vista de la tabla en arbol (true/false, def: false)
-                - parentkey     (opcional): Campo que contiene el identificador de la fila padre (def: idp)
-                - key           (opcional): Campo que contiene el identificador de la fila (def: id)
-                - childs-field  (opcional): Campo que almacena una lista de filas hijas (def: __items)
+                - show-tree         (opcional): Establece la vista de la tabla en arbol (true/false, def: false)
+                - parentkey         (opcional): Campo que contiene el identificador de la fila padre (def: idp)
+                - key               (opcional): Campo que contiene el identificador de la fila (def: id)
+                - childs-field      (opcional): Campo que almacena una lista de filas hijas (def: __items)
+                - hidde-selector    (opcional): Oculta el selector de edición de la celda (true/false, def: false)
+                - hide-row-selector (opcional): Oculta el selector de selección de la fila (true/false, def: false)
 
                 [PARAMS:edit-th]
                 ----------------------------------------------------------------------------------------------
@@ -159,6 +161,12 @@
                 - options       (opcional): Datos de las opciones de una celda tipo Select (ej: {"a":"Opción 1","b":"Opción 2","c":"Opción 3"})
                 - button        (opcional): Muestra un botón de función personalizada en la celda de la columna indicada (true/false, def:false)
                 - buttondata    (opcional): Contenido HTML del botón de función personalizada (def: svg/icon(...))
+                - textalign     (opcional): Establece la alineación del texto de la columna (ej: "start/left, center, end/right")
+                - format        (opcional): Establece el formateo de números para columnas de tipo Number y NoEditable (true/false, def: false)
+                - decs          (opcional): Cantidad de decimales a redondear cuando el atributo format es true
+                - prefix        (opcional): Prefijo del contenido de la celda cuando el atributo format es true (ej: $)
+                - sufix         (opcional): Sufijo del contenido de la celda cuando el atributo format es true (ej: MXN)
+                - thousandssep  (opcional): Establece la separación de miles cuando el atributo format es true (true/false, def: false)
             -->
             <edit-table id="micontrol5" style="width: 100%;">
                 <edit-thead>

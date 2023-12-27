@@ -2108,7 +2108,7 @@ class EditTable extends HTMLElement
                         const content = this._createFullElement('div', { iscellcontent:'true', class:'cell-content' });
                         container.appendChild(content);
                         Object.keys(data).forEach(key => {
-                            if (td.textContent == '' && (th.getAttribute('field') == key || th.getAttribute('keyfield') == key)){
+                            if (td.textContent == '' && th.getAttribute('field') == key){
                                 let value = data[key];
                                 if (this._withFormat(coldef, value))
                                     value = this._aplyFormat(coldef, value);
@@ -2121,7 +2121,7 @@ class EditTable extends HTMLElement
                     else
                     {
                         Object.keys(data).forEach(key => {
-                            if (td.textContent == '' && (th.getAttribute('field') == key || th.getAttribute('keyfield') == key)) {
+                            if (td.textContent == '' && th.getAttribute('field') == key) {
                                 let value = data[key];
                                 if (this._withFormat(coldef, value))
                                     value = this._aplyFormat(coldef, value);
