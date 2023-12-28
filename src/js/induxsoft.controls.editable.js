@@ -2007,7 +2007,7 @@ class EditTable extends HTMLElement
             && !value.includes('__table_selector') 
             && !value.includes('__table_input') 
             && coldef 
-            && coldef.type.toLowerCase() == 'number' 
+            && (coldef.type.toLowerCase() == 'number' || coldef.type.toLowerCase() == 'noeditable')
             && (coldef.format??'') == 'true');
     }
     _aplyFormat(coldef, value)
