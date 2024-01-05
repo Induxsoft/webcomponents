@@ -899,7 +899,7 @@ class InputKey extends HTMLElement
     }
     _setOtherButtonsEvents(button)
     {
-        const externalBtn = this.createFullElement('button', { style:"display:none !important;", id:button.id });
+        const externalBtn = this.createFullElement('button', { type:'button', style:"display:none !important;", id:button.id });
         this.after(externalBtn);
         button.onclick = e => externalBtn.click();
     }
