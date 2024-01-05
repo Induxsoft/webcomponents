@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../src/js/induxsoft.controls.js"></script>
+</head>
+<body>
+    <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD;border-radius: 5px; padding-bottom: 32px; margin:4px;">
+        <h3>Check List</h3>
+        <!--
+            [PARAMS: check-list]
+            ----------------------------------------------------------------------------------------------
+            - data              (opcional): datos de la lista
+            - data-locked       (opcional): Elementos marcados ya no pueden desmarcarse (true/false, def: false)
+            - data-done-style   (opcional): Visualización de elementos marcados: 0-Permanecen en su sitio, 1-Desaparecen, 2-Se apilan en una lista en la parte inferior (def: 0)
+            - can-remove        (opcional): Pueden eliminarse elementos (true/false, def: false)
+            - can-edit          (opcional): Pueden editarse elementos (true/false, def: false)
+            - can-move          (opcional): Pueden moverse elementos (true/false, def: false)
+            - can-check         (opcional): Pueden marcarse como completados o actualizar su progreso (true/false, def: true)
+        -->
+        <check-list 
+            id="micontrol3"
+            data=""
+            data-locked="true" 
+            data-done-style="0" 
+            can-remove="false" 
+            can-edit="false" 
+            can-move="false" 
+            can-check="true"
+        />
+    </div>
+</body>
