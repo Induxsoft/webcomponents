@@ -216,6 +216,7 @@ class InputKey extends HTMLElement
     accept_footer_container2 = null;
     change_event = null;
     onBeforeSearch = null;
+    buttonElements = [];
 
     constructor() 
     {
@@ -268,6 +269,16 @@ class InputKey extends HTMLElement
             search_container.appendChild(this.input_search_container);
             search_container.appendChild(button_search_container);
             description_container.appendChild(this.input_description_container);
+
+            // BOTONES ADICIONALES
+            if (this.hasAttribute('buttons'))
+                this._createOtherButtons();
+
+            this.buttonElements.forEach(btn=>{
+                description_container.appendChild(btn);
+                this._setOtherButtonsEvents(btn);
+            });
+
             if (this.getAttribute('add-url')) description_container.appendChild(button_add_container);
             if (this.getAttribute('edit-url')) description_container.appendChild(button_edit_container);
             description_container.appendChild(button_clear_container);
@@ -550,11 +561,12 @@ class InputKey extends HTMLElement
      * @param {object} attributes Objeto que representan los atributos del elemento, ej: {id:'miElement',class:'mi-element'}
      * @returns Retorna un **nuevo elemento HTML**
      */
-    createFullElement(tagName="div", attributes={})
+    createFullElement(tagName="div", attributes={}, innerHTML="")
     {
         const elem = document.createElement(tagName);
         const keys = Object.keys(attributes);
         keys.forEach(key => elem.setAttribute(key, attributes[key]));
+        if (innerHTML) elem.innerHTML = innerHTML;
         return elem;
     }
     /**
@@ -865,6 +877,31 @@ class InputKey extends HTMLElement
     {
         if (value) return (value.toString().toLowerCase() === 'true');
         return _default;
+    }
+    _createOtherButtons()
+    {
+        this.buttonElements = [];
+        if (this.getAttribute('buttons') != '')
+        {
+            let buttonList = [];
+            try { buttonList = JSON.parse(this.getAttribute('buttons')); }
+            catch{ alert('El valor del atributo "buttons" tiene un formato JSON inválido'); }
+
+            buttonList.forEach((obj,i) => {
+                const btn = {
+                    type:'button', 
+                    class:'induxsoft-buttons',
+                    id: (obj.id ?? 'btn_ik_'+i)
+                }
+                this.buttonElements.push(this.createFullElement('button', btn, (obj.content??'')));
+            });
+        }
+    }
+    _setOtherButtonsEvents(button)
+    {
+        const externalBtn = this.createFullElement('button', { style:"display:none !important;", id:button.id });
+        this.after(externalBtn);
+        button.onclick = e => externalBtn.click();
     }
 }
 
