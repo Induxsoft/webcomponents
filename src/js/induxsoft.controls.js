@@ -1930,7 +1930,14 @@ class DateRange extends HTMLElement
             const cntnr1 = this._createFullElement('div', { id:'DateRange_cntnr1', class:'w-100 d-flex wrap' });
             const lblStr = this._createFullElement('span', { id:'DateRange_lblStr', class:'induxsoft-form-label text-secondary'});
             this._iptStr = this._createFullElement('input', { type:'date', id:'DateRange_iptStr', class:'induxsoft-form-control' });
-            lblStr.textContent = 'Fecha inicial:';
+
+            if (((this.getAttribute('hide-labels')??'') === 'true'))
+            {
+                this.setAttribute("start-label","");
+                this.setAttribute("end-label","");
+            }
+
+            lblStr.textContent = this.hasAttribute("start-label") ?  this.getAttribute("start-label") : "Fecha inicial:";
             cntnr1.appendChild(lblStr);
             cntnr1.appendChild(this._iptStr);
             contnr.appendChild(cntnr1);
@@ -1938,7 +1945,7 @@ class DateRange extends HTMLElement
             const cntnr2 = this._createFullElement('div', { id:'DateRange_cntnr2', class:'w-100 d-flex wrap' });
             const lblEnd = this._createFullElement('span', { id:'DateRange_lblEnd', class:'induxsoft-form-label text-secondary'});
             this._iptEnd = this._createFullElement('input', { type:'date', id:'DateRange_iptEnd', class:'induxsoft-form-control' });
-            lblEnd.textContent = 'Fecha final:';
+            lblEnd.textContent = this.hasAttribute("end-label") ?  this.getAttribute("end-label") : "Fecha final:";
             cntnr2.appendChild(lblEnd);
             cntnr2.appendChild(this._iptEnd);
             contnr.appendChild(cntnr2);
@@ -2046,6 +2053,16 @@ class DateRange extends HTMLElement
 
         if (this.onChange) this.onChange(this.data);
     }
+    
+    get disabled()
+    {
+        return ((this.getAttribute('disabled')??'') === 'true');
+    }
+    set disabled(value)
+    {
+        this.setAttribute('disabled',value);
+    }
+
     setData=(obj)=>
     {
         this.data = obj;
@@ -2161,7 +2178,6 @@ class SafeInput extends HTMLElement
             contanr.appendChild(this._btnEdit);
             contanr.appendChild(this._btnDone);
             contanr.appendChild(this._btnUndo);
-
             shadow.appendChild(contanr);
         });
     }
