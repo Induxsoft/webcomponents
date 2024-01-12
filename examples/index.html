@@ -228,6 +228,9 @@
             - start                     (opcional): Fecha inicial en formato: YYYY-mm-dd
             - end                       (opcional): Fecha final en formato: YYYY-mm-dd
             - data                      (opcional): Objeto con la información de fecha final e inicial, ej: {"start":"2023-01-01","end":"2023-12-31"}
+            - start-label               (opcional): Leyenda del input de fecha inicial (def: "Desde:")
+            - end-label                 (opcional): Leyenda del input de fecha final (def: "Hasta:")
+            - hide-labels               (opcional): Ocultar leyenda en los inputs de fecha (true/false, def: false)
         -->
         <date-range
             id="micontrol7"
@@ -293,6 +296,48 @@
             media-prop="url"
             miniature-prop="mini">
         </media-list>
+    </div>
+    <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD; padding-bottom: 32px; margin:4px;">
+        <h3>Filter Text</h3>
+        <form action="./index.html" method="get" id="form_test">
+            <!--
+                [PARAMS: filter-text]
+                ----------------------------------------------------------------------------------------------
+                - text-field        (opcional) Nombre del campo que se envía al lanzarse la búsqueda (def: "s")
+                - placeholder       (opcional) Placeholder del cuadro de búsqueda
+                - form              (opcional) Selector del formulario al que se realizará el submit (Si no se establece se busca el formulario más cercano)
+            -->
+            <filter-text
+                id="micontrol10"
+                text-field=""
+                placeholder="Buscar"
+                auto-submit=""
+                form="#form_test">
+            </filter-text>
+        </form>
+    </div>
+    <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD; padding-bottom: 32px; margin:4px;">
+        <h3>Filter Date Range</h3>
+        <filter-date-range
+            mode-field="filter-mode" 
+            year-field="year" 
+            month-field="month" 
+            range-field="range" 
+            from-field="fromdate" 
+            to-field="todate" 
+            selection='{"mode":"lastdays", "range":90}' 
+            lastdays-options="15,30,45,60,90" 
+            custom-range="true" 
+            form=""
+            auto-submit="false"
+            label-months="Ver por cada mes"
+            label-days="Últ. @lastdays días"
+            label-custom="Personalizado"
+            label-from="Desde"
+            label-to="Hasta"    
+            month-names="Enero,Febrero,...">
+            <!--Siempre envía los campos from-date y to-date-->
+        </filter-date-range>
     </div>
     <style>
         @media screen and (max-width: 600px) {

@@ -1902,6 +1902,12 @@ class DateRange extends HTMLElement
     _iptEnd = null;
     _hiddenInputStr = null;
     _hiddenInputEnd = null;
+    _contnr = null;
+    _dateContainer = null;
+    _btnEdit = null;
+    _btnDone = null;
+    _btnUndo = null;
+    onChanging = null;
 
     constructor() 
     {
@@ -1925,11 +1931,12 @@ class DateRange extends HTMLElement
         document.addEventListener('DOMContentLoaded', () => 
         {
             const shadow = this.attachShadow({ mode: 'closed' });
-            const contnr = this._createFullElement('div', { id:'DateRange_contnr', class:'w-100 d-flex gap-2 align-items-center justify-content-center'});
+            this._contnr = this._createFullElement('div', { id:'DateRange_contnr', class:'w-100 d-flex border'});
             
-            const cntnr1 = this._createFullElement('div', { id:'DateRange_cntnr1', class:'w-100 d-flex wrap' });
-            const lblStr = this._createFullElement('span', { id:'DateRange_lblStr', class:'induxsoft-form-label text-secondary'});
-            this._iptStr = this._createFullElement('input', { type:'date', id:'DateRange_iptStr', class:'induxsoft-form-control' });
+            this._dateContainer = this._createFullElement('div', { class: "grow-1 d-flex flex-wrap gap-2 align-items-center gap-2 ps-2 wrap" })
+            const cntnr1 = this._createFullElement('div', { id: 'DateRange_cntnr1', class:'d-flex wrap align-items-center' });
+            const lblStr = this._createFullElement('span', { id:'DateRange_lblStr', class:'induxsoft-form-label text-secondary m-0'});
+            this._iptStr = this._createFullElement('input', { type: 'date', id: 'DateRange_iptStr', class:'induxsoft-form-control input-date' });
 
             if (((this.getAttribute('hide-labels')??'') === 'true'))
             {
@@ -1937,30 +1944,57 @@ class DateRange extends HTMLElement
                 this.setAttribute("end-label","");
             }
 
-            lblStr.textContent = this.hasAttribute("start-label") ?  this.getAttribute("start-label") : "Fecha inicial:";
+            lblStr.textContent = this.hasAttribute("start-label") ?  this.getAttribute("start-label") : "Desde:";
             cntnr1.appendChild(lblStr);
             cntnr1.appendChild(this._iptStr);
-            contnr.appendChild(cntnr1);
+            this._dateContainer.appendChild(cntnr1);
 
-            const cntnr2 = this._createFullElement('div', { id:'DateRange_cntnr2', class:'w-100 d-flex wrap' });
-            const lblEnd = this._createFullElement('span', { id:'DateRange_lblEnd', class:'induxsoft-form-label text-secondary'});
-            this._iptEnd = this._createFullElement('input', { type:'date', id:'DateRange_iptEnd', class:'induxsoft-form-control' });
-            lblEnd.textContent = this.hasAttribute("end-label") ?  this.getAttribute("end-label") : "Fecha final:";
+            const cntnr2 = this._createFullElement('div', { id:'DateRange_cntnr2', class:'d-flex wrap align-items-center' });
+            const lblEnd = this._createFullElement('span', { id:'DateRange_lblEnd', class:'induxsoft-form-label text-secondary m-0'});
+            this._iptEnd = this._createFullElement('input', { type: 'date', id: 'DateRange_iptEnd', class:'induxsoft-form-control input-date' });
+            lblEnd.textContent = this.hasAttribute("end-label") ?  this.getAttribute("end-label") : "Hasta:";
             cntnr2.appendChild(lblEnd);
             cntnr2.appendChild(this._iptEnd);
-            contnr.appendChild(cntnr2);
+            this._dateContainer.appendChild(cntnr2);
 
-            this._iptStr.toggleAttribute('disabled', ((this.getAttribute('disabled')??'') === 'true'));
-            this._iptEnd.toggleAttribute('disabled', ((this.getAttribute('disabled')??'') === 'true'));
+            this._contnr.appendChild(this._dateContainer);
 
-            this._iptStr.addEventListener('change', () => {
-                this.data.start = this._iptStr.value;
-                this._refreshDates();
+            const controlsContainer = this._createFullElement('div', { class: 'd-flex' });
+            this._btnEdit = this._createFullElement('button', { id: 'SafeInput_btnEdit', title: 'Edit', class: 'induxsoft-buttons d-flex justify-content-center align-items-center' });
+            this._btnDone = this._createFullElement('button', { id: 'SafeInput_btnDone', title: 'Save', class: 'd-none induxsoft-buttons d-flex justify-content-center align-items-center' });
+            this._btnUndo = this._createFullElement('button', { id: 'SafeInput_btnUndo', title: 'Cancel', class: 'd-none induxsoft-buttons d-flex justify-content-center align-items-center' });
+
+            this._btnEdit.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16"><path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/></svg>`;
+            this._btnDone.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2" viewBox="0 0 16 16"><path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/></svg>`;
+            this._btnUndo.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/></svg>`;
+            this._btnEdit.classList.toggle('disable-element', ((this.getAttribute('disabled') ?? '') === 'true'));
+
+            controlsContainer.appendChild(this._btnEdit);
+            controlsContainer.appendChild(this._btnDone);
+            controlsContainer.appendChild(this._btnUndo);
+
+            this._contnr.appendChild(controlsContainer);
+
+            this._btnEdit.addEventListener('click', () => {
+                this._startEdit();
+                this._showControlButtons(true);
             });
-            this._iptEnd.addEventListener('change', () => {
-                this.data.end = this._iptEnd.value;
-                this._refreshDates();
+            this._btnDone.addEventListener('click', async () => {
+                this._confirmEdit();
             });
+            this._btnUndo.addEventListener('click', () => {
+                this._cancelEdit();
+                this._showControlButtons(false);
+            });
+
+            // this._iptStr.addEventListener('change', () => {
+            //     this.data.start = this._iptStr.value;
+            //     // this._refreshDates();
+            // });
+            // this._iptEnd.addEventListener('change', () => {
+            //     this.data.end = this._iptEnd.value;
+            //     // this._refreshDates();
+            // });
 
             const MO = new MutationObserver(()=>{
                 this._iptStr.toggleAttribute('disabled', ((this.getAttribute('disabled')??'') === 'true'));
@@ -1975,7 +2009,7 @@ class DateRange extends HTMLElement
             shadow.innerHTML = `
                 <style>
                     *{ box-sizing: border-box;margin:0;padding:0; }
-                    .d-flex{ display:flex; }
+                    .d-flex{ display:flex; } .d-none{ display: none !important; }
                     .wrap{ flex-wrap: wrap; }
                     .gap-1{gap:4px;} .gap-2{gap:8px;}
                     .justify-content-start{ justify-content: start; } .justify-content-center{ justify-content: center; } .justify-content-end{ justify-content: end; }
@@ -1983,10 +2017,32 @@ class DateRange extends HTMLElement
                     .grow-1{ flex-grow: 1; }
                     .w-100{ width: 100%; }
                     .text-secondary{ color: #888; }
+                    .m-0{ margin: 0 !important; }
+                    .border{ border: 1px solid #ced4da; }
+                    .ps-1 { padding-left: 4px; } .ps-2 { padding-left: 8px; }
+                    .disabled { background-color: #E9ECEF; }
+                    .disable-element{ pointer-events: none; background-color: #e9ecef !important; opacity: 1;}
+                    .waiting{ pointer-events: none; opacity: .5; cursor: progress; }
 
                     .induxsoft-form-control{ border: none; outline: 1px solid #ced4da; display: block; width: 100%; padding: 0.375rem 0.75rem !important; font-size: 1rem; font-weight: 400; line-height: 1.5; color: #212529; background-color: #fff; background-clip: padding-box; appearance: none; transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; }
                     .induxsoft-form-control:disabled, .induxsoft-form-control[readonly] { background-color: #e9ecef; opacity: 1; }
                     .induxsoft-form-label{ margin-bottom: 0.5rem; }
+                    .induxsoft-buttons{ font-weight: 400;line-height: 1.5;color: #212529;text-align: center;text-decoration: none;vertical-align: middle;cursor: pointer;-webkit-user-select: none;-moz-user-select: none;user-select: none;background-color: #FFF;outline:1px solid #ced4da;border: none;padding: 0.375rem 0.75rem;font-size: 1rem;transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; }
+                    .induxsoft-buttons:hover{ color: #212529;background-color: #F5F5F5; }
+
+                    .input-date{
+                        border: none;
+                        outline: none;
+                        text-align: end;
+                        border-bottom: 1px solid transparent;
+                        width: min-content !important;
+                        font-size: .9rem;
+                        padding-left: 0 !important;
+                        padding-right: 0 !important;
+                    }
+                    .input-date:focus{
+                        border-bottom: 1px solid #005CC8;
+                    }
                 </style>
             `
 
@@ -2016,8 +2072,8 @@ class DateRange extends HTMLElement
                 this._hiddenInputStr = this._createFullElement('input', { type:'hidden', name:this.getAttribute('hidden-input-name-start').trim() });
                 this.after(this._hiddenInputStr);
             }
-
-            shadow.appendChild(contnr);
+            this._showControlButtons(false);
+            shadow.appendChild(this._contnr);
             this._refreshDates();
         });
     }
@@ -2054,14 +2110,14 @@ class DateRange extends HTMLElement
         if (this.onChange) this.onChange(this.data);
     }
     
-    get disabled()
-    {
-        return ((this.getAttribute('disabled')??'') === 'true');
-    }
-    set disabled(value)
-    {
-        this.setAttribute('disabled',value);
-    }
+    // get disabled()
+    // {
+    //     return ((this.getAttribute('disabled')??'') === 'true');
+    // }
+    // set disabled(value)
+    // {
+    //     this.setAttribute('disabled',value);
+    // }
 
     setData=(obj)=>
     {
@@ -2071,6 +2127,53 @@ class DateRange extends HTMLElement
     getData=()=>
     {
         return this.data;
+    }
+    _showControlButtons = (edit = false) => {
+        this._btnEdit.classList.toggle('d-none', edit);
+        this._btnDone.classList.toggle('d-none', !edit);
+        this._btnUndo.classList.toggle('d-none', !edit);
+        this._iptStr.toggleAttribute('disabled', !edit);
+        this._iptEnd.toggleAttribute('disabled', !edit);
+        this._dateContainer.classList.toggle('disabled', !edit);
+    }
+    _startEdit = () => {
+        this._tempValue = {
+            start: this._iptStr.value,
+            end: this._iptEnd.value,
+        }
+    }
+    _cancelEdit = () => {
+        this._iptStr.value = this._tempValue.start;
+        this._iptEnd.value = this._tempValue.end;
+        if (this._hiddenInputEnd) { this._hiddenInputEnd.value = this._tempValue.end }
+        if (this._hiddenInputStr) { this._hiddenInputStr.value = this._tempValue.start }
+    }
+    _confirmEdit = async () => {
+        this._contnr.classList.add('waiting');
+        this.style.cursor = 'progress';
+        let newValue = {
+            start: this._iptStr.value,
+            end: this._iptEnd.value,
+        }
+        let res = await this._cancelChange(newValue);
+        if (res) {
+            this._cancelEdit();
+        }
+        else {
+            this._showControlButtons(false);
+            if (this._hiddenInputEnd) this._hiddenInputEnd.value = newValue.end;
+            if (this._hiddenInputStr) this._hiddenInputStr.value = newValue.start;
+        }
+        this._contnr.classList.remove('waiting');
+        this.style.cursor = 'initial';
+    }
+    _cancelChange = async (newValue) => {
+        return new Promise(resolve => {
+            if (this.onChanging)
+                resolve(this.onChanging(this._tempValue, newValue));
+            else
+                resolve(false);
+        });
     }
 }
 
@@ -2688,6 +2791,213 @@ class MediaList extends HTMLElement
     }
 }
 
+class FilterText extends HTMLElement
+{
+    attributes = null;
+
+    constructor() {
+        super();
+        document.addEventListener('DOMContentLoaded', () => this.attributes = this.getAttributeNames());
+    }
+    static get observedAttributes() {
+        return attributes;
+    }
+    attributeChangeCallback(property, oldValue, newValue) {
+        if (newValue === oldValue) return;
+        this[property] = newValue;
+    }
+    connectedCallback()
+    {
+        document.addEventListener('DOMContentLoaded', () =>
+        {
+            const shadow = this.attachShadow({ mode: 'closed' });
+            this._writeStyles(shadow);
+            
+            let text_field = ((this.getAttribute('text-field')??'').trim() != '' ? this.getAttribute('text-field') : 's');
+            let placeholder = (this.getAttribute('placeholder') ?? 'Buscar');
+            let icon_filter = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel" viewBox="0 0 16 16"><path d = "M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z"/></svg>'
+            let icon_cancel = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"><path d="M0 0H24V24H0z" fill="none"/><path d="M6.929.515L21.07 14.657l-1.414 1.414-3.823-3.822L15 13.5V22H9v-8.5L4 6H3V4h4.585l-2.07-2.071L6.929.515zM9.585 6H6.404L11 12.894V20h2v-7.106l1.392-2.087L9.585 6zM21 4v2h-1l-1.915 2.872-1.442-1.443L17.596 6h-2.383l-2-2H21z"/></svg>'
+
+            const container = this._createFullElement('div', { class: 'd-flex' });
+            const ipt_search = this._createFullElement('input', { class: 'induxsoft-form-control', placeholder: placeholder });
+            const btn_search = this._createFullElement('button', { class: 'induxsoft-buttons button-icon' });
+
+            container.appendChild(ipt_search);
+            container.appendChild(btn_search);
+
+            const ipt_hidden = this._createFullElement('input', { type: "hidden", name: text_field });
+            // const btn_hidden = this._createFullElement('button', { style:'display: none !important;' });
+
+            ipt_search.value = (this._getURLParam('s') ?? '');
+            ipt_hidden.value = ipt_search.value;
+            
+            if (ipt_search.value.trim() != '')
+            {
+                ipt_search.disabled = true;
+                btn_search.type = "button";
+                btn_search.innerHTML = icon_cancel;
+            }
+            else
+            {
+                ipt_search.disabled = false;
+                btn_search.type = "submit";
+                btn_search.innerHTML = icon_filter;
+            }
+
+            ipt_search.addEventListener("keydown", (e) => {
+                if (e.key === "Enter" && ipt_search.value.trim() != "") this._submitFilter(ipt_search, ipt_hidden);
+            });
+            btn_search.addEventListener("click", (event) => {
+                event.preventDefault();
+                if (btn_search.type == "submit") {
+                    if (ipt_search.value.trim() != "") this._submitFilter(ipt_search, ipt_hidden);
+                }
+                else {
+                    ipt_search.disabled = false;
+                    btn_search.type = "submit";
+                    btn_search.innerHTML = icon_filter;
+                }
+            });
+
+            shadow.appendChild(container);
+            this.after(ipt_hidden);
+        });
+    }
+    _writeStyles(shadow)
+    {
+        shadow.innerHTML = `
+            <style>
+                .d-flex{ display: flex; }
+                .grow-1{ flex-grow: 1; }
+                .induxsoft-form-control{ border: none; outline: 1px solid #ced4da; display: block; width: 100%; padding: 0.375rem 0.75rem !important; font-size: 1rem; font-weight: 400; line-height: 1.5; color: #212529; background-color: #fff; background-clip: padding-box; appearance: none; transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; }
+                .induxsoft-form-control:disabled, .induxsoft-form-control[readonly] { background-color: #e9ecef; opacity: 1; }
+                .induxsoft-buttons{ font-weight: 400;line-height: 1.5;color: #212529;text-align: center;text-decoration: none;vertical-align: middle;cursor: pointer;-webkit-user-select: none;-moz-user-select: none;user-select: none;background-color: #FFF;outline:1px solid #ced4da;border: none;padding: 0.375rem 0.75rem;font-size: 1rem;transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; }
+                .induxsoft-buttons:hover{ color: #212529;background-color: #F5F5F5; }
+                .button-icon{ display: flex; align-items: center; justify-content: center; }
+            <style>
+        `;
+    }
+    _createFullElement(tagName = 'div', attributes = {}, html='') {
+        const elem = document.createElement(tagName);
+        const keys = Object.keys(attributes);
+        keys.forEach(key => elem.setAttribute(key, attributes[key]));
+        if (html) elem.innerHTML = html;
+        return elem;
+    }
+    _getURLParam(param)
+    {
+        let values = window.location.search;
+        const prms = new URLSearchParams(values);
+        return prms.get(param);
+    }
+    _submitFilter(ipt_search, ipt_hidden)
+    {
+        let idform = 'form';
+        if (this.hasAttribute('form') && this.getAttribute('form').trim() != "") idform = this.getAttribute('form');
+        const form = this.closest(idform);
+        if (!form)
+        {
+            alert('No se encontró el formulario con el selector especificado o dentro del documento');
+            return;
+        }
+        ipt_hidden.value = ipt_search.value;
+        form.submit();
+    }
+}
+
+class FilterDateRange extends HTMLElement
+{
+    attributes = null;
+    _container = null;
+
+    constructor() {
+        super();
+        document.addEventListener('DOMContentLoaded', () => this.attributes = this.getAttributeNames());
+    }
+    static get observedAttributes() {
+        return attributes;
+    }
+    attributeChangeCallback(property, oldValue, newValue) {
+        if (newValue === oldValue) return;
+        this[property] = newValue;
+    }
+    connectedCallback()
+    {
+        document.addEventListener('DOMContentLoaded', () =>
+        {
+            const shadow = this.attachShadow({ mode: 'closed' });
+            this._writeStyles(shadow);
+
+            this._container = this._createFullElement('div', { id: 'FDR_container', class: 'border d-flex' });
+            const panel_mode = this._createFullElement('div', { id: 'FDR_pnl_mode' });
+            const panel_monthly = this._createFullElement('div', { id: 'FDR_pnl_montly', class:'grow-1 panel' }, 'montly');
+            const panel_range = this._createFullElement('div', { id: 'FDR_pnl_range', class:'grow-1 panel d-none' }, 'range');
+
+            const select_mode = this._createFullElement('select', { id: 'FDR_sel_mode', class: 'induxsoft-form-select' });
+            panel_mode.appendChild(select_mode);
+
+            this._container.appendChild(panel_mode);
+            this._container.appendChild(panel_monthly);
+            this._container.appendChild(panel_range);
+            shadow.appendChild(this._container);
+
+            this._fillSelectMode(select_mode);
+        });
+    }
+
+    _createFullElement(tagName = 'div', attributes = {}, html = '') {
+        const elem = document.createElement(tagName);
+        const keys = Object.keys(attributes);
+        keys.forEach(key => elem.setAttribute(key, attributes[key]));
+        if (html) elem.innerHTML = html;
+        return elem;
+    }
+    _writeStyles(shadow) {
+        shadow.innerHTML = `
+            <style>
+                .d-flex{ display: flex; }
+                .grow-1{ flex-grow: 1; }
+                .border{ border: 1px solid #ced4da; }
+                .d-none{ display: none; }
+                .induxsoft-form-control{ border: none; outline: 1px solid #ced4da; display: block; width: 100%; padding: 0.375rem 0.75rem !important; font-size: 1rem; font-weight: 400; line-height: 1.5; color: #212529; background-color: #fff; background-clip: padding-box; appearance: none; transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; }
+                .induxsoft-form-control:disabled, .induxsoft-form-control[readonly] { background-color: #e9ecef; opacity: 1; }
+                .induxsoft-buttons{ font-weight: 400;line-height: 1.5;color: #212529;text-align: center;text-decoration: none;vertical-align: middle;cursor: pointer;-webkit-user-select: none;-moz-user-select: none;user-select: none;background-color: #FFF;outline:1px solid #ced4da;border: none;padding: 0.375rem 0.75rem;font-size: 1rem;transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; }
+                .induxsoft-buttons:hover{ color: #212529;background-color: #F5F5F5; }
+                .induxsoft-form-select { display: block; width: 100%; padding: 0.375rem 2.25rem 0.375rem 0.75rem !important; -moz-padding-start: calc(0.75rem - 3px); font-size: 1rem; font-weight: 400; line-height: 1.5; color: #212529; background-color: #fff; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 16px 12px; border: none; outline: 1px solid #ced4da; -webkit-appearance: none; -moz-appearance: none; appearance: none; }
+            <style>
+        `;
+    }
+    _fillSelectMode(select)
+    {
+        let opt = this._createFullElement('option', { value: 'FDR_pnl_montly' }, 'Ver por cada mes');
+        select.appendChild(opt);
+
+        let lastDays = (this.getAttribute('lastdays-options') ?? '').split(',');
+        let lablDays = (this.getAttribute('label-days') ?? 'Últ. @lastdays días');
+        lastDays.forEach(day => {
+            let opt = this._createFullElement('option', { value: day }, lablDays.replace('@lastdays', day));
+            select.appendChild(opt);
+        });
+
+        if ((this.getAttribute('custom-range') ?? 'false') == 'true') {
+            let opt = this._createFullElement('option', { value: 'FDR_pnl_range' }, 'Personalizado');
+            select.appendChild(opt);
+        }
+
+        select.addEventListener('change', e => {
+            this._selectMode(select.value);
+        });
+    }
+    _selectMode(mode)
+    {
+        const panels = this._container.querySelectorAll('.panel');
+        panels.forEach(p => p.classList.add('d-none'));
+
+        const panel = this._container.querySelector('#' + mode);
+        if (panel) panel.classList.remove('d-none');
+    }
+}
+
 customElements.define('edit-select', EditSelect);
 customElements.define('input-key', InputKey);
 customElements.define('check-list', CheckList);
@@ -2695,3 +3005,5 @@ customElements.define('stack-edit', StackEdit);
 customElements.define('date-range', DateRange);
 customElements.define('safe-input', SafeInput);
 customElements.define('media-list', MediaList);
+customElements.define('filter-text', FilterText);
+customElements.define('filter-date-range', FilterDateRange);
