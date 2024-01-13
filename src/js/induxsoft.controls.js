@@ -1978,6 +1978,7 @@ class DateRange extends HTMLElement
             this._btnEdit.addEventListener('click', () => {
                 this._startEdit();
                 this._showControlButtons(true);
+                this._iptStr.focus();
             });
             this._btnDone.addEventListener('click', async () => {
                 this._confirmEdit();
@@ -1987,14 +1988,12 @@ class DateRange extends HTMLElement
                 this._showControlButtons(false);
             });
 
-            // this._iptStr.addEventListener('change', () => {
-            //     this.data.start = this._iptStr.value;
-            //     // this._refreshDates();
-            // });
-            // this._iptEnd.addEventListener('change', () => {
-            //     this.data.end = this._iptEnd.value;
-            //     // this._refreshDates();
-            // });
+            this._iptStr.addEventListener('keyup', (e) => {
+                if (e.key === 'Enter') this._iptEnd.focus();
+            });
+            this._iptEnd.addEventListener('keyup', (e) => {
+                if (e.key === 'Enter') this._btnDone.focus();
+            });
 
             const MO = new MutationObserver(()=>{
                 this._iptStr.toggleAttribute('disabled', ((this.getAttribute('disabled')??'') === 'true'));
@@ -2229,6 +2228,7 @@ class SafeInput extends HTMLElement
             this._btnEdit.addEventListener('click', () => {
                 this._startEdit();
                 this._showControlButtons(true);
+                this._inputSf.select();
             });
             this._inputSf.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter')
@@ -2826,37 +2826,36 @@ class FilterText extends HTMLElement
             container.appendChild(btn_search);
 
             const ipt_hidden = this._createFullElement('input', { type: "hidden", name: text_field });
-            // const btn_hidden = this._createFullElement('button', { style:'display: none !important;' });
 
-            ipt_search.value = (this._getURLParam('s') ?? '');
+            let value = (this.getAttribute('value') ?? '').trim();
+            if (value == '' && (this.getAttribute('url-parse') ?? 'false') == 'true')
+                value = (this._getURLParam('s') ?? '');
+
+            ipt_search.value = value;
             ipt_hidden.value = ipt_search.value;
-            
-            if (ipt_search.value.trim() != '')
+
+            const disable_input = (disable = true) =>
             {
-                ipt_search.disabled = true;
-                btn_search.type = "button";
-                btn_search.innerHTML = icon_cancel;
+                ipt_search.disabled = disable;
+                btn_search.type = (disable ? 'button' : 'submit');
+                btn_search.innerHTML = (disable ? icon_cancel : icon_filter);
             }
-            else
-            {
-                ipt_search.disabled = false;
-                btn_search.type = "submit";
-                btn_search.innerHTML = icon_filter;
-            }
+
+            let disable = (ipt_search.value.trim() != '');
+            disable_input(disable);
 
             ipt_search.addEventListener("keydown", (e) => {
-                if (e.key === "Enter" && ipt_search.value.trim() != "") this._submitFilter(ipt_search, ipt_hidden);
+                if (e.key === "Enter" && ipt_search.value.trim() != "") {
+                    if ((this.getAttribute('auto-submit') ?? 'false') == 'true') this._submitFilter(ipt_search, ipt_hidden);
+                    else disable_input(true);
+                } 
             });
             btn_search.addEventListener("click", (event) => {
                 event.preventDefault();
                 if (btn_search.type == "submit") {
                     if (ipt_search.value.trim() != "") this._submitFilter(ipt_search, ipt_hidden);
                 }
-                else {
-                    ipt_search.disabled = false;
-                    btn_search.type = "submit";
-                    btn_search.innerHTML = icon_filter;
-                }
+                else disable_input(false);
             });
 
             shadow.appendChild(container);
@@ -2909,6 +2908,16 @@ class FilterDateRange extends HTMLElement
 {
     attributes = null;
     _container = null;
+    _field_va1 = null;
+    _field_va2 = null;
+    _field_mod = null;
+    _selection = null;
+
+    modes_panel = [
+        { mode: 'month', panel: 'FDR_pnl_monthly' },
+        { mode: 'lastdays', panel: '' },
+        { mode: 'range', panel: 'FDR_pnl_range' }
+    ]
 
     constructor() {
         super();
@@ -2928,20 +2937,33 @@ class FilterDateRange extends HTMLElement
             const shadow = this.attachShadow({ mode: 'closed' });
             this._writeStyles(shadow);
 
-            this._container = this._createFullElement('div', { id: 'FDR_container', class: 'border d-flex' });
-            const panel_mode = this._createFullElement('div', { id: 'FDR_pnl_mode' });
-            const panel_monthly = this._createFullElement('div', { id: 'FDR_pnl_montly', class:'grow-1 panel' }, 'montly');
-            const panel_range = this._createFullElement('div', { id: 'FDR_pnl_range', class:'grow-1 panel d-none' }, 'range');
+            this._container = this._createFullElement('div', { id: 'FDR_container', class: 'border d-flex align-items-center gap-2' });
+            this._field_va1 = this._createFullElement('input', { type: 'hidden', id: 'FDR_ipt_v1' });
+            this._field_va2 = this._createFullElement('input', { type: 'hidden', id: 'FDR_ipt_v2' });
+            this._field_mod = this._createFullElement('input', { type: 'hidden', id: 'FDR_ipt_md', name: (this.getAttribute('mode-field') ?? '') });
 
-            const select_mode = this._createFullElement('select', { id: 'FDR_sel_mode', class: 'induxsoft-form-select' });
+            const panel_mode = this._createFullElement('div', { id: 'FDR_pnl_mode' });
+            const panel_monthly = this._createFullElement('div', { id: 'FDR_pnl_monthly', class:'grow-1 panel' });
+            const panel_range = this._createFullElement('div', { id: 'FDR_pnl_range', class:'grow-1 panel d-none' });
+
+            const select_mode = this._createFullElement('select', { id: 'FDR_sel_mode', class: 'induxsoft-form-select no-border' });
             panel_mode.appendChild(select_mode);
 
             this._container.appendChild(panel_mode);
             this._container.appendChild(panel_monthly);
             this._container.appendChild(panel_range);
+
             shadow.appendChild(this._container);
+            this.after(this._field_mod);
+            this.after(this._field_va1);
+            this.after(this._field_va2);
+
+            try { this._selection = JSON.parse((this.getAttribute('selection')??'{}')); }
+            catch { alert('El atributo selection tiene un formato JSON inválido'); }
 
             this._fillSelectMode(select_mode);
+            this._printMonths(panel_monthly);
+            this._printRange(panel_range);
         });
     }
 
@@ -2957,8 +2979,13 @@ class FilterDateRange extends HTMLElement
             <style>
                 .d-flex{ display: flex; }
                 .grow-1{ flex-grow: 1; }
+                .wrap{ flex-wrap: wrap; }
+                .gap-1{gap:4px;} .gap-2{gap:8px;}
                 .border{ border: 1px solid #ced4da; }
+                .no-border{ border: none !important; outline: none !important; }
                 .d-none{ display: none; }
+                .align-items-center{ align-items: center; }
+                .active-month { background-color: #005CC8 !important; color: #FFF !important; }
                 .induxsoft-form-control{ border: none; outline: 1px solid #ced4da; display: block; width: 100%; padding: 0.375rem 0.75rem !important; font-size: 1rem; font-weight: 400; line-height: 1.5; color: #212529; background-color: #fff; background-clip: padding-box; appearance: none; transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; }
                 .induxsoft-form-control:disabled, .induxsoft-form-control[readonly] { background-color: #e9ecef; opacity: 1; }
                 .induxsoft-buttons{ font-weight: 400;line-height: 1.5;color: #212529;text-align: center;text-decoration: none;vertical-align: middle;cursor: pointer;-webkit-user-select: none;-moz-user-select: none;user-select: none;background-color: #FFF;outline:1px solid #ced4da;border: none;padding: 0.375rem 0.75rem;font-size: 1rem;transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; }
@@ -2969,7 +2996,7 @@ class FilterDateRange extends HTMLElement
     }
     _fillSelectMode(select)
     {
-        let opt = this._createFullElement('option', { value: 'FDR_pnl_montly' }, 'Ver por cada mes');
+        let opt = this._createFullElement('option', { value: 'month' }, (this.getAttribute('label-months') ?? 'Ver por cada mes'));
         select.appendChild(opt);
 
         let lastDays = (this.getAttribute('lastdays-options') ?? '').split(',');
@@ -2980,21 +3007,175 @@ class FilterDateRange extends HTMLElement
         });
 
         if ((this.getAttribute('custom-range') ?? 'false') == 'true') {
-            let opt = this._createFullElement('option', { value: 'FDR_pnl_range' }, 'Personalizado');
+            let opt = this._createFullElement('option', { value: 'range' }, (this.getAttribute('label-custom') ?? 'Personalizado'));
             select.appendChild(opt);
         }
 
+        let range_field = (this.getAttribute('range-field') ?? 'range');
+
         select.addEventListener('change', e => {
-            this._selectMode(select.value);
+            this._selectMode(select.value, lastDays);
+            if (this._field_mod.value == 'lastdays')
+                this._setFieldValues({ name: range_field, value: select.value }, null);
         });
+
+        if (this._selection && this._selection.mode)
+        {
+            if (this._selection.mode == 'lastdays')
+                select.value = (this._selection[range_field] ?? '');
+            else
+                select.value = this._selection.mode;
+
+            this._selectMode(select.value, lastDays);
+        }
     }
-    _selectMode(mode)
+    _selectMode(mode, lastDays=null)
     {
         const panels = this._container.querySelectorAll('.panel');
         panels.forEach(p => p.classList.add('d-none'));
 
-        const panel = this._container.querySelector('#' + mode);
-        if (panel) panel.classList.remove('d-none');
+        let mp = this.modes_panel.find(m => (m.mode == mode || (lastDays && lastDays.includes(mode) && m.mode == 'lastdays')));
+        this._field_mod.value = (mp.mode??'');
+
+        if (mp && mp.panel != '') {
+            const panel = this._container.querySelector('#' + mp.panel);
+            if (panel) panel.classList.remove('d-none');
+            switch (mp.mode)
+            {
+                case 'month': this._printMonths(panel); break;
+                case 'lastdays': break;
+                case 'range': this._printRange(panel); break;
+            }
+        }
+    }
+    _printMonths(panel)
+    {
+        panel.innerHTML = '';
+
+        const container = this._createFullElement('div', { id: 'FDR_cont_montly', class: 'd-flex align-items-center' });
+        const div_years = this._createFullElement('div', { id: 'FDR_div_years', class: 'd-flex' });
+        const div_months = this._createFullElement('div', { id: 'FDR_div_months', class: 'd-flex grow-1 wrap' });
+
+        const yearfield = (this.getAttribute('year-field') ?? 'year');
+        const monthfield = (this.getAttribute('month-field') ?? 'month');
+
+        const select_year = this._createFullElement('select', { id: 'FDR_sel_year', class: 'induxsoft-form-select', name: yearfield }, '<option value="2024">2024</option><option value="2025">2025</option>');
+        div_years.appendChild(select_year);
+
+        const input_mont = this._createFullElement('input', { type: 'hidden', name: monthfield });
+        container.appendChild(input_mont);
+
+        select_year.addEventListener('change', e => { this._setFieldValues(select_year, input_mont) });
+
+        const active_month = (button) => {
+            div_months.querySelectorAll('.month-button').forEach(b => b.classList.remove('active-month'));
+            button.classList.add('active-month');
+        }
+        
+        if (this._selection && this._selection.mode == 'month')
+        {
+            select_year.value = (this._selection[yearfield] ?? '');
+            input_mont.value = (this._selection[monthfield] ?? '');
+            this._setFieldValues(select_year, input_mont);
+        }
+
+        let names = (this.getAttribute('month-names') ?? 'Enero,Febrero,Marzo,Abril,Mayo,Junio,Julio,Agosto,Septiembre,Octubre,Noviembre,Diciembre').split(',');
+        for (let i = 1; i <= 12; i++) {
+            let oc = ((Number((input_mont.value ?? '-1')) != i) ? '' : 'active-month');
+            const month = this._createFullElement('button', { type: 'button', class: 'induxsoft-buttons month-button ' + oc, value: i }, `<small>${(names[i-1] ?? '')}</small>`);
+            div_months.appendChild(month);
+            month.onclick = e => {
+                active_month(month);
+                input_mont.value = month.getAttribute('value');
+                this._setFieldValues(select_year, input_mont);
+            }
+        }
+
+        container.appendChild(div_years);
+        container.appendChild(div_months);
+        panel.appendChild(container);
+    }
+    _printRange(panel)
+    {
+        panel.innerHTML = '';
+
+        const container = this._createFullElement('div', { id: 'FDR_cont_range', class: 'd-flex gap-2 align-items-center' });
+
+        const div_datef = this._createFullElement('div', { id: 'FDR_div_datef', class: 'd-flex align-items-center gap-2' }, `<small>${ (this.getAttribute('label-from') ?? 'Desde:') }</small>`);
+        const div_datet = this._createFullElement('div', { id: 'FDR_div_datet', class: 'd-flex align-items-center gap-2' }, `<small>${ (this.getAttribute('label-to') ?? 'Hasta:') }</small>`);
+        
+        let name_datef = (this.getAttribute('from-field') ?? 'fromdate');
+        let name_datet = (this.getAttribute('to-field') ?? 'todate');
+
+        const input_datef = this._createFullElement('input', { type: 'date', id: 'FDR_ipt_datef', class: 'induxsoft-form-control', disabled: '', name: name_datef });
+        const input_datet = this._createFullElement('input', { type: 'date', id: 'FDR_ipt_datet', class: 'induxsoft-form-control', disabled: '', name: name_datet });
+
+        if (this._selection && this._selection.mode == 'range')
+        {
+            input_datef.value = (this._selection[name_datef] ?? '');
+            input_datet.value = (this._selection[name_datet] ?? '');
+            this._setFieldValues(input_datef, input_datet);
+        }
+
+        const div_cntrls = this._createFullElement('div', { id:'FDR_div_cntrls', class:'d-flex align-items-center' });
+        const btn_accept = this._createFullElement('button', { id: 'FDR_btn_accept', type: 'button', class: 'induxsoft-buttons no-border d-none' }, '<small>Aplicar</small>');
+        const btn_cancel = this._createFullElement('button', { id: 'FDR_btn_cancel', type: 'button', class: 'induxsoft-buttons no-border d-none' }, '<small>Cancelar</small>');
+        const btn_modify = this._createFullElement('button', { id: 'FDR_btn_modify', type: 'button', class: 'induxsoft-buttons no-border' }, '<small>Modificar</small>');
+
+        div_datef.appendChild(input_datef);
+        div_datet.appendChild(input_datet);
+
+        container.appendChild(div_datef);
+        container.appendChild(div_datet);
+
+        div_cntrls.appendChild(btn_accept);
+        div_cntrls.appendChild(btn_cancel);
+        div_cntrls.appendChild(btn_modify);
+        container.appendChild(div_cntrls);
+
+        panel.appendChild(container);
+
+        const edit_dates = (edit = true) =>
+        {
+            btn_accept.classList.toggle('d-none', !edit);
+            btn_cancel.classList.toggle('d-none', !edit);
+            btn_modify.classList.toggle('d-none', edit);
+
+            input_datef.toggleAttribute('disabled', !edit);
+            input_datet.toggleAttribute('disabled', !edit);
+        }
+
+        btn_modify.onclick = () => { edit_dates(true); }
+        btn_cancel.onclick = () => { edit_dates(false); }
+        btn_accept.onclick = () => {
+            edit_dates(false);
+            this._setFieldValues(input_datef, input_datet);
+            if ((this.getAttribute('auto-submit') ?? 'false') == 'true')
+                this._submitFilter();
+        }
+    }
+    _setFieldValues(field1, field2)
+    {
+        this._field_va1.removeAttribute('name');
+        this._field_va2.removeAttribute('name');
+        if (field1?.name ?? null) this._field_va1.setAttribute('name', field1.name);
+        if (field2?.name ?? null) this._field_va2.setAttribute('name', field2.name);
+        this._field_va1.value = (field1?.value ?? '');
+        this._field_va2.value = (field2?.value ?? '');
+    }
+    _submitFilter()
+    {
+        let idform = 'form';
+        if (this.hasAttribute('form') && this.getAttribute('form').trim() != "") idform = this.getAttribute('form');
+        const form = this.closest(idform);
+        
+        if (!form)
+        {
+            alert('No se encontró el formulario con el selector especificado o dentro del documento');
+            return;
+        }
+
+        form.submit();
     }
 }
 

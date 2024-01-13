@@ -306,38 +306,43 @@
                 - text-field        (opcional) Nombre del campo que se envía al lanzarse la búsqueda (def: "s")
                 - placeholder       (opcional) Placeholder del cuadro de búsqueda
                 - form              (opcional) Selector del formulario al que se realizará el submit (Si no se establece se busca el formulario más cercano)
+                - value             (opcional) Valor inicial del filtro, si está esblecido, el componente está en estado 'filtro establecido (bloqueado)
+                - url-parse         (opcional) Establece el valor inicial a travez de los parámetros de la URL únicamente si el atributo value no está establecido (true/false, def:false)
+                - auto-submit       (opcional) Envío del formulario al copletar el texto de búsqueda con la tecla Enter (true/false, def: false)
             -->
             <filter-text
                 id="micontrol10"
                 text-field=""
                 placeholder="Buscar"
-                auto-submit=""
-                form="#form_test">
+                form="#form_test"
+                value="test"
+                auto-submit="true">
             </filter-text>
         </form>
     </div>
-    <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD; padding-bottom: 32px; margin:4px;">
+    <div style="width: 96vw; padding: 8px 16px; border: 1px solid #DDD; padding-bottom: 32px; margin:4px;">
         <h3>Filter Date Range</h3>
-        <filter-date-range
-            mode-field="filter-mode" 
-            year-field="year" 
-            month-field="month" 
-            range-field="range" 
-            from-field="fromdate" 
-            to-field="todate" 
-            selection='{"mode":"lastdays", "range":90}' 
-            lastdays-options="15,30,45,60,90" 
-            custom-range="true" 
-            form=""
-            auto-submit="false"
-            label-months="Ver por cada mes"
-            label-days="Últ. @lastdays días"
-            label-custom="Personalizado"
-            label-from="Desde"
-            label-to="Hasta"    
-            month-names="Enero,Febrero,...">
-            <!--Siempre envía los campos from-date y to-date-->
-        </filter-date-range>
+        <form action="./index.html" method="get" id="form_test2">
+            <filter-date-range
+                mode-field="filter-mode" 
+                year-field="year" 
+                month-field="month" 
+                range-field="range" 
+                from-field="fromdate" 
+                to-field="todate" 
+                selection='{"mode":"lastdays", "range":90}' 
+                lastdays-options="15,30,45,60,90" 
+                custom-range="true" 
+                form=""
+                auto-submit="true"
+                label-months="Ver por cada mes"
+                label-days="Últ. @lastdays días"
+                label-custom="Personalizado"
+                label-from="Desde"
+                label-to="Hasta"    
+                month-names="Enero,Febrero,Marzo,Abril,Mayo,Junio,Julio,Agosto,Septiembre,Octubre,Noviembre,Diciembre">
+            </filter-date-range>
+        </form>
     </div>
     <style>
         @media screen and (max-width: 600px) {
