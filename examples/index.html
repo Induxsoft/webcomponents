@@ -320,26 +320,27 @@
             </filter-text>
         </form>
     </div>
-    <div style="width: 96vw; padding: 8px 16px; border: 1px solid #DDD; padding-bottom: 32px; margin:4px;">
+    <div style="width: 70rem; padding: 8px 16px; border: 1px solid #DDD; padding-bottom: 32px; margin:4px;">
         <h3>Filter Date Range</h3>
         <form action="./index.html" method="get" id="form_test2">
             <filter-date-range
-                mode-field="filter-mode" 
-                year-field="year" 
-                month-field="month" 
-                range-field="range" 
-                from-field="fromdate" 
-                to-field="todate" 
-                selection='{"mode":"lastdays", "range":90}' 
-                lastdays-options="15,30,45,60,90" 
-                custom-range="true" 
+                mode-field="filter-mode"
+                year-field="year"
+                month-field="month"
+                range-field="range"
+                from-field="fromdate"
+                to-field="todate"
+                selection='{"filter-mode":"month", "year":2018, "month":3}'
+                lastdays-options="15,30,45,60,90"
+                years-options="2017,2018,2019,2020,2021,2022,2023,2024"
+                custom-range="true"
                 form=""
-                auto-submit="true"
+                auto-submit="false"
                 label-months="Ver por cada mes"
                 label-days="Últ. @lastdays días"
                 label-custom="Personalizado"
-                label-from="Desde"
-                label-to="Hasta"    
+                label-from="Desde:"
+                label-to="Hasta:"
                 month-names="Enero,Febrero,Marzo,Abril,Mayo,Junio,Julio,Agosto,Septiembre,Octubre,Noviembre,Diciembre">
             </filter-date-range>
         </form>
@@ -349,6 +350,5 @@
             body{ flex-wrap: nowrap !important; }
         }
     </style>
-
 </body>
 </html>
