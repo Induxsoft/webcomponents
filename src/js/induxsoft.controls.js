@@ -2819,10 +2819,14 @@ class FilterText extends HTMLElement
             let icon_cancel = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"><path d="M0 0H24V24H0z" fill="none"/><path d="M6.929.515L21.07 14.657l-1.414 1.414-3.823-3.822L15 13.5V22H9v-8.5L4 6H3V4h4.585l-2.07-2.071L6.929.515zM9.585 6H6.404L11 12.894V20h2v-7.106l1.392-2.087L9.585 6zM21 4v2h-1l-1.915 2.872-1.442-1.443L17.596 6h-2.383l-2-2H21z"/></svg>'
 
             const container = this._createFullElement('div', { class: 'd-flex' });
+            const div_search = this._createFullElement('div', { class:'grow-1 p-relative d-flex' })
             const ipt_search = this._createFullElement('input', { class: 'induxsoft-form-control', placeholder: placeholder });
             const btn_search = this._createFullElement('button', { class: 'induxsoft-buttons button-icon' });
-
-            container.appendChild(ipt_search);
+            const div_hidden = this._createFullElement('div', { class:'div-hidden' })
+            
+            div_search.appendChild(ipt_search);
+            div_search.appendChild(div_hidden);
+            container.appendChild(div_search);
             container.appendChild(btn_search);
 
             const ipt_hidden = this._createFullElement('input', { type: "hidden", name: text_field });
@@ -2839,11 +2843,15 @@ class FilterText extends HTMLElement
                 ipt_search.disabled = disable;
                 btn_search.type = (disable ? 'button' : 'submit');
                 btn_search.innerHTML = (disable ? icon_cancel : icon_filter);
+                div_hidden.classList.toggle('d-none', !disable);
             }
 
             let disable = (ipt_search.value.trim() != '');
             disable_input(disable);
-
+            div_hidden.addEventListener('click', (e) => {
+                disable_input(false);
+                ipt_search.select();
+            });
             ipt_search.addEventListener("keydown", (e) => {
                 if (e.key === "Enter" && ipt_search.value.trim() != "") {
                     if ((this.getAttribute('auto-submit') ?? 'false') == 'true') this._submitFilter(ipt_search, ipt_hidden);
@@ -2855,7 +2863,11 @@ class FilterText extends HTMLElement
                 if (btn_search.type == "submit") {
                     if (ipt_search.value.trim() != "") this._submitFilter(ipt_search, ipt_hidden);
                 }
-                else disable_input(false);
+                else
+                {
+                    disable_input(false);
+                    ipt_search.select();
+                }
             });
 
             shadow.appendChild(container);
@@ -2867,12 +2879,15 @@ class FilterText extends HTMLElement
         shadow.innerHTML = `
             <style>
                 .d-flex{ display: flex; }
+                .d-none{ display: none !important; }
                 .grow-1{ flex-grow: 1; }
+                .p-relative{ position: relative; }
                 .induxsoft-form-control{ border: none; outline: 1px solid #ced4da; display: block; width: 100%; padding: 0.375rem 0.75rem !important; font-size: 1rem; font-weight: 400; line-height: 1.5; color: #212529; background-color: #fff; background-clip: padding-box; appearance: none; transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; }
                 .induxsoft-form-control:disabled, .induxsoft-form-control[readonly] { background-color: #e9ecef; opacity: 1; }
                 .induxsoft-buttons{ font-weight: 400;line-height: 1.5;color: #212529;text-align: center;text-decoration: none;vertical-align: middle;cursor: pointer;-webkit-user-select: none;-moz-user-select: none;user-select: none;background-color: #FFF;outline:1px solid #ced4da;border: none;padding: 0.375rem 0.75rem;font-size: 1rem;transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; }
                 .induxsoft-buttons:hover{ color: #212529;background-color: #F5F5F5; }
                 .button-icon{ display: flex; align-items: center; justify-content: center; }
+                .div-hidden{ border: none; outline: none; position: absolute; inset: 0; background-color: transparent; }
             <style>
         `;
     }

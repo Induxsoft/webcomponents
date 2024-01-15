@@ -172,6 +172,10 @@ class EditTable extends HTMLElement
                     .transparent{ background-color: transparent !important; border: none !important; outline: none !important; color: inherit !important; }
                     a{ color: inherit; }
                     ` + (this.getAttribute('control-styles') ?? '') + `
+                    @media print
+                    {
+                        .no-print{ display: none !important; }
+                    }
                 </style>
             `;
 
