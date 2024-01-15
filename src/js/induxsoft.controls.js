@@ -3051,7 +3051,10 @@ class FilterDateRange extends HTMLElement
         if (this._selection && this._selection[this._field_mod.name])
         {
             if (this._selection[this._field_mod.name] == 'lastdays')
+            {
                 select.value = (this._selection[range_field] ?? '');
+                this._setFieldValues({ name: range_field, value: select.value }, null);
+            }
             else
                 select.value = this._selection[this._field_mod.name];
         }
