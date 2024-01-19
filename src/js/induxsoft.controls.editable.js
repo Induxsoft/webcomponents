@@ -246,7 +246,7 @@ class EditTable extends HTMLElement
                     const td = this._createFullElement('td', { class:'EdiTable-Cell' });
                     Object.keys(data).forEach(key => {
                         if (td.textContent == '' && (th.getAttribute('field') == key)){
-                            this.SetTdValue(td, data[key], true);
+                            this.SetTdValue(td, data[key], true, coldef);
                         }
                     });
                     tr.appendChild(td);
@@ -1990,9 +1990,9 @@ class EditTable extends HTMLElement
         
         return value;
     }
-    SetTdValue=(td, value, valideEncode=false)=>
+    SetTdValue=(td, value, valideEncode=false, coldef=null)=>
     {
-        let coldef = this.GetColumnDefOfTd(td);
+        if(!coldef) coldef = this.GetColumnDefOfTd(td);
         if (this._withFormat(coldef, value))
             value = this._aplyFormat(coldef, value);
 
