@@ -684,7 +684,7 @@ class InputKey extends HTMLElement
                 try{ this.data = JSON.parse(this.getAttribute('data-source-array')); }
                 catch{ alert('El valor del atributo "data-source-array" tiene un formato JSON inválido'); }
                 if (id && this.data){
-                    this.data = this.data.filter(data => data[this.getAttribute('data-search')].includes(id));
+                    this.data = this.data.filter(data => (data[this.getAttribute('data-search')].includes(id) || id=='%'));
                 }
                 this.findValue(id);
                 resolve();
@@ -784,10 +784,6 @@ class InputKey extends HTMLElement
         if (this.input_search_container2.value.trim() == ""){
             alert("Debe especificar el texto a buscar para continuar");
             this.input_search_container2.focus();
-            return;
-        }
-        if (!this.getAttribute('data-source')){
-            alert('No se ha especificado una URL de origen para realizar la busqueda');
             return;
         }
 
