@@ -44,7 +44,10 @@
     -moz-appearance: none;
     appearance: none;
 }
-
+.induxsoft-form-select:disabled {
+    background-color: #e9ecef;
+    opacity: 1;
+}
 .induxsoft-form-label {
     margin-bottom: 0.5rem;
 }
