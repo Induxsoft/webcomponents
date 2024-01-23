@@ -197,7 +197,7 @@ class EditTable extends HTMLElement
                 this._printTreeData();
 
             this.Initialize(this._table.getAttribute('id'));
-            this._processAtributesColumn();
+            //this._processAtributesColumn();
             this._resizableGrid(this._table);
             this._setSortEvent();
             this._setMoveEvent();
@@ -213,6 +213,9 @@ class EditTable extends HTMLElement
         const table = this._createFullElement('table', { id:(this.getAttribute('id')??'f077fb41716141eeb7ecb1ed0a1ce292') });
         const thead = (this._replaceTagNameElement(this.querySelector('edit-thead'), 'thead') ?? this._createFullElement('thead'));
         const tbody = (this._replaceTagNameElement(this.querySelector('edit-tbody'), 'tbody') ?? this._createFullElement('tbody'));
+
+        table.appendChild(thead);
+        table.appendChild(tbody);
 
         if (thead.hasChildNodes())
         {
@@ -237,28 +240,39 @@ class EditTable extends HTMLElement
             });
         }
 
+        this._processAtributesColumn(thead);
+
         if (this.DataArray && this.DataArray.length > 0 && thead.hasChildNodes() && !tbody.hasChildNodes())
         {
             this.DataArray.forEach((data, idx) => {
+
                 const tr = this._createFullElement('tr');
-                thead.querySelectorAll('th').forEach(th => {
-                    let coldef = this._getColdefByTh(th);
+
+                this.Columns.forEach(column => 
+                {
                     const td = this._createFullElement('td', { class:'EdiTable-Cell' });
-                    Object.keys(data).forEach(key => {
-                        if (td.textContent == '' && (th.getAttribute('field') == key)){
-                            this.SetTdValue(td, data[key], true, coldef);
-                        }
-                    });
                     tr.appendChild(td);
-                    td.style.textAlign = (coldef?.textalign??'');
-                    if (this.onTdPaint) this.onTdPaint(td, idx, this.ColIndexOfTd(td), (coldef?.field??''));
+                    
+                    let coldf = this.GetColumnDefOfTd(td);
+                    let value = (data[column.field] ?? '');
+                    
+                    let valideEncode = true;
+
+                    if(coldf.template) {
+                        valideEncode = false;
+                        value = this.applyTemplate(coldf.template, data);
+                    }
+
+                    this.SetTdValue(td, value, valideEncode, coldf);
+                    
+                    td.style.textAlign = (coldf?.textalign??'');
+                    if (this.onTdPaint) this.onTdPaint(td, idx, this.ColIndexOfTd(td), (coldf?.field??''));
                 });
+
                 tbody.appendChild(tr);
             });  
         }
 
-        table.appendChild(thead);
-        table.appendChild(tbody);
         return table;
     }
     _getColdefByTh=(th)=>
@@ -289,9 +303,9 @@ class EditTable extends HTMLElement
         keys.forEach(key => elem.setAttribute(key, attributes[key]));
         return elem;
     }
-    _processAtributesColumn=()=>
+    _processAtributesColumn=(element)=>
     {
-        let listColumns = this._shadow.querySelectorAll('th');
+        let listColumns = (element ? element.querySelectorAll('th') : this._shadow.querySelectorAll('th'));
         if (listColumns && listColumns.length > 0)
         {
             listColumns.forEach((column, i) => {
@@ -1990,9 +2004,15 @@ class EditTable extends HTMLElement
         
         return value;
     }
+    applyTemplate=(template, DataRow)=>
+    {
+        let expr="`"+template+"`";
+        return eval(expr);
+    }
     SetTdValue=(td, value, valideEncode=false, coldef=null)=>
     {
         if(!coldef) coldef = this.GetColumnDefOfTd(td);
+
         if (this._withFormat(coldef, value))
             value = this._aplyFormat(coldef, value);
 
