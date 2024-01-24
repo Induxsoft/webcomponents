@@ -67,6 +67,7 @@ var InduxsoftCrudlModel =
 			});
 		}
 	},
+
 	UrlReplace(url, params)
 	{
 		let url_sect = url.split('?');
@@ -92,17 +93,24 @@ var InduxsoftCrudlModel =
 		url_new += new_parms;
 		return url_new;
 	},
-	Delete(pk) {
-		var res = confirm("¿Desea eliminar la fila?");
-		if (!res) return;
 
-		this.InvokeService("./" + pk + "/", null,
+	Delete(id, url="") {
+		if ((typeof id === "number" && id <= 0) || (typeof id === "string" && id.trim() == "")) {
+            console.error("Debe indicar un identificador válido");
+            return;
+        }
+		if (!confirm("¿Desea eliminar el registro seleccionado?")) return;
+
+		let endpoint = (url) ? url.replace("{id}",id) : "./"+id+"/";
+
+		this.InvokeService(endpoint, null,
 			function (data) {
 				window.location.reload();
 			},
 			function (error) {
-				alert(error.message ?? error);
-			}, "DELETE", false
+				if (error.message) alert(error.message);
+				else console.error(error);
+			}, "DELETE", false, false
 		);
 	}
 }
