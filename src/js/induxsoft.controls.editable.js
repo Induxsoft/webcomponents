@@ -5,6 +5,8 @@ class EditTable extends HTMLElement
     _shadow = null;
     _current = null;
     _temp_dt = null;
+    _current_row = null;
+    _dataArrayBackup = null;
     
     constructor() 
     {
@@ -205,6 +207,8 @@ class EditTable extends HTMLElement
 
             // Si no se ha proporcionado el atributo data para el dataArray se genera a partir del contenido de la tabla
             if (this.DataArray.length < 1) this.UpdateData();
+            this._current_row = this.CurrentRowIndex();
+            this.setAutoConfirm();
         });
     }
 
@@ -514,6 +518,16 @@ class EditTable extends HTMLElement
                 this.Events[this.EdiTable.Const.Events.RowMoved](eventArgs);
 
             this.SetTree(this.DataArray, treeOptions);
+            
+            if (this._dataArrayBackup)
+            {
+                let tempBack = JSON.parse(JSON.stringify(this._dataArrayBackup));
+                this.backup();
+                this._dataArrayBackup.forEach(data => { 
+                    let back = tempBack.find(temp => (temp[treeOptions.key] == data[treeOptions.key]));
+                    if (back && back.isDirty != undefined) data.isDirty = back.isDirty;
+                });
+            }
         }
 
         return success;
@@ -660,6 +674,29 @@ class EditTable extends HTMLElement
     {
         if (this.hasAttribute('hidde-selector')) this.hiddeSelector = (this.getAttribute('hidde-selector')=='true');
         if (this.hasAttribute('hide-row-selector')) this.hiddeRowSelector = (this.getAttribute('hide-row-selector')=='true');
+        if (this.hasAttribute('auto-confirm')) this.autoConfirm = (this.getAttribute('auto-confirm')=='true');
+    }
+    autoConfirm=false;
+    _fireBlur=true;
+    setAutoConfirm()
+    {
+        setInterval(()=>
+        {
+            if (document.activeElement!=this)
+            {
+                if (this.Editing && this.autoConfirm)
+                    this.ConfirmEdit(this.CurrentTd());
+
+                if (!this._fireBlur)
+                {
+                    this._fireBlur=true;
+                    if (this._getCurren().Events[this.EdiTable.Const.Events.LostFocus]!=undefined)
+                        this._getCurren().Events[this.EdiTable.Const.Events.LostFocus]();
+                    //LanzarEvento lostFocus   
+                }
+            } 
+            //else { this._fireBlur=false;}
+        },1000);
     }
 
     // ========================= EDITABLE FUNCTIONS
@@ -711,8 +748,12 @@ class EditTable extends HTMLElement
                 FieldUpdated:"fieldupdated",
                 RowAdded:"rowadded",
                 RowDeleted:"rowdeleted",
+                BeforeRowDelete:"beforerowdelete",
                 BeforeMoveRow:"beforemoverow",
-                RowMoved:"rowmoved"
+                RowMoved:"rowmoved",
+                RowChanged:"rowchanged",
+                LostFocus:"lostfocus",
+                IsDirtyChanged:"isdirtychanged"
             },
             SelectorId:"__table_selector",
             InputId:"__table_input",
@@ -1175,6 +1216,17 @@ class EditTable extends HTMLElement
      */
     DeleteRow=(row)=>
     {
+        var eventArgs={
+            sender:this._getCurren(),
+            rowIndex:row,
+            cancel:false
+        };
+
+        if (this._getCurren().Events[this.EdiTable.Const.Events.BeforeRowDelete]!=undefined)
+            this._getCurren().Events[this.EdiTable.Const.Events.BeforeRowDelete](eventArgs);
+
+        if (eventArgs.cancel) return false;
+
         let rows=this.TRCount();
         let cols=this.ColumnsCount();
 
@@ -1182,11 +1234,7 @@ class EditTable extends HTMLElement
 
         this.GetTrByIndex(row).remove();
         this.DataArray.splice(row, 1);
-
-        var eventArgs={
-            sender:this._getCurren(),
-            rowIndex:row,
-        };
+        this._dataArrayBackup.splice(row, 1);
 
         if (this._getCurren().Events[this.EdiTable.Const.Events.RowDeleted]!=undefined)
             this._getCurren().Events[this.EdiTable.Const.Events.RowDeleted](eventArgs);
@@ -1265,6 +1313,13 @@ class EditTable extends HTMLElement
 
         return true;
     }
+
+    setIsDirtyByValue=(row,field,value)=>{
+        if (!this._dataArrayBackup) return;
+
+        this.setIsDirty(row, this.DataArray[row][field]!=value);
+        this.setIsDirty(row, this._dataArrayBackup[row][field]!=value);
+    }
     /**
      * 
      * @param {Number} row Índice de la fila.
@@ -1280,7 +1335,10 @@ class EditTable extends HTMLElement
 
         if (field!=undefined && value!=undefined)
         {
+            this.setIsDirtyByValue(row, field, value);
+
             this.DataArray[row][field]=value;
+
             var eventArgs={
                 sender:this._getCurren(),
                 row:row,
@@ -1806,6 +1864,8 @@ class EditTable extends HTMLElement
      */
     CellFocus=(td)=>
     {
+        this._fireBlur=false;
+
         var eventArgs={
             td:td,
             sender:this._getCurren(),
@@ -1896,6 +1956,16 @@ class EditTable extends HTMLElement
             if (trs && trs.length > 0) trs.forEach(tr => tr.classList.remove(this.CSS.RowSelected));
             if(!this.hiddeRowSelector) td.closest('tr').classList.add(this.CSS.RowSelected);
         }
+
+        if (this._current_row != this.CurrentRowIndex())
+        {
+            eventArgs['index'] = this.CurrentRowIndex();
+            eventArgs['previous_index'] = this._current_row;
+            if (this._getCurren().Events[this.EdiTable.Const.Events.RowChanged]!=undefined)
+                this._getCurren().Events[this.EdiTable.Const.Events.RowChanged](eventArgs);
+        }
+
+        this._current_row = this.CurrentRowIndex();
     }
     /**
      * Mueve el selector una celda hacia arriba de la celda *td* especificada.
@@ -2480,6 +2550,69 @@ class EditTable extends HTMLElement
         for(const r in this.replaceSymbols)
             value = value.replaceAll(this.replaceSymbols[r], r);
         return value;
+    }
+    backup()
+    {
+        this._dataArrayBackup = JSON.parse(JSON.stringify(this.DataArray));
+    }
+    restore()
+    {
+        if (!this._dataArrayBackup) return;
+
+        this._dataArrayBackup.forEach(data => delete data.isDirty);
+        this.DataArray = JSON.parse(JSON.stringify(this._dataArrayBackup));
+        this._refreshTable();
+    }
+    restoreRow(indexRow)
+    {
+        if (!this._dataArrayBackup) return;
+        let objOrig = this.DataArray[indexRow];
+        let objBack = this._dataArrayBackup[indexRow];
+        delete objBack.isDirty;
+        objOrig = JSON.parse(JSON.stringify(objBack));
+        this.UpdateRow(indexRow);
+    }
+    _count_isdirty=0;
+    get IsDirty()
+    {
+        if (this._count_isdirty>0) return true;
+        return false;
+
+    }
+    setIsDirty(indexRow, value)
+    {
+        if (!this._dataArrayBackup) return;
+
+        let backLength = this._dataArrayBackup.length;
+        let dataLength = this.DataArray.length;
+
+        if (indexRow <= dataLength-1  && indexRow > backLength-1)
+        {
+            for (let index = backLength; index <= indexRow; index++) 
+            {
+                this._dataArrayBackup.push(JSON.parse(JSON.stringify(this.DataArray[index])));
+            }
+        }
+
+        if (value!=this.getIsDirty(indexRow))
+        {
+            let c=this._count_isdirty;
+            if (value) this._count_isdirty++; else this._count_isdirty--;
+            if (this._count_isdirty>0 !=c>0)
+            {
+                if (this._getCurren().Events[this.EdiTable.Const.Events.IsDirtyChanged]!=undefined)
+                    this._getCurren().Events[this.EdiTable.Const.Events.IsDirtyChanged]();
+            }
+        }
+
+        let obj = this._dataArrayBackup[indexRow];
+        if (obj) obj['isDirty'] = value;
+        
+    }
+    getIsDirty(indexRow)
+    {
+        let obj = this._dataArrayBackup[indexRow];
+        return (obj?.isDirty ?? false);
     }
 }
 
