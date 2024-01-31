@@ -2566,10 +2566,10 @@ class EditTable extends HTMLElement
     restoreRow(indexRow)
     {
         if (!this._dataArrayBackup) return;
-        let objOrig = this.DataArray[indexRow];
+        
         let objBack = this._dataArrayBackup[indexRow];
         delete objBack.isDirty;
-        objOrig = JSON.parse(JSON.stringify(objBack));
+        this.DataArray[indexRow] = JSON.parse(JSON.stringify(objBack));
         this.UpdateRow(indexRow);
     }
     _count_isdirty=0;
