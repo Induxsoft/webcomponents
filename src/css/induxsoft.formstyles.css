@@ -51,3 +51,7 @@
 .induxsoft-form-label {
     margin-bottom: 0.5rem;
 }
+
+textarea {
+    resize: none;
+}
