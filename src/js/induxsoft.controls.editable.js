@@ -2222,7 +2222,7 @@ class EditTable extends HTMLElement
                     {
                         Object.keys(data).forEach(key => {
                             if (td.textContent == '' && th.getAttribute('field') == key) {
-                                this.SetTdValue(td, data[key], true);
+                                this.SetTdValue(td, data[key], true, coldef);
                             }
                         });
                     }
