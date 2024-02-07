@@ -2194,41 +2194,35 @@ class EditTable extends HTMLElement
             dataArray.forEach((data, idx) => 
             {
                 const tr = this._createFullElement('tr', { id: (data[treeOptions.key]??''), parent: (data[treeOptions.parentkey]??''), indent: (data['__level__']??0) });
-                let firstAdded = false;
                 let container = null;
-                thead.querySelectorAll('th').forEach(th => 
+                
+                this.Columns.forEach((column, i) => 
                 {
-                    let coldef = this._getColdefByTh(th);
                     const td = this._createFullElement('td', { class:'EdiTable-Cell' });
+                    tr.appendChild(td);
+                    
+                    let coldf = this.GetColumnDefOfTd(td);
+                    let value = (data[column.field] ?? '');
+                    
+                    let valideEncode = true;
 
-                    if (!firstAdded && this.ShowAsTree)
+                    if(coldf.template) {
+                        valideEncode = false;
+                        value = this.applyTemplate(coldf.template, data);
+                    }
+
+                    if (i==0 && this.ShowAsTree)
                     {
                         container = this._createFullElement('div', { class:'container-cell-content' })
                         const content = this._createFullElement('div', { iscellcontent:'true', class:'cell-content' });
                         container.appendChild(content);
-                        Object.keys(data).forEach(key => {
-                            if (td.textContent == '' && th.getAttribute('field') == key){
-                                let value = data[key];
-                                if (this._withFormat(coldef, value))
-                                    value = this._aplyFormat(coldef, value);
-                                    if (this.htmlEncode) value = this.setHtmlEncode(value);
-                                    content.innerHTML = value;
-                            }
-                        });
                         td.appendChild(container);
-                        firstAdded = true;
                     }
-                    else
-                    {
-                        Object.keys(data).forEach(key => {
-                            if (td.textContent == '' && th.getAttribute('field') == key) {
-                                this.SetTdValue(td, data[key], true, coldef);
-                            }
-                        });
-                    }
-                    tr.appendChild(td);
-                    td.style.textAlign = (coldef?.textalign??'');
-                    if (this.onTdPaint) this.onTdPaint(td, idx, this.ColIndexOfTd(td), (coldef?.field??''));
+
+                    this.SetTdValue(td, value, valideEncode, coldf);
+                    
+                    td.style.textAlign = (coldf?.textalign??'');
+                    if (this.onTdPaint) this.onTdPaint(td, idx, this.ColIndexOfTd(td), (coldf?.field??''));
                 });
 
                 if (this.ShowAsTree)
