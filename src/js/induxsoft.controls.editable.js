@@ -756,7 +756,8 @@ class EditTable extends HTMLElement
                 RowMoved:"rowmoved",
                 RowChanged:"rowchanged",
                 LostFocus:"lostfocus",
-                IsDirtyChanged:"isdirtychanged"
+                IsDirtyChanged:"isdirtychanged",
+                OnSort:"onsort"
             },
             SelectorId:"__table_selector",
             InputId:"__table_input",
@@ -2469,6 +2470,9 @@ class EditTable extends HTMLElement
     {
         if (dataArray && dataArray.length > 0)
         {
+            let orientation = (!desc) ? "ASC" : "DESC";
+            this.OnSort(field,orientation);
+
             dataArray.sort((a,b) => 
             {
                 let valA = (a[field]??'');
@@ -2610,6 +2614,25 @@ class EditTable extends HTMLElement
     {
         let obj = this._dataArrayBackup[indexRow];
         return (obj?.isDirty ?? false);
+    }
+    OnSort = (field, sort) => {
+        if (this._getCurren().Events[this.EdiTable.Const.Events.OnSort]==undefined) return;
+
+        this.Columns.forEach((col) => { delete col.sort });
+        
+        let columnDef = this.Columns.find((col) => { return (col.field === field) });
+        let thead = this.GetTHead();
+        let th = thead.querySelector(`[field=${field}]`);
+        
+        columnDef["sort"] = sort;
+
+        var eventArgs={
+            th:th,
+            coldef:columnDef,
+            caption:th.textContent
+        };
+
+        this._getCurren().Events[this.EdiTable.Const.Events.OnSort](eventArgs);
     }
 }
 
