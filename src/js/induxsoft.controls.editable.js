@@ -230,7 +230,10 @@ class EditTable extends HTMLElement
 
             thead.querySelectorAll('edit-tr').forEach(editTr => editTr.replaceWith(this._replaceTagNameElement(editTr, 'tr')));
             thead.querySelectorAll('tr').forEach(tr => {
-                tr.querySelectorAll('edit-th').forEach(editTh => editTh.replaceWith(this._replaceTagNameElement(editTh, 'th')));
+                tr.querySelectorAll('edit-th').forEach(editTh => {
+                    this._setColumnWith(editTh);
+                    editTh.replaceWith(this._replaceTagNameElement(editTh, 'th'));
+                });
             });
         }
 
@@ -281,6 +284,24 @@ class EditTable extends HTMLElement
         }
 
         return table;
+    }
+    _setColumnWith=(th)=>
+    {
+        if (th)
+        {
+            if(th.hasAttribute('minwidth')){
+                th.style.minWidth = th.getAttribute('minwidth');
+                th.removeAttribute('minwidth');
+            } 
+            if(th.hasAttribute('maxwidth')){
+                th.style.maxWidth = th.getAttribute('maxwidth');
+                th.removeAttribute('maxwidth');
+            }
+            if(th.hasAttribute('width')){
+                th.style.width = th.getAttribute('width');
+                th.removeAttribute('width');
+            }
+        }
     }
     _getColdefByTh=(th)=>
     {
