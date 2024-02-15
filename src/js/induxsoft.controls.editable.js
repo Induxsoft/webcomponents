@@ -1764,6 +1764,11 @@ class EditTable extends HTMLElement
             }
         }
 
+        if (Number(columnDef.maxlength??0) && (columnDef.type==this.EdiTable.Const.Columns.Types.Text || columnDef.type==this.EdiTable.Const.Columns.Types.Memo))
+        {
+            if (input) input.setAttribute('maxlength', columnDef.maxlength);
+        }
+
         var eventArgs={
             input:input,
             td:td,
