@@ -293,15 +293,15 @@ class EditTable extends HTMLElement
         {
             if(th.hasAttribute('minwidth')){
                 th.style.minWidth = th.getAttribute('minwidth');
-                th.removeAttribute('minwidth');
+                //th.removeAttribute('minwidth');
             } 
             if(th.hasAttribute('maxwidth')){
                 th.style.maxWidth = th.getAttribute('maxwidth');
-                th.removeAttribute('maxwidth');
+                //th.removeAttribute('maxwidth');
             }
             if(th.hasAttribute('width')){
                 th.style.width = th.getAttribute('width');
-                th.removeAttribute('width');
+                //th.removeAttribute('width');
             }
         }
     }
@@ -2134,25 +2134,28 @@ class EditTable extends HTMLElement
         if (cellContent)
         {
             cellContent.innerHTML = value;
-            this._setRowHeight(cellContent);
+            this._setRowSizes(cellContent,coldef);
             return;
         }
         else
         {
             cellContent = this._createFullElement('div', { iscellcontent:'true', class:'cell-content' });
             cellContent.innerHTML = value;
-            this._setRowHeight(cellContent);
+            this._setRowSizes(cellContent,coldef);
             td.innerHTML = cellContent.outerHTML;
         }
         //td.innerHTML = value;
     }
-    _setRowHeight(cellContent)
+    _setRowSizes(cellContent,coldef)
     {
         if (cellContent)
         {
             cellContent.style.minHeight = this.minRowHeight;
             cellContent.style.maxHeight = this.maxRowHeight;
             cellContent.style.height = this.rowHeight;
+            if (coldef?.minwidth) cellContent.style.minWidth = coldef.minwidth;
+            if (coldef?.maxwidth) cellContent.style.maxWidth = coldef.maxwidth;
+            if (coldef?.width) cellContent.style.width = coldef.maxwidth;
         }
     }
     _withFormat(coldef, value)
