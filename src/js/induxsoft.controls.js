@@ -905,6 +905,10 @@ class CheckList extends HTMLElement
 {
     attributes = null;
     data = {};
+    key = "id";
+    parentKey = "parent";
+    childs = "items";
+    treeOptions = {}
     locked = null;
     doneStyle = null;
     canRemove = null;
@@ -913,6 +917,7 @@ class CheckList extends HTMLElement
     canCheck = null;
     canAdd = null;
     showPercents = null;
+    hideHeader = false;
 
     onItemChanged = null;
     onItemChecked = null;
@@ -960,6 +965,7 @@ class CheckList extends HTMLElement
             this.canCheck =     this._parseBool(this.getAttribute('can-check'), true);
             this.canAdd =       this._parseBool(this.getAttribute('can-add'), true);
             this.showPercents = this._parseBool(this.getAttribute('show-percents'));
+            this.hideHeader =   this._parseBool(this.getAttribute('hide-header'));
 
             this._containerwc = this._createFullElement('div', { id:'CL_container', class:'bordered d-flex flex-column' });
             this._headSection = this._createFullElement('div', { id:'CL_headerSection', class:'p-3 d-flex' });
@@ -1051,6 +1057,7 @@ class CheckList extends HTMLElement
                     #CL_footHeader{ border-top: 1px solid #DDD !important; transition: .3s; }
                     #CL_footHeader:hover{ background-color: #f5f5f5; }
                     .in-done-list .list-item .movItem{ pointer-events: none !important; opacity: 0 !important; }
+                    `+ (this.getAttribute("control-styles") ?? '') +`
                 </style>
             `;
 
@@ -1066,9 +1073,12 @@ class CheckList extends HTMLElement
                 catch(error)
                 {
                     alert('El valor del atributo "data" no contiene un formato JSON válido');
+                    console.error(error);
                     this.data = {};
                 }
             }
+
+            this._initTreeValues();
         });
     }
 
@@ -1100,6 +1110,7 @@ class CheckList extends HTMLElement
         this._footHeader.classList.add('hide-element');
 
         this._titleHeader.classList.toggle('disable-element', !this.canEdit);
+        if (this.hideHeader) this._headSection.style.display = "none";
 
         // New item
         let id = this._generateUUID()
@@ -1131,7 +1142,6 @@ class CheckList extends HTMLElement
             return v.toString(16);
         });
     }
-
     _createRowItem(item, params = { isNew: false, isSubItem: false, id: '', parentId:''})
     {
         let containerItem = null;
@@ -1529,20 +1539,84 @@ class CheckList extends HTMLElement
         }
         return itemsCompleted;
     }
+    _initTreeValues()
+    {
+        let v = (this.getAttribute("key") ?? "").trim();
+        this.key = (v || this.key);
+        v = (this.getAttribute("parentkey") ?? "").trim();
+        this.parentKey = (v || this.parentKey);
+        v = (this.getAttribute("childs-field") ?? "").trim();
+        this.childs = (v || this.childs);
+    }
+    _getTreeOptions()
+    {
+        if (!this.treeOptions || Object.keys(this.treeOptions) < 1)
+        {
+            this.treeOptions =
+            {
+                key: this.key,
+                parentkey: this.parentKey,
+                childs: this.childs
+            }
+        }
+        return this.treeOptions;
+    }
+
+    TreeArray=(dataArray, treeOptions=null)=>
+    {
+        if (!treeOptions) treeOptions = this._getTreeOptions();
+        
+        const positionObj = (list=[], data={}) => 
+        {
+            let parentObj = null;
+            let sourcData = null;
+
+            const _search = listObj => 
+            {
+                return listObj.some((obj, idx) =>  {
+                    if (data[treeOptions.parentkey] == (obj[treeOptions.key] ?? '_'))
+                        parentObj = obj;
+                    else if ((data[treeOptions.key] ?? '|') == (obj[treeOptions.key] ?? '_'))
+                        sourcData = { listObj, idx };
+                    return ((parentObj && sourcData) || _search((obj[treeOptions.childs] ?? [])));
+                });
+            }
+            
+            if (!_search(list)) return;
+
+            const parentChilds = (parentObj[treeOptions.childs] ?? []);
+            parentChilds.push( ...sourcData.listObj.splice(sourcData.idx,1) );
+            parentObj[treeOptions.childs] = parentChilds;
+        }
+
+        if (dataArray && dataArray.length > 0)
+        {
+            let copyArray = JSON.parse(JSON.stringify(dataArray));
+
+            copyArray.forEach(data => {
+                if (data[treeOptions.parentkey] != undefined) 
+                    positionObj(dataArray, data);
+            });
+        }
+
+        return dataArray;
+    }
     setData(obj)
     {
+        let treeOp = this._getTreeOptions();
         this.data = obj;
+        this.TreeArray(obj[treeOp.childs],treeOp);
         
-        if (this.data && this.data.items && this.data.items.length > 0)
+        if (this.data && this.data[treeOp.childs] && this.data[treeOp.childs].length > 0)
         {
-            this.data.items.forEach(item => 
+            this.data[treeOp.childs].forEach(item => 
             {
-                item['id'] = (item.id ?? this._generateUUID());
+                item[treeOp.key] = (item[treeOp.key] ?? this._generateUUID());
                 item['_meta'] =  { percent:(item.meta?.percent ?? -1), progress:(item.meta?.progress ?? '100') };
-                if (item.items && item.items.length > 0)
+                if (item[treeOp.childs] && item[treeOp.childs].length > 0)
                 {
-                    item.items.forEach(subItem => { 
-                        subItem['id'] = (subItem.id ?? this._generateUUID());
+                    item[treeOp.childs].forEach(subItem => { 
+                        subItem[treeOp.key] = (subItem[treeOp.key] ?? this._generateUUID());
                         subItem['_meta'] = { percent:(subItem.meta?.percent ?? -1), progress:(subItem.meta?.progress ?? '100') };
                     });
                 }
