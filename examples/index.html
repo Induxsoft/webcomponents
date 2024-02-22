@@ -314,7 +314,7 @@
                 - placeholder       (opcional) Placeholder del cuadro de búsqueda
                 - form              (opcional) Selector del formulario al que se realizará el submit (Si no se establece se busca el formulario más cercano)
                 - value             (opcional) Valor inicial del filtro, si está esblecido, el componente está en estado 'filtro establecido (bloqueado)
-                - url-parse         (opcional) Establece el valor inicial a travez de los parámetros de la URL únicamente si el atributo value no está establecido (true/false, def:false)
+                - url-parse         (opcional) Establece el valor inicial a través de los parámetros de la URL únicamente si el atributo value no está establecido (true/false, def:false)
                 - auto-submit       (opcional) Envío del formulario al copletar el texto de búsqueda con la tecla Enter (true/false, def: false)
             -->
             <filter-text
@@ -322,8 +322,9 @@
                 text-field=""
                 placeholder="Buscar"
                 form="#form_test"
-                value="test"
-                auto-submit="false">
+                value=""
+                url-parse="true"
+                auto-submit="true">
             </filter-text>
         </form>
     </div>

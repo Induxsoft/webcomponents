@@ -2864,6 +2864,14 @@ class MediaList extends HTMLElement
 class FilterText extends HTMLElement
 {
     attributes = null;
+    actions = { 
+        bloquear:0, 
+        cancelar_filtro:1, 
+        editar:2, 
+        aceptar_edicion:3, 
+        cancelar_edicion:4,
+        default:5
+    };
 
     constructor() {
         super();
@@ -2885,60 +2893,135 @@ class FilterText extends HTMLElement
             
             let text_field = ((this.getAttribute('text-field')??'').trim() != '' ? this.getAttribute('text-field') : 's');
             let placeholder = (this.getAttribute('placeholder') ?? 'Buscar');
-            let icon_filter = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel" viewBox="0 0 16 16"><path d = "M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z"/></svg>'
-            let icon_cancel = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"><path d="M0 0H24V24H0z" fill="none"/><path d="M6.929.515L21.07 14.657l-1.414 1.414-3.823-3.822L15 13.5V22H9v-8.5L4 6H3V4h4.585l-2.07-2.071L6.929.515zM9.585 6H6.404L11 12.894V20h2v-7.106l1.392-2.087L9.585 6zM21 4v2h-1l-1.915 2.872-1.442-1.443L17.596 6h-2.383l-2-2H21z"/></svg>'
+            let autosubmit = ((this.getAttribute('auto-submit') ?? 'false') == 'true');
+            
+            const icon_filter = '<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="16" height="16" viewBox="0 0 8.4666665 8.4666669" version="1.1" id="svg6448" inkscape:version="1.0.2-2 (e86c870879, 2021-01-15)" sodipodi:docname="filter.svg"><defs id="defs6442" /><sodipodi:namedview id="base" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" inkscape:pageopacity="0.0" inkscape:pageshadow="2" inkscape:zoom="2.8" inkscape:cx="-4.7783453" inkscape:cy="89.407866" inkscape:document-units="mm" inkscape:current-layer="layer1" inkscape:document-rotation="0" showgrid="false" units="px" inkscape:window-width="1920" inkscape:window-height="1017" inkscape:window-x="-8" inkscape:window-y="-8" inkscape:window-maximized="1" /><metadata id="metadata6445"><rdf:RDF><cc:Work rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><g inkscape:label="Capa 1" inkscape:groupmode="layer" id="layer1"><path d="M 7.7485116,0.71815461 V 1.4993056 H 7.3579362 l -1.9528767,2.929315 v 3.319891 H 3.0616071 V 4.4286206 L 1.1087301,1.4993056 H 0.71815466 V 0.71815461 Z M 2.0476733,1.4993056 3.8427577,4.1919316 v 2.775429 H 4.6239085 V 4.1919316 L 6.418993,1.4993056 Z" id="path7029" style="stroke-width:0.390575" /></g></svg>';
+            const icon_filter_cancel = '<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="16" height="16" viewBox="0 0 8.4666665 8.4666669" version="1.1" id="svg6448" sodipodi:docname="filter-cancel.svg" inkscape:version="1.0.2-2 (e86c870879, 2021-01-15)"> <defs id="defs6442" /> <sodipodi:namedview id="base" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" inkscape:pageopacity="0.0" inkscape:pageshadow="2" inkscape:zoom="2.8" inkscape:cx="-4.7783453" inkscape:cy="89.407866" inkscape:document-units="mm" inkscape:current-layer="layer1" inkscape:document-rotation="0" showgrid="false" units="px" inkscape:window-width="1920" inkscape:window-height="1017" inkscape:window-x="-8" inkscape:window-y="-8" inkscape:window-maximized="1" /> <metadata id="metadata6445"> <rdf:RDF> <cc:Work rdf:about=""> <dc:format>image/svg+xml</dc:format> <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" /> <dc:title></dc:title> </cc:Work> </rdf:RDF> </metadata> <g inkscape:label="Capa 1" inkscape:groupmode="layer" id="layer1"> <path d="M 2.4278252,0.43472896 7.4281558,5.4354145 6.9281591,5.9354125 5.5763265,4.5839328 5.2817726,5.0262931 V 8.0319373 H 3.1601415 V 5.0262931 L 1.3921153,2.3742541 H 1.0385105 V 1.6670432 H 2.6597914 L 1.9278274,0.93472689 Z M 3.367,2.3742541 H 2.2421832 l 1.625169,2.4377537 V 7.3247277 H 4.5745619 V 4.8120078 L 5.0667801,4.0740343 Z M 7.4034047,1.6670432 V 2.3742541 H 7.0497977 L 6.3726441,3.3898079 5.8627454,2.8795565 6.199732,2.3742541 H 5.3570904 L 4.6498808,1.6670432 Z" id="path7056" style="stroke-width:0.353605" /> </g> </svg>';
+            const icon_filter_edit = '<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="16" height="16" viewBox="0 0 8.4666665 8.4666669" version="1.1" id="svg6448" sodipodi:docname="filter-edit.svg" inkscape:version="1.0.2-2 (e86c870879, 2021-01-15)"><defs id="defs6442"><style id="style7085">.cls-1{fill:#101820;}</style></defs><sodipodi:namedview id="base" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" inkscape:pageopacity="0.0" inkscape:pageshadow="2" inkscape:zoom="11.2" inkscape:cx="15.669823" inkscape:cy="31.978525" inkscape:document-units="mm" inkscape:current-layer="layer1" inkscape:document-rotation="0" showgrid="false" units="px" inkscape:window-width="1920" inkscape:window-height="1017" inkscape:window-x="-8" inkscape:window-y="-8" inkscape:window-maximized="1" inkscape:snap-global="false" /><metadata id="metadata6445"><rdf:RDF><cc:Work rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title /></cc:Work></rdf:RDF></metadata><g inkscape:label="Capa 1" inkscape:groupmode="layer" id="layer1"><g data-name="Layer 18" id="Layer_18" transform="matrix(0.18406198,0.00894607,-0.00890713,0.1832608,2.7189358,2.4995563)"><path class="cls-1" d="M 2,31 A 1,1 0 0 1 1,29.89 l 0.9,-8.17 a 1,1 0 0 1 0.29,-0.6 L 21.27,2.05 a 3.56,3.56 0 0 1 5.05,0 L 30,5.68 a 3.56,3.56 0 0 1 0,5.05 L 10.88,29.8 a 1,1 0 0 1 -0.6,0.29 L 2.11,31 Z m 8.17,-1.91 z M 3.86,22.28 3.13,28.87 9.72,28.14 28.54,9.31 a 1.58,1.58 0 0 0 0,-2.22 L 24.91,3.46 a 1.58,1.58 0 0 0 -2.22,0 z" id="path7091" /><path class="cls-1" d="m 26.52,13.74 a 1,1 0 0 1 -0.7,-0.29 L 18.55,6.18 A 1.0112616,1.0112616 0 0 1 20,4.77 L 27.23,12 a 1,1 0 0 1 0,1.41 1,1 0 0 1 -0.71,0.33 z" id="path7093" /><rect class="cls-1" height="2" transform="rotate(-45,14.718942,17.283215)" width="12.84" x="8.29" y="16.280001" id="rect7095" /></g><g id="g1095" style="fill:#000000" transform="matrix(0.95940959,0,0,0.95940959,-0.05552833,-0.48615617)"><rect style="fill:#000000;stroke:none;stroke-width:0.330123" id="rect1086" width="7.1343002" height="0.70870537" x="0.37797618" y="0.82682306" /><path style="fill:#000000;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="M 0.8031994,1.5355282 2.763951,4.204985 2.7403274,7.2287947 3.5199033,6.4728423 V 3.921503 L 1.7008929,1.5119048 Z" id="path1088" /><path style="fill:#000000;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="M 6.1421131,1.5355282 4.3231027,4.0159969 4.3467262,5.7405134 5.1026786,5.1263021 5.1263021,4.1813616 7.0870536,1.5355283 Z" id="path1090" /></g></g></svg>';
+            const icon_filter_edit_cancel = '<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="16" height="16" viewBox="0 0 8.4666665 8.4666669" version="1.1" id="svg6448" sodipodi:docname="filter-edit-cancel.svg" inkscape:version="1.0.2-2 (e86c870879, 2021-01-15)"> <defs id="defs6442"> <style id="style7085">.cls-1{fill:#101820;}</style> </defs> <sodipodi:namedview id="base" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" inkscape:pageopacity="0.0" inkscape:pageshadow="2" inkscape:zoom="11.2" inkscape:cx="15.669823" inkscape:cy="31.978525" inkscape:document-units="mm" inkscape:current-layer="layer1" inkscape:document-rotation="0" showgrid="false" units="px" inkscape:window-width="1920" inkscape:window-height="1017" inkscape:window-x="-8" inkscape:window-y="-8" inkscape:window-maximized="1" inkscape:snap-global="false" /> <metadata id="metadata6445"> <rdf:RDF> <cc:Work rdf:about=""> <dc:format>image/svg+xml</dc:format> <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" /> <dc:title></dc:title> </cc:Work> </rdf:RDF> </metadata> <g inkscape:label="Capa 1" inkscape:groupmode="layer" id="layer1"> <path d="M 7.3658104,4.4192907 C 7.1700608,4.1628903 6.9145586,3.8343028 6.749814,3.6534856 5.9799386,2.8085007 5.1064452,2.3151043 4.0325333,2.3151043 c -2.5057041,0 -3.7254276,1.7302543 -3.7254276,3.9215029 h 0.7843011 c 0,-1.8049948 0.9391242,-3.1372023 2.9411265,-3.1372023 0.8200474,0 1.5028188,0.3856653 2.1375286,1.0822994 0.1658044,0.18198 0.4818476,0.5970606 0.6983295,0.8784521 H 4.6207588 V 5.844457 H 8.1501115 V 2.3151043 H 7.3658104 Z" fill-rule="evenodd" id="path1097" style="stroke-width:0.39215" /> </g> </svg>';
+            const icon_filter_edit_ok = '<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="16" height="16" viewBox="0 0 8.4666665 8.4666669" version="1.1" id="svg6448" sodipodi:docname="filter-edit-ok.svg" inkscape:version="1.0.2-2 (e86c870879, 2021-01-15)"> <defs id="defs6442"> <style id="style7085">.cls-1{fill:#101820;}</style> </defs> <sodipodi:namedview id="base" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" inkscape:pageopacity="0.0" inkscape:pageshadow="2" inkscape:zoom="11.2" inkscape:cx="15.669823" inkscape:cy="31.978525" inkscape:document-units="mm" inkscape:current-layer="layer1" inkscape:document-rotation="0" showgrid="false" units="px" inkscape:window-width="1920" inkscape:window-height="1017" inkscape:window-x="-8" inkscape:window-y="-8" inkscape:window-maximized="1" inkscape:snap-global="false" /> <metadata id="metadata6445"> <rdf:RDF> <cc:Work rdf:about=""> <dc:format>image/svg+xml</dc:format> <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" /> <dc:title></dc:title> </cc:Work> </rdf:RDF> </metadata> <g inkscape:label="Capa 1" inkscape:groupmode="layer" id="layer1"> <path clip-rule="evenodd" d="m 7.4336501,1.2011754 c -0.09656,-0.097219 -0.2537587,-0.097219 -0.3496598,0 L 3.3992157,4.8688131 c -0.09656,0.097878 -0.2540884,0.097878 -0.3499893,0 L 1.4347275,3.2246541 C 1.3869417,3.1758797 1.324326,3.1518221 1.2613806,3.1514925 1.1977762,3.151163 1.1331831,3.1752206 1.0847382,3.2246541 L 0.37124767,3.8659717 c -0.0474562,0.048774 -0.073161,0.1097421 -0.073161,0.1733468 0,0.063934 0.0257048,0.1308341 0.0734911,0.179279 L 1.9995883,5.92702 c 0.09623,0.097549 0.2540884,0.255736 0.3499893,0.3526257 L 3.0495563,6.985227 c 0.09623,0.09656 0.2534292,0.09656 0.3499893,0 L 8.1339593,2.2593823 c 0.096557,-0.096889 0.096557,-0.2560657 0,-0.3529554 z" fill-rule="evenodd" id="path1108" style="stroke-width:0.329556" /> </g> </svg>';
 
             const container = this._createFullElement('div', { class: 'd-flex' });
             const div_search = this._createFullElement('div', { class:'grow-1 p-relative d-flex' })
             const ipt_search = this._createFullElement('input', { class: 'induxsoft-form-control', placeholder: placeholder });
-            const btn_search = this._createFullElement('button', { class: 'induxsoft-buttons button-icon' });
             const div_hidden = this._createFullElement('div', { class:'div-hidden' })
+            const ipt_hidden = this._createFullElement('input', { type: "hidden", name: text_field });
+
+            const btn_filter = this._createFullElement('button', { class: 'induxsoft-buttons button-icon', title:'Filtrar' }, icon_filter);
+            const btn_filter_cancel = this._createFullElement('button', { class: 'induxsoft-buttons button-icon', title:'Cancelar' }, icon_filter_cancel);
+            const btn_filter_edit = this._createFullElement('button', { class: 'induxsoft-buttons button-icon', title:'Editar' }, icon_filter_edit);
+            const btn_filter_edit_cancel = this._createFullElement('button', { class: 'induxsoft-buttons button-icon', title:' Cancelar edición' }, icon_filter_edit_cancel);
+            const btn_filter_edit_ok = this._createFullElement('button', { class: 'induxsoft-buttons button-icon', title:'Aplicar' }, icon_filter_edit_ok);
             
             div_search.appendChild(ipt_search);
             div_search.appendChild(div_hidden);
             container.appendChild(div_search);
-            container.appendChild(btn_search);
+            container.appendChild(btn_filter);
+            container.appendChild(btn_filter_edit);
+            container.appendChild(btn_filter_cancel);
+            container.appendChild(btn_filter_edit_ok);
+            container.appendChild(btn_filter_edit_cancel);
 
-            const ipt_hidden = this._createFullElement('input', { type: "hidden", name: text_field });
+            // Ocultar/mostrar todos los botones
+            const hidde_buttons = (hidde=true) =>
+            {
+                btn_filter.classList.toggle('d-none', hidde);
+                btn_filter_cancel.classList.toggle('d-none', hidde);
+                btn_filter_edit.classList.toggle('d-none', hidde);
+                btn_filter_edit_cancel.classList.toggle('d-none', hidde);
+                btn_filter_edit_ok.classList.toggle('d-none', hidde);
+            }
 
+            // Mostrar un botón
+            const show_button = button =>
+            {
+                button.classList.remove('d-none');
+            }
+
+            // Desactivar/activar input search
+            const disable_input = (disable = true) =>
+            {
+                ipt_search.disabled = disable;
+                div_hidden.classList.toggle('d-none', !disable);
+            }
+
+            // Manejador de acciones del input search
+            let temp_val = '';
+
+            const action_handler = (action) =>
+            {
+                hidde_buttons(true);
+
+                switch (action) 
+                {
+                    case this.actions.bloquear:
+                    {
+                        show_button(btn_filter_edit);
+                        show_button(btn_filter_cancel);
+                        disable_input(true);
+                        break;
+                    }
+                    case this.actions.cancelar_filtro:
+                    {
+                        ipt_search.value = '';
+                        this._submitFilter(ipt_search, ipt_hidden);
+                        break;
+                    }
+                    case this.actions.editar:
+                    {
+                        temp_val = ipt_search.value;
+                        disable_input(false);
+                        show_button(btn_filter_edit_cancel);
+                        show_button(btn_filter_edit_ok);
+                        ipt_search.select();
+                        break;
+                    }
+                    case this.actions.aceptar_edicion:
+                    {
+                        this._submitFilter(ipt_search, ipt_hidden);
+                        break;
+                    }
+                    case this.actions.cancelar_edicion:
+                    {
+                        ipt_search.value = temp_val;
+                        action_handler(this.actions.bloquear);
+                        break;
+                    }
+                    case this.actions.default:
+                    {
+                        show_button(btn_filter);
+                        disable_input(false);
+                        break;
+                    }
+                }
+            }
+
+            // Establecer valor inicial
             let value = (this.getAttribute('value') ?? '').trim();
             if (value == '' && (this.getAttribute('url-parse') ?? 'false') == 'true')
-                value = (this._getURLParam('s') ?? '');
+                value = (this._getURLParam(text_field) ?? '');
 
             ipt_search.value = value;
             ipt_hidden.value = ipt_search.value;
 
-            const disable_input = (disable = true) =>
-            {
-                ipt_search.disabled = disable;
-                btn_search.type = (disable ? 'button' : 'submit');
-                btn_search.innerHTML = (disable ? icon_cancel : icon_filter);
-                div_hidden.classList.toggle('d-none', !disable);
-            }
-
-            let disable = (ipt_search.value.trim() != '');
-            disable_input(disable);
-            div_hidden.addEventListener('click', (e) => {
-                disable_input(false);
-                ipt_search.select();
-            });
-            ipt_search.addEventListener("keydown", (e) => {
-                if (e.key === "Enter" && ipt_search.value.trim() != "") {
-                    if ((this.getAttribute('auto-submit') ?? 'false') == 'true') this._submitFilter(ipt_search, ipt_hidden);
+            // Eventos
+            ipt_search.addEventListener('keydown', e => {
+                if (e.key === "Enter") {
+                    if (autosubmit) action_handler(this.actions.aceptar_edicion);
                     else disable_input(true);
-                } 
-            });
-            btn_search.addEventListener("click", (event) => {
-                event.preventDefault();
-                if (btn_search.type == "submit") {
-                    if (ipt_search.value.trim() != "") this._submitFilter(ipt_search, ipt_hidden);
-                }
-                else
-                {
-                    disable_input(false);
-                    ipt_search.select();
                 }
             });
+
+            div_hidden.addEventListener('click', e => action_handler(this.actions.editar));
+            btn_filter.addEventListener('click', e => action_handler(this.actions.aceptar_edicion));
+            btn_filter_cancel.addEventListener('click', e => action_handler(this.actions.cancelar_filtro));
+            btn_filter_edit.addEventListener('click', e => action_handler(this.actions.editar));
+            btn_filter_edit_cancel.addEventListener('click', e => action_handler(this.actions.cancelar_edicion));
+            btn_filter_edit_ok.addEventListener('click', e => action_handler(this.actions.aceptar_edicion));
+
+            let filtered = (ipt_search.value.trim() != '');
+            let initial_action = (filtered ? this.actions.bloquear : this.actions.default);
+            action_handler(initial_action);
 
             shadow.appendChild(container);
             this.after(ipt_hidden);
