@@ -1539,6 +1539,22 @@ class CheckList extends HTMLElement
         }
         return itemsCompleted;
     }
+    _getUncheckedItems()
+    {
+        let incompleteItems = [];
+        if (this.data && this.data.items && this.data.items.length > 0)
+        {
+            this.data.items.forEach(item => {
+                if (item.done == false) incompleteItems.push(item);
+                if (item.items && item.items.length > 0){
+                    item.items.forEach(subitem => {
+                        if (subitem.done == false) incompleteItems.push(subitem);
+                    });
+                }
+            });
+        }
+        return incompleteItems;
+    }
     _initTreeValues()
     {
         let v = (this.getAttribute("key") ?? "").trim();
@@ -2872,6 +2888,7 @@ class FilterText extends HTMLElement
         cancelar_edicion:4,
         default:5
     };
+    action_handler = null;
 
     constructor() {
         super();
@@ -2894,6 +2911,7 @@ class FilterText extends HTMLElement
             let text_field = ((this.getAttribute('text-field')??'').trim() != '' ? this.getAttribute('text-field') : 's');
             let placeholder = (this.getAttribute('placeholder') ?? 'Buscar');
             let autosubmit = ((this.getAttribute('auto-submit') ?? 'false') == 'true');
+            let id_field = this.id ?? text_field;
             
             const icon_filter = '<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="16" height="16" viewBox="0 0 8.4666665 8.4666669" version="1.1" id="svg6448" inkscape:version="1.0.2-2 (e86c870879, 2021-01-15)" sodipodi:docname="filter.svg"><defs id="defs6442" /><sodipodi:namedview id="base" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" inkscape:pageopacity="0.0" inkscape:pageshadow="2" inkscape:zoom="2.8" inkscape:cx="-4.7783453" inkscape:cy="89.407866" inkscape:document-units="mm" inkscape:current-layer="layer1" inkscape:document-rotation="0" showgrid="false" units="px" inkscape:window-width="1920" inkscape:window-height="1017" inkscape:window-x="-8" inkscape:window-y="-8" inkscape:window-maximized="1" /><metadata id="metadata6445"><rdf:RDF><cc:Work rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><g inkscape:label="Capa 1" inkscape:groupmode="layer" id="layer1"><path d="M 7.7485116,0.71815461 V 1.4993056 H 7.3579362 l -1.9528767,2.929315 v 3.319891 H 3.0616071 V 4.4286206 L 1.1087301,1.4993056 H 0.71815466 V 0.71815461 Z M 2.0476733,1.4993056 3.8427577,4.1919316 v 2.775429 H 4.6239085 V 4.1919316 L 6.418993,1.4993056 Z" id="path7029" style="stroke-width:0.390575" /></g></svg>';
             const icon_filter_cancel = '<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="16" height="16" viewBox="0 0 8.4666665 8.4666669" version="1.1" id="svg6448" sodipodi:docname="filter-cancel.svg" inkscape:version="1.0.2-2 (e86c870879, 2021-01-15)"> <defs id="defs6442" /> <sodipodi:namedview id="base" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" inkscape:pageopacity="0.0" inkscape:pageshadow="2" inkscape:zoom="2.8" inkscape:cx="-4.7783453" inkscape:cy="89.407866" inkscape:document-units="mm" inkscape:current-layer="layer1" inkscape:document-rotation="0" showgrid="false" units="px" inkscape:window-width="1920" inkscape:window-height="1017" inkscape:window-x="-8" inkscape:window-y="-8" inkscape:window-maximized="1" /> <metadata id="metadata6445"> <rdf:RDF> <cc:Work rdf:about=""> <dc:format>image/svg+xml</dc:format> <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" /> <dc:title></dc:title> </cc:Work> </rdf:RDF> </metadata> <g inkscape:label="Capa 1" inkscape:groupmode="layer" id="layer1"> <path d="M 2.4278252,0.43472896 7.4281558,5.4354145 6.9281591,5.9354125 5.5763265,4.5839328 5.2817726,5.0262931 V 8.0319373 H 3.1601415 V 5.0262931 L 1.3921153,2.3742541 H 1.0385105 V 1.6670432 H 2.6597914 L 1.9278274,0.93472689 Z M 3.367,2.3742541 H 2.2421832 l 1.625169,2.4377537 V 7.3247277 H 4.5745619 V 4.8120078 L 5.0667801,4.0740343 Z M 7.4034047,1.6670432 V 2.3742541 H 7.0497977 L 6.3726441,3.3898079 5.8627454,2.8795565 6.199732,2.3742541 H 5.3570904 L 4.6498808,1.6670432 Z" id="path7056" style="stroke-width:0.353605" /> </g> </svg>';
@@ -2905,7 +2923,7 @@ class FilterText extends HTMLElement
             const div_search = this._createFullElement('div', { class:'grow-1 p-relative d-flex' })
             const ipt_search = this._createFullElement('input', { class: 'induxsoft-form-control', placeholder: placeholder });
             const div_hidden = this._createFullElement('div', { class:'div-hidden' })
-            const ipt_hidden = this._createFullElement('input', { type: "hidden", name: text_field });
+            const ipt_hidden = this._createFullElement('input', { type: "hidden", name: text_field, id: id_field });
 
             const btn_filter = this._createFullElement('button', { class: 'induxsoft-buttons button-icon', title:'Filtrar' }, icon_filter);
             const btn_filter_cancel = this._createFullElement('button', { class: 'induxsoft-buttons button-icon', title:'Cancelar' }, icon_filter_cancel);
@@ -2948,7 +2966,7 @@ class FilterText extends HTMLElement
             // Manejador de acciones del input search
             let temp_val = '';
 
-            const action_handler = (action) =>
+            this.action_handler = (action) =>
             {
                 hidde_buttons(true);
 
@@ -2984,7 +3002,7 @@ class FilterText extends HTMLElement
                     case this.actions.cancelar_edicion:
                     {
                         ipt_search.value = temp_val;
-                        action_handler(this.actions.bloquear);
+                        this.action_handler(this.actions.bloquear);
                         break;
                     }
                     case this.actions.default:
@@ -3007,21 +3025,23 @@ class FilterText extends HTMLElement
             // Eventos
             ipt_search.addEventListener('keydown', e => {
                 if (e.key === "Enter") {
-                    if (autosubmit) action_handler(this.actions.aceptar_edicion);
+                    if (autosubmit) this.action_handler(this.actions.aceptar_edicion);
                     else disable_input(true);
                 }
             });
 
-            div_hidden.addEventListener('click', e => action_handler(this.actions.editar));
-            btn_filter.addEventListener('click', e => action_handler(this.actions.aceptar_edicion));
-            btn_filter_cancel.addEventListener('click', e => action_handler(this.actions.cancelar_filtro));
-            btn_filter_edit.addEventListener('click', e => action_handler(this.actions.editar));
-            btn_filter_edit_cancel.addEventListener('click', e => action_handler(this.actions.cancelar_edicion));
-            btn_filter_edit_ok.addEventListener('click', e => action_handler(this.actions.aceptar_edicion));
+            ipt_search.addEventListener('input', (e) => { ipt_hidden.value = ipt_search.value });
+
+            div_hidden.addEventListener('click', e => this.action_handler(this.actions.editar));
+            btn_filter.addEventListener('click', e => this.action_handler(this.actions.aceptar_edicion));
+            btn_filter_cancel.addEventListener('click', e => this.action_handler(this.actions.cancelar_filtro));
+            btn_filter_edit.addEventListener('click', e => this.action_handler(this.actions.editar));
+            btn_filter_edit_cancel.addEventListener('click', e => this.action_handler(this.actions.cancelar_edicion));
+            btn_filter_edit_ok.addEventListener('click', e => this.action_handler(this.actions.aceptar_edicion));
 
             let filtered = (ipt_search.value.trim() != '');
             let initial_action = (filtered ? this.actions.bloquear : this.actions.default);
-            action_handler(initial_action);
+            this.action_handler(initial_action);
 
             shadow.appendChild(container);
             this.after(ipt_hidden);
@@ -3068,7 +3088,9 @@ class FilterText extends HTMLElement
             return;
         }
         ipt_hidden.value = ipt_search.value;
-        form.submit();
+        // form.submit();
+        const event = new Event('submit');
+        form.dispatchEvent(event);
     }
 }
 
