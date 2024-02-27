@@ -2889,6 +2889,7 @@ class FilterText extends HTMLElement
         default:5
     };
     action_handler = null;
+    dispatch_submit = false;
 
     constructor() {
         super();
@@ -3026,7 +3027,7 @@ class FilterText extends HTMLElement
             ipt_search.addEventListener('keydown', e => {
                 if (e.key === "Enter") {
                     if (autosubmit) this.action_handler(this.actions.aceptar_edicion);
-                    else disable_input(true);
+                    else this.action_handler(this.actions.bloquear);
                 }
             });
 
@@ -3082,15 +3083,24 @@ class FilterText extends HTMLElement
         let idform = 'form';
         if (this.hasAttribute('form') && this.getAttribute('form').trim() != "") idform = this.getAttribute('form');
         const form = this.closest(idform);
+        
         if (!form)
         {
             alert('No se encontró el formulario con el selector especificado o dentro del documento');
             return;
         }
+        
         ipt_hidden.value = ipt_search.value;
-        // form.submit();
-        const event = new Event('submit');
-        form.dispatchEvent(event);
+
+        if (!this.dispatch_submit) {
+            form.submit();
+        }
+        else {
+            const event = new Event('submit');
+            form.dispatchEvent(event);
+        }
+
+        this.action_handler(this.actions.bloquear);
     }
 }
 
