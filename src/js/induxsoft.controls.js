@@ -410,7 +410,7 @@ class InputKey extends HTMLElement
                     {
                         this._search();
                     }
-                    else if (this.accept_data && (this.accept_data[this.getAttribute('data-search') ?? '']) != this.input_search_container.value)
+                    else if (this.accept_data && (this.accept_data[(this.getAttribute('data-search') ?? '').toLowerCase()]) != this.input_search_container.value.toLowerCase())
                     {
                         this.setValue(this.accept_data);
                     }
@@ -548,7 +548,7 @@ class InputKey extends HTMLElement
             if (this.hasAttribute('data-value'))
             {
                 try{
-                    let initvalue = JSON.parse(this.getAttribute('data-value')??'{}');
+                    let initvalue = this.setObjectMinus(JSON.parse(this.getAttribute('data-value')??'{}'));
                     this.setValue(initvalue);
                 }catch{
                     alert('El valor del atributo "data-value" tiene un formato JSON inválido');
@@ -606,7 +606,7 @@ class InputKey extends HTMLElement
 
         this.data.forEach((dt, i) => 
         {
-            const row_tables_conatiner2 = this.createFullElement('tr',{class:'row_table', value:`${dt[this.getAttribute('data-search')]}`, tabindex:`0`});
+            const row_tables_conatiner2 = this.createFullElement('tr',{class:'row_table', value:`${dt[(this.getAttribute('data-search')??'').toLowerCase()]}`, tabindex:`0`});
             row_tables_conatiner2.addEventListener('click', (e) => 
             {
                 e.stopPropagation();
@@ -663,7 +663,7 @@ class InputKey extends HTMLElement
     {
         this.data = null;
         let url = this.getAttribute('data-source');
-
+        id=id.toLowerCase();
         return new Promise(resolve => {
             if (url && id.trim() != "")
             {
@@ -672,7 +672,7 @@ class InputKey extends HTMLElement
                     surl = this.onBeforeSearch(surl);
                 }
                 this.request(surl, (dataSuccess) => {
-                    this.data = dataSuccess;
+                    this.data = this.setObjectListMinus(dataSuccess);
                     this.findValue(id);
                     resolve();
                 }, (dataFail) => {
@@ -681,10 +681,10 @@ class InputKey extends HTMLElement
             }
             else if(this.hasAttribute('data-source-array') && this.getAttribute('data-source-array').trim() != '')
             {
-                try{ this.data = JSON.parse(this.getAttribute('data-source-array')); }
+                try{ this.data = this.setObjectListMinus(JSON.parse(this.getAttribute('data-source-array'))); }
                 catch{ alert('El valor del atributo "data-source-array" tiene un formato JSON inválido'); }
                 if (id && this.data){
-                    this.data = this.data.filter(data => (data[this.getAttribute('data-search')].includes(id) || id=='%'));
+                    this.data = this.data.filter(data => (data[(this.getAttribute('data-search')??'').toLowerCase()].includes(id.toLowerCase()) || id=='%'));
                 }
                 this.findValue(id);
                 resolve();
@@ -696,6 +696,34 @@ class InputKey extends HTMLElement
         });
     }
     /**
+     * Convierte los campos de los objetos de la lista a minúsculas.
+     * @param {Array} list 
+     * @returns Retorna una copia de la lista de objetos con campos convertidos a minúsculas
+     */
+    setObjectListMinus(list)
+    {
+        if (!list) return [];
+
+        let newList = [];
+        list.forEach(obj => {
+            newList.push(this.setObjectMinus(obj));
+        });
+        return newList;
+    }
+    /**
+     * Convierte los campos del objeto a minúsculas.
+     * @param {Object} obj 
+     * @returns Retorna una copia del objeto con campos convertidos a minúsculas
+     */
+    setObjectMinus(obj)
+    {
+        let newObj = {};
+        Object.keys(obj).forEach(key => {
+            newObj[key.toLowerCase()] = obj[key];
+        });
+        return newObj;
+    }
+    /**
      * @param {string} id Cadena con el valor a buscar.
      * @returns Retorna un **elemento** dentro del objeto de datos que coincida con el valor especificado establecido en la propiedad searchData y el identificador proporcionado.
      */
@@ -703,7 +731,7 @@ class InputKey extends HTMLElement
     {
         if (this.data && this.data.length > 0)
         {
-            this.record_selected = this.data.find(d => d[this.getAttribute('data-search')] == id);
+            this.record_selected = this.data.find(d => (d[(this.getAttribute('data-search')??'').toLowerCase()]??'').toLowerCase() == id.toLowerCase());
         }
         return this.record_selected;
     }
@@ -731,10 +759,11 @@ class InputKey extends HTMLElement
         }
         else
         {
-            this.input_search_container.value = (this.accept_data[this.getAttribute('data-search')]??'');
-            this.input_description_container.value = (this.accept_data[this.getAttribute('data-text')]??'');
-            this.setAttribute('value', this.accept_data[this.getAttribute('data-key')]??'');
-            this.inputv.setAttribute('value', this.accept_data[this.getAttribute('data-key')]??'');
+            this.accept_data = this.setObjectMinus(this.accept_data);
+            this.input_search_container.value = (this.accept_data[(this.getAttribute('data-search')??'').toLowerCase()]??'');
+            this.input_description_container.value = (this.accept_data[(this.getAttribute('data-text')??'').toLowerCase()]??'');
+            this.setAttribute('value', this.accept_data[(this.getAttribute('data-key')??'').toLowerCase()]??'');
+            this.inputv.setAttribute('value', this.accept_data[(this.getAttribute('data-key')??'').toLowerCase()]??'');
         }
 
         if (this.change_event)
