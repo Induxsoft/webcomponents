@@ -947,6 +947,7 @@ class CheckList extends HTMLElement
     canAdd = null;
     showPercents = null;
     hideHeader = false;
+    radioStyle = false;
 
     onItemChanged = null;
     onItemChecked = null;
@@ -995,6 +996,7 @@ class CheckList extends HTMLElement
             this.canAdd =       this._parseBool(this.getAttribute('can-add'), true);
             this.showPercents = this._parseBool(this.getAttribute('show-percents'));
             this.hideHeader =   this._parseBool(this.getAttribute('hide-header'));
+            this.radioStyle =   this._parseBool(this.getAttribute('radio-style'));
 
             this._containerwc = this._createFullElement('div', { id:'CL_container', class:'bordered d-flex flex-column' });
             this._headSection = this._createFullElement('div', { id:'CL_headerSection', class:'p-3 d-flex' });
@@ -1068,14 +1070,16 @@ class CheckList extends HTMLElement
                     .hide-element{ display: none !important; }
                     .disable-element{ pointer-events: none !important; opacity: .5 !important; }
                     .disable-element-op0{ pointer-events: none !important; opacity: 0 !important; }
+                    .disable-element-transparent{ pointer-events: none !important; }
                     .borderxy4{ border-top: 6px solid transparent; border-bottom: 6px solid transparent; }
                     .border-t{ border-top-color: #005CC8; }
                     .border-b{ border-bottom-color: #005CC8; }
                     .dragging{ background-color: #F0F8FF; }
+                    .d-none{ display: none !important; }
 
                     /* ========== List */
                     .list-item-new{ display: grid; grid-template-columns: 1rem 1rem 1fr; gap:4px;}
-                    .list-item{ display: grid; grid-template-columns: 1rem 1rem 1fr 2rem; gap:4px;}
+                    .list-item{ display: grid; grid-template-columns: 1rem auto 1fr 2rem; gap:4px;}
                     .sub-item{ padding-left: 1.6rem; }
                     .hover-item:focus-within{ outline: 1px solid #DDD !important; }
                     .movItem, .delItem{ position: relative; left: -1000rem; }
@@ -1086,6 +1090,12 @@ class CheckList extends HTMLElement
                     #CL_footHeader{ border-top: 1px solid #DDD !important; transition: .3s; }
                     #CL_footHeader:hover{ background-color: #f5f5f5; }
                     .in-done-list .list-item .movItem{ pointer-events: none !important; opacity: 0 !important; }
+                    .container-checks{ display: flex; justify-content: center; align-items: center; gap: 10px; }
+                    .rd-item-yes, rd-item-no{ width: 1rem; height: 1rem; }
+                    .rd-item-yes::before{ content:'Si'; position:relative;top:-16px;left:2px;font-size:.7rem; color:#CCC; }
+                    .rd-item-no::before{ content:'No'; position:relative;top:-16px;font-size:.7rem; color:#CCC; }
+                    .rd-item-yes:hover::before{ color:#000; }
+                    .rd-item-no:hover::before{ color:#000; }
                     `+ (this.getAttribute("control-styles") ?? '') +`
                 </style>
             `;
@@ -1212,15 +1222,20 @@ class CheckList extends HTMLElement
             const rowItem = this._createFullElement('div', { class:'list-item' });
             const movItem = this._createFullElement('button', { class: 'movItem noborder', style: 'background: transparent;', draggable: 'true' });
             const chkItem = this._createFullElement('input', { type:'checkbox' });
+            const rdItemY = this._createFullElement('input', { type:'radio', name:`radio_${params.id}`, title:'Si', class:'rd-item-yes' });
+            const rdItemN = this._createFullElement('input', { type:'radio', name:`radio_${params.id}`, title:'No', class:'rd-item-no' });
             const txtItem = this._createFullElement('input', { type:'text', class:'p-2 noborder w-100 bg-transparent'});
             const delItem = this._createFullElement('button', { class:'delItem noborder bg-transparent d-flex align-items-center justify-content-center' });
             const childIcon = this._createFullElement('div', { style:'position:absolute; top: 5px; left: 2px;', class:'hide-element'});
-            
+            const cntnrChks = this._createFullElement('div', { class:'container-checks' });
+
             childIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#005CC8" class="bi bi-arrow-right-short" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"/></svg>`;
             movItem.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#888" class="bi bi-three-dots-vertical" viewBox="0 0 16 16"><path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/></svg>`;
             delItem.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/></svg>`;
             txtItem.value = item.text;
             chkItem.checked = (item.done ?? false);
+            rdItemY.checked = (item.done ?? false);
+            rdItemN.checked = (!item.done ?? true);
             containerItem.setAttribute('item-text', item.text);
             containerItem.setAttribute('item-done', chkItem.checked);
 
@@ -1230,18 +1245,42 @@ class CheckList extends HTMLElement
                 containerItem.setAttribute('parent-id', params.parentId);
             }
 
-            if (chkItem.checked && this.locked) chkItem.classList.add('disable-element');
+            if (chkItem.checked && this.locked) cntnrChks.classList.add('disable-element');
             if (!this.canRemove) delItem.classList.add('hide-element');
-            if (!this.canEdit) txtItem.classList.add('disable-element');
+            if (!this.canEdit) txtItem.classList.add('disable-element-transparent');
             if (!this.canMove) movItem.classList.add('disable-element-op0');
-            if (!this.canCheck) chkItem.classList.add('disable-element');
+            if (!this.canCheck) cntnrChks.classList.add('disable-element');
+
+            chkItem.classList.toggle('d-none', this.radioStyle);
+            rdItemY.classList.toggle('d-none', !this.radioStyle);
+            rdItemN.classList.toggle('d-none', !this.radioStyle);
+
+            cntnrChks.append(chkItem);
+            cntnrChks.append(rdItemY);
+            cntnrChks.append(rdItemN);
 
             rowItem.appendChild(movItem);
-            rowItem.appendChild(chkItem);
+            rowItem.appendChild(cntnrChks);
             rowItem.appendChild(txtItem);
             rowItem.appendChild(delItem);
             containerItem.appendChild(rowItem);
             containerItem.appendChild(childIcon);
+
+            const verifyCheckItem = () => 
+            {
+                containerItem.setAttribute('item-done', chkItem.checked);
+                this._addOrUpdateItem(containerItem);
+                this._refreshView();
+                
+                if (chkItem.checked && this.onItemChecked)
+                {
+                    let item = this.getItem((containerItem.getAttribute('item-id')??''))
+                    this.onItemChecked(item);
+                }
+
+                if (chkItem.checked && this.locked)
+                    cntnrChks.classList.add('disable-element');
+            }
 
             delItem.addEventListener('click', () => {
                 this._addOrUpdateItem(containerItem, true);
@@ -1254,153 +1293,154 @@ class CheckList extends HTMLElement
                 }
             });
             chkItem.addEventListener('click', () => {
-                containerItem.setAttribute('item-done', chkItem.checked);
-                this._addOrUpdateItem(containerItem);
-                this._refreshView();
-                if (chkItem.checked && this.onItemChecked)
-                {
-                    let item = this.getItem((containerItem.getAttribute('item-id')??''))
-                    this.onItemChecked(item);
-                }
-                if (chkItem.checked && this.locked)
-                    chkItem.classList.add('disable-element');
+                verifyCheckItem();
+            });
+            rdItemY.addEventListener('change', () => {
+                chkItem.checked = rdItemY.checked;
+                verifyCheckItem();
+            });
+            rdItemN.addEventListener('change', () => {
+                chkItem.checked = (!rdItemN.checked);
+                verifyCheckItem();
             });
 
-
-            containerItem.addEventListener('dragstart', (e) => {
-                this._draggingItem = containerItem;
-                e.dataTransfer.setData('text/plain', containerItem.getAttribute('item-id'));
-                containerItem.classList.add('dragging');
-                let item = this.getItem(containerItem.getAttribute('item-id'));
-                if (item && item.items && item.items.length > 0)
-                {
-                    this._bodySection.childNodes.forEach(itemList => {
-                        item.items.forEach(item => {
-                            if (item.id == itemList.getAttribute('item-id'))
-                                itemList.classList.add('disable-element');
+            if (this.canMove)
+            {
+                containerItem.addEventListener('dragstart', (e) => {
+                    this._draggingItem = containerItem;
+                    e.dataTransfer.setData('text/plain', containerItem.getAttribute('item-id'));
+                    containerItem.classList.add('dragging');
+                    let item = this.getItem(containerItem.getAttribute('item-id'));
+                    if (item && item.items && item.items.length > 0)
+                    {
+                        this._bodySection.childNodes.forEach(itemList => {
+                            item.items.forEach(item => {
+                                if (item.id == itemList.getAttribute('item-id'))
+                                    itemList.classList.add('disable-element');
+                            });
                         });
-                    });
-                }
-            });
-            containerItem.addEventListener('dragend', () => {
-                containerItem.classList.remove('dragging');
-                this._draggingItem = null;
-                let item = this.getItem(containerItem.getAttribute('item-id'));
-                if (item && item.items && item.items.length > 0)
-                {
-                    this._bodySection.childNodes.forEach(itemList => {
-                        item.items.forEach(item => {
-                            if (item.id == itemList.getAttribute('item-id'))
-                                itemList.classList.remove('disable-element');
-                        });
-                    });
-                }
-            })
-            containerItem.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                if (containerItem.classList.contains('in-done-list')) return;
-                if (this._draggingItem && containerItem.getAttribute('item-id') == this._draggingItem.getAttribute('item-id')) return;
-                const rect = containerItem.getBoundingClientRect();
-                const limity = (rect.y + (rect.height / 2));
-                const limitx = (rect.x + (rect.width / 5))
-
-                let y = (e.clientY < limity);
-                let x = (!y && e.clientX > limitx);
-
-                containerItem.classList.toggle('border-b', !y);
-                containerItem.classList.toggle('border-t', y);
-                if ((containerItem.getAttribute('parent-id')??'') == '')
-                {
-                    containerItem.classList.toggle('bg-light-gray', x);
-                    childIcon.classList.toggle('hide-element', !x);
-                }
-
-                this._topPositionDragEvent = y;
-                this._isChildItemDragEvent = x;
-            });
-            containerItem.addEventListener('dragleave', (e) => {
-                containerItem.classList.remove('border-b');
-                containerItem.classList.remove('border-t');
-                containerItem.classList.remove('bg-light-gray');
-                childIcon.classList.add('hide-element');
-            });
-            containerItem.addEventListener('drop', (e) => {
-                e.preventDefault();
-                if (containerItem.classList.contains('in-done-list')) return;
-                containerItem.classList.remove('border-b');
-                containerItem.classList.remove('border-t');
-                containerItem.classList.remove('bg-light-gray');
-                childIcon.classList.add('hide-element');
-
-                let itemId = e.dataTransfer.getData("text");
-                let itemDrop = null;
-                this._bodySection.childNodes.forEach(item => {
-                    if (item.getAttribute('item-id') == itemId)
-                        itemDrop = item;
+                    }
                 });
-
-                if (itemDrop && containerItem.getAttribute('item-id') == itemDrop.getAttribute('item-id')) return;
-
-                if (itemDrop)
-                {
-                    itemDrop.classList.remove('dragging');
-
-                    let index = 0;
-                    let sourceItem = this.getItem(itemDrop.getAttribute('item-id'), false);
-                    
-                    if (sourceItem)
+                containerItem.addEventListener('dragend', () => {
+                    containerItem.classList.remove('dragging');
+                    this._draggingItem = null;
+                    let item = this.getItem(containerItem.getAttribute('item-id'));
+                    if (item && item.items && item.items.length > 0)
                     {
-                        if (sourceItem.subindex != undefined) 
-                            this.data.items[sourceItem.subindex].items.splice(sourceItem.index, 1);
-                        else
-                            this.data.items.splice(sourceItem.index, 1);
+                        this._bodySection.childNodes.forEach(itemList => {
+                            item.items.forEach(item => {
+                                if (item.id == itemList.getAttribute('item-id'))
+                                    itemList.classList.remove('disable-element');
+                            });
+                        });
                     }
-
-                    let targetItem = this.getItem(containerItem.getAttribute('item-id'), false);
-                    
-                    if (!this._topPositionDragEvent)
-                        index = 1;
-                    
-                    if (targetItem)
+                })
+                containerItem.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    if (containerItem.classList.contains('in-done-list')) return;
+                    if (this._draggingItem && containerItem.getAttribute('item-id') == this._draggingItem.getAttribute('item-id')) return;
+                    const rect = containerItem.getBoundingClientRect();
+                    const limity = (rect.y + (rect.height / 2));
+                    const limitx = (rect.x + (rect.width / 5))
+    
+                    let y = (e.clientY < limity);
+                    let x = (!y && e.clientX > limitx);
+    
+                    containerItem.classList.toggle('border-b', !y);
+                    containerItem.classList.toggle('border-t', y);
+                    if ((containerItem.getAttribute('parent-id')??'') == '')
                     {
-                        index += targetItem.index;
-                        delete sourceItem.index;
-                        delete sourceItem.subindex;
-
-                        if (targetItem.subindex != undefined)
-                        {
-                            let subitemsSource = JSON.parse(JSON.stringify(sourceItem.items ?? []));
-                            if (subitemsSource && subitemsSource.length > 0)
-                                delete sourceItem.items;
-                            this.data.items[targetItem.subindex].items.splice(index, 0, sourceItem);
-                            subitemsSource.forEach(subitem => {
-                                index ++;
-                                this.data.items[targetItem.subindex].items.splice(index, 0, subitem);
-                            });
-                        }
-                        else if (this._isChildItemDragEvent)
-                        {
-                            let subitems = (this.data.items[targetItem.index].items??[]);
-                            let subitemsSource = JSON.parse(JSON.stringify(sourceItem.items ?? []));
-                            if (subitemsSource && subitemsSource.length > 0)
-                                delete sourceItem.items;
-                            subitems.unshift(sourceItem);
-                            let _index = 0;
-                            subitemsSource.forEach(subitem => {
-                                _index ++;
-                                subitems.splice(_index, 0, subitem);
-                            });
-                            this.data.items[targetItem.index].items = subitems;
-                        }
-                        else
-                        {
-                            this.data.items.splice(index, 0, sourceItem);
-                        }
-                        if (this.onItemMoved) this.onItemMoved(sourceItem);
+                        containerItem.classList.toggle('bg-light-gray', x);
+                        childIcon.classList.toggle('hide-element', !x);
                     }
-                }
-                this._refreshView();
-            });
+    
+                    this._topPositionDragEvent = y;
+                    this._isChildItemDragEvent = x;
+                });
+                containerItem.addEventListener('dragleave', (e) => {
+                    containerItem.classList.remove('border-b');
+                    containerItem.classList.remove('border-t');
+                    containerItem.classList.remove('bg-light-gray');
+                    childIcon.classList.add('hide-element');
+                });
+                containerItem.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    if (containerItem.classList.contains('in-done-list')) return;
+                    containerItem.classList.remove('border-b');
+                    containerItem.classList.remove('border-t');
+                    containerItem.classList.remove('bg-light-gray');
+                    childIcon.classList.add('hide-element');
+    
+                    let itemId = e.dataTransfer.getData("text");
+                    let itemDrop = null;
+                    this._bodySection.childNodes.forEach(item => {
+                        if (item.getAttribute('item-id') == itemId)
+                            itemDrop = item;
+                    });
+    
+                    if (itemDrop && containerItem.getAttribute('item-id') == itemDrop.getAttribute('item-id')) return;
+    
+                    if (itemDrop)
+                    {
+                        itemDrop.classList.remove('dragging');
+    
+                        let index = 0;
+                        let sourceItem = this.getItem(itemDrop.getAttribute('item-id'), false);
+                        
+                        if (sourceItem)
+                        {
+                            if (sourceItem.subindex != undefined) 
+                                this.data.items[sourceItem.subindex].items.splice(sourceItem.index, 1);
+                            else
+                                this.data.items.splice(sourceItem.index, 1);
+                        }
+    
+                        let targetItem = this.getItem(containerItem.getAttribute('item-id'), false);
+                        
+                        if (!this._topPositionDragEvent)
+                            index = 1;
+                        
+                        if (targetItem)
+                        {
+                            index += targetItem.index;
+                            delete sourceItem.index;
+                            delete sourceItem.subindex;
+    
+                            if (targetItem.subindex != undefined)
+                            {
+                                let subitemsSource = JSON.parse(JSON.stringify(sourceItem.items ?? []));
+                                if (subitemsSource && subitemsSource.length > 0)
+                                    delete sourceItem.items;
+                                this.data.items[targetItem.subindex].items.splice(index, 0, sourceItem);
+                                subitemsSource.forEach(subitem => {
+                                    index ++;
+                                    this.data.items[targetItem.subindex].items.splice(index, 0, subitem);
+                                });
+                            }
+                            else if (this._isChildItemDragEvent)
+                            {
+                                let subitems = (this.data.items[targetItem.index].items??[]);
+                                let subitemsSource = JSON.parse(JSON.stringify(sourceItem.items ?? []));
+                                if (subitemsSource && subitemsSource.length > 0)
+                                    delete sourceItem.items;
+                                subitems.unshift(sourceItem);
+                                let _index = 0;
+                                subitemsSource.forEach(subitem => {
+                                    _index ++;
+                                    subitems.splice(_index, 0, subitem);
+                                });
+                                this.data.items[targetItem.index].items = subitems;
+                            }
+                            else
+                            {
+                                this.data.items.splice(index, 0, sourceItem);
+                            }
+                            if (this.onItemMoved) this.onItemMoved(sourceItem);
+                        }
+                    }
+                    this._refreshView();
+                });
+            }
         }
 
         return containerItem;

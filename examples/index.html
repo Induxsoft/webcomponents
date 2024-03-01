@@ -86,12 +86,13 @@
             ----------------------------------------------------------------------------------------------
             - data              (opcional): datos de la lista ( ej: {"text":"Lista de compras","items":[{"id":"1","text":"3 Tomates","done":false,"_meta":{"percent":-1,"progress":"100"}},{"id":"2","text":"1 Cebolla","done":false,"_meta":{"percent":-1,"progress":"100"}},{"id":"3","text":"1 Pieza de chile","done":false,"_meta":{"percent":-1,"progress":"100"}},{"id":"4","text":"4 Huevos","done":false,"_meta":{"percent":-1,"progress":"100"}},{"id":"5","text":"4 Naranjas","done":true,"_meta":{"percent":-1,"progress":"100"}}]} )
             - data-locked       (opcional): Elementos marcados ya no pueden desmarcarse (true/false, def: false)
-            - data-done-style   (opcional): Visualización de elementos marcados: 0-Permanecen en su sitio, 1-Desaparecen, 2-Se apilan en una lista en la parte inferior (def: 0)
+            - data-done-style   (opcional): Visualización de elementos marcados: 0-Permanecen en su sitio, 1-Se apilan en una lista en la parte inferior, 2-Desaparecen (def: 0)
             - can-remove        (opcional): Pueden eliminarse elementos (true/false, def: false)
             - can-edit          (opcional): Pueden editarse elementos (true/false, def: false)
             - can-move          (opcional): Pueden moverse elementos (true/false, def: false)
             - can-check         (opcional): Pueden marcarse como completados o actualizar su progreso (true/false, def: true)
             - can-add           (opcional): Pueden agregarse elementos a la lista (true/false, def: true)
+            - radio-style       (opcional): Mecanismo de marcado por radio buttons (Si - No), Si es false o no se establece: el mecanismo será un check. (true/false, def:false)
         -->
         <check-list 
             id="micontrol3"
@@ -103,6 +104,7 @@
             can-move="true" 
             can-check="true"
             can-add="true"
+            radio-style="false"
         />
     </div>
     <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD; padding-bottom: 32px; margin:4px; min-height: 35vh;">
