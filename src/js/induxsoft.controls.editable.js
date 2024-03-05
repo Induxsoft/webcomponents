@@ -184,13 +184,13 @@ class EditTable extends HTMLElement
                         .no-print{ display: none !important; }
                     }
                     @media screen and (max-width: 768px) {
-                        .table-target {
-                            /* row to targets */
+                        .table-cards {
+                            /* row to cards */
                             & th{ display:none !important; }
                             & td{ display:block !important; }
                             & td::before{ content: attr(data-cell) ": "; font-weight: 600; }
                             & td{ display: grid !important; grid-template-columns: 35% 65% !important; word-wrap: break-word; }
-                            /* style targets */
+                            /* cards styles */
                             & td:first-child{ padding-top:2rem !important; }
                             & td:last-child{ padding-bottom:2rem !important; }
                             & .EdiTable-Cell{ outline: none; padding-left: 1rem; height: auto; }
@@ -750,7 +750,7 @@ class EditTable extends HTMLElement
     checkAndSetRowCards()
     {
         const editable = this.Columns.find(col => col.type.toLowerCase() != 'noeditable')
-        this._table.classList.toggle('table-target', (!editable && this.cardsResponsive));
+        this._table.classList.toggle('table-cards', (!editable && this.cardsResponsive));
     }
 
 
