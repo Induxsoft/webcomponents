@@ -183,6 +183,20 @@ class EditTable extends HTMLElement
                     {
                         .no-print{ display: none !important; }
                     }
+                    @media screen and (max-width: 768px) {
+                        .table-target {
+                            /* row to targets */
+                            & th{ display:none !important; }
+                            & td{ display:block !important; }
+                            & td::before{ content: attr(data-cell) ": "; font-weight: 600; }
+                            & td{ display: grid !important; grid-template-columns: 35% 65% !important; word-wrap: break-word; }
+                            /* style targets */
+                            & td:first-child{ padding-top:2rem !important; }
+                            & td:last-child{ padding-bottom:2rem !important; }
+                            & .EdiTable-Cell{ outline: none; padding-left: 1rem; height: auto; }
+                            & tbody tr{ outline: 1px solid #DDD; }
+                        }
+                    }
                 </style>
             `;
 
@@ -214,6 +228,8 @@ class EditTable extends HTMLElement
             if (this.DataArray.length < 1) this.UpdateData();
             this._current_row = this.CurrentRowIndex();
             this.setAutoConfirm();
+
+            this.checkAndSetRowCards();
         });
     }
 
@@ -278,6 +294,7 @@ class EditTable extends HTMLElement
                     this.SetTdValue(td, value, valideEncode, coldf);
                     
                     td.style.textAlign = (coldf?.textalign??'');
+                    td.setAttribute('data-cell',(coldf?.title??''));
                     if (this.onTdPaint) this.onTdPaint(td, idx, this.ColIndexOfTd(td), (coldf?.field??''));
                 });
 
@@ -346,6 +363,7 @@ class EditTable extends HTMLElement
                         settings[attr] = this._getAttributeColumn(attr, column.getAttribute(attr));
                     });
                 }
+                settings['title'] = column.textContent;
                 this.Columns[i] = settings;
             });
         }
@@ -704,6 +722,7 @@ class EditTable extends HTMLElement
         if (this.hasAttribute('min-row-height')) this.minRowHeight = this.getAttribute('min-row-height');
         if (this.hasAttribute('max-row-height')) this.maxRowHeight = this.getAttribute('max-row-height');
         if (this.hasAttribute('row-height')) this.rowHeight = this.getAttribute('row-height');
+        if (this.hasAttribute('cards-responsive')) this.cardsResponsive = (this.getAttribute('cards-responsive')=='true');
     }
     autoConfirm=false;
     _fireBlur=true;
@@ -727,6 +746,13 @@ class EditTable extends HTMLElement
             //else { this._fireBlur=false;}
         },1000);
     }
+
+    checkAndSetRowCards()
+    {
+        const editable = this.Columns.find(col => col.type.toLowerCase() != 'noeditable')
+        this._table.classList.toggle('table-target', (!editable && this.cardsResponsive));
+    }
+
 
     // ========================= EDITABLE FUNCTIONS
     
@@ -1115,6 +1141,7 @@ class EditTable extends HTMLElement
     minRowHeight = "none";
     maxRowHeight = "none";
     rowHeight = "100%";
+    cardsResponsive = false;
     
     CSS = {
         Cell:"EdiTable-Cell",
@@ -1267,7 +1294,7 @@ class EditTable extends HTMLElement
 
         this.GetTrByIndex(row).remove();
         this.DataArray.splice(row, 1);
-        this._dataArrayBackup.splice(row, 1);
+        if(this._dataArrayBackup) this._dataArrayBackup.splice(row, 1);
 
         if (this._getCurren().Events[this.EdiTable.Const.Events.RowDeleted]!=undefined)
             this._getCurren().Events[this.EdiTable.Const.Events.RowDeleted](eventArgs);
@@ -2281,6 +2308,7 @@ class EditTable extends HTMLElement
                     this.SetTdValue(td, value, valideEncode, coldf);
                     
                     td.style.textAlign = (coldf?.textalign??'');
+                    td.setAttribute('data-cell',(coldf?.title??''));
                     if (this.onTdPaint) this.onTdPaint(td, idx, this.ColIndexOfTd(td), (coldf?.field??''));
                 });
 
