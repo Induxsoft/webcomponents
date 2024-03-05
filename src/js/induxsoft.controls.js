@@ -3206,7 +3206,7 @@ class FilterDateRange extends HTMLElement
             const shadow = this.attachShadow({ mode: 'closed' });
             this._writeStyles(shadow);
 
-            this._container = this._createFullElement('div', { id: 'FDR_container', class: 'border d-flex align-items-center gap-2' });
+            this._container = this._createFullElement('div', { id: 'FDR_container', class: 'border d-flex align-items-center gap-1' });
             this._field_va1 = this._createFullElement('input', { type: 'hidden', id: 'FDR_ipt_v1' });
             this._field_va2 = this._createFullElement('input', { type: 'hidden', id: 'FDR_ipt_v2' });
             this._field_mod = this._createFullElement('input', { type: 'hidden', id: 'FDR_ipt_md', name: (this.getAttribute('mode-field') ?? '') });
@@ -3215,7 +3215,7 @@ class FilterDateRange extends HTMLElement
             const panel_monthly = this._createFullElement('div', { id: 'FDR_pnl_monthly', class:'grow-1 panel' });
             const panel_range = this._createFullElement('div', { id: 'FDR_pnl_range', class:'grow-1 panel d-none' });
 
-            const select_mode = this._createFullElement('select', { id: 'FDR_sel_mode', class: 'induxsoft-form-select no-border' });
+            const select_mode = this._createFullElement('select', { id: 'FDR_sel_mode', class: 'induxsoft-form-select' });
             panel_mode.appendChild(select_mode);
 
             this._container.appendChild(panel_mode);
@@ -3253,26 +3253,43 @@ class FilterDateRange extends HTMLElement
                 .d-flex{ display: flex; }
                 .grow-1{ flex-grow: 1; }
                 .wrap{ flex-wrap: wrap; }
-                .gap-1{gap:4px;} .gap-2{gap:8px;}
+                .gap-1{gap:5px;} .gap-2{gap:8px;}
                 .border{ border: 1px solid #ced4da; }
                 .no-border{ border: none !important; outline: none !important; }
                 .d-none{ display: none; }
                 .align-items-center{ align-items: center; }
                 .active-month { background-color: #005CC8 !important; color: #FFF !important; }
-                .input-date{ font-size: .9rem; }
-                .input-date:focus{ border-bottom: 1px solid #005CC8 !important; }
+                .input-date{ font-size: .9rem !important; }
+                .input-date:focus{ outline: 2px solid #005CC8 !important; }
                 .fz-9{ font-size: .9rem; }
+                /*#FDR_container{ background-color: #EDEDED; }*/
+                #FDR_div_datef,#FDR_div_datet{ background-color:#FFF; padding-left: 4px;}
+                #FDR_div_months{ display: grid; grid-template-columns: repeat(12, minmax(1rem, 6rem)); }
+                .month-button{text-overflow: ellipsis;overflow: hidden;width: auto;}
                 .induxsoft-form-control{ border: none; outline: 1px solid #ced4da; display: block; width: 100%; padding: 0.375rem 0.75rem !important; font-size: 1rem; font-weight: 400; line-height: 1.5; color: #212529; background-color: #fff; background-clip: padding-box; appearance: none; transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; }
                 .induxsoft-form-control:disabled, .induxsoft-form-control[readonly] { background-color: #e9ecef; opacity: 1; }
                 .induxsoft-buttons{ font-weight: 400;line-height: 1.5;color: #212529;text-align: center;text-decoration: none;vertical-align: middle;cursor: pointer;-webkit-user-select: none;-moz-user-select: none;user-select: none;background-color: #FFF;outline:1px solid #ced4da;border: none;padding: 0.375rem 0.75rem;font-size: 1rem;transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; }
                 .induxsoft-buttons:hover{ color: #212529;background-color: #F5F5F5; }
                 .induxsoft-form-select { display: block; width: 100%; padding: 0.375rem 2.25rem 0.375rem 0.75rem !important; -moz-padding-start: calc(0.75rem - 3px); font-size: 1rem; font-weight: 400; line-height: 1.5; color: #212529; background-color: #fff; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 16px 12px; border: none; outline: 1px solid #ced4da; -webkit-appearance: none; -moz-appearance: none; appearance: none; }
+                #FDR_month_select{ display: none; }
+
+                @media screen and (max-width:768px){
+                    #FDR_div_months{
+                        grid-template-columns: auto;
+                        & .month-button{
+                            display: none;
+                        }
+                        & #FDR_month_select{
+                            display: initial;
+                        }
+                    }
+                }
             <style>
         `;
     }
     _fillSelectMode(select)
     {
-        let opt = this._createFullElement('option', { value: 'month' }, (this.getAttribute('label-months') ?? 'Ver por cada mes'));
+        let opt = this._createFullElement('option', { value: 'month' }, (this.getAttribute('label-months') ?? 'Por mes'));
         select.appendChild(opt);
 
         let lastDays = (this.getAttribute('lastdays-options') ?? '').split(',');
@@ -3294,9 +3311,7 @@ class FilterDateRange extends HTMLElement
             if (this._field_mod.value == 'lastdays')
             {
                 this._setFieldValues({ name: range_field, value: select.value }, null);
-                this._selection = {};
-                this._selection[this._field_mod.name] = 'lastdays';
-                this._selection[range_field] = select.value;
+                this._setTisSelection({[this._field_mod.name]: 'lastdays', [range_field]: select.value});
                 if (this._isAutoSubmit())
                     this._submitFilter();
             }
@@ -3339,7 +3354,7 @@ class FilterDateRange extends HTMLElement
 
         const container = this._createFullElement('div', { id: 'FDR_cont_montly', class: 'd-flex align-items-center' });
         const div_years = this._createFullElement('div', { id: 'FDR_div_years', class: 'd-flex' });
-        const div_months = this._createFullElement('div', { id: 'FDR_div_months', class: 'd-flex grow-1 wrap' });
+        const div_months = this._createFullElement('div', { id: 'FDR_div_months', class: 'grow-1' });
 
         const yearfield = (this.getAttribute('year-field') ?? 'year');
         const monthfield = (this.getAttribute('month-field') ?? 'month');
@@ -3360,10 +3375,7 @@ class FilterDateRange extends HTMLElement
 
         select_year.addEventListener('change', e => { 
             this._setFieldValues(select_year, input_mont);
-            this._selection = {};
-            this._selection[this._field_mod.name] = 'month';
-            this._selection[yearfield] = select_year.value;
-            this._selection[monthfield] = input_mont.value;
+            this._setTisSelection({[this._field_mod.name]: 'month', [yearfield]: select_year.value, [monthfield]: input_mont.value});
             if (this._isAutoSubmit())
                 this._submitFilter();
         });
@@ -3380,6 +3392,9 @@ class FilterDateRange extends HTMLElement
             this._setFieldValues(select_year, input_mont);
         }
 
+        const month_select = this._createFullElement('select', { id:'FDR_month_select', class:'induxsoft-form-select' });
+        let select_template = ``;
+
         let names = (this.getAttribute('month-names') ?? 'Enero,Febrero,Marzo,Abril,Mayo,Junio,Julio,Agosto,Septiembre,Octubre,Noviembre,Diciembre').split(',');
         for (let i = 1; i <= 12; i++) {
             let oc = ((Number((input_mont.value ?? '-1')) != i) ? '' : 'active-month');
@@ -3389,13 +3404,25 @@ class FilterDateRange extends HTMLElement
                 active_month(month);
                 input_mont.value = month.getAttribute('value');
                 this._setFieldValues(select_year, input_mont);
-                this._selection = {};
-                this._selection[this._field_mod.name] = 'month';
-                this._selection[yearfield] = select_year.value;
-                this._selection[monthfield] = input_mont.value;
+                this._setTisSelection({[this._field_mod.name]:'month', [yearfield]: select_year.value, [monthfield]: input_mont.value});
                 if (this._isAutoSubmit())
                     this._submitFilter();
             }
+
+            select_template+=`
+                <option value="${i}" ${(oc=='active-month'?'selected':'')}>${(names[i-1] ?? '')}</option>
+            `;
+        }
+
+        month_select.innerHTML = select_template;
+        div_months.appendChild(month_select);
+
+        month_select.onchange = e => {
+            input_mont.value = month_select.value;
+            this._setFieldValues(select_year, input_mont);
+            this._setTisSelection({[this._field_mod.name]:'month', [yearfield]: select_year.value, [monthfield]: input_mont.value});
+            if (this._isAutoSubmit())
+                this._submitFilter();
         }
 
         container.appendChild(div_years);
@@ -3406,7 +3433,7 @@ class FilterDateRange extends HTMLElement
     {
         panel.innerHTML = '';
 
-        const container = this._createFullElement('div', { id: 'FDR_cont_range', class: 'd-flex gap-2 align-items-center' });
+        const container = this._createFullElement('div', { id: 'FDR_cont_range', class: 'd-flex gap-1 align-items-center wrap' });
 
         const div_datef = this._createFullElement('div', { id: 'FDR_div_datef', class: 'd-flex align-items-center gap-2' }, `<small class="text-secondary">${ (this.getAttribute('label-from') ?? 'Desde:') }</small>`);
         const div_datet = this._createFullElement('div', { id: 'FDR_div_datet', class: 'd-flex align-items-center gap-2' }, `<small class="text-secondary">${ (this.getAttribute('label-to') ?? 'Hasta:') }</small>`);
@@ -3469,10 +3496,7 @@ class FilterDateRange extends HTMLElement
         btn_accept.onclick = () => {
             edit_dates(false);
             this._setFieldValues(input_datef, input_datet);
-            this._selection = {};
-            this._selection[this._field_mod.name] = 'range';
-            this._selection[name_datef] = input_datef.value;
-            this._selection[name_datet] = input_datet.value;
+            this._setTisSelection({[this._field_mod.name]:'range', [name_datef]: input_datef.value, [name_datet]: input_datet.value});
             if (this._isAutoSubmit())
                 this._submitFilter();
         }
@@ -3509,6 +3533,12 @@ class FilterDateRange extends HTMLElement
     _isAutoSubmit()
     {
         return ((this.getAttribute('auto-submit') ?? 'false') == 'true');
+    }
+    _setTisSelection(obj){
+        this._selection = {};
+        Object.keys(obj??{}).forEach(k=>{
+            this._selection[k]=obj[k];
+        });
     }
 }
 
