@@ -2576,6 +2576,7 @@ class MediaList extends HTMLElement
     highlightFirst = true;
     mediaProp = 'url';
     miniatureProp = 'mini';
+    labelProp = '';
     removeOnMove = true;
     backColorMedia = '#FFF';
     outlineSelected = false;
@@ -2610,7 +2611,7 @@ class MediaList extends HTMLElement
                 <style>
                     .bordered{ outline: 1px solid #DDD; }
                     .w-100{ width: 100%; } .h-100{ height: 100%; }
-                    .p-1{ padding: 4px; } .p-2{ padding: 8px; } .p-3{ padding: 12px; } .p-4{ padding: 16px; } .p-5{ padding: 32px; }
+                    .p-05 { padding: 2px; } .p-1{ padding: 4px; } .p-2{ padding: 8px; } .p-3{ padding: 12px; } .p-4{ padding: 16px; } .p-5{ padding: 32px; }
                     .ps-1{ padding-left: 4px; }.ps-2{ padding-left: 8px; }.ps-3{ padding-left: 12px; }.ps-4{ padding-left: 16px; }.ps-5{ padding-left: 32px; }
                     .pe-1{ padding-right: 4px; }.pe-2{ padding-right: 8px; }.pe-3{ padding-right: 12px; }.pe-4{ padding-right: 16px; }.pe-5{ padding-right: 32px; }
                     
@@ -2618,8 +2619,12 @@ class MediaList extends HTMLElement
                     .media-item { border: 8px solid transparent; transition: .5s; position:relative; position: relative; }
                     .dragging { border: 24px solid transparent; }
                     .dragging .img { box-shadow: 4px 4px 8px 0 #DDD !important; }
-                    .btn-delete { cursor:pointer; position:absolute; background-color: #FFF; opacity: .3; bottom: 8px; right: 8px; display:flex; align-items:center; }
-                    .btn-delete:hover { opacity: 1; }
+                    .btn-delete { cursor:pointer; margin: 4px 4px 4px 0; display: flex; align-items:center; justify-content: center; }
+                    .label-img { margin: 4px 0px 4px 4px; text-wrap: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; font-size: 14px; }
+                    .btn-delete, .label-img{ opacity: .9; background-color: #FFF; color: #000; }
+                    .btn-delete:hover, .label-img:hover { opacity: 1; }
+                    /* .label-img:hover{ position: absolute; left:0; text-wrap:wrap; bottom: 0; } */
+                    .container-controls{ display: flex; justify-content: end; gap: 4px; position:absolute; bottom: 0px; right: 0px; width: 100%;}
                     .border-l { border-left: 24px solid transparent !important; border-top: 24px solid transparent !important; }
                     .border-r { border-right: 24px solid transparent !important; border-bottom: 24px solid transparent !important; }
                     .highlight { border-color: #E2F2FF; }
@@ -2669,13 +2674,23 @@ class MediaList extends HTMLElement
         const imgi = this._createFullElement('div', { class:'w-100 h-100 img bordered'});
 
         const container = this._createFullElement('div', { class:'media-item', draggable:'true', data: JSON.stringify(item), id: item[this._key_id] });
+        const containerControls = this._createFullElement('div', { class:'container-controls' });
         container.appendChild(imgi);
+        imgi.appendChild(containerControls);
+
+        if (this.labelProp != '')
+        {
+            const text = (item[this.labelProp] ?? '')
+            const label = this._createFullElement('small', { class:'p-05 label-img', title:text });
+            label.textContent = text;
+            containerControls.appendChild(label);
+        }
 
         if (this.canDelete)
         {
-            let btnDelete = this._createFullElement('div', { class:'p-1 btn-delete', title:'Eliminar' });
+            let btnDelete = this._createFullElement('div', { class:'p-05 btn-delete', title:'Eliminar' });
             btnDelete.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/></svg>';
-            imgi.appendChild(btnDelete);
+            containerControls.appendChild(btnDelete);
             btnDelete.addEventListener('click', (e) => {
                 e.stopPropagation();
                 this.contanr.removeChild(container);
@@ -2702,6 +2717,7 @@ class MediaList extends HTMLElement
         this.highlightFirst = this._parseBool((this.getAttribute('highlight-first') ?? 'true'), true);
         this.mediaProp = (this.getAttribute('media-prop') ?? 'url');
         this.miniatureProp = (this.getAttribute('miniature-prop') ?? 'mini');
+        this.labelProp = (this.getAttribute('label-prop') ?? '');
         this.backColorMedia = (this.getAttribute('back-color-media') ?? '#FFF');
         this.outlineSelected = this._parseBool((this.getAttribute('outline-selected') ?? 'false'), false);
         let maxsize = (this.getAttribute('max-size-media') ?? '');

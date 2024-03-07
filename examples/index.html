@@ -287,6 +287,7 @@
             - highlight-first   (opcional): Marcar el primer elemento (true/false, def: true)
             - media-prop        (opcional): Nombre del campo que indica la ubicación del recurso (def: url)
             - miniature-prop    (opcional): Nombre del campo que indica la ubicación de la miniatura del recurso (def: mini)
+            - label-prop        (opcional): Nombre del campo para ser usado como etiqueta del recurso
             - back-color-media  (opcional): Color de fondo de los elementos media (ej: #FFF o white, def: #FFF)
             - outline-selected  (opcional): Remarcar el elemento seleccionado (true/false, def: false)
             - max-size-media    (opcional): Valor que se aplica al alto y ancho máximo de los elementos (ej: 12rem, def: 8rem)
@@ -294,9 +295,9 @@
         <media-list
             id="micontrol9"
             data='[
-                {"url":"https://induxsoft.net/img/test/img1.png", "mini":"https://induxsoft.net/img/test/img1.png"}, 
-                {"url":"https://induxsoft.net/img/test/img2.png", "mini":"https://induxsoft.net/img/test/img2.png"}, 
-                {"url":"https://induxsoft.net/img/test/img3.png", "mini":"https://induxsoft.net/img/test/img3.png"}
+                {"url":"https://induxsoft.net/img/test/img1.png", "mini":"https://induxsoft.net/img/test/img1.png", "titulo":"título"}, 
+                {"url":"https://induxsoft.net/img/test/img2.png", "mini":"https://induxsoft.net/img/test/img2.png", "titulo":"título medio"}, 
+                {"url":"https://induxsoft.net/img/test/img3.png", "mini":"https://induxsoft.net/img/test/img3.png", "titulo":"título grande con mucho texto"}
             ]'
             can-arrange="true"
             can-drag="true"
@@ -304,7 +305,9 @@
             can-delete="true"
             highlight-first="true"
             media-prop="url"
-            miniature-prop="mini">
+            label-prop="titulo"
+            miniature-prop="mini"
+            max-size-media="9rem">
         </media-list>
     </div>
     <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD; padding-bottom: 32px; margin:4px;">
