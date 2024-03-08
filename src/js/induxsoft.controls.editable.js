@@ -37,6 +37,7 @@ class EditTable extends HTMLElement
                         width: 100%;
                         height: 100%;
                         text-align: inherit;
+                        justify-content: inherit;
                         display: flex;
                         align-items: center;
                         background-color: rgba(255,255,255,.7);
@@ -293,7 +294,6 @@ class EditTable extends HTMLElement
 
                     this.SetTdValue(td, value, valideEncode, coldf);
                     
-                    td.style.textAlign = (coldf?.textalign??'');
                     td.setAttribute('data-cell',(coldf?.title??''));
                     if (this.onTdPaint) this.onTdPaint(td, idx, this.ColIndexOfTd(td), (coldf?.field??''));
                 });
@@ -2157,6 +2157,12 @@ class EditTable extends HTMLElement
 
         let cellContent = td.querySelector('div[iscellcontent=true]');
         if (!cellContent) cellContent = td.closest('div[iscellcontent=true]');
+
+        if (cellContent)
+        {
+            cellContent.style.justifyContent = (coldef?.textalign??'');
+            cellContent.style.textAlign = (coldef?.textalign??'');
+        }
         
         if (cellContent)
         {
@@ -2307,7 +2313,6 @@ class EditTable extends HTMLElement
 
                     this.SetTdValue(td, value, valideEncode, coldf);
                     
-                    td.style.textAlign = (coldf?.textalign??'');
                     td.setAttribute('data-cell',(coldf?.title??''));
                     if (this.onTdPaint) this.onTdPaint(td, idx, this.ColIndexOfTd(td), (coldf?.field??''));
                 });
