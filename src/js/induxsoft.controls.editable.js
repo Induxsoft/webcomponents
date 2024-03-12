@@ -2157,12 +2157,6 @@ class EditTable extends HTMLElement
 
         let cellContent = td.querySelector('div[iscellcontent=true]');
         if (!cellContent) cellContent = td.closest('div[iscellcontent=true]');
-
-        if (cellContent)
-        {
-            cellContent.style.justifyContent = (coldef?.textalign??'');
-            cellContent.style.textAlign = (coldef?.textalign??'');
-        }
         
         if (cellContent)
         {
@@ -2183,12 +2177,16 @@ class EditTable extends HTMLElement
     {
         if (cellContent)
         {
+            // Sizes
             cellContent.style.minHeight = this.minRowHeight;
             cellContent.style.maxHeight = this.maxRowHeight;
             cellContent.style.height = this.rowHeight;
             if (coldef?.minwidth) cellContent.style.minWidth = coldef.minwidth;
             if (coldef?.maxwidth) cellContent.style.maxWidth = coldef.maxwidth;
             if (coldef?.width) cellContent.style.width = coldef.maxwidth;
+            // Align
+            cellContent.style.justifyContent = (coldef?.textalign??'');
+            cellContent.style.textAlign = (coldef?.textalign??'');
         }
     }
     _withFormat(coldef, value)
