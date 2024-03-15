@@ -131,6 +131,12 @@ class EditTable extends HTMLElement
                         cursor: col-resize;
                         background-color: transparent;
                     }
+                    th.ascendent::after{
+                        content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23BBB' class='bi bi-caret-down-fill' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+                    }
+                    th.descendent::after{
+                        content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23BBB' class='bi bi-caret-up-fill' viewBox='0 0 16 16'%3E%3Cpath d='m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z'/%3E%3C/svg%3E");
+                    }
 
                     .tr-border-bottom td{ 
                         transition: border .1s; 
@@ -460,17 +466,21 @@ class EditTable extends HTMLElement
             let par = 0;
             field.onclick = e => {
                 e.stopPropagation();
+                fields.forEach(f=>{f.classList.remove('ascendent');f.classList.remove('descendent')});
                 par++;
+                let desc = (par%2==0);
+                field.classList.toggle('ascendent',!desc);
+                field.classList.toggle('descendent',desc);
                 if (this.ShowAsTree)
                 {
                     let options = this._getTreeOptions();
                     this.GetTree(options);
-                    this.SortTree(this.DataArray, (field.getAttribute('field')??''), (par%2==0), options);
+                    this.SortTree(this.DataArray, (field.getAttribute('field')??''), desc, options);
                     this.SetTree(this.DataArray, options);
                 }
                 else
                 {
-                    this.Sort(this.DataArray, (field.getAttribute('field')??''), (par%2==0));
+                    this.Sort(this.DataArray, (field.getAttribute('field')??''), desc);
                 }
                 this._printRows();
             };
