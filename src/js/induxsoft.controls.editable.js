@@ -432,7 +432,8 @@ class EditTable extends HTMLElement
         });
         document.addEventListener('mouseup', (e) => { 
             e.stopPropagation();
-            curCol,nxtCol = undefined;
+            curCol = undefined;
+            nxtCol = undefined;
             nxtCol = undefined;
             pageX = undefined;
             nxtColWidth = undefined;
@@ -2193,7 +2194,7 @@ class EditTable extends HTMLElement
             cellContent.style.height = this.rowHeight;
             if (coldef?.minwidth) cellContent.style.minWidth = coldef.minwidth;
             if (coldef?.maxwidth) cellContent.style.maxWidth = coldef.maxwidth;
-            if (coldef?.width) cellContent.style.width = coldef.maxwidth;
+            if (coldef?.width) cellContent.style.width = coldef.width;
             // Align
             cellContent.style.justifyContent = (coldef?.textalign??'');
             cellContent.style.textAlign = (coldef?.textalign??'');
