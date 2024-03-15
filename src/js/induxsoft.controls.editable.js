@@ -30,6 +30,7 @@ class EditTable extends HTMLElement
         document.addEventListener('DOMContentLoaded', () => 
         {
             this._shadow = this.attachShadow({ mode: 'closed' });
+            this._initOtherValues();
             
             this._shadow.innerHTML = `
                 <style>
@@ -229,7 +230,6 @@ class EditTable extends HTMLElement
             this._resizableGrid(this._table);
             this._setSortEvent();
             this._setMoveEvent();
-            this._initOtherValues();
 
             // Si no se ha proporcionado el atributo data para el dataArray se genera a partir del contenido de la tabla
             if (this.DataArray.length < 1) this.UpdateData();
@@ -2197,6 +2197,11 @@ class EditTable extends HTMLElement
             // Align
             cellContent.style.justifyContent = (coldef?.textalign??'');
             cellContent.style.textAlign = (coldef?.textalign??'');
+
+            if (this.maxRowHeight != 'none' || this.rowHeight != '100%')
+            {
+                cellContent.style.display = 'block';
+            }
         }
     }
     _withFormat(coldef, value)
