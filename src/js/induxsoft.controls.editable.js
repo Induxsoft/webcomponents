@@ -469,8 +469,8 @@ class EditTable extends HTMLElement
                 fields.forEach(f=>{f.classList.remove('ascendent');f.classList.remove('descendent')});
                 par++;
                 let desc = (par%2==0);
-                field.classList.toggle('ascendent',!desc);
-                field.classList.toggle('descendent',desc);
+                field.classList.toggle('ascendent',desc);
+                field.classList.toggle('descendent',!desc);
                 if (this.ShowAsTree)
                 {
                     let options = this._getTreeOptions();
