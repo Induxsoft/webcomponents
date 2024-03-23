@@ -171,6 +171,7 @@ class EditTable extends HTMLElement
                     .collapse-btn { cursor: pointer; }
                     .cell-content { width: 100%; height: 100%; display: flex; align-items: center; overflow: hidden; }
                     .hidde-row{ display: none; }
+                    .hidde-col{ display: none !important; }
                     .container-cell-content { display: flex; gap:2px; width:-webkit-fill-available; height: 100%; align-items: center;}
 
                     .induxsoft-form-control{border: none; outline:1px solid #ced4da;display: block;width: 100%;padding: 0.375rem 0.75rem !important;font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-clip: padding-box;appearance: none;transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
@@ -256,6 +257,7 @@ class EditTable extends HTMLElement
             thead.querySelectorAll('edit-tr').forEach(editTr => editTr.replaceWith(this._replaceTagNameElement(editTr, 'tr')));
             thead.querySelectorAll('tr').forEach(tr => {
                 tr.querySelectorAll('edit-th').forEach(editTh => {
+                    editTh.innerHTML = `<span>${editTh.textContent}</span>`;
                     this._setColumnWith(editTh);
                     editTh.replaceWith(this._replaceTagNameElement(editTh, 'th'));
                 });
@@ -452,6 +454,13 @@ class EditTable extends HTMLElement
         let index = -1;
         let tbody = tr?.parentElement;
         if (tbody) tbody.querySelectorAll('tr:not(.hidde-row)').forEach((_tr, i) => { if (_tr === tr) index = i });
+        return index;
+    }
+    _getVisibleColumnIndex=(td)=>
+    {
+        let index = -1;
+        let tr = td?.parentElement;
+        if (tr) tr.querySelectorAll('td:not(.hidde-col)').forEach((_td, i) => { if (_td === td) index = i });
         return index;
     }
     _getCurren=(setnew=false)=>
@@ -1220,7 +1229,7 @@ class EditTable extends HTMLElement
      */
     NavToEnd=()=>
     {
-        this.NavTo(this.TRCount()-1,this.ColumnsCount()-1);
+        this.NavTo(this.TRCount()-1,(this._table.querySelectorAll('thead tr td:not(.hidde-col)').length-1));
     }
     /**
      * Mueve el selector a la primer columna de la fila especificada.
@@ -1236,7 +1245,7 @@ class EditTable extends HTMLElement
      */
     NavToLastCell=(row)=>
     {
-        this.NavTo(row,this.ColumnsCount()-1);
+        this.NavTo(row,(this._table.querySelectorAll('thead th:not(.hidde-col)').length-1));
     }
     /**
      * Mueve el selector a la columna y fila especificada.
@@ -1251,7 +1260,7 @@ class EditTable extends HTMLElement
         if (rows<1 || cols<1 || row>rows-1 || col>cols-1 || col<0 || row<0) return;
         
         let tbody=this.GetTBody();
-        let td = tbody.querySelectorAll(this.EdiTable.Const.HTML.TR)[row].querySelectorAll(this.EdiTable.Const.HTML.TD)[col];
+        let td = tbody.querySelectorAll(this.EdiTable.Const.HTML.TR)[row].querySelectorAll(this.EdiTable.Const.HTML.TD+':not(.hidde-col)')[col];
         this.CellFocus( td );
     }
     /**
@@ -1476,12 +1485,13 @@ class EditTable extends HTMLElement
             this._shadow.querySelectorAll(this.EdiTable.Const.HTML.TABLE+"#"+this.tableId+" "+this.EdiTable.Const.HTML.TD).forEach(td => {
                 td.removeEventListener('click', clickFunct);
                 td.addEventListener('click', clickFunct);
+                if (this.hideColumns.includes(td.cellIndex)) td.classList.add('hidde-col');
             });
 
             this._setMoveEvent();
 
             if (!nofocus)
-                this.CellFocus(nr.cells[0]);
+                this.CellFocus(nr.querySelector('td:not(.hidde-col)'));
             
             var eventArgs={
                 sender:this._getCurren(),
@@ -2066,7 +2076,7 @@ class EditTable extends HTMLElement
     NavLeft=(active_cell)=>
     {
         let active_cell_index=active_cell.cellIndex;
-        if (active_cell_index==0)
+        if (this._getVisibleColumnIndex(active_cell)==0)
         {
             if (!this.EverMove)
                 return;
@@ -2077,7 +2087,7 @@ class EditTable extends HTMLElement
         }
 
         let parent_tr = active_cell.parentElement;
-        let target_cell = parent_tr.querySelectorAll(this.EdiTable.Const.HTML.TD)[active_cell_index-1];
+        let target_cell = parent_tr.querySelectorAll(this.EdiTable.Const.HTML.TD+":not(.hidde-col)")[this._getVisibleColumnIndex(active_cell)-1];
         this.CellFocus(target_cell);
     }
     /**
@@ -2091,8 +2101,9 @@ class EditTable extends HTMLElement
         let active_cell_index=active_cell.cellIndex;
 
         let parent_tr = active_cell.parentElement;
-        
-        if (active_cell_index==parent_tr.querySelectorAll('td').length-1)
+        // console.log(active_cell_index);
+        // console.log(parent_tr.querySelectorAll(this.EdiTable.Const.HTML.TD+":not(.hidde-col)").length);
+        if (this._getVisibleColumnIndex(active_cell)==parent_tr.querySelectorAll(this.EdiTable.Const.HTML.TD+":not(.hidde-col)").length-1)
         {
             if (!this.EverMove)
                 return;
@@ -2102,7 +2113,7 @@ class EditTable extends HTMLElement
             return;
         }
 
-        let target_cell = parent_tr.querySelectorAll(this.EdiTable.Const.HTML.TD)[active_cell_index+1];
+        let target_cell = parent_tr.querySelectorAll(this.EdiTable.Const.HTML.TD+":not(.hidde-col)")[this._getVisibleColumnIndex(active_cell)+1];
         this.CellFocus(target_cell);
     }
     /**
@@ -2329,6 +2340,7 @@ class EditTable extends HTMLElement
                     
                     td.setAttribute('data-cell',(coldf?.title??''));
                     if (this.onTdPaint) this.onTdPaint(td, idx, this.ColIndexOfTd(td), (coldf?.field??''));
+                    if (this.hideColumns.includes(td.cellIndex)) td.classList.add('hidde-col');
                 });
 
                 if (this.ShowAsTree)
@@ -2739,6 +2751,28 @@ class EditTable extends HTMLElement
 
         this._getCurren().Events[this.EdiTable.Const.Events.OnSort](eventArgs);
     }
+    changeColumnTitle(field,title)
+    {
+        const th = this._table.querySelector(`thead > tr th[field="${field}"] span`);
+        if (!th) return false;
+
+        th.textContent = title;
+        return true;
+    }
+    hideColumn(fieldColumn,hide=true)
+    {
+        let th = this._table.querySelector(`thead th[field="${fieldColumn}"]`);
+        if (!th) return false;
+
+        this._table.querySelectorAll('tbody tr').forEach(tr => tr.cells[th.cellIndex].classList.toggle('hidde-col',hide));
+        th.classList.toggle('hidde-col', hide);
+
+        if (hide && !this.hideColumns.includes(th.cellIndex)) this.hideColumns.push(th.cellIndex);
+        else this.hideColumns = this.hideColumns.filter(idx => idx != th.cellIndex);
+
+        return true;
+    }
+    hideColumns=[];
 }
 
 customElements.define('edit-table', EditTable);
