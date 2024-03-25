@@ -2767,7 +2767,9 @@ class EditTable extends HTMLElement
         this._table.querySelectorAll('tbody tr').forEach(tr => tr.cells[th.cellIndex].classList.toggle('hidde-col',hide));
         th.classList.toggle('hidde-col', hide);
 
-        if (hide && !this.hideColumns.includes(th.cellIndex)) this.hideColumns.push(th.cellIndex);
+        if (hide){
+            if (!this.hideColumns.includes(th.cellIndex)) this.hideColumns.push(th.cellIndex);
+        }
         else this.hideColumns = this.hideColumns.filter(idx => idx != th.cellIndex);
 
         return true;
