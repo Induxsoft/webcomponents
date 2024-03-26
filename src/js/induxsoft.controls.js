@@ -469,11 +469,13 @@ class InputKey extends HTMLElement
 
             const MO = new MutationObserver(()=>{
                 container.classList.toggle('disable-element', ((this.getAttribute('disabled')??'') === 'true'));
+                this.inputv.required = ((this.getAttribute('required') ?? 'false') === 'true');
+                //container.classList.toggle('disable-element', ((this.getAttribute('disabled')??'') === 'true'));
             });
 
             MO.observe(this, {
                 attributes: true,
-                attributeFilter: ['disabled']
+                attributeFilter: ['disabled','required']
             });
             
             //=============== STYLES
