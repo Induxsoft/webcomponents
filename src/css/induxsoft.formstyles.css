@@ -52,3 +52,7 @@
     margin-bottom: 0.5rem;
 }
 
+.induxsoft-num-field {
+    text-align: end;
+    max-width: 12rem;
+}
