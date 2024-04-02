@@ -37,30 +37,61 @@ var InduxsoftNumberFields =
     AsNumber(el)
     {
         el.type = "number";
-        el.value = Number(el.defaultValue);
-        // el.value = Number(el.getAttribute("data-number"));
+        el.value = Number(el.getAttribute("data-value")) || Number(el.value);
     },
 
     AsText(el)
     {
-        let lcode = el.getAttribute("num-locale") ?? "";
-        let style = el.getAttribute("num-style") ?? "";
-        let currency = (el.getAttribute("num-currency") ?? "MXN").toUpperCase();
+        let lcode = (el.getAttribute("num-locale") ?? "");
+        let style = (el.getAttribute("num-style") ?? "").toLowerCase();
+        
         let decimal = Number(el.getAttribute("num-decs") ?? "2");
-
-        let options =
-        {
+        let options = {
             style: style,
-            currency: currency,
             minimumFractionDigits: decimal,
+            maximumFractionDigits: decimal,
         }
         
         if (lcode === "") lcode = (new Intl.NumberFormat()).resolvedOptions().locale;
-        if (style === "") {
-            delete options.style;
-            delete options.currency;
+
+        switch (style) {
+            case "currency":
+                // MXN, USD, EUR, ...
+                let currency = (el.getAttribute("num-currency") ?? "MXN").toUpperCase();
+                // symbol, code, name
+                let currencyDisplay = (el.getAttribute("num-currency-display") ?? "").toLowerCase();
+
+                if (currency === "") {
+                    alert("Es necesario indicar la moneda `num-currency` en " + el.name);
+                    return;
+                }
+
+                options.currency = currency;
+                if (currencyDisplay !== "") options.currencyDisplay = currencyDisplay;
+                break;
+            case "unit":
+                // meter, kilometer, megabyte, gigabyte, ... 
+                let unit = (el.getAttribute("num-unit") ?? "").toLowerCase();
+                // long, short
+                let unitDisplay = (el.getAttribute("num-unit-display") ?? "").toLowerCase();
+
+                if (unit === "") {
+                    alert("Es necesario indicar la unidad `num-unit` en " + el.name);
+                    return;
+                }
+                
+                options.unit = unit;
+                if (unitDisplay !== "") options.unitDisplay = unitDisplay;
+                break;
+            case "percent":
+                break;
+            case "decimal":
+                break;
+        
+            default:
+                delete options.style;
+                break;
         }
-        console.log(lcode);
 
         const formatter = new Intl.NumberFormat(lcode,options);
 
@@ -69,7 +100,6 @@ var InduxsoftNumberFields =
         
         el.type = "text";
         el.value = format;
-        el.defaultValue = number;
-        // el.setAttribute("data-number",number);
+        el.setAttribute("data-value",number);
     },
 }
