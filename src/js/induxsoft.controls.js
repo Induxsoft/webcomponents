@@ -550,8 +550,13 @@ class InputKey extends HTMLElement
             if (this.hasAttribute('data-value'))
             {
                 try{
-                    let initvalue = this.setObjectMinus(JSON.parse(this.getAttribute('data-value')??'{}'));
-                    this.setValue(initvalue);
+                    var data_value=JSON.parse(this.getAttribute('data-value')??'{}');
+                    if(data_value)
+                    {
+                        let initvalue = this.setObjectMinus(data_value);
+                        this.setValue(initvalue);
+                    }
+                    
                 }catch{
                     alert('El valor del atributo "data-value" tiene un formato JSON inválido');
                 }
