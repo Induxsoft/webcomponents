@@ -983,6 +983,7 @@ class EditTable extends HTMLElement
                     case "ArrowLeft":
                         _current.NavLeft(selector.closest('td'));
                         break;
+                    case "Tab":
                     case "ArrowRight":
                         _current.NavRight(selector.closest('td'));
                         break;
@@ -1020,7 +1021,9 @@ class EditTable extends HTMLElement
                         _current.CancelEdit(input.closest('td'));
                         e.stopPropagation();
                         break
+                    case "Tab":
                     case "Enter":
+                        e.preventDefault();
                         _current.NavRight(input.closest('td'));
                         e.stopPropagation();
                         break;
@@ -1055,6 +1058,7 @@ class EditTable extends HTMLElement
                         _current.CancelEdit(input.closest('td'));
                         e.stopPropagation();
                         break
+                    case "Tab":
                     case "Enter":
                         if (e.ctrlKey)
                         {
@@ -1100,6 +1104,7 @@ class EditTable extends HTMLElement
                         _current.NavLeft(input.closest('td'));
                         e.stopPropagation();
                         break;
+                    case "Tab":
                     case "ArrowRight":
                         _current.NavRight(input.closest('td'));
                         e.stopPropagation();
