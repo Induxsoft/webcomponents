@@ -209,6 +209,7 @@ class EditTable extends HTMLElement
                 </style>
             `;
 
+            this.ReadOnly = this.hasAttribute("readonly");
             if (this.hasAttribute('data') && this.getAttribute('data').trim() != "")
             {
                 try{ this.DataArray = JSON.parse(this.getAttribute('data')); }
@@ -1147,6 +1148,7 @@ class EditTable extends HTMLElement
     PagOffSet = 10; //Desplazamiento con AvPag PrevPag
     DataArray = []; //Contiene un array asociado a las filas
     ColumnsDefaultType = this.EdiTable.Const.Columns.Types.Text;
+    ReadOnly = false;
     
     ShowAsTree = true;
     CanMoveRow = false;
@@ -1726,11 +1728,12 @@ class EditTable extends HTMLElement
      */
     StartEdit=(td,text,clear)=>
     {
+        if (this.ReadOnly) return;
         
         let columnDef=this.GetColumnDef();
         
-        if (columnDef.type==this.EdiTable.Const.Columns.Types.NoEditable)
-            return;
+        if ((columnDef?.readonly??false)) return;
+        if (columnDef.type==this.EdiTable.Const.Columns.Types.NoEditable) return;
 
         this.Editing=true;
         
