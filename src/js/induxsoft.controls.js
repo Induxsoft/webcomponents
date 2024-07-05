@@ -239,329 +239,335 @@ class InputKey extends HTMLElement
     {
         document.addEventListener('DOMContentLoaded', () => 
         {
-            this.columns = this.getAttribute('columns');
-            this.colcaptions = this.getAttribute('colcaptions');
+            this.CreateShadow();
+        });
+    }
+    shadow=null;
+    CreateShadow()
+    {
+        this.columns = this.getAttribute('columns');
+        this.colcaptions = this.getAttribute('colcaptions');
 
-            //=============== 1 SECTION [ MAIN CONTROL ]
-            
-            const shadow = this.attachShadow({ mode: 'closed' });
-            this.inputv = this.createFullElement('input', {id:'inputv', type:'text', value:`${this.getAttribute('value')??''}`, name:`${this.getAttribute('name')}`, style:'opacity: 0 !important;width: 1px !important; height:1px !important; border:none !important; outline:none !important; box-shadow:none !important; padding:0 !important; margin: 0 !important; pointer-events: none !important; background-color: transparent !important; position:relative !important; display:block !important; top:-15px !important;'});
-            const container = this.createFullElement('div', {id:'container'});
-            const search_container = this.createFullElement('div', {id:'search_container'});
-            this.input_search_container = this.createFullElement('input', {id:'input_search_container', type:'text', class:'form-control induxsoft-form-control'});
-            const button_search_container = this.createFullElement('button', {id:'button_search_container', type:'button', class:'induxsoft-buttons', title:'Buscar'});
-            const description_container = this.createFullElement('div', {id:'description_container'});
-            this.input_description_container = this.createFullElement('input', {id:'input_description_container', type:'text', readonly:'readonly', class:'induxsoft-form-control'});
-            const button_add_container = this.createFullElement('button', {id:'button_add_container', type:'button', class:'induxsoft-buttons', title:'Agregar'});
-            const button_edit_container = this.createFullElement('button', {id:'button_edit_container', type:'button', class:'induxsoft-buttons', title:'Editar'});
-            const button_clear_container = this.createFullElement('button', {id:'button_clear_container', type:'button', class:'induxsoft-buttons', title:'Limpiar'});
+        //=============== 1 SECTION [ MAIN CONTROL ]
+        
+        if(!this.shadow)this.shadow = this.attachShadow({ mode: 'closed' });
 
-            container.classList.toggle('disable-element', ((this.getAttribute('disabled')??'') === 'true'));
-            this.inputv.required = ((this.getAttribute('required') ?? 'false') === 'true');
+        this.inputv = this.createFullElement('input', {id:'inputv', type:'text', value:`${this.getAttribute('value')??''}`, name:`${this.getAttribute('name')}`, style:'opacity: 0 !important;width: 1px !important; height:1px !important; border:none !important; outline:none !important; box-shadow:none !important; padding:0 !important; margin: 0 !important; pointer-events: none !important; background-color: transparent !important; position:relative !important; display:block !important; top:-15px !important;'});
+        const container = this.createFullElement('div', {id:'container'});
+        const search_container = this.createFullElement('div', {id:'search_container'});
+        this.input_search_container = this.createFullElement('input', {id:'input_search_container', type:'text', class:'form-control induxsoft-form-control'});
+        const button_search_container = this.createFullElement('button', {id:'button_search_container', type:'button', class:'induxsoft-buttons', title:'Buscar'});
+        const description_container = this.createFullElement('div', {id:'description_container'});
+        this.input_description_container = this.createFullElement('input', {id:'input_description_container', type:'text', readonly:'readonly', class:'induxsoft-form-control'});
+        const button_add_container = this.createFullElement('button', {id:'button_add_container', type:'button', class:'induxsoft-buttons', title:'Agregar'});
+        const button_edit_container = this.createFullElement('button', {id:'button_edit_container', type:'button', class:'induxsoft-buttons', title:'Editar'});
+        const button_clear_container = this.createFullElement('button', {id:'button_clear_container', type:'button', class:'induxsoft-buttons', title:'Limpiar'});
 
-            this.input_search_container.value = (this.getAttribute('search-value') ?? '');
-            this.input_description_container.value = (this.getAttribute('text-value') ?? '');
-            button_search_container.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16"><path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg>`;
-            button_add_container.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/></svg>`;
-            button_edit_container.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16"><path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/></svg>`;
-            button_clear_container.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/></svg>`;
+        container.classList.toggle('disable-element', ((this.getAttribute('disabled')??'') === 'true'));
+        this.inputv.required = ((this.getAttribute('required') ?? 'false') === 'true');
 
-            search_container.appendChild(this.input_search_container);
-            search_container.appendChild(button_search_container);
-            description_container.appendChild(this.input_description_container);
+        this.input_search_container.value = (this.getAttribute('search-value') ?? '');
+        this.input_description_container.value = (this.getAttribute('text-value') ?? '');
+        button_search_container.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16"><path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg>`;
+        button_add_container.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/></svg>`;
+        button_edit_container.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16"><path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/></svg>`;
+        button_clear_container.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/></svg>`;
 
-            // BOTONES ADICIONALES
-            if (this.hasAttribute('buttons'))
-                this._createOtherButtons();
+        search_container.appendChild(this.input_search_container);
+        search_container.appendChild(button_search_container);
+        description_container.appendChild(this.input_description_container);
 
-            this.buttonElements.forEach(btn=>{
-                description_container.appendChild(btn);
-                this._setOtherButtonsEvents(btn);
-            });
+        // BOTONES ADICIONALES
+        if (this.hasAttribute('buttons'))
+            this._createOtherButtons();
 
-            if (this.getAttribute('add-url')) description_container.appendChild(button_add_container);
-            if (this.getAttribute('edit-url')) description_container.appendChild(button_edit_container);
-            description_container.appendChild(button_clear_container);
-            container.appendChild(search_container);
-            container.appendChild(description_container);
+        this.buttonElements.forEach(btn=>{
+            description_container.appendChild(btn);
+            this._setOtherButtonsEvents(btn);
+        });
 
-            //=============== 2 SECTION [ SEARCH AND SELECT ELEMENT ]
+        if (this.getAttribute('add-url')) description_container.appendChild(button_add_container);
+        if (this.getAttribute('edit-url')) description_container.appendChild(button_edit_container);
+        description_container.appendChild(button_clear_container);
+        container.appendChild(search_container);
+        container.appendChild(description_container);
 
-            this.container2 = this.createFullElement('div', {id:'container2', class:'hide-element modal-backdrop'});
-            const search_container2 = this.createFullElement('div', {id:'search_container2', class:'bg-white modal-container'});
-            const header_section_container2 = this.createFullElement('div', {id:'header_section_container2', class:'d-flex modal-section modal-section-header'});
-            const search_section_container2 = this.createFullElement('div', {id:'search_section_container2', class:'d-flex p-2 modal-section'});
-            const tables_section_container2 = this.createFullElement('div', {id:'tables_section_container2', class:'grow-1 modal-section overflow'});
-            const footer_section_container2 = this.createFullElement('div', {class:'bg-light-gray d-flex gap-1 justify-content-end p-2 modal-section'});
+        //=============== 2 SECTION [ SEARCH AND SELECT ELEMENT ]
 
-            // header section
-            const title_header_container2 = this.createFullElement('p', {id:'title_container2', class:'text-secondary grow-1'});
-            const close_header_container2 = this.createFullElement('button', {id:'close_header_container2', class:"border-0 induxsoft-buttons p-2 d-flex align-items-center justify-content-center hover-red"});
-            title_header_container2.textContent = (this.getAttribute('box-title-text') ?? 'Seleccione un Registro');
-            close_header_container2.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#333" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/></svg>`;
-            header_section_container2.appendChild(title_header_container2);
-            header_section_container2.appendChild(close_header_container2);
+        this.container2 = this.createFullElement('div', {id:'container2', class:'hide-element modal-backdrop'});
+        const search_container2 = this.createFullElement('div', {id:'search_container2', class:'bg-white modal-container'});
+        const header_section_container2 = this.createFullElement('div', {id:'header_section_container2', class:'d-flex modal-section modal-section-header'});
+        const search_section_container2 = this.createFullElement('div', {id:'search_section_container2', class:'d-flex p-2 modal-section'});
+        const tables_section_container2 = this.createFullElement('div', {id:'tables_section_container2', class:'grow-1 modal-section overflow'});
+        const footer_section_container2 = this.createFullElement('div', {class:'bg-light-gray d-flex gap-1 justify-content-end p-2 modal-section'});
 
-            // search section
-            const button_search_container2 = this.createFullElement('button', {type:'button',class:'p-2 induxsoft-buttons'});
-            this.input_search_container2 = this.createFullElement('input', {type:'text', class:'grow-1 induxsoft-form-control'});
-            button_search_container2.textContent = 'Buscar';
-            this.input_search_container2.setAttribute('placeholder', (this.getAttribute('box-placeholder-text') ?? 'Buscar...'));
-            search_section_container2.appendChild(this.input_search_container2);
-            search_section_container2.appendChild(button_search_container2);
+        // header section
+        const title_header_container2 = this.createFullElement('p', {id:'title_container2', class:'text-secondary grow-1'});
+        const close_header_container2 = this.createFullElement('button', {id:'close_header_container2', class:"border-0 induxsoft-buttons p-2 d-flex align-items-center justify-content-center hover-red"});
+        title_header_container2.textContent = (this.getAttribute('box-title-text') ?? 'Seleccione un Registro');
+        close_header_container2.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#333" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/></svg>`;
+        header_section_container2.appendChild(title_header_container2);
+        header_section_container2.appendChild(close_header_container2);
 
-            // tables section
-            this.table_tables_container2 = this.createFullElement('table', {id:'table_tables_container2'});
-            this.head_tables_container2 = this.createFullElement('thead', {id:'head_tables_container2', class:'bg-light-gray'});
-            this.body_tables_container2 = this.createFullElement('tbody', {id:'body_tables_container2'});
+        // search section
+        const button_search_container2 = this.createFullElement('button', {type:'button',class:'p-2 induxsoft-buttons'});
+        this.input_search_container2 = this.createFullElement('input', {type:'text', class:'grow-1 induxsoft-form-control'});
+        button_search_container2.textContent = 'Buscar';
+        this.input_search_container2.setAttribute('placeholder', (this.getAttribute('box-placeholder-text') ?? 'Buscar...'));
+        search_section_container2.appendChild(this.input_search_container2);
+        search_section_container2.appendChild(button_search_container2);
 
-            this.table_tables_container2.appendChild(this.head_tables_container2);
-            this.table_tables_container2.appendChild(this.body_tables_container2);
-            tables_section_container2.appendChild(this.table_tables_container2);
+        // tables section
+        this.table_tables_container2 = this.createFullElement('table', {id:'table_tables_container2'});
+        this.head_tables_container2 = this.createFullElement('thead', {id:'head_tables_container2', class:'bg-light-gray'});
+        this.body_tables_container2 = this.createFullElement('tbody', {id:'body_tables_container2'});
 
-            // footer section
-            this.accept_footer_container2 = this.createFullElement('button', {type:'button',class:'induxsoft-buttons'});
-            const close2_footer_container2 = this.createFullElement('button', {id:'close2_container2', type:'button', class:'induxsoft-buttons'});
-            this.accept_footer_container2.textContent = 'Aceptar';
-            close2_footer_container2.textContent = 'Cancelar';
-            footer_section_container2.appendChild(this.accept_footer_container2);
-            footer_section_container2.appendChild(close2_footer_container2);
+        this.table_tables_container2.appendChild(this.head_tables_container2);
+        this.table_tables_container2.appendChild(this.body_tables_container2);
+        tables_section_container2.appendChild(this.table_tables_container2);
 
-            search_container2.appendChild(header_section_container2);
-            search_container2.appendChild(search_section_container2);
-            search_container2.appendChild(tables_section_container2);
-            search_container2.appendChild(footer_section_container2);
-            this.container2.appendChild(search_container2);
+        // footer section
+        this.accept_footer_container2 = this.createFullElement('button', {type:'button',class:'induxsoft-buttons'});
+        const close2_footer_container2 = this.createFullElement('button', {id:'close2_container2', type:'button', class:'induxsoft-buttons'});
+        this.accept_footer_container2.textContent = 'Aceptar';
+        close2_footer_container2.textContent = 'Cancelar';
+        footer_section_container2.appendChild(this.accept_footer_container2);
+        footer_section_container2.appendChild(close2_footer_container2);
 
-            //=============== 3 SECTION [ ADD ELEMENT ]
+        search_container2.appendChild(header_section_container2);
+        search_container2.appendChild(search_section_container2);
+        search_container2.appendChild(tables_section_container2);
+        search_container2.appendChild(footer_section_container2);
+        this.container2.appendChild(search_container2);
 
-            const container3 = this.createFullElement('div', {id:'container3', class:'hide-element modal-backdrop'});
-            const add_container3 = this.createFullElement('div', {id:'add_container3', class:'bg-white modal-container'});
-            const header_section_container3 = this.createFullElement('div', {id:'header_section_container3', class:'d-flex modal-section modal-section-header'});
-            const iframe_section_container3 = this.createFullElement('div', {id:'iframe_section_container3', class:'grow-1 modal-section'});
+        //=============== 3 SECTION [ ADD ELEMENT ]
 
-            // header section
-            const title_header_container3 = this.createFullElement('p', {id:'title_container2', class:'text-secondary grow-1'});
-            const close_header_container3 = this.createFullElement('button', {id:'close_header_container2', class:"border-0 p-1 hover-red"});
-            title_header_container3.textContent = (this.getAttribute('box-title-text') ?? 'Agregar registro');
-            close_header_container3.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#FFF" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/></svg>`;
-            header_section_container3.appendChild(title_header_container3);
-            header_section_container3.appendChild(close_header_container3);
+        const container3 = this.createFullElement('div', {id:'container3', class:'hide-element modal-backdrop'});
+        const add_container3 = this.createFullElement('div', {id:'add_container3', class:'bg-white modal-container'});
+        const header_section_container3 = this.createFullElement('div', {id:'header_section_container3', class:'d-flex modal-section modal-section-header'});
+        const iframe_section_container3 = this.createFullElement('div', {id:'iframe_section_container3', class:'grow-1 modal-section'});
 
-            add_container3.appendChild(header_section_container3);
-            add_container3.appendChild(iframe_section_container3);
-            container3.appendChild(add_container3);
+        // header section
+        const title_header_container3 = this.createFullElement('p', {id:'title_container2', class:'text-secondary grow-1'});
+        const close_header_container3 = this.createFullElement('button', {id:'close_header_container2', class:"border-0 p-1 hover-red"});
+        title_header_container3.textContent = (this.getAttribute('box-title-text') ?? 'Agregar registro');
+        close_header_container3.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#FFF" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/></svg>`;
+        header_section_container3.appendChild(title_header_container3);
+        header_section_container3.appendChild(close_header_container3);
 
-            //=============== 4 SECTION [ EDIT ELEMENT ]
+        add_container3.appendChild(header_section_container3);
+        add_container3.appendChild(iframe_section_container3);
+        container3.appendChild(add_container3);
 
-            const container4 = this.createFullElement('div', {id:'container4', class:'hide-element modal-backdrop'});
-            const edit_container4 = this.createFullElement('div', {id:'edit_container4', class:'bg-white modal-container'});
-            const header_section_container4 = this.createFullElement('div', {id:'header_section_container4', class:'d-flex modal-section modal-section-header'});
-            const iframe_section_container4 = this.createFullElement('div', {id:'iframe_section_container4', class:'grow-1 modal-section'});
+        //=============== 4 SECTION [ EDIT ELEMENT ]
 
-            // header section
-            const title_header_container4 = this.createFullElement('p', {id:'title_container4', class:'text-secondary grow-1'});
-            const close_header_container4 = this.createFullElement('button', {id:'close_header_container4', class:"border-0 p-1 hover-red"});
-            title_header_container4.textContent = (this.getAttribute('box-title-text') ?? 'Editar registro');
-            close_header_container4.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#FFF" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/></svg>`;
-            header_section_container4.appendChild(title_header_container4);
-            header_section_container4.appendChild(close_header_container4);
+        const container4 = this.createFullElement('div', {id:'container4', class:'hide-element modal-backdrop'});
+        const edit_container4 = this.createFullElement('div', {id:'edit_container4', class:'bg-white modal-container'});
+        const header_section_container4 = this.createFullElement('div', {id:'header_section_container4', class:'d-flex modal-section modal-section-header'});
+        const iframe_section_container4 = this.createFullElement('div', {id:'iframe_section_container4', class:'grow-1 modal-section'});
 
-            edit_container4.appendChild(header_section_container4);
-            edit_container4.appendChild(iframe_section_container4);
-            container4.appendChild(edit_container4);
+        // header section
+        const title_header_container4 = this.createFullElement('p', {id:'title_container4', class:'text-secondary grow-1'});
+        const close_header_container4 = this.createFullElement('button', {id:'close_header_container4', class:"border-0 p-1 hover-red"});
+        title_header_container4.textContent = (this.getAttribute('box-title-text') ?? 'Editar registro');
+        close_header_container4.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#FFF" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/></svg>`;
+        header_section_container4.appendChild(title_header_container4);
+        header_section_container4.appendChild(close_header_container4);
 
-            //=============== EVENTS
+        edit_container4.appendChild(header_section_container4);
+        edit_container4.appendChild(iframe_section_container4);
+        container4.appendChild(edit_container4);
 
-            button_search_container.addEventListener('click', () => {
-                this._search(false);
-            });
-            this.input_description_container.addEventListener('dblclick', () => {
-                button_search_container.click();
-            })
-            close_header_container2.addEventListener('click', () => {
-                this.container2.classList.add('hide-element');
-            });
-            close2_footer_container2.addEventListener('click', () => {
-                this.container2.classList.add('hide-element');
-                this.setValue(this.accept_data);
-            });
-            this.accept_footer_container2.addEventListener('click', () => {
-                if (!this.record_selected || Object.entries(this.record_selected).length <= 0)
-                {
-                    alert("Debe seleccionar un registro para continuar");
-                    return;
-                }
-                this.setValue(this.record_selected);
-                this.container2.classList.add('hide-element');
-            });
-            this.input_search_container.addEventListener('click', () => {
-                this.input_search_container.select();
-                this.input_search_container.focus();
-            });
-            this.input_search_container.addEventListener('blur', (e) => {
-                if (this.container2.classList.contains('hide-element'))
-                {
-                    if (!this.input_search_container.value.trim())
-                    {
-                        this.clear();
-                    }
-                    else if (!this.accept_data || Object.keys(this.accept_data).length < 1)
-                    {
-                        this._search();
-                    }
-                    else if (this.accept_data && (this.accept_data[(this.getAttribute('data-search') ?? '').toLowerCase()]) != this.input_search_container.value.toLowerCase())
-                    {
-                        this.setValue(this.accept_data);
-                    }
-                }
-            });
-            this.input_search_container.addEventListener('keyup', (e) => {
-                if (e.key === 'Enter' && this.input_search_container.value == "")
-                    this.clear();
-                else if (e.key === 'Enter')
-                    this._search();
-                else if (e.key === 'Escape')
-                    this.input_search_container.blur();
-            });
-            button_search_container2.addEventListener('click', () => {
-                this.searchButton(this.container2);
-            });
-            this.input_search_container2.addEventListener('keyup', (e) => {
-                if (e.key === 'Enter')
-                    this.searchButton(this.container2);
-            });
-            search_container2.addEventListener('keyup', (e) => {
-                if (e.key === 'Escape')
-                    this.container2.classList.add('hide-element');
-            });
-            button_add_container.addEventListener('click', (e) => {
-                e.stopPropagation();
-                let url = this.prepareUrl((this.getAttribute('add-url')??''));
-                const iframe_container3 = this.createFullElement('iframe', {width:'100%', height:'100%', title:'Add element', src:url});
-                iframe_section_container3.innerHTML = '';
-                iframe_section_container3.appendChild(iframe_container3);
-                container3.classList.remove('hide-element');
-            });
-            close_header_container3.addEventListener('click', () => {
-                container3.classList.add('hide-element');
-            });
-            button_edit_container.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (!this.getAttribute('value'))
-                {
-                    alert('Debe seleccionar un registro para continuar.');
-                    return;
-                }
-                let url = this.prepareUrl((this.getAttribute('edit-url')??''));
-                const iframe_container4 = this.createFullElement('iframe', {width:'100%', height:'100%', title:'Edit element', src:url});
-                iframe_section_container4.innerHTML = '';
-                iframe_section_container4.appendChild(iframe_container4);
-                container4.classList.remove('hide-element');
-            });
-            button_clear_container.addEventListener('click', () => {
-                this.clear();
-                this.input_search_container.focus();
-            });
-            close_header_container4.addEventListener('click', () => {
-                container4.classList.add('hide-element');
-            });
+        //=============== EVENTS
 
-            const MO = new MutationObserver(()=>{
-                container.classList.toggle('disable-element', ((this.getAttribute('disabled')??'') === 'true'));
-                this.inputv.required = ((this.getAttribute('required') ?? 'false') === 'true');
-                //container.classList.toggle('disable-element', ((this.getAttribute('disabled')??'') === 'true'));
-            });
-
-            MO.observe(this, {
-                attributes: true,
-                attributeFilter: ['disabled','required']
-            });
-            
-            //=============== STYLES
-
-            shadow.innerHTML = `
-                <style>
-                    /* ========== General */
-                    *{ box-sizing: border-box; margin: 0; padding: 0; }
-                    .hide-element{ display: none !important; }
-                    .text-secondary{ color: #888; }
-                    .text-white{color: #FFF;}
-                    .bg-white{ background-color: #FFF;}.bg-red{ background-color: #F00; }.bg-light-gray{ background-color: #F5F5F5; }.bg-gray{background-color:#C0C0C0;}
-                    .d-flex{ display:flex; align-items:center;}
-                    .gap-1{gap:4px;}.gap-2{gap:8px;}
-                    .grow-1{ flex-grow: 1; }
-                    .border-0{ border:none; outline:none; }.border-1{border:1px solid #EEE;}
-                    .p-1{ padding: 2px; }.p-2{ padding: 4px; }.p-3{ padding: 8px; }.p-4{ padding: 16px; }.p-5{ padding: 32px; }
-                    .ps-1{ padding-left: 2px; }.ps-2{ padding-left: 4px; }.ps-3{ padding-left: 8px; }.ps-4{ padding-left: 16px; }.ps-5{ padding-left: 32px; }
-                    .pe-1{ padding-right: 2px; }.pe-2{ padding-right: 4px; }.pe-3{ padding-right: 8px; }.pe-4{ padding-right: 16px; }.pe-5{ padding-right: 32px; }
-                    .justify-content-start{ justify-content: start; }.justify-content-center{ justify-content: center; }.justify-content-end{ justify-content: end; }
-                    .hover-red:hover{ background-color:#F00; }.hover-gray:hover{ background-color:#DDD !important; }
-                    .fw-500{font-weight: 500;}
-                    .btn-sm{display: flex; align-items:center; justify-content: center; padding: 0 5px; border: none; outline:1px solid #888;}
-                    .modal-backdrop{ width: 100vw; height: 100vh; position: fixed; top:0; left:0; padding:0; margin: 0; display:flex; align-items:center; justify-content:center; z-index: 1000; }
-                    .modal-container{ width: 40rem; height: 30rem; border:1px solid #ededed; box-shadow: 1px 3px 6px 0 #DDD; display:flex;flex-direction: column; }
-                    .modal-section{ border-bottom:1px solid #DDD; }
-                    .modal-section-header{ padding: 6px 10px; }
-                    .overflow{ overflow:auto; }
-                    .disable-element{ pointer-events: none !important; opacity: .5 !important; }
-
-                    /* ========== 1 Section */
-                    #container{ display: grid; grid-template-columns: 40% 60%; }
-                    #search_container, #description_container{ display: flex; padding:0 4px;}
-                    #input_search_container, #input_description_container{ padding: 4px 8px; width: 100%; }
-
-                    /* ========== 2 Section */
-                    #table_tables_container2{width:100%;border-spacing: 0;}
-                    th,td{ border: 1px solid #DDD; }
-                    th{text-align:start;}
-                    #body_tables_container2{text-wrap: nowrap;}
-                    .row_table{cursor: default;}
-                    .row_table:hover{background-color:#F5F5F5;color:#000;}
-                    .row_selected{background-color:#3D75DD !important;color:#FFF !important;}
-
-                    @media screen and (max-width:600px) {
-                        #search_container2{width: 100%;}
-                    }
-
-                    .induxsoft-form-control{border: none; outline:1px solid #ced4da;display: block;width: 100%;padding: 0.375rem 0.75rem !important;font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-clip: padding-box;appearance: none;transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-                    }
-                    .induxsoft-form-control:disabled, .induxsoft-form-control[readonly] {background-color: #e9ecef;opacity: 1;
-                    }
-                    .induxsoft-buttons{font-weight: 400;line-height: 1.5;color: #212529;text-align: center;text-decoration: none;vertical-align: middle;cursor: pointer;-webkit-user-select: none;-moz-user-select: none;user-select: none;background-color: #FFF;outline:1px solid #ced4da;border: none;padding: 0.375rem 0.75rem;font-size: 1rem;transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-                    }
-                    .induxsoft-buttons:hover{color: #212529;background-color: #F5F5F5;
-                    }
-                    .induxsoft-form-select {display: block;width: 100%;padding: 0.375rem 2.25rem 0.375rem 0.75rem !important;-moz-padding-start: calc(0.75rem - 3px);font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");background-repeat: no-repeat;background-position: right 0.75rem center;background-size: 16px 12px;border: none;outline:1px solid #ced4da;-webkit-appearance: none;-moz-appearance: none;appearance: none;
-                    }
-
-                    ` + (this.getAttribute('control-styles') ?? '') + `
-                    
-                </style>
-            `;
-
-            shadow.appendChild(container);
-            shadow.appendChild(this.container2);
-            shadow.appendChild(container3);
-            shadow.appendChild(container4);
-            
-            if (this._parseBool((this.getAttribute('hidden-input')??''), true)) this.after(this.inputv);
-
-            if (this.hasAttribute('data-value'))
+        button_search_container.addEventListener('click', () => {
+            this._search(false);
+        });
+        this.input_description_container.addEventListener('dblclick', () => {
+            button_search_container.click();
+        })
+        close_header_container2.addEventListener('click', () => {
+            this.container2.classList.add('hide-element');
+        });
+        close2_footer_container2.addEventListener('click', () => {
+            this.container2.classList.add('hide-element');
+            this.setValue(this.accept_data);
+        });
+        this.accept_footer_container2.addEventListener('click', () => {
+            if (!this.record_selected || Object.entries(this.record_selected).length <= 0)
             {
-                try{
-                    var data_value=JSON.parse(this.getAttribute('data-value')??'{}');
-                    if(data_value)
-                    {
-                        let initvalue = this.setObjectMinus(data_value);
-                        this.setValue(initvalue);
-                    }
-                    
-                }catch{
-                    alert('El valor del atributo "data-value" tiene un formato JSON inválido');
+                alert("Debe seleccionar un registro para continuar");
+                return;
+            }
+            this.setValue(this.record_selected);
+            this.container2.classList.add('hide-element');
+        });
+        this.input_search_container.addEventListener('click', () => {
+            this.input_search_container.select();
+            this.input_search_container.focus();
+        });
+        this.input_search_container.addEventListener('blur', (e) => {
+            if (this.container2.classList.contains('hide-element'))
+            {
+                if (!this.input_search_container.value.trim())
+                {
+                    this.clear();
+                }
+                else if (!this.accept_data || Object.keys(this.accept_data).length < 1)
+                {
+                    this._search();
+                }
+                else if (this.accept_data && (this.accept_data[(this.getAttribute('data-search') ?? '').toLowerCase()]) != this.input_search_container.value.toLowerCase())
+                {
+                    this.setValue(this.accept_data);
                 }
             }
         });
+        this.input_search_container.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter' && this.input_search_container.value == "")
+                this.clear();
+            else if (e.key === 'Enter')
+                this._search();
+            else if (e.key === 'Escape')
+                this.input_search_container.blur();
+        });
+        button_search_container2.addEventListener('click', () => {
+            this.searchButton(this.container2);
+        });
+        this.input_search_container2.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter')
+                this.searchButton(this.container2);
+        });
+        search_container2.addEventListener('keyup', (e) => {
+            if (e.key === 'Escape')
+                this.container2.classList.add('hide-element');
+        });
+        button_add_container.addEventListener('click', (e) => {
+            e.stopPropagation();
+            let url = this.prepareUrl((this.getAttribute('add-url')??''));
+            const iframe_container3 = this.createFullElement('iframe', {width:'100%', height:'100%', title:'Add element', src:url});
+            iframe_section_container3.innerHTML = '';
+            iframe_section_container3.appendChild(iframe_container3);
+            container3.classList.remove('hide-element');
+        });
+        close_header_container3.addEventListener('click', () => {
+            container3.classList.add('hide-element');
+        });
+        button_edit_container.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (!this.getAttribute('value'))
+            {
+                alert('Debe seleccionar un registro para continuar.');
+                return;
+            }
+            let url = this.prepareUrl((this.getAttribute('edit-url')??''));
+            const iframe_container4 = this.createFullElement('iframe', {width:'100%', height:'100%', title:'Edit element', src:url});
+            iframe_section_container4.innerHTML = '';
+            iframe_section_container4.appendChild(iframe_container4);
+            container4.classList.remove('hide-element');
+        });
+        button_clear_container.addEventListener('click', () => {
+            this.clear();
+            this.input_search_container.focus();
+        });
+        close_header_container4.addEventListener('click', () => {
+            container4.classList.add('hide-element');
+        });
+
+        const MO = new MutationObserver(()=>{
+            container.classList.toggle('disable-element', ((this.getAttribute('disabled')??'') === 'true'));
+            this.inputv.required = ((this.getAttribute('required') ?? 'false') === 'true');
+            //container.classList.toggle('disable-element', ((this.getAttribute('disabled')??'') === 'true'));
+        });
+
+        MO.observe(this, {
+            attributes: true,
+            attributeFilter: ['disabled','required']
+        });
+        
+        //=============== STYLES
+
+        this.shadow.innerHTML = `
+            <style>
+                /* ========== General */
+                *{ box-sizing: border-box; margin: 0; padding: 0; }
+                .hide-element{ display: none !important; }
+                .text-secondary{ color: #888; }
+                .text-white{color: #FFF;}
+                .bg-white{ background-color: #FFF;}.bg-red{ background-color: #F00; }.bg-light-gray{ background-color: #F5F5F5; }.bg-gray{background-color:#C0C0C0;}
+                .d-flex{ display:flex; align-items:center;}
+                .gap-1{gap:4px;}.gap-2{gap:8px;}
+                .grow-1{ flex-grow: 1; }
+                .border-0{ border:none; outline:none; }.border-1{border:1px solid #EEE;}
+                .p-1{ padding: 2px; }.p-2{ padding: 4px; }.p-3{ padding: 8px; }.p-4{ padding: 16px; }.p-5{ padding: 32px; }
+                .ps-1{ padding-left: 2px; }.ps-2{ padding-left: 4px; }.ps-3{ padding-left: 8px; }.ps-4{ padding-left: 16px; }.ps-5{ padding-left: 32px; }
+                .pe-1{ padding-right: 2px; }.pe-2{ padding-right: 4px; }.pe-3{ padding-right: 8px; }.pe-4{ padding-right: 16px; }.pe-5{ padding-right: 32px; }
+                .justify-content-start{ justify-content: start; }.justify-content-center{ justify-content: center; }.justify-content-end{ justify-content: end; }
+                .hover-red:hover{ background-color:#F00; }.hover-gray:hover{ background-color:#DDD !important; }
+                .fw-500{font-weight: 500;}
+                .btn-sm{display: flex; align-items:center; justify-content: center; padding: 0 5px; border: none; outline:1px solid #888;}
+                .modal-backdrop{ width: 100vw; height: 100vh; position: fixed; top:0; left:0; padding:0; margin: 0; display:flex; align-items:center; justify-content:center; z-index: 1000; }
+                .modal-container{ width: 40rem; height: 30rem; border:1px solid #ededed; box-shadow: 1px 3px 6px 0 #DDD; display:flex;flex-direction: column; }
+                .modal-section{ border-bottom:1px solid #DDD; }
+                .modal-section-header{ padding: 6px 10px; }
+                .overflow{ overflow:auto; }
+                .disable-element{ pointer-events: none !important; opacity: .5 !important; }
+
+                /* ========== 1 Section */
+                #container{ display: grid; grid-template-columns: 40% 60%; }
+                #search_container, #description_container{ display: flex; padding:0 4px;}
+                #input_search_container, #input_description_container{ padding: 4px 8px; width: 100%; }
+
+                /* ========== 2 Section */
+                #table_tables_container2{width:100%;border-spacing: 0;}
+                th,td{ border: 1px solid #DDD; }
+                th{text-align:start;}
+                #body_tables_container2{text-wrap: nowrap;}
+                .row_table{cursor: default;}
+                .row_table:hover{background-color:#F5F5F5;color:#000;}
+                .row_selected{background-color:#3D75DD !important;color:#FFF !important;}
+
+                @media screen and (max-width:600px) {
+                    #search_container2{width: 100%;}
+                }
+
+                .induxsoft-form-control{border: none; outline:1px solid #ced4da;display: block;width: 100%;padding: 0.375rem 0.75rem !important;font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-clip: padding-box;appearance: none;transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+                }
+                .induxsoft-form-control:disabled, .induxsoft-form-control[readonly] {background-color: #e9ecef;opacity: 1;
+                }
+                .induxsoft-buttons{font-weight: 400;line-height: 1.5;color: #212529;text-align: center;text-decoration: none;vertical-align: middle;cursor: pointer;-webkit-user-select: none;-moz-user-select: none;user-select: none;background-color: #FFF;outline:1px solid #ced4da;border: none;padding: 0.375rem 0.75rem;font-size: 1rem;transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+                }
+                .induxsoft-buttons:hover{color: #212529;background-color: #F5F5F5;
+                }
+                .induxsoft-form-select {display: block;width: 100%;padding: 0.375rem 2.25rem 0.375rem 0.75rem !important;-moz-padding-start: calc(0.75rem - 3px);font-size: 1rem;font-weight: 400;line-height: 1.5;color: #212529;background-color: #fff;background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");background-repeat: no-repeat;background-position: right 0.75rem center;background-size: 16px 12px;border: none;outline:1px solid #ced4da;-webkit-appearance: none;-moz-appearance: none;appearance: none;
+                }
+
+                ` + (this.getAttribute('control-styles') ?? '') + `
+                
+            </style>
+        `;
+
+        this.shadow.appendChild(container);
+        this.shadow.appendChild(this.container2);
+        this.shadow.appendChild(container3);
+        this.shadow.appendChild(container4);
+        
+        if (this._parseBool((this.getAttribute('hidden-input')??''), true)) this.after(this.inputv);
+
+        if (this.hasAttribute('data-value'))
+        {
+            try{
+                var data_value=JSON.parse(this.getAttribute('data-value')??'{}');
+                if(data_value)
+                {
+                    let initvalue = this.setObjectMinus(data_value);
+                    this.setValue(initvalue);
+                }
+                
+            }catch{
+                alert('El valor del atributo "data-value" tiene un formato JSON inválido');
+            }
+        }
     }
     /**
      * @param {string} tagName Nombre de etiqueta.
