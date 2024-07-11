@@ -21,7 +21,6 @@ Math.add = function () {
     function cb(x, y, i, o) { return x + f * y; }
     return Array.prototype.reduce.call(arguments, cb, 0) / f;
 };
-
 /*********************************************************
 Resta en punto flotante
 *********************************************************/
@@ -38,3 +37,14 @@ Math.mul = function () {
 División en punto flotante
 *********************************************************/
 Math.div = function (l, r) { var f = _cf(l, r); return (l * f) / (r * f); };
+
+
+Math.RoundTo = function (num, dec) {
+    var signo = (num >= 0 ? 1 : -1);
+    num = num * signo;
+    if (dec === 0) return signo * Math.round(num);
+    num = num.toString().split('e');
+    num = Math.round(+(num[0] + 'e' + (num[1] ? (+num[1] + dec) : dec)));
+    num = num.toString().split('e');
+    return signo * (num[0] + 'e' + (num[1] ? (+num[1] - dec) : -dec));
+}
