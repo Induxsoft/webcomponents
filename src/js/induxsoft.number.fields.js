@@ -102,4 +102,81 @@ var InduxsoftNumberFields =
         el.value = format;
         el.setAttribute("data-value",number);
     },
+    filterFloat:function(evt,input,dec=4)
+    {
+        // Backspace = 8, Enter = 13, ‘0′ = 48, ‘9′ = 57, ‘.’ = 46, ‘-’ = 43
+        var key = window.Event ? evt.which : evt.keyCode;    
+        var chark = String.fromCharCode(key);
+        var tempValue = input.value+chark;
+        if(key >= 48 && key <= 57){
+            if(this.filter(tempValue,dec)=== false){
+                return false;
+            }else{       
+                return true;
+            }
+        }else{
+              if(key == 8 || key == 13 || key == 0) {     
+                  return true;              
+              }else if(key == 46){
+                    if(this.filter(tempValue,dec)=== false){
+                        return false;
+                    }else{       
+                        return true;
+                    }
+              }else{
+                  return false;
+              }
+        }
+    },
+    filter:function(__val__,dec=4)
+    {
+    	
+    	var regex = "^\([0-9]+\.?[0-9]{0,"+dec+"})$"; 
+    	var preg=new RegExp(regex);
+        // var preg = /^([0-9]+\.?[0-9]{0,4})$/;  //asi estaba antes ,se corrgio por la var dec
+        if(preg.test(__val__) === true){
+            return true;
+        }else{
+           return false;
+        }
+        
+    },
+    filterInt:function(evt,input,dec=4)
+    {
+        // Backspace = 8, Enter = 13, ‘0′ = 48, ‘9′ = 57, ‘.’ = 46, ‘-’ = 43
+        var key = window.Event ? evt.which : evt.keyCode;    
+        var chark = String.fromCharCode(key);
+        var tempValue = input.value+chark;
+        if(key >= 48 && key <= 57){
+            if(this.filterI(tempValue,dec)=== false){
+                return false;
+            }else{       
+                return true;
+            }
+        }else{
+              if(key == 8 || key == 13 || key == 0) {     
+                  return true;              
+              }else if(key == 46){
+                    if(this.filterI(tempValue,dec)=== false){
+                        return false;
+                    }else{       
+                        return true;
+                    }
+              }else{
+                  return false;
+              }
+        }
+    },
+    filterI:function(__val__,dec=4)
+    {
+        // var preg = /^([0-9]+?[0-9]{0,6})$/; 
+		var regex = "^\([0-9]+\?[0-9]{0,"+dec+"})$"; 
+    	var preg=new RegExp(regex);
+        if(preg.test(__val__) === true){
+            return true;
+        }else{
+           return false;
+        }
+        
+    }
 }
