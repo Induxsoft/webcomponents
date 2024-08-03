@@ -68,6 +68,88 @@ var InduxsoftCrudlModel =
 		}
 	},
 
+	Submit(formOrId, details={}, success=null, failure=null, {url="", url_exit="", err_timeout=7, redir=true}={})
+	{
+		const form = (typeof formOrId === "string") ? document.getElementById(formOrId) : formOrId;
+		if (!form) {
+			console.error("No se encontro el formulario.");
+			return
+		}
+		if (form.nodeName !== "FORM") {
+			console.error("El elemento proporcionado no es un Formulario.");
+			return
+		}
+		if (!form.reportValidity()) return;
+
+		// Desctivar controles del v12FormBar y Formulario
+		const DisableControls = (disable) => {
+			const v12FormBar = document.getElementById("v12FormBar_content");
+			v12FormBar.querySelectorAll("li").forEach(v12btn => {
+				v12btn.style.pointerEvents = (disable) ? "none" : "";
+				v12btn.style.backgroundColor = (disable) ? "#e9ecef" : "";
+				v12btn.style.opacity = (disable) ? "1" : "";
+			});
+			form.querySelectorAll("button").forEach(frmbtn => {
+				frmbtn.disabled = disable;
+			});
+		}
+		DisableControls(true);
+
+		const ff = form.elements;
+		const fd = new FormData(form);
+		
+		let endpoint = (url.trim() != "") ? url : (form.action || "./");
+		let method = (fd.get("sys_pk") > 0) ? "PUT" : "POST";
+		
+		Object.entries(details).forEach(entry => {
+			const [key, obj] = entry;
+			fd.append(key,JSON.stringify(obj));
+		});
+
+		const FireError = (msg) => {
+			const div = document.createElement("div");
+			const text = document.createTextNode(msg);
+			
+			div.classList.add("alert", "alert-danger", "overflow-auto", "mb-2");
+			div.appendChild(text);
+			/**
+			 * [ insertar elemento adyacente ]
+			 * 
+			 * beforebegin: Para insertar el nodo HTML antes del inicio del elemento.
+			 * beforeend: Éste es similar al appendChild(). Como sugiere el nombre, la posición beforeend coloca el elemento justo después del último hijo.
+			 * afterbegin: como sugiere el nombre, esta opción inserta el elemento justo después de la etiqueta de apertura del nodo seleccionado y lo coloca antes del primer hijo.
+			 * afterend: se refiere a la posición después de que se cierra la etiqueta de nodo HTML de destino.
+			 */
+			form.insertAdjacentElement("beforebegin",div);
+			setTimeout(() => {
+				div.remove();
+			}, (err_timeout * 1000));
+		}
+
+		if (!success) success = (data) => {
+			if (!(data?.success??true) || (data?.message??"")!="") {
+				FireError(data?.message ?? JSON.stringify(data));
+				DisableControls(false);
+				return
+			}
+			// console.log(data)
+			if (redir) window.location.href = data.url_redir ?? (url_exit || "../");
+			else
+			{
+				Array.from(ff).forEach(el => {
+					if ("defaultValue" in el) el.defaultValue = el.value;
+				});
+			}
+		}
+
+		if (!failure) failure = (error) => {
+			FireError(error?.message ?? JSON.stringify(error));
+			DisableControls(false);
+		}
+
+		InduxsoftCrudlModel.InvokeService(endpoint,fd,success,failure,method,false,true,"",true);
+	},
+
 	UrlReplace(url, params)
 	{
 		let url_sect = url.split('?');
