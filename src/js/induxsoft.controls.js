@@ -217,6 +217,7 @@ class InputKey extends HTMLElement
     change_event = null;
     onBeforeSearch = null;
     buttonElements = [];
+    #Requesting = false;
 
     constructor() 
     {
@@ -265,6 +266,10 @@ class InputKey extends HTMLElement
 
         container.classList.toggle('disable-element', ((this.getAttribute('disabled')??'') === 'true'));
         this.inputv.required = ((this.getAttribute('required') ?? 'false') === 'true');
+        if (this.getAttribute("hide-searcher") === 'true') {
+            this.input_search_container.style.display = 'none';
+            container.style.gridTemplateColumns = 'minmax(6%,max-content) auto';
+        }
 
         this.input_search_container.value = (this.getAttribute('search-value') ?? '');
         this.input_description_container.value = (this.getAttribute('text-value') ?? '');
@@ -477,12 +482,15 @@ class InputKey extends HTMLElement
         const MO = new MutationObserver(()=>{
             container.classList.toggle('disable-element', ((this.getAttribute('disabled')??'') === 'true'));
             this.inputv.required = ((this.getAttribute('required') ?? 'false') === 'true');
-            //container.classList.toggle('disable-element', ((this.getAttribute('disabled')??'') === 'true'));
+            
+            let hide_searcher = (this.getAttribute("hide-searcher") === 'true');
+            this.input_search_container.style.display = (hide_searcher) ? 'none' : '';
+            container.style.gridTemplateColumns = (hide_searcher) ? 'minmax(6%,max-content) auto' : '40% 60%';
         });
 
         MO.observe(this, {
             attributes: true,
-            attributeFilter: ['disabled','required']
+            attributeFilter: ['disabled','required','hide-searcher']
         });
         
         //=============== STYLES
@@ -619,7 +627,7 @@ class InputKey extends HTMLElement
 
         this.data.forEach((dt, i) => 
         {
-            const row_tables_conatiner2 = this.createFullElement('tr',{class:'row_table', value:`${dt[(this.getAttribute('data-search')??'').toLowerCase()]}`, tabindex:`0`});
+            const row_tables_conatiner2 = this.createFullElement('tr',{class:'row_table', value:`${dt[(this.getAttribute('data-key')??'').toLowerCase()]}`, tabindex:`0`});
             row_tables_conatiner2.addEventListener('click', (e) => 
             {
                 e.stopPropagation();
@@ -672,25 +680,29 @@ class InputKey extends HTMLElement
      * @param {string} id Cadena con el valor a buscar.
      * @returns retorna un objeto **promise** al que se le puede adjuntar un *callback* de retorno.
      */
-    setDataSource(id="")
+    setDataSource(id="",search="")
     {
         this.data = null;
         let url = this.getAttribute('data-source');
-        id=id.toLowerCase();
+        search=search.toLowerCase();
         return new Promise(resolve => {
-            if (url && id.trim() != "")
+            if (url && search.trim() != "" && !this.#Requesting)
             {
-                let surl = url.replace('@search', id);
+                let surl = url.replace('@search', search);
                 if (this.onBeforeSearch) {
                     surl = this.onBeforeSearch(surl);
                 }
+
+                this.#Requesting = true;
                 this.request(surl, (dataSuccess) => {
                     this.data = this.setObjectListMinus(dataSuccess);
                     this.findValue(id);
                     resolve();
+                    this.#Requesting = false;
                 }, (dataFail) => {
                     resolve();
                     alert("Ocurrió un error al invocar el servicio.\n\n" + dataFail);
+                    this.#Requesting = false;
                 });
             }
             else if(this.hasAttribute('data-source-array') && this.getAttribute('data-source-array').trim() != '')
@@ -698,7 +710,10 @@ class InputKey extends HTMLElement
                 try{ this.data = this.setObjectListMinus(JSON.parse(this.getAttribute('data-source-array'))); }
                 catch{ alert('El valor del atributo "data-source-array" tiene un formato JSON inválido'); }
                 if (id && this.data){
-                    this.data = this.data.filter(data => (data[(this.getAttribute('data-search')??'').toLowerCase()].includes(id.toLowerCase()) || id=='%'));
+                    this.data = this.data.filter(data => (data[(this.getAttribute('data-key')??'').toLowerCase()] === id.toLowerCase()));
+                }
+                else if (search && this.data){
+                    this.data = this.data.filter(data => (data[(this.getAttribute('data-search')??'').toLowerCase()].includes(search.toLowerCase()) || search=='%'));
                 }
                 this.findValue(id);
                 resolve();
@@ -743,10 +758,16 @@ class InputKey extends HTMLElement
      */
     findValue(id)
     {
-        if (this.data && this.data.length > 0)
-        {
-            this.record_selected = this.data.find(d => (d[(this.getAttribute('data-search')??'').toString().toLowerCase()]??'').toString().toLowerCase() == id.toLowerCase());
+        if (this.data && this.data.length > 0) {
+            this.record_selected = this.data.find(d => (d[(this.getAttribute('data-key')??'').toString().toLowerCase()]??'').toString().toLowerCase() == id.toLowerCase());
+            // console.log("key")
         }
+        if (Object.keys(this.record_selected??{}).length == 0) {
+            this.record_selected = this.data.find(d => (d[(this.getAttribute('data-search')??'').toString().toLowerCase()]??'').toString().toLowerCase() == id.toLowerCase());
+            // console.log("search")
+        }
+        // console.log(this.record_selected)
+
         return this.record_selected;
     }
     /**
@@ -775,6 +796,7 @@ class InputKey extends HTMLElement
         {
             this.accept_data = this.setObjectMinus(this.accept_data);
             this.input_search_container.value = (this.accept_data[(this.getAttribute('data-search')??'').toLowerCase()]??'');
+            this.input_search_container.setAttribute("key-value",(this.accept_data[(this.getAttribute('data-key')??'').toLowerCase()]??''));
             this.input_description_container.value = (this.accept_data[(this.getAttribute('data-text')??'').toLowerCase()]??'');
             this.setAttribute('value', this.accept_data[(this.getAttribute('data-key')??'').toLowerCase()]??'');
             this.inputv.setAttribute('value', this.accept_data[(this.getAttribute('data-key')??'').toLowerCase()]??'');
@@ -830,7 +852,9 @@ class InputKey extends HTMLElement
             return;
         }
 
-        this.setDataSource(this.input_search_container2.value).then(()=>{
+        let kv = this.input_search_container2.getAttribute("key-value") || "";
+        let sv = this.input_search_container2.value || "";
+        this.setDataSource(kv,sv).then(()=>{
             this.search(container2, false);
         });
     }
@@ -840,6 +864,7 @@ class InputKey extends HTMLElement
     setDataInputSearch2()
     {
         this.input_search_container2.value = this.input_search_container.value;
+        this.input_search_container2.setAttribute("key-value",this.input_search_container.getAttribute("key-value")||"");
         this.input_search_container2.select();
         this.input_search_container2.focus();
     }
@@ -904,16 +929,20 @@ class InputKey extends HTMLElement
     }
     _search(autoselect=true)
     {
+        let kv = this.input_search_container.getAttribute("key-value") || "";
+        let sv = this.input_search_container.value || "";
+        
         if (autoselect)
         {
-            this.setDataSource(this.input_search_container.value).then(()=>{
+            this.setDataSource(kv,sv).then(()=>{
                 this.input_search_container2.value = this.input_search_container.value;
+                this.input_search_container2.setAttribute("key-value",this.input_search_container.getAttribute("key-value")||"");
                 this.search(this.container2, true);
             });
         }
         else
         {
-            this.setDataSource(this.input_search_container.value).then(()=>{
+            this.setDataSource(kv,sv).then(()=>{
                 this.setDataInputSearch2();
                 this.search(this.container2, false);
             });
