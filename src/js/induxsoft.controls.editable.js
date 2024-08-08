@@ -721,10 +721,14 @@ class EditTable extends HTMLElement
         const roundedNumber = number.toFixed(decimals);
         let integerPart = '', fractionalPart = '';
         
-        if (decimals == 0) {
+        if (decimals == 0) 
+        {
             integerPart = roundedNumber;
-            decimalSeparator = '';
-        } else {
+            this.NumFormat.decimals="";
+        } 
+        else 
+        {
+            this.NumFormat.decimals=this.NumFormat.default_decimals;
             let numberParts = roundedNumber.split('.');
             integerPart = numberParts[0];
             fractionalPart = numberParts[1];
@@ -1159,6 +1163,7 @@ class EditTable extends HTMLElement
     ButtonOnClick = null;
     onTdPaint = null;
     NumFormat = {
+        default_decimals:".",
         thousands:",",
         decimals:"."
     }
