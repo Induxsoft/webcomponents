@@ -1241,7 +1241,7 @@ class CheckList extends HTMLElement
         let containerItem = null;
         if (params.isNew)
         {
-            containerItem = this._createFullElement('div', { id:'CL_newCont', class:'hover-item p-2 pe-3 bg-white', style:'margin-top: 1px;' });
+            containerItem = this._createFullElement('div', { id:'CL_newCont', class:'hover-item p-2 pe-3 bg-white', style:'margin-top: 1px;',tabindex:"0" });
             const newItem = this._createFullElement('div', { id:'CL_newItem', class:'list-item-new', 'item-id': params.id });
             const newEmpt = this._createFullElement('div');
             const newIcon = this._createFullElement('div', { class:'d-flex align-items-center justify-content-center' });
@@ -1273,7 +1273,7 @@ class CheckList extends HTMLElement
         }
         else
         {
-            containerItem = this._createFullElement('div', { class:'hover-item bg-white ps-1 pe-3 borderxy4', 'item-id':`${params.id}`, style:'position: relative; margin-top: 1px;' });
+            containerItem = this._createFullElement('div', { class:'hover-item bg-white ps-1 pe-3 borderxy4', 'item-id':`${params.id}`, style:'position: relative; margin-top: 1px;',tabindex:"0" });
             const rowItem = this._createFullElement('div', { class:'list-item' });
             const movItem = this._createFullElement('button', { class: 'movItem noborder', style: 'background: transparent;', draggable: 'true' });
             const chkItem = this._createFullElement('input', { type:'checkbox' });
@@ -1292,6 +1292,7 @@ class CheckList extends HTMLElement
             rdItemY.checked = (item.done ?? false);
             rdItemN.checked = (!item.done ?? true);
             containerItem.setAttribute('item-text', item.text);
+            containerItem.setAttribute('title', item.text);
             containerItem.setAttribute('item-done', chkItem.checked);
 
             if (params.isSubItem)
