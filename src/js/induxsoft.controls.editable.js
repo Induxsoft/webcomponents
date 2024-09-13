@@ -748,6 +748,7 @@ class EditTable extends HTMLElement
         if (this.hasAttribute('max-row-height')) this.maxRowHeight = this.getAttribute('max-row-height');
         if (this.hasAttribute('row-height')) this.rowHeight = this.getAttribute('row-height');
         if (this.hasAttribute('cards-responsive')) this.cardsResponsive = (this.getAttribute('cards-responsive')=='true');
+        if (this.hasAttribute('editable-responsive')) this.editableResponsive = (this.getAttribute('editable-responsive')=='true');
     }
     autoConfirm=false;
     _fireBlur=true;
@@ -774,7 +775,9 @@ class EditTable extends HTMLElement
 
     checkAndSetRowCards()
     {
-        const editable = this.Columns.find(col => col.type.toLowerCase() != 'noeditable')
+        var editable=null;
+        if(!this.editableResponsive) editable = this.Columns.find(col => col.type.toLowerCase() != 'noeditable');
+        
         this._table.classList.toggle('table-cards', (!editable && this.cardsResponsive));
     }
 
@@ -1174,7 +1177,7 @@ class EditTable extends HTMLElement
     maxRowHeight = "none";
     rowHeight = "100%";
     cardsResponsive = false;
-    
+    editableResponsive=false;
     CSS = {
         Cell:"EdiTable-Cell",
         RowSelected: "EdiTable-Row-Selected"
