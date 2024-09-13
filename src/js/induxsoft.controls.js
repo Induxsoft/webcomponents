@@ -1054,7 +1054,7 @@ class CheckList extends HTMLElement
             this.radioStyle =   this._parseBool(this.getAttribute('radio-style'));
 
             this._containerwc = this._createFullElement('div', { id:'CL_container', class:'bordered d-flex flex-column' });
-            this._headSection = this._createFullElement('div', { id:'CL_headerSection', class:'p-3 d-flex' });
+            this._headSection = this._createFullElement('div', { id:'CL_headerSection', class:'p-3 d-flex',tabindex:"0" });
             this._bodySection = this._createFullElement('div', { id:'CL_bodySection', class:'grow-1' });
             this._footSection = this._createFullElement('div', { id:'CL_footSection'});
 
@@ -1202,7 +1202,8 @@ class CheckList extends HTMLElement
         this._bodySection.innerHTML = ``;
         this._footSection.innerHTML = ``;
         this._footHeader.classList.add('hide-element');
-
+        
+        this._headSection.setAttribute("title",(this.data?.text ?? ''));
         this._titleHeader.classList.toggle('disable-element', !this.canEdit);
         if (this.hideHeader) this._headSection.style.display = "none";
 
