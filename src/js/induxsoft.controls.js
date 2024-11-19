@@ -2443,8 +2443,8 @@ class SafeInput extends HTMLElement
                 this._inputSf.select();
             });
             this._inputSf.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter')
-                    this._confirmEdit(contanr);    
+                if (e.key === 'Enter' && this._inputSf.nodeName != "TEXTAREA")
+                    this._confirmEdit(contanr);
             });
             this._btnDone.addEventListener('click', async () => {
                 this._confirmEdit(contanr);
@@ -2557,10 +2557,11 @@ class SafeInput extends HTMLElement
             }
         }
 
-        if (this.getAttribute('placeholder'))
-            input.setAttribute('placeholder', this.getAttribute('placeholder'));
-
-        if (input) input.value = (this.getAttribute('value') ?? '');
+        if (input) {
+            input.value = (this.getAttribute('value')??'');
+            if (this.getAttribute('placeholder')) input.setAttribute('placeholder', this.getAttribute('placeholder'));
+            if (this.hasAttribute('onchange')) input.setAttribute('onchange', this.getAttribute('onchange'));
+        }
 
         if (this._parseBool(this.getAttribute('hidden-input')))
         {

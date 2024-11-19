@@ -84,7 +84,7 @@ var InduxsoftCrudlModel =
 		// Desctivar controles del v12FormBar y Formulario
 		const DisableControls = (disable) => {
 			const v12FormBar = document.getElementById("v12FormBar_content");
-			if (v12FormBar) v12FormBar.querySelectorAll("li").forEach(v12btn => {
+			if (v12FormBar) v12FormBar.querySelectorAll("button,a").forEach(v12btn => {
 				v12btn.style.pointerEvents = (disable) ? "none" : "";
 				v12btn.style.backgroundColor = (disable) ? "#e9ecef" : "";
 				v12btn.style.opacity = (disable) ? "1" : "";
@@ -99,7 +99,7 @@ var InduxsoftCrudlModel =
 		const fd = new FormData(form);
 		
 		let endpoint = (url.trim() != "") ? url : (form.action || "./");
-		let method = ((Number(fd.get("sys_pk")) || 0) > 0) ? "PUT" : "POST";
+		let method = ((Number(fd.get("sys_pk")) || 0) > 0) ? "PATCH" : "POST";
 		
 		Object.entries(details).forEach(entry => {
 			const [key, obj] = entry;
