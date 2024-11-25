@@ -224,8 +224,7 @@ class EditTable extends HTMLElement
             
             this._initTreeValues();
 
-            if (this.ShowAsTree)
-                this._printTreeData();
+            if (this.ShowAsTree) this._printTreeData();
 
             this.Initialize(this._table.getAttribute('id'));
             //this._processAtributesColumn();
@@ -236,8 +235,23 @@ class EditTable extends HTMLElement
             // Si no se ha proporcionado el atributo data para el dataArray se genera a partir del contenido de la tabla
             if (this.DataArray.length < 1) this.UpdateData();
             this._current_row = this.CurrentRowIndex();
-            this.setAutoConfirm();
 
+            // Vista de impresión activada.
+            window.addEventListener('beforeprint', () => {
+                this.Columns.forEach(col => {
+                    if ((col?.class??"").includes("hide-on-print") || (col?.class??"").includes("no-print"))
+                        this.hideColumn(col.field, true);
+                });
+            });
+            // Vista de impresión desactivada.
+            window.addEventListener('afterprint', () => {
+                this.Columns.forEach(col => {
+                    if ((col?.class??"").includes("hide-on-print") || (col?.class??"").includes("no-print"))
+                        this.hideColumn(col.field, false);
+                });
+            });
+            
+            this.setAutoConfirm();
             this.checkAndSetRowCards();
         });
     }
@@ -1147,7 +1161,7 @@ class EditTable extends HTMLElement
 
     // ========================= EDITABLE WC FUNCTIONS
 
-    Events = { };
+    Events = {};
     TheadRowIndex = 0;
     AutoAddRow = true;
     AutoDelRow = true;
