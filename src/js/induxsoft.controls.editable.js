@@ -2187,7 +2187,7 @@ class EditTable extends HTMLElement
 
         let coldef = this.GetColumnDefOfTd(td);
         if (this._withFormat(coldef, value))
-            value = value.replace(/[^0-9.]+/g, "");
+            value = value.replace(/[^0-9.-]+/g, "");
 
         if (valideEncode && this.htmlEncode) value = this.getHtmlDecode(value);
         
