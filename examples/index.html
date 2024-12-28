@@ -18,11 +18,11 @@
             - manual-text       (optional): Establece el texto a mostrar para la opción editable (def: Escribir manualmente...)
             - control-styles    (opcional): Establece los estilos personalizados que se le aplicarán al control (ej: input{border:1px solid red;})
         -->
-        <edit-select id="micontrol1" name="opcion" edit-options="true" manual-text="Editar manualmente" value="" control-styles="">
+        <edit-select id="micontrol1" name="opcion" edit-options="false" manual-text="Editar manualmente" value="" control-styles="option{ border:1px solid red; }">
+            <option value="" disabled hidden selected>Selecciona una opción</option>
             <option value="1">Opción 1</option>
             <option value="2">Opción 2</option>
             <option value="3">Opción 3</option>
-            <option >Opción 4</option>
         </edit-select>
     </div>
     <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD; padding-bottom: 32px; margin:4px;">
@@ -60,11 +60,11 @@
         <input-key 
             id="micontrol2"
             name="cliente"
-            data-key="sys_pk"
+            data-key="id"
             data-search="codigo"
             data-text="nombre"
-            data-value='{"sys_pk":1, "codigo":"001", "nombre":"Bob"}'
-            data-source-array='[{"sys_pk":1, "codigo":"001", "nombre":"Bob"}]'
+            data-value='{}'
+            data-source-array='[{"id":1, "codigo":"001", "nombre":"Bob"}, {"id":2, "codigo":"002", "nombre":"Katelynn"}, {"id":3, "codigo":"003", "nombre":"Larry"}]'
             data-source=""
             columns="codigo,nombre"
             colcaptions="Código,Nombre"
@@ -336,7 +336,7 @@
             </filter-text>
         </form>
     </div>
-    <div style="width: 70rem; padding: 8px 16px; border: 1px solid #DDD; padding-bottom: 32px; margin:4px;">
+    <div style="width: auto; padding: 8px 16px; border: 1px solid #DDD; padding-bottom: 32px; margin:4px;">
         <h3>Filter Date Range</h3>
         <form action="./index.html" method="get" id="form_test2">
             <filter-date-range

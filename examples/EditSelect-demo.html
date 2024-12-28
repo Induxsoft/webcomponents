@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EditSelect</title>
+    <script src="../src/js/induxsoft.controls.js"></script>
+</head>
+<body style="font-family: monospace;">
+    <div style="width:50%; margin-left:auto; margin-right:auto;">
+        <h3>Edit Select</h3>
+        <form action="" method="GET">
+            <edit-select name="option" id="select">
+                <option value="" disabled hidden selected>Selecciona una opción</option>
+                <option value="1">Opción 1</option>
+                <option value="2">Opción 2</option>
+                <option value="3">Opción 3</option>
+            </edit-select>
+            <br>
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+
+    <script>
+        const select = document.getElementById("select");
+
+        select.onChanging = () => {
+            alert("Se ha establecido un nuevo valor: " + select.getValue());
+        }
+    </script>
+</body>
+</html>

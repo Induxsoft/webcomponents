@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeInput</title>
+    <script src="../src/js/induxsoft.controls.js"></script>
+</head>
+<body style="font-family: monospace;">
+    <div style="width:50%; margin-left:auto; margin-right:auto;">
+        <h3>Safe Input</h3>
+        <form action="" method="GET">
+            <safe-input type="text" input-name="input" id="input" hidden-input="true"></safe-input>
+            <br>
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+
+    <script>
+        const input = document.getElementById("input");
+
+        input.onChanging = (old,value) => {
+            alert("Se ha establecido un nuevo valor: " + old + " > " + value);
+        }
+    </script>
+</body>
+</html>

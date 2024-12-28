@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DateRange</title>
+    <script src="../src/js/induxsoft.controls.js"></script>
+</head>
+<body style="font-family: monospace;">
+    <div style="width: max-content; margin-left:auto; margin-right:auto;">
+        <h3>Date Range</h3>
+        <form action="" method="GET">
+            <date-range hidden-input-name-start="fi" hidden-input-name-end="ff" id="dtr"></date-range>
+            <br>
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+
+    <script>
+        function hoy() {
+            const fecha = new Date();
+            const yyyy = fecha.getFullYear();
+            const MM = String(fecha.getMonth() + 1).padStart(2, '0');
+            const dd = String(fecha.getDate()).padStart(2, '0');
+
+            return `${yyyy}-${MM}-${dd}`;
+        }
+
+        function establecerDatos() {
+            const dtr = document.getElementById("dtr")
+            
+            let obj = {
+                start: hoy(),
+                end: hoy()
+            };
+
+            dtr.setData(obj);
+        }
+
+        establecerDatos();
+    </script>
+</body>
+</html>
