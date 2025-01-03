@@ -3,31 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CheckList</title>
     <script src="../src/js/induxsoft.controls.js"></script>
 </head>
-<body>
+<body style="font-family: monospace;">
     <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD;border-radius: 5px; padding-bottom: 32px; margin:4px;">
-        <h3>Check List</h3>
-        <!--
-            [PARAMS: check-list]
-            ----------------------------------------------------------------------------------------------
-            - data              (opcional): datos de la lista
-            - data-locked       (opcional): Elementos marcados ya no pueden desmarcarse (true/false, def: false)
-            - data-done-style   (opcional): Visualización de elementos marcados: 0-Permanecen en su sitio, 1-Desaparecen, 2-Se apilan en una lista en la parte inferior (def: 0)
-            - can-remove        (opcional): Pueden eliminarse elementos (true/false, def: false)
-            - can-edit          (opcional): Pueden editarse elementos (true/false, def: false)
-            - can-move          (opcional): Pueden moverse elementos (true/false, def: false)
-            - can-check         (opcional): Pueden marcarse como completados o actualizar su progreso (true/false, def: true)
-        -->
-        <check-list 
-            id="micontrol3"
-            data=""
-            data-locked="true" 
-            data-done-style="0" 
-            can-remove="false" 
-            can-edit="false" 
-            can-move="false" 
+        <div style="display: flex; gap: .5rem; align-items: center;">
+            <h3>Check List</h3>
+
+            <button onclick="establecer();">Establecer</button>
+        </div>
+        <check-list id="lista"/>
+        <!-- <check-list 
+            id="lista"
+            data='{
+                "text": "Lista de compras",
+                "items": [
+                    {"id":"1", "text":"3 Tomates", "done":false},
+                    {"id":"2", "text":"1 Cebolla", "done":false},
+                    {"id":"3", "text":"3 Habaneros", "done":false},
+                    {"id":"4", "text":"4 Huevos", "done":false},
+                    {"id":"5", "text":"4 Naranjas", "done":true}
+                ]
+            }'
+            data-locked="false"
+            data-done-style="0"
+            radio-style="false"
+            hide-header="false"
+            can-add="false"
+            can-edit="false"
+            can-remove="false"
+            can-move="false"
             can-check="true"
-        />
+        /> -->
     </div>
+
+    <script>
+        const lista = document.getElementById("lista");
+
+        function inicializar() {
+            lista.locked = false;
+            lista.doneStyle = 0;
+            lista.radioStyle = false;
+            lista.hideHeader = false;
+            lista.canAdd = true;
+            lista.canEdit = true;
+            lista.canRemove = true;
+            lista.canMove = true;
+            lista.canCheck = false;
+
+            lista.onItemChanged = (item) => {
+                alert(item.text+" ha cambiado");
+                console.log(item);
+            };
+
+            lista.onItemChecked = (item) => {
+                alert(item.text+" ha sido marcado");
+                console.log(item);
+            };
+
+            lista.onItemMoved = (sourceItem) => {
+                alert(sourceItem.text+" ha cambiado de posición");
+                console.log(sourceItem);
+            };
+        }
+
+        function establecer() {
+            let data = {
+                text: "Lista de compras",
+                items: [
+                    {id:"1", text:"3 Tomates", done:false},
+                    {id:"2", text:"1 Cebolla", done:false},
+                    {id:"3", text:"3 Habaneros", done:false},
+                    {id:"4", text:"4 Huevos", done:false},
+                    {id:"5", text:"4 Naranjas", done:true}
+
+                    /* {id:"1", text:"1 kg pollo", done:false},
+                    {id:"2", text:"1 kg harina", done:false},
+                    {id:"3", text:"1 lt aceite", done:false},
+                    {id:"4", text:"Limones", done:false},
+                    {id:"5", text:"Quezo", done:false},
+                    {
+                        id:"6", text:"Ingredientes para la salsa", done:false,
+                        items: [
+                            {id:"6.1", text:"8 tomatillos verdes", done:false},
+                            {id:"6.2", text:"1 chile jalapeño", done:false},
+                            {id:"6.3", text:"1 cebolla chica", done:false},
+                            {id:"6.4", text:"1 cabeza ajo", done:false},
+                            {id:"6.5", text:"1 manojo cilantro", done:false},
+                        ]
+                    } */
+                ]
+            };
+
+            lista.canAdd = false;
+            lista.canEdit = false;
+            lista.canRemove = false;
+            lista.canMove = false;
+            lista.canCheck = true;
+            lista.setData(data);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            inicializar();
+        });
+    </script>
 </body>

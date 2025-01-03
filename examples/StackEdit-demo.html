@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StackEdit</title>
+    <script src="../src/js/induxsoft.controls.js"></script>
+</head>
+<body style="font-family: monospace;">
+    <div style="max-width: 30rem; padding: 8px 16px; border: 1px solid #DDD;border-radius: 5px; padding-bottom: 32px; margin:4px;">
+        <div style="display: flex; gap: .5rem; align-items: center;">
+            <h3>Stack Edit</h3>
+
+            <button onclick="establecer();">Establecer</button>
+        </div>
+
+        <stack-edit id="stack"/>
+        <!-- <stack-edit
+            id="stack"
+            data='[
+                {
+                    "id":"1",
+                    "a":"01-01-2025","b":"Activo","c":"Verde","d":"Uno",
+                    "title":"Item Verde",
+                    "subtitle":"Este es un item de color Verde",
+                    "styles":"color:#FFFFFF !important; background-color:#198754 !important;"
+                },
+                {
+                    "id":"2",
+                    "a":"01-01-2025","b":"En revisión","c":"Predeterminado","d":"Dos",
+                    "title":"Item Predeterminado",
+                    "subtitle":"Este es un item predeterminado"
+                }
+            ]'
+            caption-a="a"
+            caption-b="b"
+            caption-c="c"
+            caption-d="d"
+            title="title"
+            subtitle="subtitle"
+            color-field="#000"
+            backcolor-field="#FFF"
+            styles-field="styles"/> -->
+    </div>
+
+    <script>
+        const stack = document.getElementById("stack");
+
+        function inicializar() {
+            stack.captionA = "a";
+            stack.captionB = "b";
+            stack.captionC = "c";
+            stack.captionD = "d";
+            stack.title = "title";
+            stack.subtitle = "subtitle";
+            stack.colorField = "#000";
+            stack.backColorField = "#FFF";
+            stack.stylesField = "styles";
+
+            stack.onElementClick = (item, index) => {
+                console.log(index);
+                console.log(item);
+            };
+        }
+
+        function establecer() {
+            let data = [
+                {
+                    id:"1",
+                    a:"01-01-2025",b:"Activo",c:"Verde",d:"Uno",
+                    title:"Item Verde",
+                    subtitle:"Este es un item de color Verde",
+                    styles:"color:#FFFFFF !important; background-color:#198754 !important;"
+                },
+                {
+                    id:"2",
+                    a:"01-01-2025",b:"En revisión",c:"Predeterminado",d:"Dos",
+                    title:"Item Predeterminado",
+                    subtitle:"Este es un item predeterminado"
+                }
+            ];
+
+            stack.setData(data);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            inicializar();
+        });
+    </script>
+</body>

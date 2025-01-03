@@ -8,30 +8,89 @@
 </head>
 <body style="font-family: monospace;">
     <div style="width: 75%; margin-left: auto; margin-right: auto;">
-        <h3>Media List</h3>
+        <div style="display: flex; gap: .5rem; align-items: center;">
+            <h3>Media List</h3>
+
+            <button onclick="establecer()">Establecer</button>
+            <button onclick="agregar()">Agregar</button>
+            <button onclick="eliminar()">Eliminar</button>
+        </div>
         
-        <media-list
+        <media-list id="gallery"></media-list>
+        <!-- <media-list
             id="gallery"
             data='[
                 {"url":"https://induxsoft.net/img/test/img1.png", "mini":"https://induxsoft.net/img/test/img1.png", "titulo":"título"}, 
                 {"url":"https://induxsoft.net/img/test/img2.png", "mini":"https://induxsoft.net/img/test/img2.png", "titulo":"título medio"}, 
                 {"url":"https://induxsoft.net/img/test/img3.png", "mini":"https://induxsoft.net/img/test/img3.png", "titulo":"título grande con mucho texto"}
             ]'
-            can-arrange="true"
-            can-drag="true"
-            can-drop="true"
+            can-arrange="false"
+            can-drag="false"
+            can-drop="false"
             can-delete="true"
-            highlight-first="true"
+            highlight-first="false"
             outline-selected="true"
             media-prop="url"
             miniature-prop="mini"
             label-prop="titulo"
             max-size-media="9rem"
             back-color-media="#F8F8F8">
-        </media-list>
+        </media-list> -->
     </div>
 
     <script>
+        const gallery = document.getElementById("gallery");
+        let selected = null;
+
+        function inicializar() {
+            gallery.canArrange = false;
+            gallery.canDrag = false;
+            gallery.canDrop = false;
+            gallery.canDelete = true;
+            gallery.highlightFirst = false;
+            gallery.outlineSelected = true;
+            gallery.mediaProp = "url";
+            gallery.miniatureProp = "mini";
+            gallery.labelProp = "titulo";
+            gallery.maxSizeMedia = "9rem";
+            gallery.backColorMedia = "#F8F8F8";
+
+            gallery.onClicking = (item) => { selected = item }
+        }
+
+        function establecer() {
+            let data = [
+                {url:"https://induxsoft.net/img/test/img1.png", mini:"https://induxsoft.net/img/test/img1.png", titulo:"título"},
+                {url:"https://induxsoft.net/img/test/img2.png", mini:"https://induxsoft.net/img/test/img2.png", titulo:"título medio"},
+                {url:"https://induxsoft.net/img/test/img3.png", mini:"https://induxsoft.net/img/test/img3.png", titulo:"título grande con mucho texto"}
+            ];
+
+            gallery.setData(data);
+            selected = null;
+        }
+
+        function agregar() {
+            let item = {
+                url: "https://induxsoft.net/img/test/img1.png",
+                mini: "https://induxsoft.net/img/test/img1.png",
+                titulo: "Mi elemento"
+            };
+
+            gallery.addMedia(item);
+        }
+
+        function eliminar() {
+            if (!selected || !confirm("¿Esta seguro que desea eliminar el elemento seleccionado?")) return;
+
+            let internalID = gallery._key_id;
+            let index = gallery.getData(false).findIndex(item => item[internalID] == selected[internalID]);
+
+            gallery.removeMediaByIndex(index);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            inicializar();
+        });
     </script>
 </body>
 </html>

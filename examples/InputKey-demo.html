@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InputKey</title>
+    <script src="../src/js/induxsoft.controls.js"></script>
+</head>
+<body style="font-family: monospace;">
+    <div style="width: max-content;">
+        <h3>Input Key</h3>
+
+        <form action="" method="POST">
+            <!-- <input-key
+                id="usuario"
+                name="usuario"
+                data-key="id"
+                data-search="username"
+                data-text="name"
+                data-source="https://jsonplaceholder.typicode.com/users/"
+                columns="username,name,email,phone"
+                colcaptions="Usuario,Nombre,Correo,Telefono">
+            </input-key> -->
+
+            <!-- <input-key
+                id="usuario"
+                name="usuario"
+                data-key="id"
+                data-search="codigo"
+                data-text="nombre"
+                data-source-array='[
+                    {"id":1, "codigo":"001", "nombre":"Bob"},
+                    {"id":2, "codigo":"002", "nombre":"Katelynn"},
+                    {"id":3, "codigo":"003", "nombre":"Larry"}
+                ]'
+                columns="codigo,nombre"
+                colcaptions="Código,Nombre">
+            </input-key> -->
+
+            <input-key 
+                id="usuario"
+                name="usuario"
+                data-key="id"
+                data-search="username"
+                data-text="name"
+                data-source="https://jsonplaceholder.typicode.com/users/"
+                add-url=""
+                edit-url=""
+                columns="username,name,email,phone"
+                colcaptions="Usuario,Nombre,Correo,Telefono"
+                search-value=""
+                text-value=""
+                box-title-text="Seleccione un usuario"
+                box-placeholder-text="Buscar usuario"
+                box-nodata-text="No se encontraron usuarios"
+                buttons='[
+                    {"id":"btn-ext-1", "content":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"12\" fill=\"currentColor\" class=\"bi bi-plus-lg\" viewBox=\"0 0 16 16\"><path fill-rule=\"evenodd\" d=\"M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z\"/></svg>"},
+                    {"id":"btn-ext-2", "content":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"12\" fill=\"currentColor\" class=\"bi bi-pencil-fill\" viewBox=\"0 0 16 16\"><path d=\"M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z\"/></svg>"}
+                ]'
+                hidden-input="true"
+                disabled="false"
+                required="true"
+                control-styles="">
+            </input-key>
+        </form>
+    </div>
+ 
+    <script>
+        const input = document.getElementById("usuario");
+
+        // input.addEventListener("change", (data) => {
+        //     console.log(data);
+        // });
+        
+        // input.change_event = (data) => {
+        //     console.log(data);
+        // };
+
+        // input.onBeforeSearch = (surl) => {
+        //     console.log(surl);
+        //     return surl;
+        // };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const btn_ext_1 = document.getElementById("btn-ext-1");
+            const btn_ext_2 = document.getElementById("btn-ext-2");
+
+            btn_ext_1.addEventListener("click", (e) => {
+                /* implementación */
+            });
+
+            btn_ext_2.addEventListener("click", (e) => {
+                /* implementación */
+            });
+        });
+    </script>
+</body>
+</html>

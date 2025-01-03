@@ -1342,7 +1342,7 @@ class CheckList extends HTMLElement
             delItem.addEventListener('click', () => {
                 this._addOrUpdateItem(containerItem, true);
             });
-            txtItem.addEventListener('keyup', (e) => {
+            txtItem.addEventListener('change', (e) => {
                 containerItem.setAttribute('item-text', txtItem.value);
                 this._addOrUpdateItem(containerItem);
                 if (e.key === 'Enter' && containerItem.nextElementSibling && containerItem.nextElementSibling.childNodes[0] && containerItem.nextElementSibling.childNodes[0].childNodes[2]){
@@ -1829,6 +1829,7 @@ class StackEdit extends HTMLElement
     subtitle = '';
     colorField = '';
     backColorField = '';
+    stylesField = '';
 
     _stackContainer = null;
     onElementClick = null;
@@ -1855,14 +1856,15 @@ class StackEdit extends HTMLElement
         document.addEventListener('DOMContentLoaded', () => 
         {
             const shadow =      this.attachShadow({ mode: 'closed' });
-            this.captionA =     (this.getAttribute('caption-a')??'');
-            this.captionB =     (this.getAttribute('caption-b')??'');
-            this.captionC =     (this.getAttribute('caption-c')??'');
-            this.captionD =     (this.getAttribute('caption-d')??'');
-            this.title =        (this.getAttribute('title')??'');
-            this.subtitle =     (this.getAttribute('subtitle')??'');
+            this.captionA =     (this.getAttribute('caption-a')??'a');
+            this.captionB =     (this.getAttribute('caption-b')??'b');
+            this.captionC =     (this.getAttribute('caption-c')??'c');
+            this.captionD =     (this.getAttribute('caption-d')??'d');
+            this.title =        (this.getAttribute('title')??'title');
+            this.subtitle =     (this.getAttribute('subtitle')??'subtitle');
             this.colorField =   (this.getAttribute('color-field')??'#000');
             this.backColorField = (this.getAttribute('backcolor-field')??'#FFF');
+            this.stylesField = (this.getAttribute('styles-field')??'styles');
 
             this._stackContainer = this._createFullElement('div', { id:'_stackContainer' });
 
@@ -2040,8 +2042,8 @@ class StackEdit extends HTMLElement
             this._refreshView();
         });
 
-        if ((this.getAttribute('styles-field')??'') != '')
-            containerItem.setAttribute('style', (item[this.getAttribute('styles-field')]??''));
+        if ((item?.[this.stylesField]??'') != '')
+            containerItem.setAttribute('style', (item?.[this.stylesField]??''));
 
         return containerItem;
     }
