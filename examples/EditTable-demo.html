@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EditTable</title>
+    <script src="../src/js/induxsoft.controls.editable.js"></script>
+</head>
+<body style="font-family: monospace;">
+    <div style="max-width: 100vw; padding: 0px 16px 8px; border: 1px solid #DDD; border-radius: 5px;">
+        <div style="display: flex; align-items: center; gap: .5rem;">
+            <h3>Edit Table</h3>
+
+            <button id="btn-add-row">+</button>
+            <button id="btn-del-row">-</button>
+        </div>
+
+        <div style="display: flex; width: auto; min-width: 100%;">
+            <edit-table
+                style="width: 100%;"
+                id="editable"
+                min-row-height="1rem"
+                max-row-height="5rem"
+                data='[
+                    {
+                        "uno": "",
+                        "dos": "Cillum consequat laboris mollit irure.",
+                        "tres": 123456.789,
+                        "cuatro": "PAQ",
+                        "cinco": "2025-01-01",
+                        "seis": "2025-01-03 12:00",
+                        "siete": "Sí",
+                        "ocho": "",
+                        "nueve": "Occaecat exercitation cillum esse. Dolor cupidatat fugiat duis ea ipsum officia dolore ullamco nulla laborum. Exercitation laborum qui Lorem laboris fugiat nostrud sunt. Dolore dolor labore dolor cillum in velit ad non in eiusmod irure ullamco officia veniam esse. Dolor ut ad eiusmod sit ullamco culpa mollit laboris aute. Lorem amet proident exercitation elit mollit magna elit exercitation est voluptate quis velit sunt velit esse."
+                    }
+                ]'>
+                <edit-thead>
+                    <edit-tr>
+                        <edit-th type="NoEditable" field="uno">NoEditable</edit-th>
+                        <edit-th type="Text" field="dos" maxlength="25">Text</edit-th>
+                        <edit-th type="Number" field="tres" textalign="end" format="true" thousandssep="true" decs="2" prefix="$ " sufix=" MXN" default="0.00">Number</edit-th>
+                        <edit-th type="Select" field="cuatro" options='{"PZA":"PIEZA","PAQ":"PAQUETE","CAJA":"CAJA"}'>Select</edit-th>
+                        <edit-th type="Date" field="cinco" textalign="center">Date</edit-th>
+                        <edit-th type="DateTime" field="seis" textalign="center">DateTime</edit-th>
+                        <edit-th type="Check" field="siete" textalign="center" default="No">Check</edit-th>
+                        <edit-th type="Custom" field="ocho" button="true">Custom</edit-th>
+                        <edit-th type="Memo" field="nueve" minwidth="100px" maxwidth="300px">Memo</edit-th>
+                    </edit-tr>
+                </edit-thead>
+                <!-- <edit-tbody>
+                    <edit-tr>
+                        <edit-td></edit-td>
+                        <edit-td>Cillum consequat laboris mollit irure.</edit-td>
+                        <edit-td>123456.789</edit-td>
+                        <edit-td>PAQ</edit-td>
+                        <edit-td>2025-01-01</edit-td>
+                        <edit-td>2025-01-03 12:00</edit-td>
+                        <edit-td>Sí</edit-td>
+                        <edit-td></edit-td>
+                        <edit-td>
+                            Occaecat exercitation cillum esse. Dolor cupidatat fugiat duis ea ipsum officia dolore ullamco nulla laborum. Exercitation laborum qui Lorem laboris fugiat nostrud sunt. Dolore dolor labore dolor cillum in velit ad non in eiusmod irure ullamco officia veniam esse. Dolor ut ad eiusmod sit ullamco culpa mollit laboris aute. Lorem amet proident exercitation elit mollit magna elit exercitation est voluptate quis velit sunt velit esse.
+                        </edit-td>
+                    </edit-tr>
+                </edit-tbody> -->
+            </edit-table>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const table = document.getElementById("editable");
+
+            function disableShortcuts() {
+                table.AutoAddRow = false;
+                table.AutoDelRow = false;
+            }
+
+            function cellsButtonClickHandler(irow,icol,coldef) {
+                let field = coldef.field;
+
+                switch (field) {
+                    case "ocho":
+                        table.DataArray[irow][field] = prompt("Escribe el contenido aqui...","");
+                        table.UpdateRow(irow);
+                        break;
+                }
+            }
+
+            function setTableEvents() {
+                const events = table.EdiTable.Const.Events;
+
+                table.Events[events.BeforeCellFocus] = (e) => {
+                    /**
+                     * Argumentos del evento.
+                     * 
+                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.
+                     * td: (HTMLTableCellElement) Referencia al elemento <td> seleccionado.
+                     * cancel: (boolean) Detiene la ejecución de los procesos descendientes.
+                    */
+
+                    // implementación...
+                };
+                table.Events[events.EnterCell] = (e) => {
+                    /**
+                     * Argumentos de evento.
+                     * 
+                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.
+                     * td: (HTMLTableCellElement) Referencia al elemento <td> seleccionado.
+                    */
+
+                    // implementación...
+                };
+                table.Events[events.LeaveCell] = (e) => {
+                    /**
+                     * Argumentos de evento.
+                     * 
+                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.
+                     * td: (HTMLTableCellElement) Referencia al elemento <td> seleccionado.
+                    */
+
+                    // implementación...
+                };
+                table.Events[events.StartEdition] = (e) => {
+                    /**
+                     * Argumentos de evento.
+                     * 
+                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.
+                     * coldef: (array) Objeto con la información de la columna.
+                     * td: (HTMLTableCellElement) Referencia al elemento <td> seleccionado.
+                     * text: (string) Texto que se pasará como parámetro en los eventos descendientes.
+                    */
+
+                    // implementación...
+                };
+                table.Events[events.ConfirmEdition] = (e) => {
+                    /**
+                     * Argumentos de evento.
+                     * 
+                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.
+                     * coldef: (array) Objeto con la información de la columna.
+                     * td: (HTMLTableCellElement) Referencia al elemento <td> seleccionado.
+                     * text: (string) Texto que se pasará como parámetro en los eventos descendientes.
+                     * cancel: (boolean) Detiene la ejecución de los procesos descendientes.
+                    */
+
+                    // implementación...
+                };
+                table.Events[events.CancelEdition] = (e) => {
+                    /**
+                     * Argumentos de evento.
+                     * 
+                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.
+                     * td: (HTMLTableCellElement) Referencia al elemento <td> seleccionado.
+                    */
+
+                    // implementación...
+                };
+                table.Events[events.InputCreated] = (e) => {
+                    /**
+                     * Argumentos de evento.
+                     * 
+                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.
+                     * coldef: (array) Objeto con la información de la columna.
+                     * td: (HTMLTableCellElement) Referencia al elemento <td> seleccionado.
+                     * input: (HTMLElement) Referencia al elemento <input> creado.
+                     * text: (string) Contenido de la celda seleccionada/especificada.
+                    */
+
+                    // implementación...
+                };
+                table.Events[events.BeforeSetInput] = (e) => {
+                    /**
+                     * Argumentos de evento.
+                     * 
+                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.
+                     * coldef: (array) Objeto con la información de la columna.
+                     * td: (HTMLTableCellElement) Referencia al elemento <td> seleccionado.
+                     * input: (HTMLElement) Referencia al elemento <input> creado.
+                     * text: (string) Contenido de la celda seleccionada/especificada.
+                    */
+
+                    // implementación...
+                };
+                table.Events[events.BeforeUpdateCell] = (e) => {
+                    /**
+                     * Argumentos de evento.
+                     * 
+                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.
+                     * coldef: (array) Objeto con la información de la columna.
+                     * td: (HTMLTableCellElement) Referencia al elemento <td> seleccionado.
+                     * input: (HTMLElement) Referencia al elemento <input> creado.
+                     * text: (string) Contenido de la celda seleccionada/especificada.
+                     * cancel: (boolean) Detiene la ejecución de los procesos descendientes.
+                    */
+
+                    // implementación...
+                };
+                table.Events[events.FieldUpdated] = (e) => {
+                    /**
+                     * Argumentos de evento.
+                     * 
+                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.
+                     * row: (number) Índice de la fila seleccionada.
+                     * field: (string) Nombre de la celda seleccionada.
+                     * value: (string) Valor establecido.
+                    */
+
+                    // implementación...
+                };
+                table.Events[events.RowAdded] = (e) => {
+                    /**
+                     * Argumentos de evento.
+                     * 
+                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.
+                     * tr: (HTMLTableRowElement) Referencia al elemento <tr> creado.
+                     * rowIndex: (number) Índice de la nueva fila creada.
+                    */
+
+                    // implementación...
+                };
+                table.Events[events.BeforeRowDelete] = (e) => {
+                    /**
+                     * Argumentos de evento.
+                     * 
+                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.
+                     * rowIndex: (number) Índice de la fila a eliminar.
+                     * cancel: (boolean) Detiene la ejecución de los procesos descendientes.
+                    */
+
+                    // implementación...
+                };
+                table.Events[events.RowDeleted] = (e) => {
+                    /**
+                     * Argumentos de evento.
+                     * 
+                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.
+                     * rowIndex: (number) Índice de la fila eliminada.
+                    */
+
+                    // implementación...
+                };
+                table.Events[events.BeforeMoveRow] = (e) => {
+                    /**
+                     * Argumentos de evento.
+                     * 
+                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.
+                     * source: (array) Objeto con la información de la fila que se esta moviendo.
+                     * target: (array) Objeto con la información de la fila objetivo.
+                     * child: (boolean) Indica si la fila se moverá como un elemento hijo de otra fila.
+                     * cancel: (boolean) Detiene la ejecución de los procesos descendientes.
+                    */
+
+                    // implementación...
+                };
+                table.Events[events.RowMoved] = (e) => {
+                    /**
+                     * Argumentos de evento.
+                     * 
+                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.
+                     * source: (array) Objeto con la información de la fila que se esta moviendo.
+                     * target: (array) Objeto con la información de la fila objetivo.
+                     * child: (boolean) Indica si la fila se movió como un elemento hijo de la fila objetivo.
+                    */
+
+                    // implementación...
+                };
+                table.Events[events.RowChanged] = (e) => {
+                    /**
+                     * Argumentos del evento.
+                     * 
+                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.
+                     * td: (HTMLTableCellElement) Referencia al elemento <td> seleccionado.
+                     * previous_index: (number) Índice previo/anterior a la fila seleccionada.
+                     * index: (number) Índice actual de la fila seleccionada.
+                    */
+
+                    // implementación...
+                };
+                table.Events[events.LostFocus] = () => {/*implementación*/};
+                table.Events[events.IsDirtyChanged] = () => {/*implementación*/};
+                table.Events[events.OnSort] = (e) => {
+                    /**
+                     * Argumentos del evento.
+                     * 
+                     * coldef: (array) Objeto con la información de la columna: {type:"", field:"", sort:"ASC/DESC", ...}
+                     * th: (HTMLTableCellElement) Referencia al elemento <th> seleccionado.
+                     * caption: (string) Título de la columna seleccionada.
+                    */
+
+                    // implementación...
+                };
+
+                /**
+                 * irow: (number) Índice de la fila seleccionada/especificada.
+                 * icol: (number) Índice de la celda seleccionada/especificada.
+                 * coldef: (array) Objeto con la información de la columna: {type:"", field:"", ...}
+                */
+                table.ButtonOnClick = (irow,icol,coldef) => cellsButtonClickHandler(irow,icol,coldef);
+                /**
+                 * td: (HTMLTableCellElement) Referencia al elemento <td> creado.
+                 * irow: (number) Índice de la fila creada.
+                 * icol: (number) Índice de la celda creada.
+                 * field: (string) Nombre de la celda creada.
+                */
+                table.onTdPaint = (td,irow,icol,field) => {/*implementación*/};
+            }
+
+            function setEvents() {
+                const add = document.getElementById("btn-add-row");
+                const del = document.getElementById("btn-del-row");
+
+                add.addEventListener("click", () => table.AddRow());
+                del.addEventListener("click", () => table.DeleteCurrentRow());
+            }
+
+            function setData() {
+                let data = [
+                    {
+                        uno: "",
+                        dos: "Cillum consequat laboris mollit irure.",
+                        tres: 123456.789,
+                        cuatro: "PAQ",
+                        cinco: "2025-01-01",
+                        seis: "2025-01-03 12:00",
+                        siete: "Sí",
+                        ocho: "",
+                        nueve: "Occaecat exercitation cillum esse. Dolor cupidatat fugiat duis ea ipsum officia dolore ullamco nulla laborum. Exercitation laborum qui Lorem laboris fugiat nostrud sunt. Dolore dolor labore dolor cillum in velit ad non in eiusmod irure ullamco officia veniam esse. Dolor ut ad eiusmod sit ullamco culpa mollit laboris aute. Lorem amet proident exercitation elit mollit magna elit exercitation est voluptate quis velit sunt velit esse."
+                    }
+                ];
+
+                table.DataArray = data;
+                table._printRows();
+            }
+
+            disableShortcuts();
+            setTableEvents();
+            setEvents();
+            // setData();
+        });
+    </script>
+</body>
+</html>
