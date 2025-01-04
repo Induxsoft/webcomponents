@@ -2805,6 +2805,70 @@ class EditTable extends HTMLElement
         return true;
     }
     hideColumns=[];
+
+    addEventListener(type, listener) {
+        if (typeof type != "string" || typeof listener != "function") return;
+
+        switch (type.toLowerCase()) {
+            case this.EdiTable.Const.Events.BeforeCellFocus:
+                this._getCurren().Events[this.EdiTable.Const.Events.BeforeCellFocus] = listener
+                break;
+            case this.EdiTable.Const.Events.EnterCell:
+                this._getCurren().Events[this.EdiTable.Const.Events.EnterCell] = listener
+                break;
+            case this.EdiTable.Const.Events.LeaveCell:
+                this._getCurren().Events[this.EdiTable.Const.Events.LeaveCell] = listener
+                break;
+            case this.EdiTable.Const.Events.StartEdition:
+                this._getCurren().Events[this.EdiTable.Const.Events.StartEdition] = listener
+                break;
+            case this.EdiTable.Const.Events.ConfirmEdition:
+                this._getCurren().Events[this.EdiTable.Const.Events.ConfirmEdition] = listener
+                break;
+            case this.EdiTable.Const.Events.CancelEdition:
+                this._getCurren().Events[this.EdiTable.Const.Events.CancelEdition] = listener
+                break;
+            case this.EdiTable.Const.Events.InputCreated:
+                this._getCurren().Events[this.EdiTable.Const.Events.InputCreated] = listener
+                break;
+            case this.EdiTable.Const.Events.BeforeSetInput:
+                this._getCurren().Events[this.EdiTable.Const.Events.BeforeSetInput] = listener
+                break;
+            case this.EdiTable.Const.Events.BeforeUpdateCell:
+                this._getCurren().Events[this.EdiTable.Const.Events.BeforeUpdateCell] = listener
+                break;
+            case this.EdiTable.Const.Events.FieldUpdated:
+                this._getCurren().Events[this.EdiTable.Const.Events.FieldUpdated] = listener
+                break;
+            case this.EdiTable.Const.Events.RowAdded:
+                this._getCurren().Events[this.EdiTable.Const.Events.RowAdded] = listener
+                break;
+            case this.EdiTable.Const.Events.BeforeRowDelete:
+                this._getCurren().Events[this.EdiTable.Const.Events.BeforeRowDelete] = listener
+                break;
+            case this.EdiTable.Const.Events.RowDeleted:
+                this._getCurren().Events[this.EdiTable.Const.Events.RowDeleted] = listener
+                break;
+            case this.EdiTable.Const.Events.BeforeMoveRow:
+                this._getCurren().Events[this.EdiTable.Const.Events.BeforeMoveRow] = listener
+                break;
+            case this.EdiTable.Const.Events.RowMoved:
+                this._getCurren().Events[this.EdiTable.Const.Events.RowMoved] = listener
+                break;
+            case this.EdiTable.Const.Events.RowChanged:
+                this._getCurren().Events[this.EdiTable.Const.Events.RowChanged] = listener
+                break;
+            case this.EdiTable.Const.Events.LostFocus:
+                this._getCurren().Events[this.EdiTable.Const.Events.LostFocus] = listener
+                break;
+            case this.EdiTable.Const.Events.IsDirtyChanged:
+                this._getCurren().Events[this.EdiTable.Const.Events.IsDirtyChanged] = listener
+                break;
+            case this.EdiTable.Const.Events.OnSort:
+                this._getCurren().Events[this.EdiTable.Const.Events.OnSort] = listener
+                break;
+        }
+    }
 }
 
 customElements.define('edit-table', EditTable);
