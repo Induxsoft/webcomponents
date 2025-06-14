@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule</title>
+    <script src="../src/js/induxsoft.controls.schedule.js"></script>
+</head>
+<body style="font-family: monospace;">
+    <div style="/*width: max-content;*/">
+        <h3>Schedule</h3>
+
+        <custom-schedule
+            id="schedule"
+            view="week"
+            day="2025-06-14"
+            start-weekday="lunes"
+            start-lab-hour="8"
+            end-lab-hour="18"
+            interval="30"
+            increment="10"
+            events='[
+                {
+                    "id":"EV01",
+                    "start":"2025-06-16 14:00",
+                    "duration":"10",
+                    "caption":"Ir por unas papitas",
+                    "backcolor":"#FFFFE1",
+                    "color":"#000000",
+                    "data":{}
+                }
+            ]'>
+        </custom-schedule>
+    </div>
+</body>
+</html>
