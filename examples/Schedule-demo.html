@@ -14,16 +14,21 @@
             id="schedule"
             view="week"
             day="2025-06-14"
-            start-weekday="lunes"
-            start-lab-hour="8"
+            breaks="14:00-14:30"
+            weekend="sunday"
+            hollydays=""
+            start-weekday="monday"
+            start-lab-hour="9"
             end-lab-hour="18"
             interval="30"
-            increment="10"
+            increment="15"
+            min-duration="15"
+            max-duration="60"
             events='[
                 {
                     "id":"EV01",
-                    "start":"2025-06-16 14:00",
-                    "duration":"10",
+                    "start":"2025-06-14 12:00",
+                    "duration":"15",
                     "caption":"Ir por unas papitas",
                     "backcolor":"#FFFFE1",
                     "color":"#000000",
@@ -32,5 +37,36 @@
             ]'>
         </custom-schedule>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const schedule = document.getElementById('schedule');
+
+            schedule.addEventListener('itemclick', (e) => {
+                console.log("Al hacer click en el evento.");
+                console.log(e);
+            });
+            schedule.addEventListener('itemdblclick', (e) => {
+                console.log("Al hacer doble click en el evento.");
+                console.log(e);
+            });
+            schedule.addEventListener('itemmoving', (e) => {
+                console.log("Durante el arrastre del evento.");
+                console.log(e);
+            });
+            schedule.addEventListener('itemresizing', (e) => {
+                console.log("Durante el redimensionamiento del evento.");
+                console.log(e);
+            });
+            schedule.addEventListener('itemmoved', (e) => {
+                console.log("Al finalizar arrastre del evento.");
+                console.log(e);
+            });
+            schedule.addEventListener('itemupdated', (e) => {
+                console.log("Al actualizar el evento.");
+                console.log(e);
+            });
+        });
+    </script>
 </body>
 </html>

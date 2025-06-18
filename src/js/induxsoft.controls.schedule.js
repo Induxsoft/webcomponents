@@ -4,20 +4,28 @@ class CustomSchedule extends HTMLElement
     events = null;
     view = 'week';
     day = 'now';
-    breaks = null;
-    hollydays = null;
+    breaks = '';
+    hollydays = '';
     weekend = 'saturday,sunday';
     start_weekday = 'sunday';
     start_lab_hour = 0;
     end_lab_hour = 24;
     interval = 30;
     increment = 0;
-    min_duration = null;
-    max_duration = null;
+    min_duration = 15;
+    max_duration = 60;
 
     #shadow = null;
-    #semana = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
-    #weekdays = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
+    #events_backup = null;
+    #weekdays = [
+        {en:'sunday',es:'domingo'},
+        {en:'monday',es:'lunes'},
+        {en:'tuesday',es:'martes'},
+        {en:'wednesday',es:'miércoles'},
+        {en:'thursday',es:'jueves'},
+        {en:'friday',es:'viernes'},
+        {en:'saturday',es:'sábado'}
+    ];
 
     constructor() {
         super();
@@ -48,7 +56,7 @@ class CustomSchedule extends HTMLElement
                 left: 0;
                 z-index: 10;
             }
-            tr th{
+            tr th {
                 background-color: #7532F9;
                 color: #FFFFFF;
                 padding: 4px 8px;
@@ -65,12 +73,41 @@ class CustomSchedule extends HTMLElement
             }
             tbody tr { position: relative; }
             tbody tr:hover { background-color: #F5F5F5; }
-
-            /* .table-container {
-                min-height: 2rem;
-                max-height: 100%;
-                overflow: auto;
-            } */
+            td.breaks,
+            td.weekend,
+            td.hollydays
+            {
+                /* pointer-events: none; */
+                background-color: #e9ecef;
+                opacity: 1;
+                outline: 1px solid #FFF;
+            }
+            .event-task {
+                position: absolute;
+                font-size: 0.75rem;
+                border-radius: 4px;
+                box-shadow: 1px 1px 4px rgba(0,0,0,0.1);
+                padding: 2px 4px;
+                overflow: hidden;
+                cursor: pointer;
+                z-index: 5;
+            }
+            .event-task.dragging {
+                opacity: 0.7;
+                cursor: grabbing;
+            }
+            .resize-handle {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: 3px;
+                cursor: ns-resize;
+                background-color: #F8F8F8;
+            }
+            .resize-handle:hover {
+                background-color: #DDD;
+            }
         </style>
 
         <div id="schedule-wrapper">
@@ -110,25 +147,29 @@ class CustomSchedule extends HTMLElement
         const table = this.getScheduleTable();
         
         tableLayer.appendChild(table);
+        this.renderEvents();
     }
     //* ======================================== [ Métodos públicos o privados ]
-    getWeekdays()
+    backup() { this.#events_backup = JSON.parse(JSON.stringify(this.events)); }
+    restore()
     {
-        let index = this.#weekdays.indexOf(this.start_weekday);
-        if (index == -1) {
-            index = this.#semana.indexOf(this.start_weekday);
-            if (index == -1) {
-                console.warn("Día inválido");
-                if (this.view == "day") return [this.#semana[0]];
-                return this.#semana;
-            }
-        }
-
-        if (this.view == "day") return [this.#semana[index]];
-        return [...this.#semana.slice(index), ...this.#semana.slice(0,index)];
+        if (!this.#events_backup) return;
+        this.events = JSON.parse(JSON.stringify(this.#events_backup));
+        this.renderEvents();
     }
 
-    getHours() {
+    getWeekdays()
+    {
+        const index = this.#startWeekdayIndex();
+
+        if (this.view == "day") return [this.#weekdays[index]];
+        if (index == 0) return this.#weekdays;
+
+        return [...this.#weekdays.slice(index), ...this.#weekdays.slice(0,index)];
+    }
+
+    getHours()
+    {
         const intervals = [15,30,60,120];
         const result = [];
         const pad = (num) => num.toString().padStart(2, '0');
@@ -156,51 +197,127 @@ class CustomSchedule extends HTMLElement
     getScheduleTable()
     {
         const table = document.createElement('table');
-        this.setScheduleHead(table);
-        this.setScheduleBody(table);
+        const columns = this.#getColumns();
+        const weekdays = this.getWeekdays();
+
+        this.#setScheduleHead(table,columns,weekdays);
+        this.#setScheduleBody(table,columns,weekdays);
 
         return table;
     }
 
-    setScheduleHead(table)
+    renderEvents()
     {
-        const weekdays = this.getWeekdays();
+        const tasksLayer = this.#shadow.querySelector('#tasks-layer');
+        if (!tasksLayer) return;
+        // Limpia eventos anteriores
+        tasksLayer.innerHTML = '';
+
+        const interval = this.interval;
+        const startHour = this.start_lab_hour;
+        const cellHeight = this.#getCellHeight();
+
+        const resizeHandle = this.#createFullElement('div', { class:'resize-handle' });
+        
+        this.events.forEach(event => {
+            const [dateStr, timeStr] = event.start.split(' ');
+            const [hour, minute] = timeStr.split(':').map(Number);
+
+            const rect = this.#getCellOffset(dateStr);
+            // Calcula el número de bloques desde el inicio
+            const minutesFromStart = (hour * 60 + minute) - (startHour * 60);
+            const topOffset = rect.top + (minutesFromStart / interval) * cellHeight;
+
+            const durationBlocks = parseInt(event.duration) / interval;
+            const height = durationBlocks * cellHeight;
+
+            const taskEl = document.createElement('div');
+            taskEl.id = event.id;
+            taskEl.className = 'event-task';
+            taskEl.textContent = event.caption || '';
+            taskEl.style.cssText = `
+                top: ${topOffset}px;
+                height: ${height}px;
+                left: ${rect.left}px;
+                width: ${rect.width - 8}px;
+                background-color: ${event.backcolor || '#FFFFE1'};
+                color: ${event.color || '#000'};
+            `;
+
+            taskEl.appendChild(resizeHandle);
+            tasksLayer.appendChild(taskEl);
+
+            this.#setTaskEvents(taskEl,event);
+        });
+    }
+
+    #setScheduleHead(table,columns,weekdays)
+    {
+        const weekend = this.weekend.split(',');
+        const hollydays = this.hollydays.split(',');
         const thead = document.createElement('thead');
         
         const row = document.createElement('tr')
         row.appendChild(document.createElement('th'));
         
-        let turns = this.#nweek();
-        for (let i = 0; i < turns; i++) {
-            for (const d of weekdays) {
-                const cell = document.createElement('th');
-                cell.innerHTML = `<div>${d}<br><small>25/06/14</small></div>`;
-                row.appendChild(cell);
-            }   
+        let d = 0;
+        for (let i = 0; i < columns.length; i++) {
+            const cell = document.createElement('th');
+            let day = weekdays[d].en;
+            let dia = weekdays[d].es;
+            let date = columns[i];
+            
+            if (weekend.includes(day) || weekend.includes(dia)) cell.classList.add('weekend');
+            if (hollydays.includes(date)) cell.classList.add('hollydays');
+            
+            cell.innerHTML = `
+            <div>
+                <span>${dia}</span>
+                <br>
+                <small>${date}</small>
+            </div>`;
+            
+            row.appendChild(cell);
+            (d < 6) ? d++ : d = 0;
         }
         
         thead.appendChild(row);
         table.appendChild(thead);
     }
 
-    setScheduleBody(table)
+    #setScheduleBody(table,columns,weekdays)
     {
         const hours = this.getHours();
+        const breaks = this.breaks.split(',');
+        const weekend = this.weekend.split(',');
+        const hollydays = this.hollydays.split(',');
         const tbody = document.createElement('tbody');
-        const cells = (this.view == "month") ? (7 * 4) : 7;
-        const tags = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","AA","AB","AC","AD","AE","AF","AG","AH","AI"]
         
         for (let i = 0; i < hours.length; i++) {
             const tr = document.createElement('tr');
             const th = document.createElement('th');
+            let hour = hours[i];
+            let row = (i+1);
+            let d = 0;
 
-            th.textContent = hours[i];
+            th.textContent = hour;
             tr.appendChild(th);
-            for (let j = 0; j < cells; j++) {
+            for (let j = 0; j < columns.length; j++) {
                 const td = document.createElement('td');
-                td.id = tags[j]+(i+1);
+                let col = (j+1);
+                let day = weekdays[d].en;
+                let dia = weekdays[d].es;
+                let date = columns[j];
+                let datetime = `${date} ${hour}`
+                
+                if (weekend.includes(day) || weekend.includes(dia)) td.classList.add('weekend');
+                if (hollydays.includes(date)) td.classList.add('hollydays');
+
+                td.id = `${col}:${row}`;
+                td.dataset.datetime = datetime;
 
                 tr.appendChild(td);
+                (d < 6) ? d++ : d = 0;
             }
             tbody.appendChild(tr);
         }
@@ -208,24 +325,154 @@ class CustomSchedule extends HTMLElement
         table.appendChild(tbody);
     }
 
-    renderTasks()
+    #setTaskEvents(taskEl,eventData)
     {
-        if ((this.events ?? []).length == 0) return;
-
-        const tasksLayer = this.#shadow.querySelector('#tasks-layer');
-        tasksLayer.innerHTML = '';
-
-        let h_row = 40;
-        let w_col = 100;
-        let weekdays = this.getWeekdays()
-        let tasks = this.events;
-
-        tasks.forEach(t => {
-            let start = new Date(t.start);
-            let day = (start.getDay() + 6) % 7;
-
-            console.log(start,day)
+        taskEl.addEventListener('click', () => {
+            // Disparar evento personalizado al hacer clic.
+            this.dispatchEvent(new CustomEvent('itemclick', { detail: eventData }));
         });
+        taskEl.addEventListener('dblclick', () => {
+            // Disparar evento personalizado al hacer doble clic.
+            this.dispatchEvent(new CustomEvent('itemdblclick', { detail: eventData }));
+        });
+        
+        taskEl.addEventListener('mousedown', e => this.#startDrag(e, taskEl));
+
+        const handle = taskEl.querySelector('.resize-handle');
+        if (handle) {
+            handle.addEventListener('mousedown', e => {
+                e.stopPropagation(); // Evita iniciar arrastre al mismo tiempo
+                this.#startResize(e, taskEl);
+            });
+        }
+    }
+
+    #startDrag(e,taskEl)
+    {
+        e.preventDefault();
+
+        const eventData = this.events.find(ev => ev.id === taskEl.id);
+        const shiftX = e.clientX - taskEl.getBoundingClientRect().left;
+        const shiftY = e.clientY - taskEl.getBoundingClientRect().top;
+
+        taskEl.classList.add('dragging');
+
+        const updateEventDatetime = (newDatetime) => {
+            if (eventData) {
+                eventData.start = newDatetime;
+                // this.renderEvents(); // Volver a pintar
+                // Disparar evento personalizado al finalizar arrastre.
+                this.dispatchEvent(new CustomEvent('itemmoved', { detail: eventData }));
+            }
+        }
+
+        const onMouseMove = (moveEvent) => {
+            const x = moveEvent.clientX - shiftX;
+            const y = moveEvent.clientY - shiftY;
+
+            // Disparar evento personalizado durante el arrastre.
+            this.dispatchEvent(new CustomEvent('itemmoving', { detail: eventData }));
+
+            taskEl.style.left = `${x}px`;
+            taskEl.style.top = `${y}px`;
+        };
+
+        const onMouseUp = (upEvent) => {
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+            taskEl.classList.remove('dragging');
+
+            // Detectar celda de destino
+            const dropTarget = this.#getDropTarget(upEvent.clientX, upEvent.clientY);
+            if (dropTarget) {
+                const datetime = dropTarget.dataset.datetime;
+                updateEventDatetime(datetime);
+            }
+        };
+
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+    }
+
+    #startResize(e, taskEl)
+    {
+        e.preventDefault();
+
+        const eventData = this.events.find(ev => ev.id === taskEl.id);
+        const interval = this.interval;
+        const cellHeight = this.#getCellHeight();
+        const startY = e.clientY;
+        const startHeight = taskEl.offsetHeight;
+        const minHeight = this.min_duration / interval * cellHeight;
+        const maxHeight = this.max_duration / interval * cellHeight;
+
+        const onMouseMove = (moveEvent) => {
+            const delta = moveEvent.clientY - startY;
+            let newHeight = startHeight + delta;
+
+            // Aplicar límites
+            newHeight = Math.max(minHeight, Math.min(maxHeight, newHeight));
+
+            taskEl.style.height = `${newHeight}px`;
+
+            const newDuration = Math.round((newHeight / cellHeight) * interval);
+            // Disparar evento personalizado durante el redimensionamiento.
+            this.dispatchEvent(new CustomEvent('itemresizing', {
+                detail: { ...eventData, duration: newDuration }
+            }));
+        };
+
+        const onMouseUp = () => {
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+
+            const newDuration = Math.round(taskEl.offsetHeight / cellHeight) * interval;
+            eventData.duration = newDuration;
+            // this.renderEvents(); // Volver a pintar
+            // Disparar evento personalizado al finalizar el redimensionamiento.
+            this.dispatchEvent(new CustomEvent('itemupdated', { detail: eventData }));
+        };
+
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+    }
+
+    #getDropTarget(x, y) {
+        const cells = this.#shadow.querySelectorAll('td[data-datetime]');
+        for (const cell of cells) {
+            const rect = cell.getBoundingClientRect();
+            if (
+                x >= rect.left && x <= rect.right &&
+                y >= rect.top && y <= rect.bottom
+            ) {
+                return cell;
+            }
+        }
+        return null;
+    }
+
+    #getColumns()
+    {
+        const weekdays = this.getWeekdays();
+        const baseDate = (this.day.toLowerCase()=="now") ? new Date() : new Date(this.day);
+        const baseWeekday = baseDate.getDay();
+        const startWeekdayIndex = this.#startWeekdayIndex();
+
+        const diff = (baseWeekday - startWeekdayIndex + 7) % 7;
+        const startDate = new Date(baseDate);
+        startDate.setDate(baseDate.getDate() - diff);
+
+        const totalDays = (weekdays.length * this.#nweek());
+        let result = [];
+
+        for (let i = 0; i < totalDays; i++) {
+            const date = new Date(startDate);
+            date.setDate(startDate.getDate() + i);
+            
+            result.push(this.#dateFormat(date));
+        }
+
+        return result;
     }
 
     #createFullElement(tagName, attributes={}, innerHTML="")
@@ -237,6 +484,25 @@ class CustomSchedule extends HTMLElement
         if (innerHTML.trim() !== "") element.innerHTML = innerHTML.trim();
         
         return element;
+    }
+
+    #startWeekdayIndex()
+    {
+        let index = this.#weekdays.findIndex(d => d.en == this.start_weekday || d.es == this.start_weekday);
+        if (index == -1) {
+            console.warn("Día inválido");
+            index = 0;
+        }
+        return index;
+    }
+
+    #dateFormat(date)
+    {
+        const yyyy = date.getFullYear().toString();
+        const MM = (date.getMonth() + 1).toString().padStart(2,'0');
+        const dd = date.getDate().toString().padStart(2, '0');
+
+        return yyyy +"-"+ MM +"-"+ dd;
     }
 
     #boolval(v)
@@ -251,11 +517,41 @@ class CustomSchedule extends HTMLElement
     }
 
     #nweek() {
-        if (!this.view.includes("week")) return 1;
+        if (!this.view.endsWith("week")) return 1;
 
         let v = Number(this.view.replace("week",""));
         if (v <= 0) v = 1;
         return v;
+    }
+
+    #getHeadHeight() {
+        const cell = this.#shadow.querySelector('thead th');
+        return cell ? cell.offsetHeight : 40;
+    }
+
+    #getCellHeight() {
+        const cell = this.#shadow.querySelector('tbody td');
+        return cell ? cell.offsetHeight : 20;
+    }
+
+    #getColumnWidth() {
+        const firstRow = this.#shadow.querySelector('tbody tr');
+        if (!firstRow) return 80;
+        const cell = firstRow.querySelector('td');
+        return cell ? cell.offsetWidth : 80;
+    }
+
+    #getCellOffset(dateStr) {
+        const selector = `td[data-datetime^="${dateStr}"]`;
+        const cell = this.#shadow.querySelector(selector);
+        const rect = cell?.getBoundingClientRect();
+        
+        return {
+            left: rect?.left ?? 0,
+            top: rect?.top ?? 0,
+            width: rect?.width ?? this.#getColumnWidth(),
+            height: rect?.height ?? this.#getCellHeight()
+        };
     }
 }
 
