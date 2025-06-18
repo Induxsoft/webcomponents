@@ -66,6 +66,14 @@
                 console.log("Al actualizar el evento.");
                 console.log(e);
             });
+            schedule.addEventListener('beforeitemdelete', (e) => {
+                console.log("Antes de eliminar el evento.");
+                console.log(e);
+            });
+            schedule.addEventListener('itemdeleted', (e) => {
+                console.log("Al eliminar el evento.");
+                console.log(e);
+            });
         });
     </script>
 </body>

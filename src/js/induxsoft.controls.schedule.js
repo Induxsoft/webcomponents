@@ -30,7 +30,6 @@ class CustomSchedule extends HTMLElement
     constructor() {
         super();
         this.#shadow = this.attachShadow({mode:'closed'});
-
         this.#shadow.innerHTML = `
         <style>
             table {
@@ -118,7 +117,7 @@ class CustomSchedule extends HTMLElement
     }
     // Observa atributos a cambiar
     static get observedAttributes() {
-        return attributes;
+        return this.attributes;
     }
     // Reacciona a cambios de atributo
     attributeChangeCallback(property, oldValue, newValue)
@@ -149,51 +148,8 @@ class CustomSchedule extends HTMLElement
         tableLayer.appendChild(table);
         this.renderEvents();
     }
-    //* ======================================== [ Métodos públicos o privados ]
-    backup() { this.#events_backup = JSON.parse(JSON.stringify(this.events)); }
-    restore()
-    {
-        if (!this.#events_backup) return;
-        this.events = JSON.parse(JSON.stringify(this.#events_backup));
-        this.renderEvents();
-    }
-
-    getWeekdays()
-    {
-        const index = this.#startWeekdayIndex();
-
-        if (this.view == "day") return [this.#weekdays[index]];
-        if (index == 0) return this.#weekdays;
-
-        return [...this.#weekdays.slice(index), ...this.#weekdays.slice(0,index)];
-    }
-
-    getHours()
-    {
-        const intervals = [15,30,60,120];
-        const result = [];
-        const pad = (num) => num.toString().padStart(2, '0');
-
-        let start = ((this.start_lab_hour ?? -1) < 0) ? 0 : this.start_lab_hour;
-        let end = ((this.end_lab_hour ?? 25) > 24) ? 24 : this.end_lab_hour;
-        if (!intervals.includes(this.interval)) {
-            console.warn("Intervalo inválido");
-            this.interval = 30;
-        }
-
-        const endMin = end * 60;
-        let totalMin = start * 60;
-
-        while (totalMin <= endMin) {
-            const hour = Math.floor(totalMin / 60);
-            const minute = totalMin % 60;
-            result.push(`${pad(hour)}:${pad(minute)}`);
-            totalMin += this.interval;
-        }
-
-        return result;
-    }
-
+    
+    //#region Métodos públicos
     getScheduleTable()
     {
         const table = document.createElement('table');
@@ -251,6 +207,54 @@ class CustomSchedule extends HTMLElement
         });
     }
 
+    save(newEvent)
+    {
+        if (!this.events) this.events = [];
+        if (Object.keys(newEvent).length == 0) return;
+
+        const index = this.events.findIndex(e => e.id == newEvent.id);
+        if (index == -1)
+        {
+            this.events.push(newEvent);
+            this.renderEvents();
+        }
+        else
+        {
+            const oldEvent = this.events[index];
+
+            this.events[index] = newEvent;
+            this.renderEvents();
+        }
+    }
+
+    delete(id)
+    {
+        if (!this.events || !id) return;
+
+        const index = this.events.findIndex(e => e.id == id);
+        const eventArgs = {
+            index: index,
+            item: this.events[index]
+        };
+
+        this.dispatchEvent(new CustomEvent('beforeitemdelete', { detail: eventArgs }));
+
+        this.events.splice(index,1);
+        this.renderEvents();
+
+        this.dispatchEvent(new CustomEvent('itemdeleted', { detail: eventArgs }));
+    }
+
+    backup() { this.#events_backup = JSON.parse(JSON.stringify(this.events)); }
+    restore()
+    {
+        if (!this.#events_backup) return;
+        this.events = JSON.parse(JSON.stringify(this.#events_backup));
+        this.renderEvents();
+    }
+    //#endregion
+
+    //#region Métodos privados
     #setScheduleHead(table,columns,weekdays)
     {
         const weekend = this.weekend.split(',');
@@ -292,6 +296,16 @@ class CustomSchedule extends HTMLElement
         const weekend = this.weekend.split(',');
         const hollydays = this.hollydays.split(',');
         const tbody = document.createElement('tbody');
+
+        const isBreak = (hour) => {
+            let result = false;
+            for (const range of breaks) {
+                const [start,end] = range.split('-');
+                result = this.bwnHours(hour,start,end);
+                if (result) break;
+            }
+            return result;
+        }
         
         for (let i = 0; i < hours.length; i++) {
             const tr = document.createElement('tr');
@@ -312,6 +326,7 @@ class CustomSchedule extends HTMLElement
                 
                 if (weekend.includes(day) || weekend.includes(dia)) td.classList.add('weekend');
                 if (hollydays.includes(date)) td.classList.add('hollydays');
+                if (isBreak(hour)) td.classList.add('breaks');
 
                 td.id = `${col}:${row}`;
                 td.dataset.datetime = datetime;
@@ -469,10 +484,83 @@ class CustomSchedule extends HTMLElement
             const date = new Date(startDate);
             date.setDate(startDate.getDate() + i);
             
-            result.push(this.#dateFormat(date));
+            result.push(this.dateFormat(date));
         }
 
         return result;
+    }
+    //#endregion
+
+    //#region Funciones auxiliares
+    getWeekdays()
+    {
+        const index = this.#startWeekdayIndex();
+
+        if (this.view == "day") return [this.#weekdays[index]];
+        if (index == 0) return this.#weekdays;
+
+        return [...this.#weekdays.slice(index), ...this.#weekdays.slice(0,index)];
+    }
+
+    getHours()
+    {
+        const intervals = [15,30,60,120];
+        const result = [];
+        const pad = (num) => num.toString().padStart(2, '0');
+
+        let start = ((this.start_lab_hour ?? -1) < 0) ? 0 : this.start_lab_hour;
+        let end = ((this.end_lab_hour ?? 25) > 24) ? 24 : this.end_lab_hour;
+        if (!intervals.includes(this.interval)) {
+            console.warn("Intervalo inválido");
+            this.interval = 30;
+        }
+
+        const endMin = end * 60;
+        let totalMin = start * 60;
+
+        while (totalMin <= endMin) {
+            const hour = Math.floor(totalMin / 60);
+            const minute = totalMin % 60;
+            result.push(`${pad(hour)}:${pad(minute)}`);
+            totalMin += this.interval;
+        }
+
+        return result;
+    }
+
+    bwnHours(value,min,max)
+    {
+        const parse = (v) => {
+            const [h, m] = v.split(':').map(Number);
+            return h * 60 + m;
+        }
+
+        const v = parse(value);
+        const a = parse(min);
+        const b = parse(max);
+
+        return (v >= a && v <= b);
+    }
+
+    dateFormat(value)
+    {
+        const date = (value instanceof Date) ? value : new Date(value);
+
+        const yyyy = date.getFullYear().toString();
+        const MM = (date.getMonth() + 1).toString().padStart(2,'0');
+        const dd = date.getDate().toString().padStart(2,'0');
+
+        return yyyy +"-"+ MM +"-"+ dd;
+    }
+
+    datetimeFormat(value)
+    {
+        const date = (value instanceof Date) ? value : new Date(value);
+
+        const HH = date.getHours().toString().padStart(2,'0');
+        const mm = date.getMinutes().toString().padStart(2,'0');
+
+        return this.dateFormat(date) +" "+ HH +":"+ mm;
     }
 
     #createFullElement(tagName, attributes={}, innerHTML="")
@@ -494,15 +582,6 @@ class CustomSchedule extends HTMLElement
             index = 0;
         }
         return index;
-    }
-
-    #dateFormat(date)
-    {
-        const yyyy = date.getFullYear().toString();
-        const MM = (date.getMonth() + 1).toString().padStart(2,'0');
-        const dd = date.getDate().toString().padStart(2, '0');
-
-        return yyyy +"-"+ MM +"-"+ dd;
     }
 
     #boolval(v)
@@ -553,6 +632,7 @@ class CustomSchedule extends HTMLElement
             height: rect?.height ?? this.#getCellHeight()
         };
     }
+    //#endregion
 }
 
 customElements.define('custom-schedule', CustomSchedule);
