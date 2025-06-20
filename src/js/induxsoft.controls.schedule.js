@@ -15,8 +15,22 @@ class CustomSchedule extends HTMLElement
     min_duration = 15;
     max_duration = 60;
 
-    #shadow = null;
-    #events_backup = null;
+    Const = {
+        Events: {
+            ItemClick:'itemclick',
+            ItemDoubleClick:'itemdblclick',
+            ItemMoving:'itemmoving',
+            ItemResizing:'itemresizing',
+            ItemMoved:'itemmoved',
+            BeforeCreateItem:'beforecreateitem',
+            ItemCreated:'itemcreated',
+            BeforeUpdateItem:'beforeupdateitem',
+            ItemUpdated:'itemupdated',
+            BeforeDeleteItem:'beforedeleteitem',
+            ItemDeleted:'itemdeleted'
+        }
+    };
+
     #weekdays = [
         {en:'sunday',es:'domingo'},
         {en:'monday',es:'lunes'},
@@ -26,9 +40,12 @@ class CustomSchedule extends HTMLElement
         {en:'friday',es:'viernes'},
         {en:'saturday',es:'sábado'}
     ];
+    #shadow = null;
+    #events_backup = null;
 
     constructor() {
         super();
+        this.#deepFreeze(this.Const);
         this.#shadow = this.attachShadow({mode:'closed'});
         this.#shadow.innerHTML = `
         <style>
@@ -90,6 +107,9 @@ class CustomSchedule extends HTMLElement
                 overflow: hidden;
                 cursor: pointer;
                 z-index: 5;
+            }
+            .event-task .content {
+                white-space: pre-wrap;
             }
             .event-task.dragging {
                 opacity: 0.7;
@@ -168,81 +188,116 @@ class CustomSchedule extends HTMLElement
         if (!tasksLayer) return;
         // Limpia eventos anteriores
         tasksLayer.innerHTML = '';
-
-        const interval = this.interval;
-        const startHour = this.start_lab_hour;
-        const cellHeight = this.#getCellHeight();
-
-        const resizeHandle = this.#createFullElement('div', { class:'resize-handle' });
         
         this.events.forEach(event => {
-            const [dateStr, timeStr] = event.start.split(' ');
-            const [hour, minute] = timeStr.split(':').map(Number);
-
-            const rect = this.#getCellOffset(dateStr);
-            // Calcula el número de bloques desde el inicio
-            const minutesFromStart = (hour * 60 + minute) - (startHour * 60);
-            const topOffset = rect.top + (minutesFromStart / interval) * cellHeight;
-
-            const durationBlocks = parseInt(event.duration) / interval;
-            const height = durationBlocks * cellHeight;
-
-            const taskEl = document.createElement('div');
-            taskEl.id = event.id;
-            taskEl.className = 'event-task';
-            taskEl.textContent = event.caption || '';
-            taskEl.style.cssText = `
-                top: ${topOffset}px;
-                height: ${height}px;
-                left: ${rect.left}px;
-                width: ${rect.width - 8}px;
-                background-color: ${event.backcolor || '#FFFFE1'};
-                color: ${event.color || '#000'};
-            `;
-
-            taskEl.appendChild(resizeHandle);
+            const taskEl = this.#createTaskElement(event);
+            
             tasksLayer.appendChild(taskEl);
-
             this.#setTaskEvents(taskEl,event);
         });
+    }
+
+    renderEvent(event)
+    {
+        const tasksLayer = this.#shadow.querySelector('#tasks-layer');
+        if (!event || !tasksLayer) return;
+
+        const taskEl = this.#createTaskElement(event);
+            
+        tasksLayer.appendChild(taskEl);
+        this.#setTaskEvents(taskEl,event);
     }
 
     save(newEvent)
     {
         if (!this.events) this.events = [];
-        if (Object.keys(newEvent).length == 0) return;
+        if (Object.keys(newEvent).length == 0) return false;
 
         const index = this.events.findIndex(e => e.id == newEvent.id);
         if (index == -1)
         {
+            const BeforeCreateItem = new CustomEvent(this.Const.Events.BeforeCreateItem, {
+                bubbles: true,
+                cancelable: true,
+                detail: { item: newEvent }
+            });
+            const ok = this.dispatchEvent(BeforeCreateItem);
+            if (!ok) return false;
+
             this.events.push(newEvent);
-            this.renderEvents();
+            this.renderEvent(newEvent);
+
+            const ItemCreated = new CustomEvent(this.Const.Events.ItemCreated, {
+                detail: {
+                    index: (this.events.length - 1),
+                    item: newEvent,
+                    element: this.getTaskElementById(newEvent.id)
+                }
+            });
+            this.dispatchEvent(ItemCreated);
+            return true;
         }
         else
         {
             const oldEvent = this.events[index];
+            const eventArgs = {
+                index: index,
+                oldItem: oldEvent,
+                newItem: newEvent
+            }
+
+            const BeforeUpdateItem = new CustomEvent(this.Const.Events.BeforeUpdateItem, {
+                bubbles: true,
+                cancelable: true,
+                detail: eventArgs
+            });
+            const ok = this.dispatchEvent(BeforeUpdateItem);
+            if (!ok) return false;
 
             this.events[index] = newEvent;
-            this.renderEvents();
+            this.#updateTaskElement(newEvent);
+
+            this.dispatchEvent(new CustomEvent(this.Const.Events.ItemUpdated, { detail: eventArgs }));
+            return true;
         }
     }
 
     delete(id)
     {
-        if (!this.events || !id) return;
+        if (!this.events || !id) return false;
 
         const index = this.events.findIndex(e => e.id == id);
+        if (index == -1) return false;
+
         const eventArgs = {
             index: index,
             item: this.events[index]
         };
 
-        this.dispatchEvent(new CustomEvent('beforeitemdelete', { detail: eventArgs }));
+        const BeforeDeleteItem = new CustomEvent(this.Const.Events.BeforeDeleteItem, {
+            bubbles: true,
+            cancelable: true,
+            detail: eventArgs
+        });
+        const ok = this.dispatchEvent(BeforeDeleteItem);
+        if (!ok) return false;
 
+        const element = this.getTaskElementById(eventArgs.item.id);
         this.events.splice(index,1);
-        this.renderEvents();
+        if (element) element.remove();
 
-        this.dispatchEvent(new CustomEvent('itemdeleted', { detail: eventArgs }));
+        this.dispatchEvent(new CustomEvent(this.Const.Events.ItemDeleted, { detail: eventArgs }));
+        return true;
+    }
+
+    getTaskElementById(id)
+    {
+        try {
+            const taskEl = this.#shadow.querySelector('#tasks-layer #'+id);
+            return taskEl;
+        } catch (error) {
+            return null;
+        }
     }
 
     backup() { this.#events_backup = JSON.parse(JSON.stringify(this.events)); }
@@ -340,18 +395,62 @@ class CustomSchedule extends HTMLElement
         table.appendChild(tbody);
     }
 
+    #createTaskElement(event)
+    {
+        const taskEl = document.createElement('div');
+        const content = this.#createFullElement('div', { class: 'content' });
+        const resizeHandle = this.#createFullElement('div', { class:'resize-handle' });
+
+        taskEl.id = event.id;
+        taskEl.className = 'event-task';
+        taskEl.appendChild(content);
+        this.#updateTaskElement(event,taskEl);
+        taskEl.appendChild(resizeHandle);
+
+        return taskEl;
+    }
+
+    #updateTaskElement(event,taskEl=null)
+    {
+        taskEl ??= this.getTaskElementById(event.id);
+
+        const [dateStr, timeStr] = event.start.split(' ');
+        const [hour, minute] = timeStr.split(':').map(Number);
+
+        const interval = this.interval;
+        const startHour = this.start_lab_hour;
+        const cellHeight = this.#getCellHeight();
+        const rect = this.#getCellOffset(dateStr);
+        // Calcula el número de bloques desde el inicio
+        const minutesFromStart = (hour * 60 + minute) - (startHour * 60);
+        const topOffset = rect.top + (minutesFromStart / interval) * cellHeight;
+
+        const durationBlocks = parseInt(event.duration) / interval;
+        const height = durationBlocks * cellHeight;
+
+        taskEl.querySelector('.content').textContent = event.caption || '';
+        taskEl.style.cssText = `
+            top: ${topOffset}px;
+            height: ${height}px;
+            left: ${rect.left}px;
+            width: ${rect.width - 8}px;
+            background-color: ${event.backcolor || '#FFFFE1'};
+            color: ${event.color || '#000'};
+        `;
+    }
+
     #setTaskEvents(taskEl,eventData)
     {
-        taskEl.addEventListener('click', () => {
+        taskEl.addEventListener('click', (e) => {
             // Disparar evento personalizado al hacer clic.
-            this.dispatchEvent(new CustomEvent('itemclick', { detail: eventData }));
+            this.dispatchEvent(new CustomEvent(this.Const.Events.ItemClick, { detail: eventData }));
         });
-        taskEl.addEventListener('dblclick', () => {
+        taskEl.addEventListener('dblclick', (e) => {
             // Disparar evento personalizado al hacer doble clic.
-            this.dispatchEvent(new CustomEvent('itemdblclick', { detail: eventData }));
+            this.dispatchEvent(new CustomEvent(this.Const.Events.ItemDoubleClick, { detail: eventData }));
         });
         
-        taskEl.addEventListener('mousedown', e => this.#startDrag(e, taskEl));
+        taskEl.addEventListener('mousedown', e => { this.#startDrag(e, taskEl) });
 
         const handle = taskEl.querySelector('.resize-handle');
         if (handle) {
@@ -402,6 +501,9 @@ class CustomSchedule extends HTMLElement
             if (dropTarget) {
                 const datetime = dropTarget.dataset.datetime;
                 updateEventDatetime(datetime);
+                // const newData = JSON.parse(JSON.stringify(eventData));
+                // newData.start = datetime;
+                // this.save(newData);
             }
         };
 
@@ -561,6 +663,16 @@ class CustomSchedule extends HTMLElement
         const mm = date.getMinutes().toString().padStart(2,'0');
 
         return this.dateFormat(date) +" "+ HH +":"+ mm;
+    }
+
+    #deepFreeze(obj) {
+        Object.getOwnPropertyNames(obj).forEach(prop => {
+            const value = obj[prop];
+            if (value && typeof value === 'object') {
+                this.#deepFreeze(value);
+            }
+        });
+        return Object.freeze(obj);
     }
 
     #createFullElement(tagName, attributes={}, innerHTML="")

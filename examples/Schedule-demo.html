@@ -62,11 +62,24 @@
                 console.log("Al finalizar arrastre del evento.");
                 console.log(e);
             });
+            
+            schedule.addEventListener('beforecreateitem', (e) => {
+                console.log("Antes de crear el evento.");
+                console.log(e);
+            });
+            schedule.addEventListener('itemcreated', (e) => {
+                console.log("Al crear el evento.");
+                console.log(e);
+            });
+            schedule.addEventListener('beforeupdateitem', (e) => {
+                console.log("Antes de actualizar el evento.");
+                console.log(e);
+            });
             schedule.addEventListener('itemupdated', (e) => {
                 console.log("Al actualizar el evento.");
                 console.log(e);
             });
-            schedule.addEventListener('beforeitemdelete', (e) => {
+            schedule.addEventListener('beforedeleteitem', (e) => {
                 console.log("Antes de eliminar el evento.");
                 console.log(e);
             });
