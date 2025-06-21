@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Schedule</title>
+    <title>CustomSchedule</title>
     <script src="../src/js/induxsoft.controls.schedule.js"></script>
 </head>
 <body style="font-family: monospace;">
     <div style="/*width: max-content;*/">
-        <h3>Schedule</h3>
+        <h3>Custom Schedule</h3>
 
         <custom-schedule
             id="schedule"
-            view="week"
+            view="2week"
             day="2025-06-14"
             breaks="14:00-14:30"
             weekend="sunday"
@@ -52,10 +52,6 @@
             });
             schedule.addEventListener('itemmoving', (e) => {
                 console.log("Durante el arrastre del evento.");
-                console.log(e);
-            });
-            schedule.addEventListener('itemresizing', (e) => {
-                console.log("Durante el redimensionamiento del evento.");
                 console.log(e);
             });
             schedule.addEventListener('itemmoved', (e) => {

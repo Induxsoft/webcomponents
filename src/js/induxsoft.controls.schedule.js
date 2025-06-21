@@ -20,7 +20,6 @@ class CustomSchedule extends HTMLElement
             ItemClick:'itemclick',
             ItemDoubleClick:'itemdblclick',
             ItemMoving:'itemmoving',
-            ItemResizing:'itemresizing',
             ItemMoved:'itemmoved',
             BeforeCreateItem:'beforecreateitem',
             ItemCreated:'itemcreated',
@@ -42,6 +41,7 @@ class CustomSchedule extends HTMLElement
     ];
     #shadow = null;
     #events_backup = null;
+    #resizeObserver = null;
 
     constructor() {
         super();
@@ -52,6 +52,7 @@ class CustomSchedule extends HTMLElement
             table {
                 width: 100%;
                 font-size: 1rem;
+                /* table-layout: fixed; */
                 border-spacing: 1px;
                 border-collapse: collapse;
             }
@@ -67,6 +68,12 @@ class CustomSchedule extends HTMLElement
                 top: 0;
                 z-index: 15;
             }
+            thead th span {
+                font-weight: bold;
+            }
+            thead th small {
+                font-size: .8rem;
+            }
             tbody tr th {
                 position: sticky;
                 left: 0;
@@ -80,6 +87,10 @@ class CustomSchedule extends HTMLElement
                 font-weight: normal;
                 position: relative;
                 cursor: pointer;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                -o-text-overflow: ellipsis;
             }
             tr td {
                 height: 1.4rem;
@@ -98,8 +109,15 @@ class CustomSchedule extends HTMLElement
                 opacity: 1;
                 outline: 1px solid #FFF;
             }
+            td[data-datetime] {
+                min-width: 100px;
+                /* max-width: 1fr; */
+                word-break: break-word;
+            }
             .event-task {
                 position: absolute;
+                pointer-events: auto;
+                /* box-sizing: border-box; */
                 font-size: 0.75rem;
                 border-radius: 4px;
                 box-shadow: 1px 1px 4px rgba(0,0,0,0.1);
@@ -127,6 +145,46 @@ class CustomSchedule extends HTMLElement
             .resize-handle:hover {
                 background-color: #DDD;
             }
+            #schedule-wrapper {
+                position: relative;
+                overflow: auto;
+                height: 100%;
+            }
+            #table-layer {
+                position: relative;
+                padding-bottom: .25rem;
+                z-index: 0;
+            }
+            #tasks-layer {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 5;
+                pointer-events: none;
+            }
+
+            @media (max-width: 575px)
+            {
+                td[data-datetime] {
+                    min-width: 150px;
+                }
+                /* thead tr th:nth-child(1), tbody tr th { display: none; }
+                tbody tr td::before {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    content: attr(data-time);
+                    color: #6c757d;
+                } */
+            }
+            /* Small devices (landscape phones, 576px and up) */
+            @media (min-width: 576px) { }
+            /* Medium devices (tablets, 768px and up) */
+            @media (min-width: 768px) { }
+            /* Large devices (desktops, 992px and up) */
+            @media (min-width: 992px) { }
         </style>
 
         <div id="schedule-wrapper">
@@ -162,11 +220,23 @@ class CustomSchedule extends HTMLElement
             }
         });
 
+        const wrapper = this.#shadow.querySelector('#schedule-wrapper');
         const tableLayer = this.#shadow.querySelector('#table-layer');
         const table = this.getScheduleTable();
         
         tableLayer.appendChild(table);
         this.renderEvents();
+        
+        this.#resizeObserver = new ResizeObserver(() => this.#onResizeOrScroll());
+        this.#resizeObserver.observe(wrapper);
+        // wrapper?.addEventListener('scroll', () => this.#onResizeOrScroll());
+    }
+    // Se llama cuando se quita del DOM
+    disconnectedCallback() {
+        if (this.#resizeObserver) {
+            this.#resizeObserver.disconnect();
+            this.#resizeObserver = null;
+        }
     }
     
     //#region Métodos públicos
@@ -385,6 +455,8 @@ class CustomSchedule extends HTMLElement
 
                 td.id = `${col}:${row}`;
                 td.dataset.datetime = datetime;
+                td.dataset.date = date;
+                td.dataset.time = hour;
 
                 tr.appendChild(td);
                 (d < 6) ? d++ : d = 0;
@@ -441,11 +513,22 @@ class CustomSchedule extends HTMLElement
 
     #setTaskEvents(taskEl,eventData)
     {
+        let clickTimeout = null;
+        let isDragging = false;
+
         taskEl.addEventListener('click', (e) => {
-            // Disparar evento personalizado al hacer clic.
-            this.dispatchEvent(new CustomEvent(this.Const.Events.ItemClick, { detail: eventData }));
+            if (isDragging) return; //Evitar 'click' si se arrastra.
+            if (clickTimeout) return; //Evitar 'click' si se hace 'doble click'.
+            //Esperar por el 'doble clic'.
+            clickTimeout = setTimeout(() => {
+                // Disparar evento personalizado al hacer clic.
+                this.dispatchEvent(new CustomEvent(this.Const.Events.ItemClick, { detail: eventData }));
+                clickTimeout = null;
+            },200);
         });
         taskEl.addEventListener('dblclick', (e) => {
+            clearTimeout(clickTimeout);
+            clickTimeout = null;
             // Disparar evento personalizado al hacer doble clic.
             this.dispatchEvent(new CustomEvent(this.Const.Events.ItemDoubleClick, { detail: eventData }));
         });
@@ -455,7 +538,7 @@ class CustomSchedule extends HTMLElement
         const handle = taskEl.querySelector('.resize-handle');
         if (handle) {
             handle.addEventListener('mousedown', e => {
-                e.stopPropagation(); // Evita iniciar arrastre al mismo tiempo
+                e.stopPropagation(); // Evita iniciar arrastre al mismo tiempo.
                 this.#startResize(e, taskEl);
             });
         }
@@ -466,44 +549,66 @@ class CustomSchedule extends HTMLElement
         e.preventDefault();
 
         const eventData = this.events.find(ev => ev.id === taskEl.id);
-        const shiftX = e.clientX - taskEl.getBoundingClientRect().left;
-        const shiftY = e.clientY - taskEl.getBoundingClientRect().top;
+        const backupData = JSON.parse(JSON.stringify(eventData));
+        const taskRect = taskEl.getBoundingClientRect();
+        const shiftX = e.clientX - taskRect.left;
+        const shiftY = e.clientY - taskRect.top;
+        const initialStart = backupData.start;
 
         taskEl.classList.add('dragging');
-
-        const updateEventDatetime = (newDatetime) => {
-            if (eventData) {
-                eventData.start = newDatetime;
-                // this.renderEvents(); // Volver a pintar
-                // Disparar evento personalizado al finalizar arrastre.
-                this.dispatchEvent(new CustomEvent('itemmoved', { detail: eventData }));
-            }
-        }
+        let successDrag = false;
 
         const onMouseMove = (moveEvent) => {
-            const x = moveEvent.clientX - shiftX;
-            const y = moveEvent.clientY - shiftY;
-
+            const x = moveEvent.clientX;
+            const y = moveEvent.clientY;
+            
+            const cell = this.#shadow.elementFromPoint(x,y);
+            if (!cell || cell.tagName != 'TD') return;
             // Disparar evento personalizado durante el arrastre.
-            this.dispatchEvent(new CustomEvent('itemmoving', { detail: eventData }));
-
-            taskEl.style.left = `${x}px`;
-            taskEl.style.top = `${y}px`;
+            const eventArgs = {
+                item: backupData,
+                cell: cell,
+                from: initialStart,
+                to: cell.dataset.datetime
+            };
+            const ItemMoving = new CustomEvent(this.Const.Events.ItemMoving, {
+                bubbles: true,
+                cancelable: true,
+                detail: eventArgs
+            });
+            successDrag = this.dispatchEvent(ItemMoving);
+            if (!successDrag) return;
+            // Mover visualmente la tarea
+            const rect = cell.getBoundingClientRect();
+            taskEl.style.position = 'fixed';
+            taskEl.style.top = `${y - shiftY}px`;
+            taskEl.style.left = `${rect.left}px`;
+            taskEl.style.width = `${rect.width - 8}px`;
         };
 
         const onMouseUp = (upEvent) => {
             document.removeEventListener('mousemove', onMouseMove);
             document.removeEventListener('mouseup', onMouseUp);
             taskEl.classList.remove('dragging');
+            // Oculta temporalmente el div arrastrado para detectar el <td> debajo
+            taskEl.style.visibility = 'hidden';
+            const cell = this.#shadow.elementFromPoint(upEvent.clientX, upEvent.clientY);
+            taskEl.style.visibility = 'visible';
 
-            // Detectar celda de destino
-            const dropTarget = this.#getDropTarget(upEvent.clientX, upEvent.clientY);
-            if (dropTarget) {
-                const datetime = dropTarget.dataset.datetime;
-                updateEventDatetime(datetime);
-                // const newData = JSON.parse(JSON.stringify(eventData));
-                // newData.start = datetime;
-                // this.save(newData);
+            if (!successDrag || !cell || cell.tagName != 'TD') {
+                // Si se soltó fuera de una celda válida o se cancelo el evento, volver al estado original.
+                this.#updateTaskElement(backupData);
+            } else {
+                eventData.start = cell.dataset.datetime;
+                this.#updateTaskElement(eventData);
+
+                const eventArgs = {
+                    item: eventData,
+                    cell: cell,
+                    from: initialStart,
+                    to: cell.dataset.datetime
+                };
+                this.dispatchEvent(new CustomEvent(this.Const.Events.ItemMoved, { detail: eventArgs }));
             }
         };
 
@@ -516,6 +621,7 @@ class CustomSchedule extends HTMLElement
         e.preventDefault();
 
         const eventData = this.events.find(ev => ev.id === taskEl.id);
+        const backupData = JSON.parse(JSON.stringify(eventData));
         const interval = this.interval;
         const cellHeight = this.#getCellHeight();
         const startY = e.clientY;
@@ -526,17 +632,13 @@ class CustomSchedule extends HTMLElement
         const onMouseMove = (moveEvent) => {
             const delta = moveEvent.clientY - startY;
             let newHeight = startHeight + delta;
-
             // Aplicar límites
             newHeight = Math.max(minHeight, Math.min(maxHeight, newHeight));
-
+            
             taskEl.style.height = `${newHeight}px`;
 
-            const newDuration = Math.round((newHeight / cellHeight) * interval);
+            // const newDuration = Math.round((newHeight / cellHeight) * interval);
             // Disparar evento personalizado durante el redimensionamiento.
-            this.dispatchEvent(new CustomEvent('itemresizing', {
-                detail: { ...eventData, duration: newDuration }
-            }));
         };
 
         const onMouseUp = () => {
@@ -544,28 +646,12 @@ class CustomSchedule extends HTMLElement
             document.removeEventListener('mouseup', onMouseUp);
 
             const newDuration = Math.round(taskEl.offsetHeight / cellHeight) * interval;
-            eventData.duration = newDuration;
-            // this.renderEvents(); // Volver a pintar
-            // Disparar evento personalizado al finalizar el redimensionamiento.
-            this.dispatchEvent(new CustomEvent('itemupdated', { detail: eventData }));
+            backupData.duration = newDuration;
+            this.save(backupData);
         };
 
         document.addEventListener('mousemove', onMouseMove);
         document.addEventListener('mouseup', onMouseUp);
-    }
-
-    #getDropTarget(x, y) {
-        const cells = this.#shadow.querySelectorAll('td[data-datetime]');
-        for (const cell of cells) {
-            const rect = cell.getBoundingClientRect();
-            if (
-                x >= rect.left && x <= rect.right &&
-                y >= rect.top && y <= rect.bottom
-            ) {
-                return cell;
-            }
-        }
-        return null;
     }
 
     #getColumns()
@@ -590,6 +676,16 @@ class CustomSchedule extends HTMLElement
         }
 
         return result;
+    }
+
+    #onResizeOrScroll()
+    {
+        if (!this.events) this.events = [];
+        
+        this.events.forEach(item => {
+            const element = this.getTaskElementById(item.id);
+            this.#updateTaskElement(item,element); 
+        });
     }
     //#endregion
 
@@ -735,13 +831,18 @@ class CustomSchedule extends HTMLElement
     #getCellOffset(dateStr) {
         const selector = `td[data-datetime^="${dateStr}"]`;
         const cell = this.#shadow.querySelector(selector);
-        const rect = cell?.getBoundingClientRect();
+        
+        if (!cell) return { top: 0, left: 0, width: 0, height: 0 };
+
+        const parent = this.#shadow.querySelector('#schedule-wrapper');
+        const cellRect = cell.getBoundingClientRect();
+        const parentRect = parent.getBoundingClientRect();
         
         return {
-            left: rect?.left ?? 0,
-            top: rect?.top ?? 0,
-            width: rect?.width ?? this.#getColumnWidth(),
-            height: rect?.height ?? this.#getCellHeight()
+            top: cellRect.top - parentRect.top + parent.scrollTop,
+            left: cellRect.left - parentRect.left + parent.scrollLeft,
+            width: cell.offsetWidth,
+            height: cell.offsetHeight
         };
     }
     //#endregion
