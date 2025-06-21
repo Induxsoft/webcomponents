@@ -11,12 +11,12 @@
         <h3>Custom Schedule</h3>
 
         <custom-schedule
-            id="schedule"
-            view="2week"
+            id="agenda"
+            view="week"
             day="2025-06-14"
             breaks="14:00-14:30"
             weekend="sunday"
-            hollydays=""
+            holidays=""
             start-weekday="monday"
             start-lab-hour="9"
             end-lab-hour="18"
@@ -26,9 +26,9 @@
             max-duration="60"
             events='[
                 {
-                    "id":"EV01",
+                    "id":"E01",
                     "start":"2025-06-14 12:00",
-                    "duration":"15",
+                    "duration":15,
                     "caption":"Ir por unas papitas",
                     "backcolor":"#FFFFE1",
                     "color":"#000000",
@@ -40,7 +40,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const schedule = document.getElementById('schedule');
+            const schedule = document.getElementById('agenda');
 
             schedule.addEventListener('itemclick', (e) => {
                 console.log("Al hacer click en el evento.");

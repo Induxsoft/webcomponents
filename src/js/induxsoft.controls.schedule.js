@@ -1,11 +1,11 @@
 class CustomSchedule extends HTMLElement
 {
     attributes = null;
-    events = null;
+    events = [];
     view = 'week';
     day = 'now';
     breaks = '';
-    hollydays = '';
+    holidays = '';
     weekend = 'saturday,sunday';
     start_weekday = 'sunday';
     start_lab_hour = 0;
@@ -41,6 +41,8 @@ class CustomSchedule extends HTMLElement
     ];
     #shadow = null;
     #events_backup = null;
+    #table_layer = null;
+    #tasks_layer = null;
     #resizeObserver = null;
 
     constructor() {
@@ -68,7 +70,8 @@ class CustomSchedule extends HTMLElement
                 top: 0;
                 z-index: 15;
             }
-            thead th span {
+            thead th label {
+                display: block;
                 font-weight: bold;
             }
             thead th small {
@@ -102,7 +105,7 @@ class CustomSchedule extends HTMLElement
             tbody tr:hover { background-color: #F5F5F5; }
             td.breaks,
             td.weekend,
-            td.hollydays
+            td.holidays
             {
                 /* pointer-events: none; */
                 background-color: #e9ecef;
@@ -195,41 +198,53 @@ class CustomSchedule extends HTMLElement
     }
     // Observa atributos a cambiar
     static get observedAttributes() {
-        return this.attributes;
+        return ['events','view','day','breaks','holidays','weekend','start-weekday','start-lab-hour','end-lab-hour'];
     }
     // Reacciona a cambios de atributo
-    attributeChangeCallback(property, oldValue, newValue)
+    attributeChangedCallback(attribute, oldValue, newValue)
     {
         if (newValue === oldValue) return;
-        this[property] = newValue;
+        
+        let property = attribute.replaceAll('-','_');
+        if (property in this)
+        {
+            if (typeof this[property] == 'string') this[property] = newValue;
+            else if (typeof this[property] == 'number') this[property] = Number(newValue);
+            else if (typeof this[property] == 'boolean') this[property] = this.#boolval(newValue);
+            else if (typeof this[property] == 'object') this[property] = JSON.parse(newValue);
+
+            // console.log(`Atributo cambiado: ${attribute} de ${oldValue} a ${newValue}`);
+        }
+
+        switch (attribute) {
+            case 'events':
+                this.renderEvents();
+                break;
+            case 'view':
+                this.setScheduleTable();
+                break;
+            case 'breaks':
+            case 'weekend':
+            case 'holidays':
+                this.setReadonlyStyles();
+                break;
+        }
     }
     // Se llama cuando se inserta en el DOM
     connectedCallback()
     {
         this.attributes = this.getAttributeNames();
-        this.attributes.forEach(name => {
-            let prop = name.replaceAll('-','_');
-            if (prop in this)
-            {
-                let value = this.getAttribute(name);
-
-                if (typeof this[prop] == 'string') this[prop] = value;
-                else if (typeof this[prop] == 'number') this[prop] = Number(value);
-                else if (typeof this[prop] == 'boolean') this[prop] = this.#boolval(value);
-                else if (typeof this[prop] == 'object') this[prop] = JSON.parse(value);
-            }
-        });
+        this.#table_layer = this.#shadow.querySelector('#table-layer');
+        this.#tasks_layer = this.#shadow.querySelector('#tasks-layer');
 
         const wrapper = this.#shadow.querySelector('#schedule-wrapper');
-        const tableLayer = this.#shadow.querySelector('#table-layer');
-        const table = this.getScheduleTable();
         
-        tableLayer.appendChild(table);
+        this.setScheduleTable();
         this.renderEvents();
+        this.#setControlStyles();
         
         this.#resizeObserver = new ResizeObserver(() => this.#onResizeOrScroll());
         this.#resizeObserver.observe(wrapper);
-        // wrapper?.addEventListener('scroll', () => this.#onResizeOrScroll());
     }
     // Se llama cuando se quita del DOM
     disconnectedCallback() {
@@ -240,8 +255,11 @@ class CustomSchedule extends HTMLElement
     }
     
     //#region Métodos públicos
-    getScheduleTable()
+    setScheduleTable()
     {
+        if (!this.#table_layer) return;
+        this.#table_layer.innerHTML = '';
+
         const table = document.createElement('table');
         const columns = this.#getColumns();
         const weekdays = this.getWeekdays();
@@ -249,38 +267,34 @@ class CustomSchedule extends HTMLElement
         this.#setScheduleHead(table,columns,weekdays);
         this.#setScheduleBody(table,columns,weekdays);
 
-        return table;
+        this.#table_layer.appendChild(table);
     }
 
     renderEvents()
     {
-        const tasksLayer = this.#shadow.querySelector('#tasks-layer');
-        if (!tasksLayer) return;
-        // Limpia eventos anteriores
-        tasksLayer.innerHTML = '';
+        if (!this.#tasks_layer) return;
+        this.#tasks_layer.innerHTML = '';
         
         this.events.forEach(event => {
             const taskEl = this.#createTaskElement(event);
             
-            tasksLayer.appendChild(taskEl);
+            this.#tasks_layer.appendChild(taskEl);
             this.#setTaskEvents(taskEl,event);
         });
     }
 
     renderEvent(event)
     {
-        const tasksLayer = this.#shadow.querySelector('#tasks-layer');
-        if (!event || !tasksLayer) return;
+        if (!event || !this.#tasks_layer) return;
 
         const taskEl = this.#createTaskElement(event);
             
-        tasksLayer.appendChild(taskEl);
+        this.#tasks_layer.appendChild(taskEl);
         this.#setTaskEvents(taskEl,event);
     }
 
     save(newEvent)
     {
-        if (!this.events) this.events = [];
         if (Object.keys(newEvent).length == 0) return false;
 
         const index = this.events.findIndex(e => e.id == newEvent.id);
@@ -360,14 +374,50 @@ class CustomSchedule extends HTMLElement
         return true;
     }
 
-    getTaskElementById(id)
+    setReadonlyStyles()
     {
-        try {
-            const taskEl = this.#shadow.querySelector('#tasks-layer #'+id);
-            return taskEl;
-        } catch (error) {
-            return null;
+        let weekend = (this.weekend.replaceAll(',','').trim() == "")
+                        ? ''
+                        : 'td.'+this.weekend.replaceAll(',',',td.')+',';
+        let holidays = (this.holidays.replaceAll(',','').trim() == "")
+                        ? ''
+                        : 'td[data-date="'+this.holidays.replaceAll(',','"],td[data-date="')+',';
+        let breaks = '';
+
+        const isBreak = (hour) => {
+            let result = false;
+            for (const range of this.breaks.split(',')) {
+                const [start,end] = range.split('-');
+                if (!start || !end) continue;
+                result = this.bwnHours(hour,start,end);
+                if (result) break;
+            }
+            return result;
         }
+
+        for (const hour of this.getHours()) {
+            if (isBreak(hour)) {
+                breaks += 'td[data-time="'+hour+'"],'
+            }
+        }
+
+        let selectors = weekend + holidays + breaks;
+        if (selectors.trim() == "") return;
+        if (selectors.endsWith(',')) selectors = selectors.slice(0,-1);
+        
+        const style = document.createElement('style');
+        style.id = 'readonly-styles';
+        style.innerHTML = `
+        ${selectors}
+        {
+            background-color: #e9ecef;
+            opacity: 1;
+            outline: 1px solid #FFF;
+        }
+        `;
+        
+        this.#shadow.querySelector('#readonly-styles')?.remove();
+        this.#shadow.appendChild(style);
     }
 
     backup() { this.#events_backup = JSON.parse(JSON.stringify(this.events)); }
@@ -382,11 +432,9 @@ class CustomSchedule extends HTMLElement
     //#region Métodos privados
     #setScheduleHead(table,columns,weekdays)
     {
-        const weekend = this.weekend.split(',');
-        const hollydays = this.hollydays.split(',');
         const thead = document.createElement('thead');
-        
         const row = document.createElement('tr')
+
         row.appendChild(document.createElement('th'));
         
         let d = 0;
@@ -396,13 +444,11 @@ class CustomSchedule extends HTMLElement
             let dia = weekdays[d].es;
             let date = columns[i];
             
-            if (weekend.includes(day) || weekend.includes(dia)) cell.classList.add('weekend');
-            if (hollydays.includes(date)) cell.classList.add('hollydays');
-            
+            cell.classList.add(day,dia);
+            cell.dataset.date = date;
             cell.innerHTML = `
             <div>
-                <span>${dia}</span>
-                <br>
+                <label>${dia}</label>
                 <small>${date}</small>
             </div>`;
             
@@ -417,20 +463,7 @@ class CustomSchedule extends HTMLElement
     #setScheduleBody(table,columns,weekdays)
     {
         const hours = this.getHours();
-        const breaks = this.breaks.split(',');
-        const weekend = this.weekend.split(',');
-        const hollydays = this.hollydays.split(',');
         const tbody = document.createElement('tbody');
-
-        const isBreak = (hour) => {
-            let result = false;
-            for (const range of breaks) {
-                const [start,end] = range.split('-');
-                result = this.bwnHours(hour,start,end);
-                if (result) break;
-            }
-            return result;
-        }
         
         for (let i = 0; i < hours.length; i++) {
             const tr = document.createElement('tr');
@@ -439,8 +472,10 @@ class CustomSchedule extends HTMLElement
             let row = (i+1);
             let d = 0;
 
+            th.dataset.time = hour;
             th.textContent = hour;
             tr.appendChild(th);
+
             for (let j = 0; j < columns.length; j++) {
                 const td = document.createElement('td');
                 let col = (j+1);
@@ -448,11 +483,8 @@ class CustomSchedule extends HTMLElement
                 let dia = weekdays[d].es;
                 let date = columns[j];
                 let datetime = `${date} ${hour}`
-                
-                if (weekend.includes(day) || weekend.includes(dia)) td.classList.add('weekend');
-                if (hollydays.includes(date)) td.classList.add('hollydays');
-                if (isBreak(hour)) td.classList.add('breaks');
 
+                td.classList.add(day,dia);
                 td.id = `${col}:${row}`;
                 td.dataset.datetime = datetime;
                 td.dataset.date = date;
@@ -679,17 +711,25 @@ class CustomSchedule extends HTMLElement
     }
 
     #onResizeOrScroll()
-    {
-        if (!this.events) this.events = [];
-        
+    {   
         this.events.forEach(item => {
             const element = this.getTaskElementById(item.id);
-            this.#updateTaskElement(item,element); 
+            if (element) this.#updateTaskElement(item,element);
         });
     }
     //#endregion
 
     //#region Funciones auxiliares
+    getTaskElementById(id)
+    {
+        try {
+            const taskEl = this.#shadow.querySelector('#tasks-layer #'+id);
+            return taskEl;
+        } catch (error) {
+            return null;
+        }
+    }
+
     getWeekdays()
     {
         const index = this.#startWeekdayIndex();
@@ -759,6 +799,22 @@ class CustomSchedule extends HTMLElement
         const mm = date.getMinutes().toString().padStart(2,'0');
 
         return this.dateFormat(date) +" "+ HH +":"+ mm;
+    }
+
+    setCustomStyles(styles)
+    {
+        if (typeof styles != 'string' || styles.trim() == '') return;
+        this.#shadow.innerHTML += `<style>${styles}</style>`;
+    }
+
+    #setControlStyles()
+    {
+        document.addEventListener('DOMContentLoaded', () => {
+            const controlStyles = this.querySelector('control-styles');
+            const styles = controlStyles?.innerHTML ?? '';
+            
+            this.setCustomStyles(styles);
+        });
     }
 
     #deepFreeze(obj) {
