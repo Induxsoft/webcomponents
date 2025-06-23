@@ -17,6 +17,8 @@ class CustomSchedule extends HTMLElement
 
     Const = {
         Events: {
+            CellClick:'cellclick',
+            CellDoubleClick:'celldblclick',
             ItemClick:'itemclick',
             ItemDoubleClick:'itemdblclick',
             ItemMoving:'itemmoving',
@@ -136,6 +138,9 @@ class CustomSchedule extends HTMLElement
                 opacity: 0.7;
                 cursor: grabbing;
             }
+            .event-task.selected {
+                box-shadow: 1px 1px 4px #7532F9;
+            }
             .resize-handle {
                 position: absolute;
                 bottom: 0;
@@ -198,7 +203,7 @@ class CustomSchedule extends HTMLElement
     }
     // Observa atributos a cambiar
     static get observedAttributes() {
-        return ['events','view','day','breaks','holidays','weekend','start-weekday','start-lab-hour','end-lab-hour'];
+        return ['events','view','day','breaks','holidays','weekend','start-weekday','start-lab-hour','end-lab-hour', 'interval', 'increment', 'min-duration', 'max-duration'];
     }
     // Reacciona a cambios de atributo
     attributeChangedCallback(attribute, oldValue, newValue)
@@ -221,7 +226,17 @@ class CustomSchedule extends HTMLElement
                 this.renderEvents();
                 break;
             case 'view':
+            case 'day':
+            case 'start-weekday':
+            case 'start-lab-hour':
+            case 'end-lab-hour':
                 this.setScheduleTable();
+                this.renderEvents();
+                break;
+            case 'interval':
+                this.setScheduleTable();
+                this.renderEvents();
+                this.setReadonlyStyles();
                 break;
             case 'breaks':
             case 'weekend':
@@ -489,6 +504,7 @@ class CustomSchedule extends HTMLElement
                 td.dataset.datetime = datetime;
                 td.dataset.date = date;
                 td.dataset.time = hour;
+                this.#setCellClickEvents(td);
 
                 tr.appendChild(td);
                 (d < 6) ? d++ : d = 0;
@@ -518,7 +534,7 @@ class CustomSchedule extends HTMLElement
     {
         taskEl ??= this.getTaskElementById(event.id);
 
-        const [dateStr, timeStr] = event.start.split(' ');
+        const [dateStr, timeStr] = this.datetimeFormat(event.start).split(' ');
         const [hour, minute] = timeStr.split(':').map(Number);
 
         const interval = this.interval;
@@ -543,6 +559,33 @@ class CustomSchedule extends HTMLElement
         `;
     }
 
+    #setCellClickEvents(cell)
+    {
+        const eventArgs = {
+            cell: cell,
+            datetime: cell.dataset.datetime,
+            date: cell.dataset.date,
+            time: cell.dataset.time
+        };
+        let clickTimeout = null;
+
+        cell.addEventListener('click', (e) => {
+            if (clickTimeout) return; //Evitar 'click' si se hace 'doble click'.
+            //Esperar por el 'doble clic'.
+            clickTimeout = setTimeout(() => {
+                // Disparar evento personalizado al hacer clic.
+                this.dispatchEvent(new CustomEvent(this.Const.Events.CellClick, { detail: eventArgs }));
+                clickTimeout = null;
+            },200);
+        });
+        cell.addEventListener('dblclick', (e) => {
+            clearTimeout(clickTimeout);
+            clickTimeout = null;
+            // Disparar evento personalizado al hacer doble clic.
+            this.dispatchEvent(new CustomEvent(this.Const.Events.CellDoubleClick, { detail: eventArgs }));
+        });
+    }
+
     #setTaskEvents(taskEl,eventData)
     {
         let clickTimeout = null;
@@ -550,6 +593,10 @@ class CustomSchedule extends HTMLElement
 
         taskEl.addEventListener('click', (e) => {
             if (isDragging) return; //Evitar 'click' si se arrastra.
+            
+            this.#shadow.querySelectorAll('.event-task.selected').forEach(element => element.classList.remove('selected'));
+            taskEl.classList.add('selected');
+            
             if (clickTimeout) return; //Evitar 'click' si se hace 'doble click'.
             //Esperar por el 'doble clic'.
             clickTimeout = setTimeout(() => {

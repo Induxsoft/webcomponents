@@ -4,11 +4,121 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CustomSchedule</title>
+    <style>
+        label {
+            display: block;
+        }
+        #frm-event {
+            display: block;
+        }
+        #frm-event div {
+            margin-bottom: .5rem;
+        }
+    </style>
     <script src="../src/js/induxsoft.controls.schedule.js"></script>
 </head>
 <body style="font-family: monospace;">
-    <div style="/*width: max-content;*/">
+    <div>
         <h3>Custom Schedule</h3>
+
+        <fieldset style="display: flex; gap: .5rem; flex-wrap: wrap;">
+            <legend>Manipular la interfaz</legend>
+            <div>
+                <label for="view">Vista:</label>
+                <select id="view" onchange="agenda.schedule.setAttribute('view',this.value)">
+                    <option value="day">Día</option>
+                    <option value="week" selected>Semana</option>
+                    <option value="2week">Dos semanas</option>
+                    <option value="4week">Cuatro semanas</option>
+                    <option value="6week">Seis semanas</option>
+                </select>
+            </div>
+            <div>
+                <label for="day">Día:</label>
+                <input type="date" id="day" value="2025-06-14" onchange="agenda.schedule.setAttribute('day',this.value)">
+            </div>
+            <div>
+                <label for="start_weekday">Día de inicio:</label>
+                <select id="start_weekday" onchange="agenda.schedule.setAttribute('start-weekday',this.value)">
+                    <option value="sunday">Domingo</option>
+                    <option value="monday" selected>Lunes</option>
+                    <option value="tuesday">Martes</option>
+                    <option value="wednesday">Miércoles</option>
+                    <option value="thursday">Jueves</option>
+                    <option value="friday">Viernes</option>
+                    <option value="saturday">Sábado</option>
+                </select>
+            </div>
+            <div>
+                <label for="start_lab_hour">H.I laboral:</label>
+                <input type="number" id="start_lab_hour" value="9" min="0" max="24" placeholder="0" onchange="agenda.schedule.setAttribute('start-lab-hour',this.value)">
+            </div>
+            <div>
+                <label for="end_lab_hour">H.F laboral:</label>
+                <input type="number" id="end_lab_hour" value="18" min="0" max="24" placeholder="24" onchange="agenda.schedule.setAttribute('end-lab-hour',this.value)">
+            </div>
+            <div>
+                <label for="interval">Intervalo:</label>
+                <select id="interval" onchange="agenda.schedule.setAttribute('interval',this.value)">
+                    <option value="15">15 min</option>
+                    <option value="30" selected>30 min</option>
+                    <option value="60">1 hrs</option>
+                    <option value="120">2 hrs</option>
+                </select>
+            </div>
+            <div>
+                <label for="breaks">Recesos:</label>
+                <input type="text" id="breaks" value="14:00-14:30" placeholder="HH:mm-HH:mm,..." onchange="agenda.schedule.setAttribute('breaks',this.value)">
+            </div>
+            <div>
+                <label for="weekend">Dias de descanso:</label>
+                <input type="text" id="weekend" value="sunday" placeholder="saturday,sunday,..." onchange="agenda.schedule.setAttribute('weekend',this.value)">
+            </div>
+            <div>
+                <label for="holidays">Fechas no laborales:</label>
+                <input type="text" id="holidays" value="" placeholder="yyyy-MM-dd,..." onchange="agenda.schedule.setAttribute('holidays',this.value)">
+            </div>
+        </fieldset>
+        <hr>
+
+        <div style="display: flex; justify-content: end; gap: .5rem; flex-wrap: wrap; margin-bottom: .5rem;">
+            <button type="button" onclick="agenda.showDialog()">Crear</button>
+            <button type="button" onclick="agenda.update()">Editar</button>
+            <button type="button" onclick="agenda.delete()">Eliminar</button>
+        </div>
+
+        <dialog id="dlg-event">
+            <h3>Crear o actualizar evento</h3>
+            <form method="post" id="frm-event" onsubmit="agenda.submit(event)">
+                <div>
+                    <label for="id">ID:</label>
+                    <input type="text" name="id" id="id" placeholder="E00" required>
+                </div>
+                <div>
+                    <label for="start">Fecha y hora de inicio:</label>
+                    <input type="datetime-local" name="start" id="start" required>
+                </div>
+                <div>
+                    <label for="duration">Duración:</label>
+                    <input type="number" name="duration" id="duration" min="15" required>
+                </div>
+                <div>
+                    <label for="caption">Descripción:</label>
+                    <input type="text" name="caption" id="caption" placeholder="" required>
+                </div>
+                <div>
+                    <label for="backcolor">Fondo:</label>
+                    <input type="color" name="backcolor" value="#FFFFE1" id="backcolor">
+                </div>
+                <div>
+                    <label for="color">Color:</label>
+                    <input type="color" name="color" value="#000000" id="color">
+                </div>
+                <hr>
+                <button type="submit">Guardar</button>
+                <button type="reset" onclick="agenda.hideDialog()">Cancelar</button>
+            </form>
+        </dialog>
 
         <custom-schedule
             id="agenda"
@@ -39,50 +149,135 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const schedule = document.getElementById('agenda');
+        var agenda =
+        {
+            selected:null,
 
-            schedule.addEventListener('itemclick', (e) => {
-                console.log("Al hacer click en el evento.");
-                console.log(e);
-            });
-            schedule.addEventListener('itemdblclick', (e) => {
-                console.log("Al hacer doble click en el evento.");
-                console.log(e);
-            });
-            schedule.addEventListener('itemmoving', (e) => {
-                console.log("Durante el arrastre del evento.");
-                console.log(e);
-            });
-            schedule.addEventListener('itemmoved', (e) => {
-                console.log("Al finalizar arrastre del evento.");
-                console.log(e);
-            });
-            
-            schedule.addEventListener('beforecreateitem', (e) => {
-                console.log("Antes de crear el evento.");
-                console.log(e);
-            });
-            schedule.addEventListener('itemcreated', (e) => {
-                console.log("Al crear el evento.");
-                console.log(e);
-            });
-            schedule.addEventListener('beforeupdateitem', (e) => {
-                console.log("Antes de actualizar el evento.");
-                console.log(e);
-            });
-            schedule.addEventListener('itemupdated', (e) => {
-                console.log("Al actualizar el evento.");
-                console.log(e);
-            });
-            schedule.addEventListener('beforedeleteitem', (e) => {
-                console.log("Antes de eliminar el evento.");
-                console.log(e);
-            });
-            schedule.addEventListener('itemdeleted', (e) => {
-                console.log("Al eliminar el evento.");
-                console.log(e);
-            });
+            init()
+            {
+                this.form = document.getElementById('frm-event');
+                this.dialog = document.getElementById('dlg-event');
+                this.schedule = document.getElementById('agenda');
+
+                this.setEvents();
+            },
+
+            submit(e) {
+                e.preventDefault();
+                
+                const data = {};
+                for (const element of e.target.elements) {
+                    if (!element.value) continue;
+                    data[element.name] = element.value
+                }
+                
+                this.schedule.save(data);
+                e.target.reset();
+                this.hideDialog();
+            },
+
+            update()
+            {
+                if (!this.selected) {
+                    alert("Para editar seleccione un elemento haciendo click sobre el.");
+                    return;
+                }
+
+                this.loadEvent();
+                this.showDialog();
+            },
+
+            delete()
+            {
+                const eventId = this.selected?.id;
+                if (!eventId) {
+                    alert("Para eliminar seleccione un elemento haciendo click sobre el.");
+                    return;
+                }
+
+                if (confirm("¿Esta seguro que desea eliminar el evento seleccionado?")) {
+                    this.schedule.delete(eventId);
+                    this.form.reset();
+                    this.selected = null;
+                }
+            },
+
+            loadEvent(data=null)
+            {
+                if (!data && !this.selected) return;
+                if (!data && this.selected) data = this.selected;
+
+                const fields = this.form.elements;
+                Object.entries(data).forEach(entry => {
+                    const [key, value] = entry;
+                    if (fields[key]) fields[key].value = value;
+                });
+            },
+
+            showDialog(){ this.dialog.showModal(); },
+            hideDialog(){ this.dialog.close(); },
+
+            setEvents()
+            {
+                this.schedule.addEventListener('cellclick', (e) => {
+                    console.log("Al hacer click en una celda.");
+                    console.log(e);
+                });
+                this.schedule.addEventListener('celldblclick', (e) => {
+                    console.log("Al hacer doble click en una celda.");
+                    
+                    this.form.elements['start'].value = e.detail.datetime;
+                    this.showDialog();
+                });
+                this.schedule.addEventListener('itemclick', (e) => {
+                    console.log("Al hacer click en el evento.");
+                    
+                    this.selected = e.detail;
+                });
+                this.schedule.addEventListener('itemdblclick', (e) => {
+                    console.log("Al hacer doble click en el evento.");
+                    
+                    this.loadEvent(e.detail);
+                    this.showDialog();
+                });
+                this.schedule.addEventListener('itemmoving', (e) => {
+                    console.log("Durante el arrastre del evento.");
+                    console.log(e);
+                });
+                this.schedule.addEventListener('itemmoved', (e) => {
+                    console.log("Al finalizar arrastre del evento.");
+                    console.log(e);
+                });
+                
+                this.schedule.addEventListener('beforecreateitem', (e) => {
+                    console.log("Antes de crear el evento.");
+                    console.log(e);
+                });
+                this.schedule.addEventListener('itemcreated', (e) => {
+                    console.log("Al crear el evento.");
+                    console.log(e);
+                });
+                this.schedule.addEventListener('beforeupdateitem', (e) => {
+                    console.log("Antes de actualizar el evento.");
+                    console.log(e);
+                });
+                this.schedule.addEventListener('itemupdated', (e) => {
+                    console.log("Al actualizar el evento.");
+                    console.log(e);
+                });
+                this.schedule.addEventListener('beforedeleteitem', (e) => {
+                    console.log("Antes de eliminar el evento.");
+                    console.log(e);
+                });
+                this.schedule.addEventListener('itemdeleted', (e) => {
+                    console.log("Al eliminar el evento.");
+                    console.log(e);
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            agenda.init();
         });
     </script>
 </body>
