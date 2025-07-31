@@ -2,106 +2,297 @@ var InduxsoftNumberFields =
 {
     Init()
     {
-        const number_fields = document.querySelectorAll('.induxsoft-num-field[type="number"]');
-        let formId = "";
+        const number_fields = document.querySelectorAll('input.induxsoft-num-field[type="number"]');
+        for (const field of number_fields) {
+            if (field.name || field.id) this._renderTextInput(field);
+        }
+    },
 
-        number_fields.forEach((field) => {
-            const form = field.form;
-            if (form.id !== formId) {
-                formId = form.id;
-                form.addEventListener("submit", (event) => {
-                    event.preventDefault();
-                    if (!event.target.reportValidity()) return;
-                    this.submitForm(event.target);
-                });
+    /**
+     * Crea un elemento `input[type="text"]`.
+     * @param {HTMLInputElement} numberInput Elemento a procesar.
+     */
+    _renderTextInput(numberInput)
+    {
+        const textInput = document.createElement('input');
+        textInput.type = 'text';
+        textInput.value = numberInput.value || '';
+        textInput.dataset.target = numberInput.id || numberInput.name;
+
+        this._bindAttributesAndProperties(numberInput,textInput);
+        this._setNumberInputStyle(numberInput);
+        this._setEvents(textInput);
+        this._format(textInput);
+
+        numberInput.insertAdjacentElement('afterend',textInput);
+    },
+    /**
+     * @param {HTMLInputElement} source Elemento origen
+     * @param {HTMLInputElement} target Elemento objetivo
+     */
+    _bindAttributesAndProperties(source,target)
+    {
+        target.setAttribute('class',source.getAttribute('class'));
+        if (source.hasAttribute('style')) {
+            target.setAttribute('style',source.getAttribute('style'));
+            source.removeAttribute('style');
+        }
+        target.readOnly = source.readOnly;
+        target.disabled = source.disabled;
+        target.required = source.required;
+
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach(mutation => {
+                if (mutation.type === 'attributes') {
+                    const attrName = mutation.attributeName;
+                    const newValue = source.getAttribute(attrName);
+
+                    switch (attrName) {
+                        case 'readonly':
+                        case 'disabled':
+                        case 'required':
+                            if (attrName == 'readonly') target.readOnly = source.readOnly;
+                            else target[attrName] = source[attrName];
+                            break;
+                        case 'value':
+                        case 'class':
+                            target.setAttribute(attrName,newValue);
+                            break;
+                        // case 'style':
+                        //     console.log("No implementado");
+                        //     break;
+                    }
+                }
+            });
+        });
+
+        observer.observe(source, {
+            attributes: true,
+            attributeOldValue: true,
+            subtree: false
+        });
+
+        let lastValue = source.value;
+        setInterval(() => {
+            if (!source.stopPolling && source.value !== lastValue) {
+                target.value = source.value;
+                lastValue = source.value;
+                this._format(target);
+            }
+        });
+    },
+    /**
+     * Establece nuevos estilos css al elemento `input[type="number"]`.
+     * @param {HTMLInputElement} numberInput Elemento a procesar.
+     */
+    _setNumberInputStyle(numberInput)
+    {
+        numberInput.style.cssText = `
+            width: 1px !important;
+            height: 1px !important;
+            border: none !important;
+            outline: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            opacity: 0 !important;
+            box-shadow: none !important;
+            background-color: transparent !important;
+            pointer-events: none !important;
+        `;
+        if (numberInput.parentElement)
+        {
+            switch (getComputedStyle(numberInput.parentElement).position) {
+                case 'relative':
+                    numberInput.style.cssText += `
+                        position: absolute !important;
+                        bottom: 0;
+                        left: 25%;
+                    `;
+                    break;
+            }
+        }
+    },
+    /**
+     * Establecer eventos al elemento `input[type="text"]`.
+     * @param {HTMLInputElement} input Elemento a procesar.
+     */
+    _setEvents(input)
+    {
+        const _input = this._getReferredInput(input);
+
+        _input.trigger = function(type,e) {
+            const event = new Event(type,e);
+            return this.dispatchEvent(event);
+        }
+        _input.getDecimals = function() {
+            if (this.hasAttribute('num-decs')) return parseInt(this.getAttribute('num-decs')) || -1;
+            if (this.hasAttribute('step'))
+            {
+                let step = this.getAttribute('step');
+                if (!step.includes('.')) return 0;
+                else return step.split('.')[1].length;
+            }
+            return -1;
+        }
+
+        // El elemento gana el foco.
+        input.addEventListener('focus', (e) => {
+            e.target.value = this._rawValue(e.target);
+            _input.trigger('focus',e);
+        });
+        // El elemento pierde el foco.
+        input.addEventListener('blur', (e) => {
+            e.target.value = this._rawValue(e.target);
+            this._format(e.target);
+            _input.trigger('blur',e);
+        });
+        // Se presiona una tecla sobre el elemento.
+        input.addEventListener('keydown', (e) => {
+            if (!_input.trigger('keydown',e)) {
+                e.preventDefault();
+                return
             }
 
-            this.AsText(field);
+            const controlKeys = ['Backspace','Delete','ArrowLeft','ArrowRight','Home','End','Tab'];
+            const allowed = ['0','1','2','3','4','5','6','7','8','9','.','-'];
+            const value = e.target.value || '';
 
-            // El elemento gana el foco
-            field.addEventListener("focus", (event) => { this.AsNumber(event.target) });
-            // El elemento pierde el foco
-            field.addEventListener("blur", (event) => { this.AsText(event.target) });
+            // Permitir teclas de control
+            if (controlKeys.includes(e.key)) return;
+            // Bloquear si la tecla no es válida
+            if (!allowed.includes(e.key)) {
+                e.preventDefault();
+                return
+            }
+            // Solo un punto permitido
+            if (e.key == '.' && value.includes('.')) {
+                e.preventDefault();
+                return
+            }
+            // Solo un guion permitido al inicio
+            if (e.key == '-' && (value.includes('-') || e.target.selectionStart != 0)) {
+                e.preventDefault();
+                return
+            }
+        });
+        // Se suelta la tecla presionada sobre el elemento.
+        input.addEventListener('keyup', (e) => { _input.trigger('keyup',e) });
+        // El valor del elemento esta por cambiar.
+        input.addEventListener('beforeinput', (e) => {
+            if (!_input.trigger('beforeinput',e)) {
+                e.preventDefault();
+                return
+            }
+
+            const index = e.target.selectionStart;
+            let oldValue = e.target.value || '';
+            let newValue = oldValue.slice(0,index) + (e.data??'') + oldValue.slice(index);
+            let decimals = _input.getDecimals();
+
+            if (_input.hasAttribute('max') && Number(newValue) > Number(_input.getAttribute('max'))) {
+                e.preventDefault();
+                return
+            }
+            if (_input.hasAttribute('min') && Number(newValue) < Number(_input.getAttribute('min'))) {
+                e.preventDefault();
+                return
+            }
+            if (decimals >= 0 && newValue.includes('.') && newValue.split('.')[1].length > decimals) {
+                e.preventDefault();
+                return
+            }
+        });
+        // El valor del elemento esta cambiando.
+        input.addEventListener('input', (e) => {
+            _input.stopPolling = true;
+            _input.value = e.target.value;
+            _input.trigger('input',e);
+        });
+        // El valor del elemento se ha cambiado/confirmado.
+        input.addEventListener('change', (e) => {
+            _input.stopPolling = false;
+            _input.value = this._rawValue(e.target);
+            _input.trigger('change',e);
         });
     },
-
-    submitForm(form)
+    /**
+     * Dar formato al valor del elemento `input[type="text"]`.
+     * @param {HTMLInputElement} input Elemento a procesar.
+     */
+    _format(input)
     {
-        const number_fields = form.querySelectorAll('.induxsoft-num-field[type="text"]');
-        number_fields.forEach((field) => {
-            this.AsNumber(field);
-        });
-        form.submit();
-    },
+        const _input = this._getReferredInput(input);
+        if (input.value == '' || !_input) return;
 
-    AsNumber(el)
-    {
-        el.type = "number";
-        el.value = Number(el.getAttribute("data-value")) || Number(el.value);
-    },
+        let lcode = _input.getAttribute('num-locale') || (new Intl.NumberFormat()).resolvedOptions().locale;
+        let style = _input.getAttribute('num-style') || 'decimal';
+        let decimals = _input.getDecimals();
 
-    AsText(el)
-    {
-        let lcode = (el.getAttribute("num-locale") ?? "");
-        let style = (el.getAttribute("num-style") ?? "").toLowerCase();
-        
-        let decimal = Number(el.getAttribute("num-decs") ?? "2");
         let options = {
             style: style,
-            minimumFractionDigits: decimal,
-            maximumFractionDigits: decimal,
+            minimumFractionDigits: decimals,
+            maximumFractionDigits: decimals,
         }
-        
-        if (lcode === "") lcode = (new Intl.NumberFormat()).resolvedOptions().locale;
 
         switch (style) {
             case "currency":
                 // MXN, USD, EUR, ...
-                let currency = (el.getAttribute("num-currency") ?? "MXN").toUpperCase();
-                // symbol, code, name
-                let currencyDisplay = (el.getAttribute("num-currency-display") ?? "").toLowerCase();
-
-                if (currency === "") {
-                    alert("Es necesario indicar la moneda `num-currency` en " + el.name);
-                    return;
-                }
-
+                let currency = (_input.getAttribute('num-currency') || 'MXN').toUpperCase();
                 options.currency = currency;
-                if (currencyDisplay !== "") options.currencyDisplay = currencyDisplay;
+                // symbol, code, name
+                let currencyDisplay = (_input.getAttribute('num-currency-display') || '');
+                if (currencyDisplay != "") options.currencyDisplay = currencyDisplay;
                 break;
             case "unit":
                 // meter, kilometer, megabyte, gigabyte, ... 
-                let unit = (el.getAttribute("num-unit") ?? "").toLowerCase();
+                let unit = _input.getAttribute('num-unit');
+                if (unit) options.unit = unit;
                 // long, short
-                let unitDisplay = (el.getAttribute("num-unit-display") ?? "").toLowerCase();
-
-                if (unit === "") {
-                    alert("Es necesario indicar la unidad `num-unit` en " + el.name);
-                    return;
-                }
-                
-                options.unit = unit;
-                if (unitDisplay !== "") options.unitDisplay = unitDisplay;
+                let unitDisplay = input.getAttribute('num-unit-display');
+                if (unitDisplay) options.unitDisplay = unitDisplay;
                 break;
-            case "percent":
-                break;
-            case "decimal":
-                break;
-        
             default:
-                delete options.style;
+                if (!["percent","decimal"].includes(style)) delete options.style;
+                if (decimals < 0) {
+                    delete options.minimumFractionDigits;
+                    delete options.maximumFractionDigits;
+                }
                 break;
         }
 
-        const formatter = new Intl.NumberFormat(lcode,options);
-
-        let number = Number(el.value);
-        let format = formatter.format(number);
-        
-        el.type = "text";
-        el.value = format;
-        el.setAttribute("data-value",number);
+        const formatter = new Intl.NumberFormat(lcode, options);
+        input.value = formatter.format(input.value);
     },
+    /**
+     * Obtiene el valor numérico de `input[type="text"]`.
+     * @param {HTMLInputElement} input Elemento a procesar.
+     */
+    _rawValue(input)
+    {
+        const rawValue = parseFloat(input.value.replace(/[^\d.-]/g, ''));
+        return isNaN(rawValue) ? '' : rawValue;
+    },
+    /**
+     * Obtener el `input[type="number"]` del `input[type="text"]` proporcionado.
+     * @param {HTMLInputElement} input Elemento a procesar.
+     * @returns {HTMLInputElement | null}
+     */
+    _getReferredInput(input)
+    {
+        const target = input.dataset.target;
+        
+        if (input.form) {
+            const numberInput = input.form.elements[target];
+            return numberInput;
+        }
+
+        let numberInput = document.getElementById(target);
+        if (!numberInput) numberInput = document.querySelector(`input[name="${target}"]`);
+        return numberInput;
+    },
+
+    //* ======================================== [ OTHERS ] ========================================
+
     filterFloat:function(evt,input,dec=4)
     {
         // Backspace = 8, Enter = 13, ‘0′ = 48, ‘9′ = 57, ‘.’ = 46, ‘-’ = 43
