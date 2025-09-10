@@ -23,6 +23,8 @@ class CustomSchedule extends HTMLElement
             ItemDoubleClick:'itemdblclick',
             ItemMoving:'itemmoving',
             ItemMoved:'itemmoved',
+            ItemResizing:'itemresizing',
+            ItemResized:'itemresized',
             BeforeCreateItem:'beforecreateitem',
             ItemCreated:'itemcreated',
             BeforeUpdateItem:'beforeupdateitem',
@@ -674,10 +676,13 @@ class CustomSchedule extends HTMLElement
             const cell = this.#shadow.elementFromPoint(upEvent.clientX, upEvent.clientY);
             taskEl.style.visibility = 'visible';
 
-            if (!successDrag || !cell || cell.tagName != 'TD') {
+            if (!successDrag || !cell || cell.tagName != 'TD')
+            {
                 // Si se soltó fuera de una celda válida o se cancelo el evento, volver al estado original.
                 this.#updateTaskElement(backupData);
-            } else {
+            }
+            else
+            {
                 eventData.start = cell.dataset.datetime;
                 this.#updateTaskElement(eventData);
 
@@ -708,25 +713,53 @@ class CustomSchedule extends HTMLElement
         const minHeight = this.min_duration / interval * cellHeight;
         const maxHeight = this.max_duration / interval * cellHeight;
 
+        let successDrag = false;
+
         const onMouseMove = (moveEvent) => {
             const delta = moveEvent.clientY - startY;
             let newHeight = startHeight + delta;
             // Aplicar límites
             newHeight = Math.max(minHeight, Math.min(maxHeight, newHeight));
+            const newDuration = Math.round((newHeight / cellHeight) * interval);
+            // Disparar evento personalizado durante el redimensionamiento.
+            const eventArgs = {
+                item: backupData,
+                oldDuration: backupData.duration,
+                newDuration: newDuration
+            };
+            const ItemResizing = new CustomEvent(this.Const.Events.ItemResizing, {
+                bubbles: true,
+                cancelable: true,
+                detail: eventArgs
+            });
+            successDrag = this.dispatchEvent(ItemResizing);
+            if (!successDrag) return;
             
             taskEl.style.height = `${newHeight}px`;
-
-            // const newDuration = Math.round((newHeight / cellHeight) * interval);
-            // Disparar evento personalizado durante el redimensionamiento.
         };
 
         const onMouseUp = () => {
             document.removeEventListener('mousemove', onMouseMove);
             document.removeEventListener('mouseup', onMouseUp);
 
-            const newDuration = Math.round(taskEl.offsetHeight / cellHeight) * interval;
-            backupData.duration = newDuration;
-            this.save(backupData);
+            if (!successDrag)
+            {
+                // Si se cancelo el evento, volver al estado original.
+                this.#updateTaskElement(backupData);
+            }
+            else
+            {
+                const newDuration = Math.round(taskEl.offsetHeight / cellHeight) * interval;
+                eventData.duration = newDuration;
+                this.#updateTaskElement(eventData);
+
+                const eventArgs = {
+                    item: eventData,
+                    oldDuration: backupData.duration,
+                    newDuration: newDuration
+                };
+                this.dispatchEvent(new CustomEvent(this.Const.Events.ItemResized, { detail: eventArgs }));
+            }
         };
 
         document.addEventListener('mousemove', onMouseMove);

@@ -248,7 +248,14 @@
                     console.log("Al finalizar arrastre del evento.");
                     console.log(e);
                 });
-                
+                this.schedule.addEventListener('itemresizing', (e) => {
+                    console.log("Durante el redimensionamiento del evento.");
+                    console.log(e);
+                });
+                this.schedule.addEventListener('itemresized', (e) => {
+                    console.log("Al finalizar redimensionamiento del evento.");
+                    console.log(e);
+                });
                 this.schedule.addEventListener('beforecreateitem', (e) => {
                     console.log("Antes de crear el evento.");
                     console.log(e);
