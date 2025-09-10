@@ -109,6 +109,11 @@ var InduxsoftNumberFields =
                         left: 25%;
                     `;
                     break;
+                case 'static':
+                    numberInput.style.cssText += `
+                        position: absolute !important;
+                    `;
+                    break;
             }
         }
     },
