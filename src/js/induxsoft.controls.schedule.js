@@ -270,7 +270,7 @@ class CustomSchedule extends HTMLElement
             this.#resizeObserver = null;
         }
     }
-    
+
     //#region Métodos públicos
     setScheduleTable()
     {
@@ -293,73 +293,38 @@ class CustomSchedule extends HTMLElement
         this.#tasks_layer.innerHTML = '';
         
         this.events.forEach(event => {
-            const taskEl = this.#createTaskElement(event);
-            
-            this.#tasks_layer.appendChild(taskEl);
-            this.#setTaskEvents(taskEl,event);
+            this.renderEvent(event);
         });
     }
 
     renderEvent(event)
     {
-        if (!event || !this.#tasks_layer) return;
+        if (!event || !this.#tasks_layer) return false;
 
         const taskEl = this.#createTaskElement(event);
+        if (!taskEl) return false;
             
         this.#tasks_layer.appendChild(taskEl);
         this.#setTaskEvents(taskEl,event);
+        return true;
     }
 
     save(newEvent)
     {
-        if (Object.keys(newEvent).length == 0) return false;
+        if (Object.keys(newEvent).length == 0) return;
 
         const index = this.events.findIndex(e => e.id == newEvent.id);
         if (index == -1)
         {
-            const BeforeCreateItem = new CustomEvent(this.Const.Events.BeforeCreateItem, {
-                bubbles: true,
-                cancelable: true,
-                detail: { item: newEvent }
-            });
-            const ok = this.dispatchEvent(BeforeCreateItem);
-            if (!ok) return false;
-
-            this.events.push(newEvent);
-            this.renderEvent(newEvent);
-
-            const ItemCreated = new CustomEvent(this.Const.Events.ItemCreated, {
-                detail: {
-                    index: (this.events.length - 1),
-                    item: newEvent,
-                    element: this.getTaskElementById(newEvent.id)
-                }
-            });
-            this.dispatchEvent(ItemCreated);
-            return true;
+            if (this.renderEvent(newEvent)) {
+                this.events.push(newEvent);
+            }
         }
         else
         {
-            const oldEvent = this.events[index];
-            const eventArgs = {
-                index: index,
-                oldItem: oldEvent,
-                newItem: newEvent
+            if (this.#updateTaskElement(newEvent)) {
+                this.events[index] = newEvent;
             }
-
-            const BeforeUpdateItem = new CustomEvent(this.Const.Events.BeforeUpdateItem, {
-                bubbles: true,
-                cancelable: true,
-                detail: eventArgs
-            });
-            const ok = this.dispatchEvent(BeforeUpdateItem);
-            if (!ok) return false;
-
-            this.events[index] = newEvent;
-            this.#updateTaskElement(newEvent);
-
-            this.dispatchEvent(new CustomEvent(this.Const.Events.ItemUpdated, { detail: eventArgs }));
-            return true;
         }
     }
 
@@ -517,25 +482,8 @@ class CustomSchedule extends HTMLElement
         table.appendChild(tbody);
     }
 
-    #createTaskElement(event)
+    #setElementPosition(event,taskEl)
     {
-        const taskEl = document.createElement('div');
-        const content = this.#createFullElement('div', { class: 'content' });
-        const resizeHandle = this.#createFullElement('div', { class:'resize-handle' });
-
-        taskEl.id = event.id;
-        taskEl.className = 'event-task';
-        taskEl.appendChild(content);
-        this.#updateTaskElement(event,taskEl);
-        taskEl.appendChild(resizeHandle);
-
-        return taskEl;
-    }
-
-    #updateTaskElement(event,taskEl=null)
-    {
-        taskEl ??= this.getTaskElementById(event.id);
-
         const [dateStr, timeStr] = this.datetimeFormat(event.start).split(' ');
         const [hour, minute] = timeStr.split(':').map(Number);
 
@@ -550,7 +498,6 @@ class CustomSchedule extends HTMLElement
         const durationBlocks = parseInt(event.duration) / interval;
         const height = durationBlocks * cellHeight;
 
-        taskEl.querySelector('.content').textContent = event.caption || '';
         taskEl.style.cssText = `
             top: ${topOffset}px;
             height: ${height}px;
@@ -559,6 +506,64 @@ class CustomSchedule extends HTMLElement
             background-color: ${event.backcolor || '#FFFFE1'};
             color: ${event.color || '#000'};
         `;
+    }
+
+    #createTaskElement(event)
+    {
+        const BeforeCreateItem = new CustomEvent(this.Const.Events.BeforeCreateItem, {
+            bubbles: true,
+            cancelable: true,
+            detail: { item: event }
+        });
+        const ok = this.dispatchEvent(BeforeCreateItem);
+        if (!ok) return null;
+
+        const taskEl = document.createElement('div');
+        const content = this.#createFullElement('div', { class: 'content' });
+        const resizeHandle = this.#createFullElement('div', { class:'resize-handle' });
+
+        taskEl.id = event.id;
+        taskEl.className = 'event-task';
+        taskEl.appendChild(content);
+        this.#setElementPosition(event,taskEl);
+        taskEl.appendChild(resizeHandle);
+        content.textContent = event?.caption??'';
+
+        const ItemCreated = new CustomEvent(this.Const.Events.ItemCreated, {
+            detail: {
+                item: event,
+                element: taskEl
+            }
+        });
+        this.dispatchEvent(ItemCreated);
+
+        return taskEl;
+    }
+
+    #updateTaskElement(event,taskEl=null)
+    {
+        if (!taskEl) taskEl = this.getTaskElementById(event.id);
+
+        const eventArgs = {
+            oldItem: this.events.find(e => e.id == event.id),
+            oldElement: taskEl.cloneNode(true),
+            newItem: event
+        };
+
+        const BeforeUpdateItem = new CustomEvent(this.Const.Events.BeforeUpdateItem, {
+            bubbles: true,
+            cancelable: true,
+            detail: eventArgs
+        });
+        const ok = this.dispatchEvent(BeforeUpdateItem);
+        if (!ok) return false;
+
+        taskEl.querySelector('.content').textContent = event?.caption??'';
+        this.#setElementPosition(event,taskEl);
+
+        eventArgs.newElement = taskEl;
+        this.dispatchEvent(new CustomEvent(this.Const.Events.ItemUpdated, { detail: eventArgs }));
+        return true;
     }
 
     #setCellClickEvents(cell)
@@ -791,7 +796,7 @@ class CustomSchedule extends HTMLElement
     }
 
     #onResizeOrScroll()
-    {   
+    {
         this.events.forEach(item => {
             const element = this.getTaskElementById(item.id);
             if (element) this.#updateTaskElement(item,element);
