@@ -43,6 +43,7 @@ class CustomSchedule extends HTMLElement
         {en:'friday',es:'viernes'},
         {en:'saturday',es:'sábado'}
     ];
+    #view_range = [];
     #shadow = null;
     #events_backup = null;
     #table_layer = null;
@@ -281,6 +282,8 @@ class CustomSchedule extends HTMLElement
         const columns = this.#getColumns();
         const weekdays = this.getWeekdays();
 
+        this.#view_range = [columns[0], columns[columns.length - 1]];
+
         this.#setScheduleHead(table,columns,weekdays);
         this.#setScheduleBody(table,columns,weekdays);
 
@@ -300,7 +303,7 @@ class CustomSchedule extends HTMLElement
     renderEvent(event)
     {
         if (!event || !this.#tasks_layer) return false;
-
+        if (!this.bwnDate(event.start,this.#view_range[0],this.#view_range[1])) return false;
         const taskEl = this.#createTaskElement(event);
         if (!taskEl) return false;
             
@@ -363,7 +366,7 @@ class CustomSchedule extends HTMLElement
                         : 'td.'+this.weekend.replaceAll(',',',td.')+',';
         let holidays = (this.holidays.replaceAll(',','').trim() == "")
                         ? ''
-                        : 'td[data-date="'+this.holidays.replaceAll(',','"],td[data-date="')+',';
+                        : 'td[data-date="'+this.holidays.replaceAll(',','"],td[data-date="')+'"],';
         let breaks = '';
 
         const isBreak = (hour) => {
@@ -383,10 +386,10 @@ class CustomSchedule extends HTMLElement
             }
         }
 
-        let selectors = weekend + holidays + breaks;
+        let selectors = (weekend + holidays + breaks).replaceAll(' ','');
         if (selectors.trim() == "") return;
         if (selectors.endsWith(',')) selectors = selectors.slice(0,-1);
-        
+
         const style = document.createElement('style');
         style.id = 'readonly-styles';
         style.innerHTML = `
@@ -394,10 +397,10 @@ class CustomSchedule extends HTMLElement
         {
             background-color: #e9ecef;
             opacity: 1;
-            outline: 1px solid #FFF;
+            outline: 1px solid #ffffff;
         }
         `;
-        
+
         this.#shadow.querySelector('#readonly-styles')?.remove();
         this.#shadow.appendChild(style);
     }
@@ -849,6 +852,17 @@ class CustomSchedule extends HTMLElement
         }
 
         return result;
+    }
+
+    bwnDate(value,min,max)
+    {
+        const parse = (v) => new Date(v).getTime();
+
+        const v = parse(value);
+        const a = parse(min);
+        const b = parse(max);
+
+        return (v >= a && v <= b);
     }
 
     bwnHours(value,min,max)
