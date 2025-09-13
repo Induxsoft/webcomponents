@@ -777,11 +777,10 @@ class CustomSchedule extends HTMLElement
     #getColumns()
     {
         const weekdays = this.getWeekdays();
-        const baseDate = (this.day.toLowerCase()=="now") ? new Date() : new Date(this.day);
+        const baseDate = (this.day.toLowerCase()=="now") ? new Date() : new Date(this.day + 'T00:00');
         const baseWeekday = baseDate.getDay();
-        const startWeekdayIndex = this.#startWeekdayIndex();
 
-        const diff = (baseWeekday - startWeekdayIndex + 7) % 7;
+        const diff = (baseWeekday - this.#startWeekdayIndex() + 7) % 7;
         const startDate = new Date(baseDate);
         startDate.setDate(baseDate.getDate() - diff);
 
@@ -789,9 +788,8 @@ class CustomSchedule extends HTMLElement
         let result = [];
 
         for (let i = 0; i < totalDays; i++) {
-            const date = new Date(startDate);
+            let date = new Date(startDate);
             date.setDate(startDate.getDate() + i);
-            
             result.push(this.dateFormat(date));
         }
 
