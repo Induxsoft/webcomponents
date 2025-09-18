@@ -233,13 +233,12 @@ class CustomSchedule extends HTMLElement
             case 'start-weekday':
             case 'start-lab-hour':
             case 'end-lab-hour':
-                this.setScheduleTable();
-                this.renderEvents();
-                break;
             case 'interval':
                 this.setScheduleTable();
                 this.renderEvents();
-                this.setReadonlyStyles();
+                if (attribute=='day' || attribute=='interval') {
+                    this.setReadonlyStyles();
+                }
                 break;
             case 'breaks':
             case 'weekend':
@@ -303,7 +302,7 @@ class CustomSchedule extends HTMLElement
     renderEvent(event)
     {
         if (!event || !this.#tasks_layer) return false;
-        if (!this.bwnDate(event.start,this.#view_range[0],this.#view_range[1])) return false;
+        if (!this.bwnDate(this.dateFormat(event.start), this.#view_range[0], this.#view_range[1])) return false;
         const taskEl = this.#createTaskElement(event);
         if (!taskEl) return false;
             
@@ -361,32 +360,42 @@ class CustomSchedule extends HTMLElement
 
     setReadonlyStyles()
     {
-        let weekend = (this.weekend.replaceAll(',','').trim() == "")
-                        ? ''
-                        : 'td.'+this.weekend.replaceAll(',',',td.')+',';
-        let holidays = (this.holidays.replaceAll(',','').trim() == "")
-                        ? ''
-                        : 'td[data-date="'+this.holidays.replaceAll(',','"],td[data-date="')+'"],';
+        let weekend = (this.weekend.trim() == "") ? '' : 'td.'+this.weekend.replaceAll(' ','').replaceAll(',',',td.')+',';
+        let holidays = '';
         let breaks = '';
 
-        const isBreak = (hour) => {
-            let result = false;
-            for (const range of this.breaks.split(',')) {
-                const [start,end] = range.split('-');
-                if (!start || !end) continue;
-                result = this.bwnHours(hour,start,end);
-                if (result) break;
-            }
-            return result;
-        }
+        if (this.holidays.trim() != "")
+        {
+            const isDate = v => /^\d{4}-\d{2}-\d{2}$/.test(v);
+            const isMMdd = v => /^\d{2}-\d{2}$/.test(v);
+            const temp = 'td[data-date="@"],';
+            const year = (this.day=='now' ? new Date() : new Date(this.day)).getFullYear();
 
-        for (const hour of this.getHours()) {
-            if (isBreak(hour)) {
-                breaks += 'td[data-time="'+hour+'"],'
+            for (const val of this.holidays.replaceAll(' ','').split(',')) {
+                if (isDate(val)) holidays += temp.replace('@',val);
+                else if (isMMdd(val)) holidays += temp.replace('@',year+'-'+val);
             }
         }
+        if (this.breaks.trim() != "")
+        {
+            const isBreak = (hour) => {
+                let result = false;
+                for (const range of this.breaks.replaceAll(' ','').split(',')) {
+                    const [start,end] = range.split('-');
+                    if (!start || !end) continue;
+                    result = this.bwnHours(hour,start,end);
+                    if (result) break;
+                }
+                return result;
+            }
+            for (const hour of this.getHours()) {
+                if (isBreak(hour)) {
+                    breaks += 'td[data-time="'+hour+'"],'
+                }
+            }
+        }
 
-        let selectors = (weekend + holidays + breaks).replaceAll(' ','');
+        let selectors = weekend + holidays + breaks;
         if (selectors.trim() == "") return;
         if (selectors.endsWith(',')) selectors = selectors.slice(0,-1);
 
