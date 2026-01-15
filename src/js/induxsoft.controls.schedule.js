@@ -122,6 +122,9 @@ class CustomSchedule extends HTMLElement
                 /* max-width: 1fr; */
                 word-break: break-word;
             }
+            .now {
+                background-color: purple;
+            }
             .event-task {
                 position: absolute;
                 pointer-events: auto;
@@ -427,7 +430,8 @@ class CustomSchedule extends HTMLElement
     #setScheduleHead(table,columns,weekdays)
     {
         const thead = document.createElement('thead');
-        const row = document.createElement('tr')
+        const row = document.createElement('tr');
+        const now = this.dateFormat(new Date());
 
         row.appendChild(document.createElement('th'));
         
@@ -445,6 +449,8 @@ class CustomSchedule extends HTMLElement
                 <label>${dia}</label>
                 <small>${date}</small>
             </div>`;
+
+            if (date == now) cell.classList.add('now');
             
             row.appendChild(cell);
             (d < 6) ? d++ : d = 0;
