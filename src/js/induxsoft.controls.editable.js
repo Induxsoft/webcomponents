@@ -7,7 +7,7 @@ class EditTable extends HTMLElement
     _temp_dt = null;
     _current_row = null;
     _dataArrayBackup = null;
-    
+    _sorTable=true;
     constructor() 
     {
         super();
@@ -227,6 +227,10 @@ class EditTable extends HTMLElement
             if (this.ShowAsTree) this._printTreeData();
 
             this.Initialize(this._table.getAttribute('id'));
+
+            if(this.hasAttribute('sorTable'))this._sorTable=this.getAttribute('sorTable').trim().toLowerCase()=="true";
+            
+            this.sorTable=this._sorTable;
             //this._processAtributesColumn();
             this._resizableGrid(this._table);
             this._setSortEvent();
@@ -489,25 +493,29 @@ class EditTable extends HTMLElement
         const fields = this._table.querySelectorAll('th');
         fields.forEach(field => {
             let par = 0;
-            field.onclick = e => {
-                e.stopPropagation();
-                fields.forEach(f=>{f.classList.remove('ascendent');f.classList.remove('descendent')});
-                par++;
-                let desc = (par%2==0);
-                field.classList.toggle('ascendent',desc);
-                field.classList.toggle('descendent',!desc);
-                if (this.ShowAsTree)
+            field.onclick = e => 
+            {
+                if(this._sorTable)
                 {
-                    let options = this._getTreeOptions();
-                    this.GetTree(options);
-                    this.SortTree(this.DataArray, (field.getAttribute('field')??''), desc, options);
-                    this.SetTree(this.DataArray, options);
+                    e.stopPropagation();
+                    fields.forEach(f=>{f.classList.remove('ascendent');f.classList.remove('descendent')});
+                    par++;
+                    let desc = (par%2==0);
+                    field.classList.toggle('ascendent',desc);
+                    field.classList.toggle('descendent',!desc);
+                    if (this.ShowAsTree)
+                    {
+                        let options = this._getTreeOptions();
+                        this.GetTree(options);
+                        this.SortTree(this.DataArray, (field.getAttribute('field')??''), desc, options);
+                        this.SetTree(this.DataArray, options);
+                    }
+                    else
+                    {
+                        this.Sort(this.DataArray, (field.getAttribute('field')??''), desc);
+                    }
+                    this._printRows();
                 }
-                else
-                {
-                    this.Sort(this.DataArray, (field.getAttribute('field')??''), desc);
-                }
-                this._printRows();
             };
         });
     }
@@ -1196,6 +1204,7 @@ class EditTable extends HTMLElement
         Cell:"EdiTable-Cell",
         RowSelected: "EdiTable-Row-Selected"
     };
+    sorTable=true;
     Initialize = (tableId) =>
     {
         let tds = this._shadow.querySelectorAll(this.EdiTable.Const.HTML.TABLE+"#"+tableId+" "+this.EdiTable.Const.HTML.TD);
