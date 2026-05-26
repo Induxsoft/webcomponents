@@ -381,19 +381,47 @@ class CustomSchedule extends HTMLElement
         }
         if (this.breaks.trim() != "")
         {
-            const isBreak = (hour) => {
-                let result = false;
-                for (const range of this.breaks.replaceAll(' ','').split(',')) {
-                    const [start,end] = range.split('-');
-                    if (!start || !end) continue;
-                    result = this.bwnHours(hour,start,end);
-                    if (result) break;
-                }
-                return result;
-            }
-            for (const hour of this.getHours()) {
-                if (isBreak(hour)) {
-                    breaks += 'td[data-time="'+hour+'"],'
+            const weekdays = {
+                sunday: 'sunday', domingo: 'domingo',
+                monday: 'monday', lunes: 'lunes',
+                tuesday: 'tuesday', martes: 'martes',
+                wednesday: 'wednesday', miércoles: 'miércoles', miercoles: 'miercoles',
+                thursday: 'thursday', jueves: 'jueves',
+                friday: 'friday', viernes: 'viernes',
+                saturday: 'saturday', sábado: 'sábado', sabado: 'sabado'
+            };
+
+            const parseBreak = (value) => {
+                value = value.trim();
+
+                const match = value.match(/^(?:(\S+)\s+)?(\d{2}:\d{2})-(\d{2}:\d{2})$/i);
+                if (!match) return null;
+
+                let [,weekday,start,end] = match;
+                weekday = weekday?.toLowerCase();
+
+                return {
+                    weekday: weekdays[weekday] || null,
+                    start,
+                    end
+                };
+            };
+
+            for (const rawBreak of this.breaks.split(','))
+            {
+                console.log(rawBreak);
+                const parsed = parseBreak(rawBreak);
+                if (!parsed) continue;
+                console.log(parsed);
+
+                const { weekday, start, end } = parsed;
+
+                for (const hour of this.getHours())
+                {
+                    if (!this.bwnHours(hour,start,end)) continue;
+
+                    if (weekday) breaks += `td.${weekday}[data-time="${hour}"],`;
+                    else breaks += `td[data-time="${hour}"],`;
                 }
             }
         }
