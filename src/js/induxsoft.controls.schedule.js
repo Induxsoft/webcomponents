@@ -167,7 +167,7 @@ class CustomSchedule extends HTMLElement
             #table-layer {
                 position: relative;
                 padding-bottom: .25rem;
-                z-index: 0;
+                /* El 'z-index' evita que los <th> de la tabla se sobrepongan a los eventos */
             }
             #tasks-layer {
                 position: absolute;
@@ -314,16 +314,29 @@ class CustomSchedule extends HTMLElement
         return true;
     }
 
+    isValidEvent(event)
+    {
+        if (!event) return false;
+        if (typeof event != 'object') return false;
+        if (Array.isArray(event)) return false;
+
+        const required = ['id','start','duration'];
+        const keys = Object.keys(event);
+
+        if (keys.length < required.length) return false;
+        // Verificar existencia de propiedades requeridas
+        return required.every(field => keys.includes(field));
+    }
+
     save(newEvent)
     {
-        if (Object.keys(newEvent).length == 0) return;
-
+        if (!this.isValidEvent(newEvent)) return;
         const index = this.events.findIndex(e => e.id == newEvent.id);
+        
         if (index == -1)
         {
-            if (this.renderEvent(newEvent)) {
-                this.events.push(newEvent);
-            }
+            this.renderEvent(newEvent);
+            this.events.push(newEvent);
         }
         else
         {
@@ -409,10 +422,8 @@ class CustomSchedule extends HTMLElement
 
             for (const rawBreak of this.breaks.split(','))
             {
-                console.log(rawBreak);
                 const parsed = parseBreak(rawBreak);
                 if (!parsed) continue;
-                console.log(parsed);
 
                 const { weekday, start, end } = parsed;
 
