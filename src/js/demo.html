@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>availability-scheduler — demo</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 760px; margin: 40px auto; padding: 0 16px; color: #1F2430; }
+  h1 { font-size: 20px; }
+  pre { background: #F5F4F1; padding: 12px; border-radius: 8px; font-size: 12px; overflow: auto; max-height: 260px; }
+  .row { display: flex; gap: 10px; margin: 16px 0; }
+  button.primary { background: #2F6F5E; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+  button.secondary { background: #fff; border: 1px solid #E3E0D8; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+</style>
+</head>
+<body>
+  <h1>availability-scheduler — demo</h1>
+
+  <form id="myForm">
+    <availability-scheduler
+      id="scheduler"
+      name="horario"
+      min-time="06:00:00"
+      max-time="22:00:00"
+      step-minutes="30"
+      week-start="monday"
+      locale="es"
+    ></availability-scheduler>
+
+    <div class="row">
+      <button type="submit" class="primary">Enviar formulario</button>
+      <button type="button" class="secondary" id="copyMonBtn">Copiar Lunes a todos</button>
+      <button type="button" class="secondary" id="resetBtn">Reset</button>
+      <button type="button" class="secondary" id="viewInputsBtn">Vista horas</button>
+      <button type="button" class="secondary" id="viewGridBtn">Vista cuadrícula</button>
+    </div>
+  </form>
+
+  <h2>Valor actual (evento "change")</h2>
+  <pre id="output">—</pre>
+
+  <script src="./availability-scheduler.js"></script>
+  <script>
+    const scheduler = document.getElementById('scheduler');
+    const output = document.getElementById('output');
+
+    // Valor inicial de ejemplo
+    scheduler.value = {
+      monday:    { available: true,  slots: [{ start: "09:00:00", end: "13:00:00" }, { start: "15:00:00", end: "18:00:00" }] },
+      tuesday:   { available: true,  slots: [] }, // todo el día
+      wednesday: { available: true,  slots: [] },
+      thursday:  { available: true,  slots: [] },
+      friday:    { available: true,  slots: [{ start: "09:00:00", end: "14:00:00" }] },
+      saturday:  { available: false, slots: [] },
+      sunday:    { available: false, slots: [] },
+    };
+    output.textContent = JSON.stringify(scheduler.value, null, 2);
+
+    scheduler.addEventListener('change', (e) => {
+      output.textContent = JSON.stringify(e.detail.value, null, 2);
+    });
+
+    scheduler.addEventListener('invalid-slot', (e) => {
+      console.warn('Rango inválido:', e.detail.day, e.detail.reason);
+    });
+
+    document.getElementById('copyMonBtn').addEventListener('click', () => scheduler.copyDayToAll('monday'));
+    document.getElementById('resetBtn').addEventListener('click', () => scheduler.reset());
+    document.getElementById('viewInputsBtn').addEventListener('click', () => scheduler.setView('inputs'));
+    document.getElementById('viewGridBtn').addEventListener('click', () => scheduler.setView('grid'));
+
+    document.getElementById('myForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      alert('FormData["horario"] = ' + fd.get('horario'));
+    });
+  </script>
+</body>
+</html>
