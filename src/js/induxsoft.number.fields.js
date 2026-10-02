@@ -180,34 +180,129 @@ var InduxsoftNumberFields =
                 return
             }
         });
-        // Se suelta la tecla presionada sobre el elemento.
+        // Se suelta la tecla presionada.
         input.addEventListener('keyup', (e) => { _input.trigger('keyup',e) });
-        // El valor del elemento esta por cambiar.
+        // El valor del elemento está por cambiar.
         input.addEventListener('beforeinput', (e) => {
             if (!_input.trigger('beforeinput',e)) {
                 e.preventDefault();
                 return
             }
 
-            const index = e.target.selectionStart;
-            let oldValue = e.target.value || '';
-            let newValue = oldValue.slice(0,index) + (e.data??'') + oldValue.slice(index);
-            let decimals = _input.getDecimals();
+            /*
+            * Construir el valor que tendrá el input después de la operación.
+            * Esto contempla tanto escritura como reemplazo de una selección.
+            */
+            const start = e.target.selectionStart ?? 0;
+            const end = e.target.selectionEnd ?? start;
+            const oldValue = e.target.value || '';
 
-            if (_input.hasAttribute('max') && Number(newValue) > Number(_input.getAttribute('max'))) {
+            let insertedValue = e.data ?? '';
+
+            // Operaciones de borrado
+            if (
+                e.inputType === 'deleteContentBackward' ||
+                e.inputType === 'deleteContentForward' ||
+                e.inputType === 'deleteByCut'
+            ) {
+                insertedValue = '';
+            }
+
+            const newValue =
+                oldValue.slice(0, start) +
+                insertedValue +
+                oldValue.slice(end);
+
+            const decimals = _input.getDecimals();
+
+            /*
+            * Estados intermedios válidos.
+            *
+            * Ejemplos:
+            *   ""
+            *   "-"
+            *   "."
+            *   "-."
+            *   "0."
+            *   ".0"
+            *
+            * Son necesarios para poder escribir posteriormente
+            * valores como:
+            *   0.09
+            *   .09
+            *   -0.09
+            */
+            const isIntermediate =
+                newValue === '' ||
+                newValue === '-' ||
+                newValue === '.' ||
+                newValue === '-.' ||
+                newValue === '.0' ||
+                newValue === '0.';
+
+            /*
+            * Validar estructura numérica antes de aplicar min/max.
+            *
+            * Permitimos:
+            *   123
+            *   123.
+            *   123.45
+            *   .45
+            *   -123.45
+            *   -.45
+            */
+            const numericPattern = /^-?(?:\d+(?:\.\d*)?|\.\d*)$/;
+
+            if (!isIntermediate && !numericPattern.test(newValue)) {
                 e.preventDefault();
                 return
             }
-            if (_input.hasAttribute('min') && Number(newValue) < Number(_input.getAttribute('min'))) {
-                e.preventDefault();
-                return
+
+            /*
+            * Limitar cantidad de decimales.
+            *
+            * Importante: "0." todavía tiene cero decimales,
+            * por lo que debe permitirse.
+            */
+            if (decimals >= 0 && newValue.includes('.')) {
+                const decimalPart = newValue.split('.')[1];
+
+                if (decimalPart.length > decimals) {
+                    e.preventDefault();
+                    return
+                }
             }
-            if (decimals >= 0 && newValue.includes('.') && newValue.split('.')[1].length > decimals) {
-                e.preventDefault();
-                return
+
+            /*
+            * No aplicar min/max mientras el usuario está construyendo
+            * el número. Por ejemplo:
+            *
+            * min="0"
+            * escribir "0.09"
+            *
+            * "0." es un estado intermedio y no debe bloquearse.
+            */
+            if (!isIntermediate && numericPattern.test(newValue)) {
+                const numericValue = Number(newValue);
+
+                if (
+                    _input.hasAttribute('max') &&
+                    numericValue > Number(_input.getAttribute('max'))
+                ) {
+                    e.preventDefault();
+                    return
+                }
+
+                if (
+                    _input.hasAttribute('min') &&
+                    numericValue < Number(_input.getAttribute('min'))
+                ) {
+                    e.preventDefault();
+                    return
+                }
             }
         });
-        // El valor del elemento esta cambiando.
+        // El valor del elemento está cambiando.
         input.addEventListener('input', (e) => {
             _input.stopPolling = true;
             _input.value = e.target.value;
