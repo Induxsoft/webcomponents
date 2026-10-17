@@ -187,7 +187,7 @@ class EditTable extends HTMLElement
 
                     .transparent{ background-color: transparent !important; border: none !important; outline: none !important; color: inherit !important; }
                     a{ color: inherit; }
-                    ` + (this.getAttribute('control-styles') ?? '') + `
+                    ` + this._getExtraCss() + (this.getAttribute('control-styles') ?? '') + `
                     @media print
                     {
                         .no-print{ display: none !important; }
@@ -310,7 +310,7 @@ class EditTable extends HTMLElement
                     tr.appendChild(td);
                     
                     let coldf = this.GetColumnDefOfTd(td);
-                    let value = (data[column.field] ?? '');
+                    let value = (this._isBadgesCol(column) ? '' : (data[column.field] ?? ''));
                     
                     let valideEncode = true;
 
@@ -325,6 +325,7 @@ class EditTable extends HTMLElement
                     if (this.onTdPaint) this.onTdPaint(td, idx, this.ColIndexOfTd(td), (coldf?.field??''));
                 });
 
+                this._decorateRow(tr, idx, data);
                 tbody.appendChild(tr);
             });  
         }
@@ -771,6 +772,7 @@ class EditTable extends HTMLElement
         if (this.hasAttribute('row-height')) this.rowHeight = this.getAttribute('row-height');
         if (this.hasAttribute('cards-responsive')) this.cardsResponsive = (this.getAttribute('cards-responsive')=='true');
         if (this.hasAttribute('editable-responsive')) this.editableResponsive = (this.getAttribute('editable-responsive')=='true');
+        this._readVisualAttributes();
     }
     autoConfirm=false;
     _fireBlur=true;
@@ -798,9 +800,16 @@ class EditTable extends HTMLElement
     checkAndSetRowCards()
     {
         var editable=null;
-        if(!this.editableResponsive) editable = this.Columns.find(col => col.type.toLowerCase() != 'noeditable');
-        
-        this._table.classList.toggle('table-cards', (!editable && this.cardsResponsive));
+        if(!this.editableResponsive) editable = this.Columns.find(col => {
+            const type = (col?.type ?? '').toString().toLowerCase();
+            return type != 'noeditable' && type != 'badges';
+        });
+
+        this._cardsNoEditable = !editable;
+        this._cardsEligible = (!editable && this.cardsResponsive);
+        this._applyCardsConfig();
+        this._setupViewWatcher();
+        this._setupSelectionKeeper();
     }
 
 
@@ -837,7 +846,8 @@ class EditTable extends HTMLElement
                     Check:"Check",
                     Select:"Select",
                     Custom:"Custom",
-                    NoEditable:"NoEditable"
+                    NoEditable:"NoEditable",
+                    Badges:"Badges"
                 }
             },
             Events:{
@@ -859,7 +869,9 @@ class EditTable extends HTMLElement
                 RowChanged:"rowchanged",
                 LostFocus:"lostfocus",
                 IsDirtyChanged:"isdirtychanged",
-                OnSort:"onsort"
+                OnSort:"onsort",
+                BadgeClick:"badgeclick",
+                ViewModeChanged:"viewmodechanged"
             },
             SelectorId:"__table_selector",
             InputId:"__table_input",
@@ -1373,15 +1385,27 @@ class EditTable extends HTMLElement
 
         if (tds==undefined) return false;
 
+        const data = (this.DataArray[row] ?? {});
+
         for(let i=0;i<this.TDCount(tr);i++)
         {
-            if (this.Columns[i]!=undefined)
+            const col = this.Columns[i];
+            if (col==undefined || this._isBadgesCol(col)) continue;
+
+            if (col.template)
             {
-                if (this.Columns[i].field!=undefined)
-                    this.SetTdValue(tds[i], (this.DataArray[row][this.Columns[i].field] ?? ''), true);
-                    //tds[i].innerHTML = (this.DataArray[row][this.Columns[i].field] ?? '');
+                // Antes UpdateRow no evaluaba plantillas; un error en ellas no debe interrumpir al código que lo llama.
+                let html;
+                try { html = this.applyTemplate(col.template, data); }
+                catch (err) { console.error('EditTable.UpdateRow: error en template de "' + (col.field ?? i) + '"', err); continue; }
+                this.SetTdValue(tds[i], html, false);
             }
+            else if (col.field!=undefined)
+                this.SetTdValue(tds[i], (data[col.field] ?? ''), true);
+                //tds[i].innerHTML = (this.DataArray[row][this.Columns[i].field] ?? '');
         }
+
+        this._decorateRow(tr, row, data);
 
         return true;
     }
@@ -1409,7 +1433,7 @@ class EditTable extends HTMLElement
 
         for(let i=0;i<this.TDCount(tr);i++)
         {
-            if (this.Columns[i]!=undefined)
+            if (this.Columns[i]!=undefined && !this._isBadgesCol(this.Columns[i]))
             {
                 if (this.Columns[i].field!=undefined)
                 {
@@ -1527,6 +1551,7 @@ class EditTable extends HTMLElement
             });
 
             this._setMoveEvent();
+            this._decorateRow(nr, indexRow, this.DataArray[indexRow]);
 
             if (!nofocus)
                 this.CellFocus(nr.querySelector('td:not(.hidde-col)'));
@@ -1764,7 +1789,7 @@ class EditTable extends HTMLElement
         let columnDef=this.GetColumnDef();
         
         if ((columnDef?.readonly??false)) return;
-        if (columnDef.type==this.EdiTable.Const.Columns.Types.NoEditable) return;
+        if (columnDef.type==this.EdiTable.Const.Columns.Types.NoEditable || this._isBadgesCol(columnDef)) return;
 
         this.Editing=true;
         
@@ -2082,6 +2107,7 @@ class EditTable extends HTMLElement
             if (trs && trs.length > 0) trs.forEach(tr => tr.classList.remove(this.CSS.RowSelected));
             if(!this.hiddeRowSelector) td.closest('tr').classList.add(this.CSS.RowSelected);
         }
+        this._trackSelection(td.closest('tr'));
 
         if (this._current_row != this.CurrentRowIndex())
         {
@@ -2198,12 +2224,14 @@ class EditTable extends HTMLElement
         if (this._withFormat(coldef, value))
             value = value.replace(/[^0-9.-]+/g, "");
 
-        if (valideEncode && this.htmlEncode) value = this.getHtmlDecode(value);
+        // El contenido de una columna con plantilla es HTML ya renderizado, no texto de usuario.
+        if (valideEncode && this.htmlEncode && !coldef?.template) value = this.getHtmlDecode(value);
         
         return value;
     }
     applyTemplate=(template, DataRow)=>
     {
+        if (this.TemplateEncode && DataRow && typeof DataRow == 'object') DataRow = this._encodeRow(DataRow);
         let expr="`"+template+"`";
         return eval(expr);
     }
@@ -2214,7 +2242,8 @@ class EditTable extends HTMLElement
         if (this._withFormat(coldef, value))
             value = this._aplyFormat(coldef, value);
 
-        if (valideEncode && this.htmlEncode) value = this.setHtmlEncode(value);
+        // Con html-encode, al quitar el foco de una celda con plantilla su HTML se escapaba y se veía como texto.
+        if (valideEncode && this.htmlEncode && !coldef?.template) value = this.setHtmlEncode(value);
 
         let cellContent = td.querySelector('div[iscellcontent=true]');
         if (!cellContent) cellContent = td.closest('div[iscellcontent=true]');
@@ -2262,7 +2291,7 @@ class EditTable extends HTMLElement
             && !value.includes('__table_selector') 
             && !value.includes('__table_input') 
             && coldef 
-            && (coldef.type.toLowerCase() == 'number' || coldef.type.toLowerCase() == 'noeditable')
+            && ((coldef.type ?? '').toString().toLowerCase() == 'number' || (coldef.type ?? '').toString().toLowerCase() == 'noeditable')
             && (coldef.format??'') == 'true');
     }
     _aplyFormat(coldef, value)
@@ -2358,7 +2387,7 @@ class EditTable extends HTMLElement
                     tr.appendChild(td);
                     
                     let coldf = this.GetColumnDefOfTd(td);
-                    let value = (data[column.field] ?? '');
+                    let value = (this._isBadgesCol(column) ? '' : (data[column.field] ?? ''));
                     
                     let valideEncode = true;
 
@@ -2411,6 +2440,7 @@ class EditTable extends HTMLElement
                     }
                 }
 
+                this._decorateRow(tr, idx, data);
                 tbody.appendChild(tr);
             });  
         }
@@ -2798,6 +2828,1060 @@ class EditTable extends HTMLElement
         th.textContent = title;
         return true;
     }
+    // ========================= MEJORAS VISUALES: TARJETAS, BADGES Y DECORACIÓN DE FILAS
+    //
+    // Todo lo de esta sección es opcional. Si no se usa ningún atributo ni propiedad nueva,
+    // el componente genera exactamente el mismo DOM y el mismo CSS que antes.
+
+    CardsMode = null;                   // 'auto' | 'always' | 'never' | null (null: se deriva de cards-responsive)
+    CardsBreakpoint = '768px';          // Ancho por debajo del cual se muestran tarjetas (modo auto)
+    CardsBreakpointTarget = 'viewport'; // 'viewport' | 'container'
+    CardsLayout = 'grid';               // 'grid' | 'stacked' | 'slots'
+    CardsFieldGap = null;               // Distancia vertical entre campos de la tarjeta (def. 4px)
+    CardsPadding = null;                // Relleno de la tarjeta (def. '2rem 0' en grid/stacked, '.6rem .75rem' en slots)
+    CardsGap = null;                    // Separación entre tarjetas (def. 0)
+    CardsLabelWidth = null;             // Ancho de la etiqueta (def. 35%; '0' oculta etiquetas)
+    CardsHideEmpty = false;             // Oculta en la tarjeta los campos sin valor
+    CardColumns = null;                 // Array<string|{field,order,slot,label,hideEmpty}> alternativa a los atributos de columna
+    BadgesField = '__badges';           // Campo reservado de cada fila con sus badges
+    BadgeTooltip = 'native';            // 'native' (title) | 'custom'
+    BadgeSelectsRow = false;            // Si el clic en un badge también selecciona la celda
+    RowClassField = null;               // Campo de cada fila con clases CSS para su <tr>
+    TemplateEncode = false;             // Escapa los valores de DataRow dentro de las plantillas (template)
+    NativeEvents = false;               // Permite registrar eventos nativos (click, etc.) con addEventListener
+    Locale = null;                      // Idioma para format="relative" (def. lang del documento o es-MX)
+    RowBadges = null;                   // (row, irow) => badge | badge[]
+    BadgeOnClick = null;                // (irow, badge, row, event) => void
+    RowClass = null;                    // (row, irow) => 'clase1 clase2' | string[]
+    RowAccent = null;                   // (row, irow) => color CSS | null
+    CellClass = null;                   // (row, field, irow, coldef) => 'clase' | string[]
+    onRowPaint = null;                  // (tr, irow, row) => void
+    onCardPaint = null;                 // (tr, irow, row) => void  (solo en vista de tarjetas)
+    RelativeDateFormatter = null;       // (value, date) => string
+
+    _cardsAttrs = false;
+    _cardsEligible = false;
+    _cardsNoEditable = false;
+    _isCardView = false;
+    _viewReady = false;
+    _viewWatch = null;
+    _cardsInfo = null;
+    _tipEl = null;
+    _badgeOverrides = new Map();
+    _badgeOverridesObj = new WeakMap();
+    _hasBadgeOverrides = false;
+
+    /** Indica si en este momento la tabla se muestra como tarjetas. */
+    get IsCardView() { return this._isCardView; }
+
+    _readVisualAttributes()
+    {
+        const a = (n) => (this.hasAttribute(n) ? (this.getAttribute(n) ?? '').trim() : '');
+        let v;
+        if ((v = a('cards-mode')))              { this.CardsMode = v.toLowerCase(); this._cardsAttrs = true; }
+        if ((v = a('cards-breakpoint')))        { this.CardsBreakpoint = v; this._cardsAttrs = true; }
+        if ((v = a('cards-breakpoint-target'))) { this.CardsBreakpointTarget = v.toLowerCase(); this._cardsAttrs = true; }
+        if ((v = a('cards-layout')))            { this.CardsLayout = v.toLowerCase(); this._cardsAttrs = true; }
+        if ((v = a('cards-field-gap')))         { this.CardsFieldGap = v; this._cardsAttrs = true; }
+        if ((v = a('cards-padding')))           { this.CardsPadding = v; this._cardsAttrs = true; }
+        if ((v = a('cards-gap')))               { this.CardsGap = v; this._cardsAttrs = true; }
+        if ((v = a('cards-label-width')))       { this.CardsLabelWidth = v; this._cardsAttrs = true; }
+        if ((v = a('cards-hide-empty')))        { this.CardsHideEmpty = (v == 'true'); this._cardsAttrs = true; }
+        if ((v = a('badges-field')))            this.BadgesField = v;
+        if ((v = a('badge-tooltip')))           this.BadgeTooltip = v.toLowerCase();
+        if ((v = a('badge-selects-row')))       this.BadgeSelectsRow = (v == 'true');
+        if ((v = a('row-class-field')))         this.RowClassField = v;
+        if ((v = a('template-encode')))         this.TemplateEncode = (v == 'true');
+        if ((v = a('native-events')))           this.NativeEvents = (v == 'true');
+        if ((v = a('locale')))                  this.Locale = v;
+        if ((v = a('keep-selection-visible')))  this.KeepSelectionVisible = (v == 'false' ? false : (v == 'if-visible' ? 'if-visible' : true));
+    }
+
+    _getExtraCss=()=>
+    {
+        return `
+                    /* ===== EditTable: decoración de filas ===== */
+                    tbody tr.et-accent > td:first-child { box-shadow: inset 3px 0 0 var(--et-row-accent); }
+                    td.et-rel .cell-content { display: none !important; }
+                    td.et-rel::after { content: attr(data-rel); white-space: nowrap; }
+                    td.et-rel:has(#__table_selector) .cell-content { display: flex !important; }
+                    td.et-rel:has(#__table_selector)::after { content: none; }
+                    table.et-cards-custom:not(.et-cards) .et-table-hidden { display: none !important; }
+
+                    /* ===== EditTable: badges ===== */
+                    .et-badge-wrap { display: flex; align-items: center; gap: var(--et-badges-gap, .4rem); width: 100%; height: 100%; min-width: 0; }
+                    .et-badge-wrap > .cell-content { flex: 1 1 auto; min-width: 0; }
+                    .et-badges { display: inline-flex; align-items: center; flex: 0 0 auto; gap: var(--et-badges-gap, .25rem); }
+                    .et-badges-overlay-start, .et-badges-overlay-end { position: absolute; top: 1px; z-index: 2; }
+                    .et-badges-overlay-start { inset-inline-start: 1px; }
+                    .et-badges-overlay-end { inset-inline-end: 1px; }
+                    .et-badges-overlay-start .et-badge, .et-badges-overlay-end .et-badge { --et-badge-size: 1.05rem; }
+                    .et-badge {
+                        box-sizing: border-box; position: relative;
+                        display: inline-flex; align-items: center; justify-content: center; gap: .2em;
+                        min-width: var(--et-badge-size, 1.5rem); height: var(--et-badge-size, 1.5rem); padding: 0 .35em;
+                        border-radius: 999px; background: var(--et-badge-bg, #8696A0); color: var(--et-badge-color, #FFF);
+                        font-size: calc(var(--et-badge-size, 1.5rem) * .46); font-weight: 600; line-height: 1;
+                        white-space: nowrap; user-select: none; overflow: hidden;
+                    }
+                    .et-badge svg { width: 62%; height: 62%; flex: 0 0 auto; }
+                    .et-badge.et-badge-img { padding: 0; }
+                    .et-badge img { width: 100%; height: 100%; object-fit: cover; }
+                    .et-badge.et-clickable { cursor: pointer; }
+                    .et-badge:focus-visible { outline: 2px solid #3D75DD; outline-offset: 1px; }
+                    .et-tooltip {
+                        position: fixed; display: none; z-index: 2147483000; pointer-events: none;
+                        max-width: 280px; padding: .3rem .55rem; border-radius: 4px;
+                        background: #1F2328; color: #FFF; font-size: .75rem; line-height: 1.3; white-space: normal;
+                    }
+
+                    /* ===== EditTable: vista de tarjetas configurable ===== */
+                    table.et-cards { display: block; border-spacing: 0; }
+                    table.et-cards thead, table.et-cards th { display: none !important; }
+                    table.et-cards tbody { display: flex; flex-direction: column; gap: var(--et-card-gap, 0px); }
+                    table.et-cards tbody tr {
+                        display: flex; flex-direction: column; position: relative; box-sizing: border-box;
+                        outline: 1px solid #DDD; padding: var(--et-card-padding, 2rem 0);
+                    }
+                    table.et-cards tbody tr.et-accent { box-shadow: inset 4px 0 0 var(--et-row-accent); }
+                    table.et-cards tbody tr.et-accent > td:first-child { box-shadow: none; }
+                    table.et-cards td {
+                        display: grid !important; grid-template-columns: var(--et-card-label-width, 35%) minmax(0, 1fr) !important;
+                        word-wrap: break-word; outline: none; height: auto;
+                        padding: var(--et-card-field-gap, 4px) 4px var(--et-card-field-gap, 4px) 1rem;
+                    }
+                    table.et-cards td::before { content: attr(data-card-label) ": "; font-weight: 600; }
+                    table.et-cards td.et-nolabel::before, table.et-cards.et-cards-nolabels td::before { content: none; }
+                    table.et-cards td.et-nolabel, table.et-cards.et-cards-nolabels td { grid-template-columns: minmax(0, 1fr) !important; }
+
+                    table.et-cards.et-layout-stacked td { grid-template-columns: minmax(0, 1fr) !important; }
+                    table.et-cards.et-layout-stacked td::before { font-size: .78em; font-weight: 500; opacity: .7; }
+
+                    table.et-cards.et-layout-slots tbody tr {
+                        display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center;
+                        column-gap: .75rem; row-gap: var(--et-card-field-gap, 2px); padding: var(--et-card-padding, .6rem .75rem);
+                    }
+                    table.et-cards.et-layout-slots td { display: block !important; padding: 0; min-width: 0; }
+                    table.et-cards.et-layout-slots td::before { content: none; }
+                    table.et-cards.et-layout-slots td.et-haslabel { display: flex !important; align-items: baseline; gap: .3em; }
+                    table.et-cards.et-layout-slots td.et-haslabel::before { content: attr(data-card-label) ":"; font-weight: 600; flex: 0 0 auto; }
+                    table.et-cards.et-layout-slots td.et-haslabel > * { min-width: 0; }
+                    table.et-cards.et-layout-slots td[data-card-slot=avatar] { grid-column: 1; grid-row: span var(--et-avatar-rows, 3); }
+                    table.et-cards.et-layout-slots td[data-card-slot=avatar] .et-badge { --et-badge-size: var(--et-avatar-size, 2.6rem); width: var(--et-badge-size); padding: 0; }
+                    table.et-cards.et-layout-slots td[data-card-slot=title],
+                    table.et-cards.et-layout-slots td[data-card-slot=subtitle],
+                    table.et-cards.et-layout-slots td[data-card-slot=body] { grid-column: 2; }
+                    table.et-cards.et-layout-slots td[data-card-slot=meta],
+                    table.et-cards.et-layout-slots td[data-card-slot=badge] { grid-column: 3; justify-self: end; text-align: end; }
+                    table.et-cards.et-layout-slots td[data-card-slot=footer] { grid-column: 1 / -1; font-size: .85em; }
+                    table.et-cards.et-layout-slots td[data-card-slot=title] { font-weight: 600; }
+                    table.et-cards.et-layout-slots td[data-card-slot=title] .cell-content,
+                    table.et-cards.et-layout-slots td[data-card-slot=subtitle] .cell-content,
+                    table.et-cards.et-layout-slots td[data-card-slot=meta] .cell-content { display: block; white-space: nowrap; text-overflow: ellipsis; }
+                    table.et-cards.et-layout-slots td[data-card-slot=meta] { font-size: .78em; opacity: .75; }
+                    table.et-cards.et-layout-slots td[data-card-slot=subtitle] { font-size: .86em; opacity: .8; }
+                    table.et-cards.et-layout-slots td[data-card-slot=meta] .cell-content,
+                    table.et-cards.et-layout-slots td[data-card-slot=badge] .cell-content { justify-content: flex-end; }
+
+                    /* Ocultamientos: al final y con especificidad de id (:not(#…)) para ganar a cualquier layout */
+                    table.et-cards tbody td.et-card-hidden:not(#__et_none),
+                    table.et-cards tbody td.et-hide-empty:not(#__et_none),
+                    table.et-cards tbody td.hidde-col:not(#__et_none) { display: none !important; }
+        `;
+    }
+
+    // ---------- Vista de tarjetas ----------
+
+    _isBadgesCol=(col)=> ((col?.type ?? '').toString().toLowerCase() == 'badges');
+
+    _getCardsInfo=()=>
+    {
+        if (this._cardsInfo && this._cardsInfo.n === this.Columns.length) return this._cardsInfo;
+
+        const keys = ['card', 'table', 'cardorder', 'cardlabel', 'cardslot', 'cardhideempty'];
+        const badgeCols = [];
+        this.Columns.forEach((c, i) => { if (this._isBadgesCol(c)) badgeCols.push(i); });
+
+        this._cardsInfo = {
+            n: this.Columns.length,
+            columnAttrs: this.Columns.some(c => c && keys.some(k => c[k] !== undefined)),
+            anyCard: this.Columns.some(c => c && c.card !== undefined),
+            badgeCols
+        };
+        return this._cardsInfo;
+    }
+
+    _usesCustomCards=()=>
+    {
+        if (this._cardsAttrs || this.CardsMode || Array.isArray(this.CardColumns)) return true;
+        if ((this.CardsLayout ?? 'grid') != 'grid' || (this.CardsBreakpoint ?? '768px') != '768px') return true;
+        if ((this.CardsBreakpointTarget ?? 'viewport') != 'viewport' || this.CardsHideEmpty) return true;
+        if (this.CardsFieldGap || this.CardsPadding || this.CardsGap || this.CardsLabelWidth) return true;
+        return this._getCardsInfo().columnAttrs;
+    }
+
+    _cardsModeValue=()=>
+    {
+        const m = (this.CardsMode ?? '').toString().toLowerCase();
+        if (m == 'auto' || m == 'always' || m == 'never') return m;
+        return (this.cardsResponsive ? 'auto' : 'never');
+    }
+
+    _cardDef=(coldef, i)=>
+    {
+        const def = { show: true, order: null, slot: null, label: null, hideEmpty: null };
+        if (!coldef) return def;
+
+        if (this._getCardsInfo().anyCard) def.show = ((coldef.card ?? '') == 'true');
+        if ((coldef.cardorder ?? '') !== '' && !isNaN(Number(coldef.cardorder))) def.order = Number(coldef.cardorder);
+        if (coldef.cardslot) def.slot = coldef.cardslot.toLowerCase();
+        if (coldef.cardlabel !== undefined) def.label = coldef.cardlabel;
+        if (coldef.cardhideempty !== undefined) def.hideEmpty = (coldef.cardhideempty == 'true');
+
+        if (Array.isArray(this.CardColumns))
+        {
+            const idx = this.CardColumns.findIndex(c => (typeof c == 'string' ? c : c?.field) == coldef.field);
+            def.show = (idx >= 0);
+            if (idx >= 0)
+            {
+                const c = this.CardColumns[idx];
+                def.order = idx;
+                if (c && typeof c == 'object')
+                {
+                    if (c.order !== undefined) def.order = Number(c.order);
+                    if (c.slot) def.slot = String(c.slot).toLowerCase();
+                    if (c.label !== undefined) def.label = c.label;
+                    if (c.hideEmpty !== undefined) def.hideEmpty = !!c.hideEmpty;
+                }
+            }
+        }
+        return def;
+    }
+
+    _applyCardsConfig=()=>
+    {
+        const t = this._table;
+        if (!t) return;
+
+        if (!this._usesCustomCards())
+        {
+            // Comportamiento original, sin cambios.
+            t.classList.toggle('table-cards', !!this._cardsEligible);
+            return;
+        }
+
+        t.classList.remove('table-cards');
+        t.classList.add('et-cards-custom');
+        const layout = (this.CardsLayout || 'grid');
+        ['grid', 'stacked', 'slots'].forEach(l => t.classList.toggle('et-layout-' + l, layout == l));
+
+        const vars = {
+            '--et-card-field-gap': this.CardsFieldGap,
+            '--et-card-padding': this.CardsPadding,
+            '--et-card-gap': this.CardsGap,
+            '--et-card-label-width': this.CardsLabelWidth
+        };
+        Object.keys(vars).forEach(k => { if (vars[k]) t.style.setProperty(k, vars[k]); else t.style.removeProperty(k); });
+
+        const lw = (this.CardsLabelWidth ?? '').toString().trim().toLowerCase();
+        t.classList.toggle('et-cards-nolabels', ['0', '0px', '0%', 'none'].includes(lw));
+
+        const headRow = t.querySelectorAll('thead tr')[this.TheadRowIndex];
+        if (headRow) headRow.querySelectorAll('th').forEach((th, i) => th.classList.toggle('et-table-hidden', ((this.Columns[i]?.table ?? '') == 'false')));
+    }
+
+    _toPx=(value)=>
+    {
+        const s = String(value ?? '').trim();
+        const n = parseFloat(s);
+        if (isNaN(n)) return 768;
+        if (/rem$/i.test(s)) return n * (parseFloat(getComputedStyle(document.documentElement).fontSize) || 16);
+        if (/em$/i.test(s)) return n * (parseFloat(getComputedStyle(this).fontSize) || 16);
+        return n;
+    }
+
+    _teardownViewWatcher=()=>
+    {
+        const w = this._viewWatch;
+        if (!w) return;
+        if (w.mq && w.fn) w.mq.removeEventListener('change', w.fn);
+        if (w.ro) w.ro.disconnect();
+        this._viewWatch = null;
+    }
+
+    _setupViewWatcher=()=>
+    {
+        this._teardownViewWatcher();
+        if (!this._table) return;
+
+        const evaluate = () => this._setCardView(this._computeCardView());
+        const custom = this._usesCustomCards();
+        const mode = this._cardsModeValue();
+        const watch = {};
+
+        if (!custom)
+        {
+            if (this._cardsEligible && window.matchMedia)
+            {
+                watch.mq = window.matchMedia('screen and (max-width: 768px)');
+                watch.fn = evaluate;
+                watch.mq.addEventListener('change', evaluate);
+            }
+        }
+        else if (mode == 'auto' && this._cardsNoEditable)
+        {
+            if ((this.CardsBreakpointTarget ?? 'viewport') == 'container' && window.ResizeObserver)
+            {
+                watch.ro = new ResizeObserver(() => evaluate());
+                watch.ro.observe(this._table.parentElement ?? this._table);
+            }
+            else if (window.matchMedia)
+            {
+                watch.mq = window.matchMedia(`screen and (max-width: ${this.CardsBreakpoint || '768px'})`);
+                watch.fn = evaluate;
+                watch.mq.addEventListener('change', evaluate);
+            }
+        }
+
+        this._viewWatch = watch;
+        this._setCardView(this._computeCardView(), !this._viewReady);
+        this._viewReady = true;
+    }
+
+    _computeCardView=()=>
+    {
+        const w = this._viewWatch ?? {};
+        if (!this._usesCustomCards())
+            return !!(this._cardsEligible && w.mq && w.mq.matches);
+
+        const mode = this._cardsModeValue();
+        if (mode == 'always') return true;
+        if (mode == 'never' || !this._cardsNoEditable) return false;
+
+        if (w.ro)
+        {
+            const box = this._table?.parentElement ?? this._table;
+            const width = box ? box.getBoundingClientRect().width : 0;
+            return (width > 0 && width <= this._toPx(this.CardsBreakpoint));
+        }
+        return !!(w.mq && w.mq.matches);
+    }
+
+    _setCardView=(value, silent=false)=>
+    {
+        value = !!value;
+        const changed = (value !== this._isCardView);
+        this._isCardView = value;
+
+        if (this._table && this._usesCustomCards()) this._table.classList.toggle('et-cards', value);
+        if (!changed) return;
+
+        this.RefreshBadges();
+        this._scheduleEnsureSelection();
+        if (value && typeof this.onCardPaint == 'function')
+            this._eachRow((tr, i, data) => this.onCardPaint(tr, i, data));
+
+        if (!silent) this._fireEvent(this.EdiTable.Const.Events.ViewModeChanged, { sender: this._getCurren(), mode: (value ? 'cards' : 'table') });
+    }
+
+    /**
+     * Vuelve a aplicar la configuración visual (tarjetas, clases, badges) después de cambiar
+     * propiedades por JS, por ejemplo: CardsMode, CardsLayout, CardColumns, RowClass o RowBadges.
+     */
+    RefreshView=()=>
+    {
+        this._cardsInfo = null;
+        this._applyCardsConfig();
+        this._setupViewWatcher();
+        this.RefreshDecorations();
+    }
+
+    // ---------- Mantener visible la fila seleccionada al redimensionar ----------
+
+    // true (predeterminado): al cambiar el ancho, si la fila seleccionada quedó fuera del área visible, se desplaza hasta ella.
+    // 'if-visible': solo si la fila era visible antes del cambio (respeta si el usuario se desplazó a otra parte).
+    // false: desactivado.
+    KeepSelectionVisible = true;
+    _selTr = null;
+    _selVisible = false;
+    _selIO = null;
+    _widthRO = null;
+    _lastWidth = -1;
+    _ensureRaf = 0;
+    _ensureWasVisible = false;
+    _keepUntil = 0;
+
+    _trackSelection=(tr)=>
+    {
+        this._selTr = tr ?? null;
+        this._selVisible = !!tr; // recién seleccionada: el usuario la está viendo
+        if (!window.IntersectionObserver) return;
+
+        if (!this._selIO)
+        {
+            // Sin raíz explícita: considera el recorte de todos los contenedores con scroll, incluidos los de la página.
+            this._selIO = new IntersectionObserver((entries) => {
+                entries.forEach(en => { if (en.target === this._selTr) this._selVisible = en.isIntersecting; });
+            });
+        }
+        this._selIO.disconnect();
+        if (tr) this._selIO.observe(tr);
+    }
+
+    _getSelectedTr=()=>
+    {
+        const ok = (tr) => !!(tr && tr.isConnected && this._table && this._table.contains(tr));
+        if (ok(this._selTr)) return this._selTr;
+
+        // La tabla se volvió a pintar (ordenamiento, recarga): buscar la selección actual
+        let tr = this._table?.querySelector('tbody tr.' + this.CSS.RowSelected) ?? null;
+        if (!ok(tr)) tr = this.CurrentTd()?.closest('tr') ?? null;
+        if (!ok(tr)) return null;
+
+        this._trackSelection(tr);
+        return tr;
+    }
+
+    _setupSelectionKeeper=()=>
+    {
+        if (this._widthRO || !window.ResizeObserver || !this._table) return;
+
+        const box = this._table.parentElement ?? this._table;
+        this._widthRO = new ResizeObserver((entries) => {
+            const w = Math.round(entries[entries.length - 1].contentRect.width);
+            if (w === this._lastWidth) return; // solo cambios de ancho; los de alto (datos nuevos) no mueven el scroll
+            const first = (this._lastWidth < 0);
+            this._lastWidth = w;
+            if (!first) this._scheduleEnsureSelection();
+        });
+        this._widthRO.observe(box);
+    }
+
+    _scheduleEnsureSelection=()=>
+    {
+        if (!this.KeepSelectionVisible) return;
+
+        // Modo 'if-visible': se evalúa con el estado anterior al cambio (el IntersectionObserver aún no lo actualiza)
+        // y durante un redimensionamiento continuo se mantiene la intención de la primera evaluación.
+        const wasVisible = (this.KeepSelectionVisible !== 'if-visible')
+            || this._selVisible || (performance.now() < this._keepUntil);
+        if (this._ensureRaf) { this._ensureWasVisible = this._ensureWasVisible || wasVisible; return; }
+
+        this._ensureWasVisible = wasVisible;
+        this._ensureRaf = requestAnimationFrame(() => {
+            this._ensureRaf = 0;
+            if (this._ensureWasVisible) this.EnsureSelectionVisible();
+        });
+    }
+
+    _composedParent=(el)=> (el.assignedSlot ?? el.parentElement ?? (el.parentNode instanceof ShadowRoot ? el.parentNode.host : null));
+
+    /** Contenedor con scroll vertical más cercano al componente (cruza el shadow DOM). Nunca la página. */
+    _getScrollContainer=(from)=>
+    {
+        const pageScroller = document.scrollingElement ?? document.documentElement;
+        let el = from;
+        while (el)
+        {
+            el = this._composedParent(el);
+            if (!el || el === document.body || el === document.documentElement || el === pageScroller) return null;
+
+            const oy = getComputedStyle(el).overflowY;
+            if ((oy == 'auto' || oy == 'scroll' || oy == 'overlay') && el.scrollHeight > el.clientHeight + 1) return el;
+        }
+        return null;
+    }
+
+    /**
+     * Si la fila seleccionada (o su tarjeta) está fuera del área visible de su contenedor con scroll,
+     * desplaza solo ese contenedor lo mínimo necesario. No mueve la página ni otros contenedores,
+     * ni el scroll horizontal.
+     * @param {{behavior?: 'auto'|'smooth'}} options
+     * @returns {boolean} true si había una fila seleccionada.
+     */
+    EnsureSelectionVisible=(options={})=>
+    {
+        const tr = this._getSelectedTr();
+        if (!tr) return false;
+
+        const firstTd = tr.querySelector('td:not(.hidde-col)');
+        const isCard = !!(firstTd && getComputedStyle(firstTd).display != 'table-cell');
+        const selTd = this.CurrentTd();
+        const target = (!isCard && selTd && tr.contains(selTd)) ? selTd : tr;
+
+        const box = this._getScrollContainer(target);
+        if (!box) return true;
+
+        // Área visible del contenedor: la suya, recortada por los contenedores superiores y la ventana
+        // (solo para medir; a ellos nunca se les mueve el scroll).
+        const b = box.getBoundingClientRect();
+        let viewTop = b.top + box.clientTop;
+        let viewBottom = viewTop + box.clientHeight;
+        let clipTop = Math.max(viewTop, 0), clipBottom = Math.min(viewBottom, window.innerHeight);
+        for (let el = this._composedParent(box); el && el !== document.documentElement; el = this._composedParent(el))
+        {
+            if (getComputedStyle(el).overflowY == 'visible') continue;
+            const a = el.getBoundingClientRect();
+            clipTop = Math.max(clipTop, a.top + el.clientTop);
+            clipBottom = Math.min(clipBottom, a.top + el.clientTop + el.clientHeight);
+        }
+        if (clipBottom - clipTop > 20) { viewTop = clipTop; viewBottom = clipBottom; } // si casi no se ve, usar el área propia
+
+        const thead = this._table.querySelector('thead');
+        const headCss = thead ? getComputedStyle(thead) : null;
+        if (headCss && headCss.display != 'none' && headCss.position == 'sticky')
+        {
+            const h = thead.getBoundingClientRect();
+            if (h.bottom > viewTop && h.top < viewTop + 2) viewTop = h.bottom; // el encabezado está pegado arriba
+        }
+
+        const r = target.getBoundingClientRect();
+        let delta = 0;
+        if (r.top < viewTop) delta = r.top - viewTop;                                         // quedó arriba
+        else if (r.bottom > viewBottom) delta = Math.min(r.bottom - viewBottom, r.top - viewTop); // quedó abajo (si no cabe, alinea arriba)
+
+        if (Math.abs(delta) >= 1) box.scrollTo({ top: box.scrollTop + delta, behavior: (options.behavior ?? 'auto') });
+
+        this._keepUntil = performance.now() + 400;
+        return true;
+    }
+
+    // ---------- Decoración de filas ----------
+
+    _eachRow=(fn)=>
+    {
+        const tbody = this._table?.querySelector('tbody');
+        if (!tbody) return;
+        Array.from(tbody.rows).forEach((tr, i) => fn(tr, i, (tr._etData ?? this.DataArray[i] ?? {})));
+    }
+
+    /** Vuelve a aplicar clases, acentos, atributos de tarjeta y badges a todas las filas. */
+    RefreshDecorations=()=>
+    {
+        this._eachRow((tr, i, data) => this._decorateRow(tr, i, data));
+    }
+
+    _splitClasses=(value)=>
+    {
+        if (!value) return [];
+        const list = Array.isArray(value) ? value : String(value).split(/\s+/);
+        return list.map(c => String(c ?? '').trim()).filter(c => c && c != this.CSS.RowSelected && c != this.CSS.Cell);
+    }
+
+    _decorateRow=(tr, idx, data)=>
+    {
+        // Un error en los hooks del desarrollador (RowClass, RowBadges, onRowPaint…) no debe interrumpir el pintado.
+        try { this._decorateRowImpl(tr, idx, data); }
+        catch (err) { console.error('EditTable: error al decorar la fila ' + idx, err); }
+    }
+
+    _decorateRowImpl=(tr, idx, data)=>
+    {
+        if (!tr) return;
+        data = data ?? {};
+        tr._etData = data;
+
+        // Clases de la fila
+        (tr._etClasses ?? []).forEach(c => tr.classList.remove(c));
+        let rowClasses = [];
+        if (this.RowClassField) rowClasses = rowClasses.concat(this._splitClasses(data[this.RowClassField]));
+        if (typeof this.RowClass == 'function') rowClasses = rowClasses.concat(this._splitClasses(this.RowClass(data, idx)));
+        rowClasses.forEach(c => tr.classList.add(c));
+        tr._etClasses = rowClasses;
+
+        // Acento de color
+        const accent = (typeof this.RowAccent == 'function') ? this.RowAccent(data, idx) : null;
+        tr.classList.toggle('et-accent', !!accent);
+        if (accent) tr.style.setProperty('--et-row-accent', String(accent));
+        else tr.style.removeProperty('--et-row-accent');
+
+        // Celdas
+        const custom = this._usesCustomCards();
+        const slots = ((this.CardsLayout || 'grid') == 'slots');
+        const ranks = { avatar: 0, title: 1, meta: 2, subtitle: 3, badge: 4, body: 5, footer: 6 };
+
+        Array.from(tr.cells).forEach((td, i) => {
+            const coldef = this.Columns[i];
+
+            (td._etClasses ?? []).forEach(c => td.classList.remove(c));
+            td._etClasses = [];
+            if (typeof this.CellClass == 'function' && coldef)
+            {
+                td._etClasses = this._splitClasses(this.CellClass(data, coldef.field, idx, coldef));
+                td._etClasses.forEach(c => td.classList.add(c));
+            }
+
+            this._applyRelative(td, coldef, data);
+
+            if (!custom || !coldef) return;
+
+            const def = this._cardDef(coldef, i);
+            const explicitLabel = (def.label !== null && def.label !== undefined);
+            const label = explicitLabel ? String(def.label) : String(coldef.title ?? '');
+            const slot = (def.slot || 'body');
+
+            td.classList.toggle('et-card-hidden', !def.show);
+            td.classList.toggle('et-table-hidden', ((coldef.table ?? '') == 'false'));
+            td.setAttribute('data-card-label', label);
+            td.setAttribute('data-card-slot', slot);
+            td.classList.toggle('et-nolabel', label.trim() == '');
+            td.classList.toggle('et-haslabel', explicitLabel && label.trim() != '');
+            td.style.order = String((slots ? (ranks[slot] ?? 5) * 1000 : 0) + (def.order ?? i));
+
+            const empty = (!this._isBadgesCol(coldef) && this._isTdEmpty(td));
+            td.classList.toggle('et-empty', empty);
+            td.classList.toggle('et-hide-empty', empty && (def.hideEmpty ?? this.CardsHideEmpty));
+        });
+
+        this._paintBadges(tr, data, idx);
+
+        if (typeof this.onRowPaint == 'function') this.onRowPaint(tr, idx, data);
+        if (this._isCardView && typeof this.onCardPaint == 'function') this.onCardPaint(tr, idx, data);
+    }
+
+    _isTdEmpty=(td)=>
+    {
+        if (td.classList.contains('et-rel')) return !(td.getAttribute('data-rel') ?? '').trim();
+        const cc = td.querySelector('div[iscellcontent=true]');
+        const node = cc ?? td;
+        if ((node.textContent ?? '').trim() != '') return false;
+        return !node.querySelector('img,svg,input,button,video,canvas,iframe');
+    }
+
+    // ---------- Fechas relativas: <edit-th format="relative"> ----------
+
+    _applyRelative=(td, coldef, data)=>
+    {
+        const on = !!(coldef && (coldef.format ?? '') == 'relative' && coldef.field);
+        const txt = on ? this._formatRelative(data?.[coldef.field]) : null;
+
+        if (txt === null || txt === '')
+        {
+            if (td.classList.contains('et-rel'))
+            {
+                td.classList.remove('et-rel');
+                td.removeAttribute('data-rel');
+                if (td._etRelTitle) { td.removeAttribute('title'); td._etRelTitle = false; }
+            }
+            return;
+        }
+
+        td.classList.add('et-rel');
+        td.setAttribute('data-rel', txt);
+        if (!td.hasAttribute('title') || td._etRelTitle) { td.title = String(data[coldef.field]); td._etRelTitle = true; }
+        if (coldef.textalign) td.style.textAlign = coldef.textalign;
+    }
+
+    _formatRelative=(raw)=>
+    {
+        if (raw === undefined || raw === null || String(raw).trim() == '') return null;
+        const s = String(raw).trim();
+        const date = new Date(/^\d{4}-\d{2}-\d{2} /.test(s) ? s.replace(' ', 'T') : s);
+        if (isNaN(date.getTime())) return null;
+
+        if (typeof this.RelativeDateFormatter == 'function') return this.RelativeDateFormatter(raw, date);
+
+        const locale = this.Locale || document.documentElement.lang || 'es-MX';
+        const now = new Date();
+        const day = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+        const diffDays = Math.round((day(now) - day(date)) / 86400000);
+
+        try
+        {
+            if (diffDays == 0) return date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
+            if (diffDays == 1)
+            {
+                const t = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(-1, 'day');
+                return t.charAt(0).toUpperCase() + t.slice(1);
+            }
+            if (diffDays > 1 && diffDays < 7)
+            {
+                const t = date.toLocaleDateString(locale, { weekday: 'long' });
+                return t.charAt(0).toUpperCase() + t.slice(1);
+            }
+            return date.toLocaleDateString(locale, { day: '2-digit', month: '2-digit', year: '2-digit' });
+        }
+        catch { return s; }
+    }
+
+    // ---------- Badges ----------
+
+    _normBadges=(value)=>
+    {
+        if (value === undefined || value === null || value === false || value === '') return [];
+        const list = Array.isArray(value) ? value : [value];
+        return list
+            .filter(b => b !== undefined && b !== null && b !== false && b !== '')
+            .map(b => (typeof b == 'object' ? b : { text: String(b) }));
+    }
+
+    _badgeKey=(data)=>
+    {
+        // Sin efectos secundarios: no inicializa TreeOptions (se lee antes de _initTreeValues).
+        const k = (this.TreeOptions && Object.keys(this.TreeOptions).length > 0) ? this.TreeOptions.key : this.Key;
+        const v = data?.[k];
+        return (v === undefined || v === null || v === '') ? null : ('k:' + v);
+    }
+
+    _getBadgeOverride=(data)=>
+    {
+        if (!this._hasBadgeOverrides) return undefined;
+        const k = this._badgeKey(data);
+        if (k && this._badgeOverrides.has(k)) return this._badgeOverrides.get(k);
+        if (data && typeof data == 'object' && this._badgeOverridesObj.has(data)) return this._badgeOverridesObj.get(data);
+        return undefined;
+    }
+
+    _setBadgeOverride=(data, list)=>
+    {
+        const k = this._badgeKey(data);
+        if (list === undefined)
+        {
+            if (k) this._badgeOverrides.delete(k);
+            if (data && typeof data == 'object') this._badgeOverridesObj.delete(data);
+            return;
+        }
+        this._hasBadgeOverrides = true;
+        if (k) this._badgeOverrides.set(k, list);
+        if (data && typeof data == 'object') this._badgeOverridesObj.set(data, list);
+    }
+
+    _effectiveBadges=(data, idx)=>
+    {
+        const o = this._getBadgeOverride(data);
+        if (o !== undefined) return this._normBadges(o);
+        if (typeof this.RowBadges == 'function') return this._normBadges(this.RowBadges(data, idx));
+        return this._normBadges(data?.[this.BadgesField]);
+    }
+
+    _rowContext=(irow)=>
+    {
+        const tr = this.GetTrByIndex(irow);
+        if (!tr) return null;
+        return { tr, data: (tr._etData ?? this.DataArray[irow] ?? {}) };
+    }
+
+    /** Reemplaza los badges de la fila (tiene precedencia sobre RowBadges y el campo reservado). */
+    SetRowBadges=(irow, badges)=>
+    {
+        const ctx = this._rowContext(irow);
+        if (!ctx) return false;
+        this._setBadgeOverride(ctx.data, this._normBadges(badges));
+        this._paintBadges(ctx.tr, ctx.data, irow);
+        return true;
+    }
+
+    /** Agrega un badge a la fila; si trae un id que ya existe, lo reemplaza. */
+    AddRowBadge=(irow, badge)=>
+    {
+        const ctx = this._rowContext(irow);
+        if (!ctx) return false;
+        const b = this._normBadges(badge)[0];
+        if (!b) return false;
+        const list = this._effectiveBadges(ctx.data, irow).slice();
+        const pos = (b.id !== undefined && b.id !== null) ? list.findIndex(x => x.id == b.id) : -1;
+        if (pos >= 0) list[pos] = b; else list.push(b);
+        this._setBadgeOverride(ctx.data, list);
+        this._paintBadges(ctx.tr, ctx.data, irow);
+        return true;
+    }
+
+    /** Elimina un badge por id, o todos los de la fila si no se indica id. */
+    RemoveRowBadge=(irow, id)=>
+    {
+        const ctx = this._rowContext(irow);
+        if (!ctx) return false;
+        const list = (id === undefined) ? [] : this._effectiveBadges(ctx.data, irow).filter(x => x.id != id);
+        this._setBadgeOverride(ctx.data, list);
+        this._paintBadges(ctx.tr, ctx.data, irow);
+        return true;
+    }
+
+    /** Descarta los cambios hechos con SetRowBadges/AddRowBadge/RemoveRowBadge y vuelve a RowBadges o al campo reservado. */
+    ResetRowBadges=(irow)=>
+    {
+        const ctx = this._rowContext(irow);
+        if (!ctx) return false;
+        this._setBadgeOverride(ctx.data, undefined);
+        this._paintBadges(ctx.tr, ctx.data, irow);
+        return true;
+    }
+
+    /** Devuelve los badges efectivos de la fila. */
+    GetRowBadges=(irow)=>
+    {
+        const ctx = this._rowContext(irow);
+        return ctx ? this._effectiveBadges(ctx.data, irow) : [];
+    }
+
+    /** Vuelve a dibujar los badges de todas las filas sin reconstruir la tabla. */
+    RefreshBadges=()=>
+    {
+        this._eachRow((tr, i, data) => this._paintBadges(tr, data, i));
+    }
+
+    _ensureBadgeWrap=(td)=>
+    {
+        let cc = td.querySelector('div[iscellcontent=true]');
+        if (!cc)
+        {
+            cc = this._createFullElement('div', { iscellcontent: 'true', class: 'cell-content' });
+            cc.innerHTML = td.innerHTML;
+            td.innerHTML = '';
+            td.appendChild(cc);
+            this._setRowSizes(cc, this.GetColumnDefOfTd(td));
+        }
+
+        const parent = cc.parentElement;
+        if (parent && parent !== td) return { wrap: parent, cc };
+
+        const wrap = this._createFullElement('div', { class: 'et-badge-wrap' });
+        td.insertBefore(wrap, cc);
+        wrap.appendChild(cc);
+        return { wrap, cc };
+    }
+
+    _paintBadges=(tr, data, idx)=>
+    {
+        if (!tr) return;
+
+        tr.querySelectorAll('.et-badges').forEach(e => e.remove());
+        tr.querySelectorAll('td.et-badge-host').forEach(td => td.classList.remove('et-badge-host'));
+
+        const list = this._effectiveBadges(data, idx);
+        if (!list.length) return;
+
+        const info = this._getCardsInfo();
+        const cells = Array.from(tr.cells);
+
+        // Columnas de tipo Badges: el desarrollador decide dónde se ven
+        if (info.badgeCols.length)
+        {
+            const groups = info.badgeCols.map(ci => ({ ci, g: (this.Columns[ci]?.badgegroup ?? '').trim() }));
+            const claimed = new Set(groups.filter(x => x.g).map(x => x.g));
+
+            groups.forEach(({ ci, g }) => {
+                const sub = list.filter(b => (g ? (b.group ?? '') == g : !claimed.has(b.group ?? '')));
+                const td = cells[ci];
+                if (!td || !sub.length) return;
+                const { wrap, cc } = this._ensureBadgeWrap(td);
+                td.classList.add('et-badge-host');
+                wrap.insertBefore(this._buildBadges(sub, 'inline'), cc);
+            });
+            return;
+        }
+
+        // Anfitrión automático: primera (o última) celda visible en la vista actual
+        const visible = (td) => !td.classList.contains('hidde-col')
+            && !(this._isCardView ? td.classList.contains('et-card-hidden') : td.classList.contains('et-table-hidden'));
+
+        const byPos = {};
+        list.forEach(b => {
+            let p = (b.position ?? 'start').toString().toLowerCase();
+            if (!['start', 'end', 'overlay-start', 'overlay-end'].includes(p)) p = 'start';
+            (byPos[p] = byPos[p] ?? []).push(b);
+        });
+
+        Object.keys(byPos).forEach(pos => {
+            const td = pos.endsWith('end') ? cells.slice().reverse().find(visible) : cells.find(visible);
+            if (!td) return;
+            const box = this._buildBadges(byPos[pos], pos);
+            td.classList.add('et-badge-host');
+
+            if (pos.startsWith('overlay')) { td.appendChild(box); return; }
+
+            const { wrap, cc } = this._ensureBadgeWrap(td);
+            if (pos == 'end') wrap.appendChild(box);
+            else wrap.insertBefore(box, cc);
+        });
+    }
+
+    _buildBadges=(list, pos)=>
+    {
+        const box = this._createFullElement('span', { class: 'et-badges et-badges-' + pos, part: 'badges' });
+        list.forEach(b => box.appendChild(this._buildBadge(b)));
+        return box;
+    }
+
+    _hasBadgeClickHandler=(b)=>
+    {
+        const ev = this.EdiTable.Const.Events.BadgeClick;
+        return !!(typeof b.onClick == 'function' || typeof this.BadgeOnClick == 'function'
+            || this.Events[ev] || this._getCurren().Events?.[ev]);
+    }
+
+    _buildBadge=(b)=>
+    {
+        const el = document.createElement('span');
+        el.className = 'et-badge';
+        this._splitClasses(b.className).forEach(c => el.classList.add(c));
+        el.setAttribute('part', 'badge');
+        if (b.id !== undefined && b.id !== null) el.setAttribute('data-badge-id', String(b.id));
+        if (b.bg) el.style.background = String(b.bg);
+        if (b.color) el.style.color = String(b.color);
+        if (b.size) el.style.setProperty('--et-badge-size', String(b.size));
+
+        const hasIcon = (b.icon !== undefined && b.icon !== null && String(b.icon) !== '');
+        const hasText = (b.text !== undefined && b.text !== null && String(b.text) !== '');
+        if (hasIcon) this._setBadgeIcon(el, String(b.icon));
+        if (hasText)
+        {
+            if (hasIcon) { const s = document.createElement('span'); s.textContent = String(b.text); el.appendChild(s); }
+            else el.textContent = String(b.text);
+        }
+
+        const tip = (b.tooltip !== undefined && b.tooltip !== null) ? String(b.tooltip) : '';
+        const custom = (this.BadgeTooltip == 'custom');
+        if (tip)
+        {
+            el.setAttribute('aria-label', tip);
+            if (custom) el.setAttribute('data-tip', tip);
+            else el.title = tip;
+        }
+
+        const clickable = this._hasBadgeClickHandler(b);
+        if (clickable)
+        {
+            el.classList.add('et-clickable');
+            el.setAttribute('role', 'button');
+            el.tabIndex = 0;
+        }
+        else if (tip && custom) el.tabIndex = 0; // para mostrar el tooltip al tocarlo en pantallas táctiles
+
+        el.addEventListener('click', (e) => this._onBadgeClick(e, b, el));
+        el.addEventListener('keydown', (e) => {
+            if ((e.key == 'Enter' || e.key == ' ') && el.classList.contains('et-clickable'))
+            {
+                e.preventDefault();
+                e.stopPropagation();
+                this._onBadgeClick(e, b, el);
+            }
+        });
+
+        if (tip && custom)
+        {
+            el.addEventListener('mouseenter', () => this._showTip(el));
+            el.addEventListener('focus', () => this._showTip(el));
+            el.addEventListener('mouseleave', () => this._hideTip());
+            el.addEventListener('blur', () => this._hideTip());
+        }
+        return el;
+    }
+
+    _setBadgeIcon=(el, icon)=>
+    {
+        const t = icon.trim();
+
+        if (/^<svg[\s>]/i.test(t))
+        {
+            // Sin xmlns el DOMParser no crea un elemento SVG real y no se dibuja.
+            const src = /\sxmlns\s*=/.test(t.slice(0, t.indexOf('>'))) ? t : t.replace(/^<svg/i, '<svg xmlns="http://www.w3.org/2000/svg"');
+            const doc = new DOMParser().parseFromString(src, 'image/svg+xml');
+            const svg = doc.documentElement;
+            if (!svg || svg.nodeName.toLowerCase() != 'svg' || doc.querySelector('parsererror')) return;
+
+            svg.querySelectorAll('script,foreignObject,iframe,animate,set').forEach(n => n.remove());
+            [svg, ...svg.querySelectorAll('*')].forEach(n => {
+                Array.from(n.attributes).forEach(a => {
+                    const name = a.name.toLowerCase();
+                    const val = (a.value ?? '').trim().toLowerCase();
+                    if (name.startsWith('on')) n.removeAttribute(a.name);
+                    else if ((name == 'href' || name == 'xlink:href') && !val.startsWith('#')) n.removeAttribute(a.name);
+                    else if (val.startsWith('javascript:')) n.removeAttribute(a.name);
+                });
+            });
+            svg.setAttribute('aria-hidden', 'true');
+            el.appendChild(document.importNode(svg, true));
+            return;
+        }
+
+        if (/^img:/i.test(t))
+        {
+            const src = t.slice(4).trim();
+            const safe = /^https?:\/\//i.test(src) || /^data:image\/(png|jpe?g|gif|webp);/i.test(src) || /^\.{0,2}\//.test(src);
+            if (!safe) return;
+            const img = document.createElement('img');
+            img.src = src;
+            img.alt = '';
+            el.classList.add('et-badge-img');
+            el.appendChild(img);
+            return;
+        }
+
+        el.textContent = t;
+    }
+
+    _onBadgeClick=(e, b, el)=>
+    {
+        if (!el.classList.contains('et-clickable')) return; // sin manejador: el clic sigue a la celda como siempre
+        e.stopPropagation();
+        this._hideTip();
+
+        const tr = el.closest('tr');
+        const td = el.closest('td');
+        const irow = this._getRowIndex(tr);
+        const row = tr?._etData ?? this.DataArray[irow];
+        const args = { sender: this._getCurren(), irow, badge: b, row, td, event: e, cancel: false };
+
+        this._fireEvent(this.EdiTable.Const.Events.BadgeClick, args);
+        if (!args.cancel)
+        {
+            if (typeof b.onClick == 'function') b.onClick(args);
+            else if (typeof this.BadgeOnClick == 'function') this.BadgeOnClick(irow, b, row, e);
+        }
+        if (this.BadgeSelectsRow && td && !args.cancel) this.CellFocus(td);
+    }
+
+    _showTip=(el)=>
+    {
+        const tip = el.getAttribute('data-tip');
+        if (!tip || !this._shadow) return;
+
+        if (!this._tipEl)
+        {
+            this._tipEl = this._createFullElement('div', { class: 'et-tooltip', role: 'tooltip', part: 'tooltip' });
+            this._shadow.appendChild(this._tipEl);
+            this._table?.parentElement?.addEventListener('scroll', () => this._hideTip(), { passive: true });
+        }
+
+        const t = this._tipEl;
+        t.textContent = tip;
+        t.style.display = 'block';
+        const r = el.getBoundingClientRect();
+        const tr = t.getBoundingClientRect();
+        let top = r.top - tr.height - 6;
+        if (top < 4) top = r.bottom + 6;
+        let left = r.left + (r.width / 2) - (tr.width / 2);
+        left = Math.max(4, Math.min(left, window.innerWidth - tr.width - 4));
+        t.style.top = top + 'px';
+        t.style.left = left + 'px';
+    }
+
+    _hideTip=()=>
+    {
+        if (this._tipEl) this._tipEl.style.display = 'none';
+    }
+
+    _fireEvent=(name, args)=>
+    {
+        const handler = this.Events[name] ?? this._getCurren().Events?.[name];
+        if (typeof handler == 'function') handler(args);
+    }
+
+    _escapeHtml=(value)=>
+    {
+        return String(value)
+            .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;').replaceAll("'", '&#39;');
+    }
+
+    _encodeRow=(row)=>
+    {
+        const out = {};
+        Object.keys(row).forEach(k => { const v = row[k]; out[k] = (typeof v == 'string') ? this._escapeHtml(v) : v; });
+        return out;
+    }
+
     hideColumn(fieldColumn,hide=true)
     {
         let th = this._table.querySelector(`thead th[field="${fieldColumn}"]`);
@@ -2811,11 +3895,19 @@ class EditTable extends HTMLElement
         }
         else this.hideColumns = this.hideColumns.filter(idx => idx != th.cellIndex);
 
+        this.RefreshBadges();
         return true;
     }
     hideColumns=[];
 
     addEventListener(type, listener) {
+        const known = Object.values(this.EdiTable.Const.Events);
+        if (typeof type == "string" && !known.includes(type.toLowerCase()))
+        {
+            // Antes se ignoraban en silencio; ahora pueden habilitarse con native-events="true".
+            if (this.NativeEvents) super.addEventListener(...arguments);
+            return;
+        }
         if (typeof type != "string" || typeof listener != "function") return;
 
         switch (type.toLowerCase()) {
@@ -2875,6 +3967,12 @@ class EditTable extends HTMLElement
                 break;
             case this.EdiTable.Const.Events.OnSort:
                 this._getCurren().Events[this.EdiTable.Const.Events.OnSort] = listener
+                break;
+            case this.EdiTable.Const.Events.BadgeClick:
+                this._getCurren().Events[this.EdiTable.Const.Events.BadgeClick] = listener
+                break;
+            case this.EdiTable.Const.Events.ViewModeChanged:
+                this._getCurren().Events[this.EdiTable.Const.Events.ViewModeChanged] = listener
                 break;
         }
     }
