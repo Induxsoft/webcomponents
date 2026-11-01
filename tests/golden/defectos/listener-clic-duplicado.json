@@ -366,19 +366,7 @@
     "errores": [],
     "consola": [],
     "extra": "@=paso-anterior",
-    "internos": {
-     "listeners": {
-      "document:DOMContentLoaded": 3,
-      "nodo:mousedown": 4,
-      "document:mousemove": 4,
-      "document:mouseup": 4,
-      "window:beforeprint": 1,
-      "window:afterprint": 1,
-      "nodo:click:remove": 72,
-      "nodo:click": 72
-     },
-     "intervalos": 1
-    }
+    "internos": "@=paso-anterior"
    }
   },
   {
@@ -472,43 +460,13 @@
        "sender": {"$sender":"t1","esElemento":false},
        "cancel": false
       }
-     },
-     {
-      "evento": "beforecellfocus",
-      "tabla": "t1",
-      "consumidor": true,
-      "args": {
-       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[1]>td[0]>div"}},
-       "sender": {"$sender":"t1","esElemento":false},
-       "cancel": false
-      }
-     },
-     {
-      "evento": "beforecellfocus",
-      "tabla": "t1",
-      "consumidor": true,
-      "args": {
-       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[1]>td[0]>div"}},
-       "sender": {"$sender":"t1","esElemento":false},
-       "cancel": false
-      }
-     },
-     {
-      "evento": "beforecellfocus",
-      "tabla": "t1",
-      "consumidor": true,
-      "args": {
-       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[1]>td[0]>div"}},
-       "sender": {"$sender":"t1","esElemento":false},
-       "cancel": false
-      }
      }
     ],
     "callbacks": [],
     "callbacksTruncados": 0,
     "errores": [],
     "consola": [],
-    "extra": {"valor":{"beforeCellFocus":4}},
+    "extra": {"valor":{"beforeCellFocus":1}},
     "internos": {
      "listeners": {
       "document:DOMContentLoaded": 3,
@@ -517,10 +475,10 @@
       "document:mouseup": 4,
       "window:beforeprint": 1,
       "window:afterprint": 1,
-      "nodo:click:remove": 76,
-      "nodo:click": 76,
-      "nodo:keydown:remove": 4,
-      "nodo:keydown": 4
+      "nodo:click:remove": 1,
+      "nodo:click": 1,
+      "nodo:keydown:remove": 1,
+      "nodo:keydown": 1
      },
      "intervalos": 1
     }
@@ -630,36 +588,6 @@
        "sender": {"$sender":"t1","esElemento":false},
        "cancel": false
       }
-     },
-     {
-      "evento": "beforecellfocus",
-      "tabla": "t1",
-      "consumidor": true,
-      "args": {
-       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]>div"}},
-       "sender": {"$sender":"t1","esElemento":false},
-       "cancel": false
-      }
-     },
-     {
-      "evento": "beforecellfocus",
-      "tabla": "t1",
-      "consumidor": true,
-      "args": {
-       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]>div"}},
-       "sender": {"$sender":"t1","esElemento":false},
-       "cancel": false
-      }
-     },
-     {
-      "evento": "beforecellfocus",
-      "tabla": "t1",
-      "consumidor": true,
-      "args": {
-       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]>div"}},
-       "sender": {"$sender":"t1","esElemento":false},
-       "cancel": false
-      }
      }
     ],
     "callbacks": [],
@@ -675,10 +603,10 @@
       "document:mouseup": 4,
       "window:beforeprint": 1,
       "window:afterprint": 1,
-      "nodo:click:remove": 80,
-      "nodo:click": 80,
-      "nodo:keydown:remove": 8,
-      "nodo:keydown": 8
+      "nodo:click:remove": 2,
+      "nodo:click": 2,
+      "nodo:keydown:remove": 2,
+      "nodo:keydown": 2
      },
      "intervalos": 1
     }

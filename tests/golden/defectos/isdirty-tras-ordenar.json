@@ -323,7 +323,7 @@
         "title": "Precio"
        }
       ],
-      "respaldo": "@=paso-anterior",
+      "respaldo": [{"id":1,"nombre":"a"},{"id":2,"nombre":"b"},{"id":3,"nombre":"c","isDirty":true}],
       "props": {"$parche":[[14,1,["TreeOptions = {\"key\":\"id\",\"parentkey\":\"idp\",\"childs\":\"__items\"}"]]]},
       "estilos": {
        "$parche": [
@@ -418,7 +418,7 @@
     "callbacksTruncados": 0,
     "errores": [],
     "consola": [],
-    "extra": {"valor":{"a":[true,false],"b":[[1,true],[2,false],[3,false]]}},
+    "extra": {"valor":{"a":[true,false],"b":[[1,false],[2,false],[3,true]]}},
     "internos": "@=paso-anterior"
    }
   }

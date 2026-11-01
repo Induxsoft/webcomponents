@@ -352,7 +352,7 @@
          38,
          3,
          [
-          "      <input type=\"number\" id=\"__table_input\" class=\"Editable-Input-Number\" {value=\"\" foco}></input>"
+          "      <input type=\"number\" id=\"__table_input\" class=\"Editable-Input-Number\" step=\"any\" {value=\"\" foco}></input>"
          ]
         ]
        ]
@@ -477,7 +477,7 @@
          38,
          1,
          [
-          "      <input type=\"number\" id=\"__table_input\" class=\"Editable-Input-Number\" {value=\"1e3\" foco}></input>"
+          "      <input type=\"number\" id=\"__table_input\" class=\"Editable-Input-Number\" step=\"any\" {value=\"1e3\" foco}></input>"
          ]
         ]
        ]
@@ -675,7 +675,7 @@
          38,
          1,
          [
-          "      <input type=\"number\" id=\"__table_input\" class=\"Editable-Input-Number\" {value=\"1000.000\" foco}></input>"
+          "      <input type=\"number\" id=\"__table_input\" class=\"Editable-Input-Number\" step=\"any\" {value=\"1000.000\" foco}></input>"
          ]
         ],
         [43,3,["      \"texto\""]]
@@ -741,7 +741,10 @@
       "evento": "leavecell",
       "tabla": "t1",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"t1","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[2]","texto":"texto"}},
+       "sender": {"$sender":"t1","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -951,7 +954,7 @@
          1,
          [
           "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
-          "      <input type=\"number\" id=\"__table_input\" class=\"Editable-Input-Number\" {value=\"\" foco}></input>",
+          "      <input type=\"number\" id=\"__table_input\" class=\"Editable-Input-Number\" step=\"any\" {value=\"\" foco}></input>",
           "     </div>"
          ]
         ]
@@ -1010,7 +1013,10 @@
       "evento": "leavecell",
       "tabla": "t1",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"t1","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]","texto":"1000.000"}},
+       "sender": {"$sender":"t1","esElemento":false}
+      }
      },
      {
       "evento": "entercell",

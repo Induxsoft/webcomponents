@@ -362,18 +362,18 @@
        {"id":3,"nombre":"Producto de prueba 3","cantidad":2,"precio":12.1},
        {"id":4,"nombre":"Producto de prueba 4","cantidad":9,"precio":17.7}
       ],
-      "props": "@=paso-anterior",
+      "props": {"$parche":[[0,1,["IsDirty = false"]],[37,1,["_count_isdirty = 0"]]]},
       "estilos": "@=paso-anterior"
      }
     ],
     "luz": "@=paso-anterior",
     "foco": "@=paso-anterior",
-    "eventos": [],
+    "eventos": [{"evento":"isdirtychanged","tabla":"t1","consumidor":false}],
     "callbacks": [],
     "callbacksTruncados": 0,
     "errores": [],
     "consola": [],
-    "extra": {"valor":{"a":true,"b":[true,1]}},
+    "extra": {"valor":{"a":true,"b":[false,0]}},
     "internos": "@=paso-anterior"
    }
   },
@@ -391,25 +391,27 @@
       "datos": "@=paso-anterior",
       "columnas": "@=paso-anterior",
       "respaldo": "@=paso-anterior",
-      "props": {"$parche":[[37,1,["_count_isdirty = 2"]]]},
+      "props": "@=paso-anterior",
       "estilos": "@=paso-anterior"
      }
     ],
     "luz": "@=paso-anterior",
     "foco": "@=paso-anterior",
     "eventos": [
+     {"evento":"isdirtychanged","tabla":"t1","consumidor":false},
      {
       "evento": "fieldupdated",
       "tabla": "t1",
       "consumidor": false,
       "args": {"sender":{"$sender":"t1","esElemento":false},"row":1,"field":"nombre","value":"OTRO"}
-     }
+     },
+     {"evento":"isdirtychanged","tabla":"t1","consumidor":false}
     ],
     "callbacks": [],
     "callbacksTruncados": 0,
     "errores": [],
     "consola": [],
-    "extra": {"valor":{"a":true,"b":[true,1],"c":[true,2]}},
+    "extra": {"valor":{"a":true,"b":[false,0],"c":[false,0]}},
     "internos": "@=paso-anterior"
    }
   }

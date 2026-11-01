@@ -15,9 +15,9 @@
 | `presentacion/` | 15 | Encabezado fijo, ancho de columnas, orden por encabezado, control-styles y atributos visuales. |
 | `impresion/` | 4 | beforeprint/afterprint, @media print y PDF. |
 | `v12/` | 17 | Lo que genera uie.dbeditable y lo que hacen list.dk, la impresión y la exportación CSV de V12. |
-| `defectos/` | 20 | Defectos conocidos congelados como comportamiento actual (etiqueta defecto-conocido). |
+| `defectos/` | 29 | Defectos conocidos congelados como comportamiento actual (etiqueta defecto-conocido). |
 | `rendimiento/` | 6 | Mediciones (no se comparan byte a byte; solo con --rendimiento). |
-| **total** | **222** | |
+| **total** | **231** | |
 
 «Pasos» cuenta las fotos: la inicial más una por paso.
 
@@ -294,12 +294,21 @@ Lo que genera uie.dbeditable y lo que hacen list.dk, la impresión y la exportac
 | `v12/tarjetas-angosta` | Lista de V12 en pantalla angosta (cards-responsive con todas NoEditable: table-cards)<br><sub>600×800</sub> | Induxsoft/v12 src/uielements.v12.dkl:41-323 (línea 82) | 4 |
 | `v12/impresion-media-print` | Lista de V12 con @media print del control-styles y beforeprint (no-print, hide-on-print) | Induxsoft/v12 src/uielements.v12.dkl:41-323 (líneas 85-90) | 3 |
 
-## defectos/ (20)
+## defectos/ (29)
 
 Defectos conocidos congelados como comportamiento actual (etiqueta defecto-conocido).
 
 | Escenario | Qué congela | Origen | Pasos |
 |---|---|---|---|
+| `defectos/c13-number-step-any` | C13: el editor nativo de Number lleva step="any" y un decimal no lo deja :invalid **[correccion-f1]**<br><sub>registro: consumer</sub> | spec §1.1 C13; editable.js StartEdit | 4 |
+| `defectos/c15-number-badinput` | C15: con badInput (1-2) no se confirma, sigue en edición y se dispara MaskInvalid reason:badInput **[correccion-f1]**<br><sub>registro: consumer</sub> | spec §1.1 C15; editable.js ConfirmEdit | 5 |
+| `defectos/c17-date-sin-cambio` | C17: Date con 2026-02-01 10:30:00, 01/02/2026 y …T00:00:00.000Z: confirmar sin cambiar no toca DataArray ni dispara eventos **[correccion-f1]**<br><sub>registro: consumer</sub> | spec §1.1 C17 (casos verificados) | 4 |
+| `defectos/c17-datetime-sin-cambio` | C17: DateTime con segundos y con Z: confirmar sin cambiar no reescribe el formato ni pierde los segundos **[correccion-f1]**<br><sub>registro: consumer</sub> | spec §1.1 C17 (casos verificados) | 4 |
+| `defectos/c17-number-text-sin-cambio` | C17: Number (número 12.5 y con formato) y Text: confirmar sin cambiar conserva valor y tipo, sin FieldUpdated ni IsDirtyChanged; un cambio real sí se guarda **[correccion-f1]**<br><sub>registro: consumer</sub> | spec §1.1 C17 | 6 |
+| `defectos/c18-editor-fecha` | C18: el editor nativo de Date y DateTime recibe el valor normalizado (espacio, segundos, Z u offset); 01/02/2026 abre vacío **[correccion-f1]**<br><sub>registro: consumer</sub> | spec §1.1 C18 | 8 |
+| `defectos/c21-sorttree-nietos` | C21: ordenar en árbol ordena también a los nietos (una raíz con un solo hijo y dos nietos desordenados) **[correccion-f1]** | spec §13 C21; editable.js SortTree | 3 |
+| `defectos/click-propagation-sin-atributo` | P37: sin click-propagation el clic de la celda no llega a la fila ni al documento (igual que 0ed1824) **[correccion-f1]**<br><sub>registro: consumer</sub> | spec §13 P37; editable.js Initialize/InsertRow | 4 |
+| `defectos/click-propagation-true` | P37: con click-propagation="true" el clic llega a la fila y al documento después de procesarlo el componente **[correccion-f1]**<br><sub>registro: consumer</sub> | spec §13 P37 | 4 |
 | `defectos/listener-clic-duplicado` | Cada InsertRow agrega otro listener de clic a todas las celdas (3 inserciones: BeforeCellFocus x4) **[defecto-conocido]**<br><sub>registro: consumer</sub> | editable.js:1543-1551; contrato §4 #5 (verificado) | 4 |
 | `defectos/ctrl-c-edita` | Ctrl+C sobre el selector empieza a editar con la letra «c» **[defecto-conocido]** | editable.js:1038-1044; plan D1 | 4 |
 | `defectos/navtoend` | NavToEnd (y Ctrl+Fin) no hace nada: busca thead tr td **[defecto-conocido]** | editable.js:1280-1283 | 3 |

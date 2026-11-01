@@ -334,64 +334,13 @@
       "id": "t1",
       "inicializada": "@=paso-anterior",
       "modoShadowPedido": "@=paso-anterior",
-      "dom": {
-       "$parche": [
-        [9,1,["    <th field=\"id\" class=\"no-print\">"]],
-        [25,1,["    <td class=\"EdiTable-Cell\" data-cell=\"Id\">"]],
-        [37,1,["    <td class=\"EdiTable-Cell\" data-cell=\"Id\">"]],
-        [49,1,["    <td class=\"EdiTable-Cell\" data-cell=\"Id\">"]],
-        [61,1,["    <td class=\"EdiTable-Cell\" data-cell=\"Id\">"]]
-       ]
-      },
+      "dom": "@=paso-anterior",
       "shadowEsElGuardado": "@=paso-anterior",
       "datos": "@=paso-anterior",
       "columnas": "@=paso-anterior",
       "respaldo": "@=paso-anterior",
-      "props": {"$parche":[[29,1,["hideColumns = []"]]]},
-      "estilos": {
-       "$parche": [
-        [
-         4,
-         2,
-         [
-          "th[0] = display:table-cell;position:relative;width:125px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "th[1] = display:table-cell;position:relative;width:808px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
-         ]
-        ],
-        [
-         7,
-         2,
-         [
-          "tr[0].td[0] = display:table-cell;position:relative;width:133px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[0].td[1] = display:table-cell;position:relative;width:816px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
-         ]
-        ],
-        [
-         10,
-         2,
-         [
-          "tr[1].td[0] = display:table-cell;position:relative;width:133px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[1].td[1] = display:table-cell;position:relative;width:816px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
-         ]
-        ],
-        [
-         13,
-         2,
-         [
-          "tr[2].td[0] = display:table-cell;position:relative;width:133px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[2].td[1] = display:table-cell;position:relative;width:816px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
-         ]
-        ],
-        [
-         16,
-         2,
-         [
-          "tr[3].td[0] = display:table-cell;position:relative;width:133px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[3].td[1] = display:table-cell;position:relative;width:816px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
-         ]
-        ]
-       ]
-      }
+      "props": "@=paso-anterior",
+      "estilos": "@=paso-anterior"
      }
     ],
     "luz": "@=paso-anterior",

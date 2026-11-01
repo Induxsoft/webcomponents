@@ -908,7 +908,10 @@
       "evento": "leavecell",
       "tabla": "t1",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"t1","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[2]","texto":"1"}},
+       "sender": {"$sender":"t1","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -995,7 +998,10 @@
       "evento": "leavecell",
       "tabla": "t1",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"t1","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[5]>td[3]","texto":"$28.80"}},
+       "sender": {"$sender":"t1","esElemento":false}
+      }
      }
     ],
     "callbacks": [],
@@ -1088,7 +1094,10 @@
       "evento": "leavecell",
       "tabla": "t1",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"t1","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[12]>td[3]","texto":"$67.60"}},
+       "sender": {"$sender":"t1","esElemento":false}
+      }
      }
     ],
     "callbacks": [],

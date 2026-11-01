@@ -727,7 +727,10 @@
       "evento": "leavecell",
       "tabla": "t1",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"t1","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[1]>td[0]","texto":"2"}},
+       "sender": {"$sender":"t1","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -810,12 +813,6 @@
        "coldef": {"field":"nombre","type":"Text","title":"Nombre"},
        "cancel": false
       }
-     },
-     {
-      "evento": "fieldupdated",
-      "tabla": "t1",
-      "consumidor": false,
-      "args": {"sender":{"$sender":"t1","esElemento":false},"row":1,"field":"nombre","value":"Producto de prueba 2X"}
      },
      {
       "evento": "entercell",

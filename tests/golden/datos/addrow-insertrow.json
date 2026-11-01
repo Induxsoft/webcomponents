@@ -459,8 +459,8 @@
       "document:mouseup": 4,
       "window:beforeprint": 1,
       "window:afterprint": 1,
-      "nodo:click:remove": 25,
-      "nodo:click": 25,
+      "nodo:click:remove": 1,
+      "nodo:click": 1,
       "nodo:keydown:remove": 1,
       "nodo:keydown": 1
      },
@@ -578,7 +578,10 @@
       "evento": "leavecell",
       "tabla": "t1",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"t1","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[6]>td[0]","texto":""}},
+       "sender": {"$sender":"t1","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -625,8 +628,8 @@
       "document:mouseup": 4,
       "window:beforeprint": 1,
       "window:afterprint": 1,
-      "nodo:click:remove": 54,
-      "nodo:click": 54,
+      "nodo:click:remove": 2,
+      "nodo:click": 2,
       "nodo:keydown:remove": 2,
       "nodo:keydown": 2
      },
@@ -735,21 +738,7 @@
     "errores": [],
     "consola": [],
     "extra": {"valor":{"AddRow":"[undefined]","InsertRow1":"[undefined]","InsertRow0nofocus":"[undefined]"}},
-    "internos": {
-     "listeners": {
-      "document:DOMContentLoaded": 2,
-      "nodo:mousedown": 4,
-      "document:mousemove": 4,
-      "document:mouseup": 4,
-      "window:beforeprint": 1,
-      "window:afterprint": 1,
-      "nodo:click:remove": 86,
-      "nodo:click": 86,
-      "nodo:keydown:remove": 2,
-      "nodo:keydown": 2
-     },
-     "intervalos": 1
-    }
+    "internos": "@=paso-anterior"
    }
   },
   {
@@ -895,7 +884,10 @@
       "evento": "leavecell",
       "tabla": "t1",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"t1","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[2]>td[0]","texto":""}},
+       "sender": {"$sender":"t1","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -932,8 +924,8 @@
       "document:mouseup": 4,
       "window:beforeprint": 1,
       "window:afterprint": 1,
-      "nodo:click:remove": 87,
-      "nodo:click": 87,
+      "nodo:click:remove": 3,
+      "nodo:click": 3,
       "nodo:keydown:remove": 3,
       "nodo:keydown": 3
      },

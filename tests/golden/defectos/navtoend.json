@@ -302,13 +302,14 @@
       "modoShadowPedido": "@=paso-anterior",
       "dom": {
        "$parche": [
-        [36,1,["   <tr class=\"EdiTable-Row-Selected\">"]],
+        [36,1,["   <tr class=\"\">"]],
+        [102,1,["   <tr class=\"EdiTable-Row-Selected\">"]],
         [
-         39,
+         105,
          1,
          [
           "      <div id=\"__table_selector\" class=\"EdiTable-Selector\" tabindex=\"0\" {foco}>",
-          "       \"1\"",
+          "       \"4\"",
           "      </div>"
          ]
         ]
@@ -320,13 +321,13 @@
       "respaldo": "@=paso-anterior",
       "props": {
        "$parche": [
-        [38,1,["_current_row = 0"]],
-        [50,2,["CurrentRowIndex() = 0","CurrentColIndex() = 0"]],
+        [38,1,["_current_row = 3"]],
+        [50,2,["CurrentRowIndex() = 3","CurrentColIndex() = 0"]],
         [
          55,
          2,
          [
-          "CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(t1)>div>table#t1>tbody>tr[0]>td[0]\",\"texto\":\"1\"}}",
+          "CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(t1)>div>table#t1>tbody>tr[3]>td[0]\",\"texto\":\"4\"}}",
           "focusedTable==_getCurren() = true"
          ]
         ]
@@ -335,20 +336,14 @@
       "estilos": {
        "$parche": [
         [
-         8,
+         23,
          5,
          [
-          "tr[0] = display:table-row;position:relative;width:966px;height:30px;color:rgb(255, 255, 255);background-color:rgb(61, 117, 221);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[0].td[0] = display:table-cell;position:relative;width:74px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[0].td[1] = display:table-cell;position:relative;width:470px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[0].td[2] = display:table-cell;position:relative;width:225px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[0].td[3] = display:table-cell;position:relative;width:163px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
-         ]
-        ],
-        [
-         28,
-         0,
-         [
+          "tr[3] = display:table-row;position:relative;width:966px;height:30px;color:rgb(255, 255, 255);background-color:rgb(61, 117, 221);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[3].td[0] = display:table-cell;position:relative;width:74px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[3].td[1] = display:table-cell;position:relative;width:470px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[3].td[2] = display:table-cell;position:relative;width:225px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[3].td[3] = display:table-cell;position:relative;width:163px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "selector = display:flex;position:static;width:72px;height:22px;color:rgb(0, 0, 0);background-color:rgba(255, 255, 255, 0.7);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
          ]
         ]
@@ -370,7 +365,7 @@
     },
     "foco": {
      "documento": {"ruta":"body>edit-table#t1"},
-     "shadow": {"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[0]>div>div#__table_selector"}
+     "shadow": {"ruta":"shadow(t1)>div>table#t1>tbody>tr[3]>td[0]>div>div#__table_selector"}
     },
     "eventos": [
      {
@@ -403,13 +398,53 @@
        "index": 0,
        "previous_index": -1
       }
+     },
+     {
+      "evento": "beforecellfocus",
+      "tabla": "t1",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[3]>td[0]","texto":"4"}},
+       "sender": {"$sender":"t1","esElemento":false},
+       "cancel": false
+      }
+     },
+     {
+      "evento": "leavecell",
+      "tabla": "t1",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[0]","texto":"1"}},
+       "sender": {"$sender":"t1","esElemento":false}
+      }
+     },
+     {
+      "evento": "entercell",
+      "tabla": "t1",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[3]>td[0]","texto":"4"}},
+       "sender": {"$sender":"t1","esElemento":false}
+      }
+     },
+     {
+      "evento": "rowchanged",
+      "tabla": "t1",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[3]>td[0]","texto":"4"}},
+       "sender": {"$sender":"t1","esElemento":false},
+       "cancel": false,
+       "index": 3,
+       "previous_index": 0
+      }
      }
     ],
     "callbacks": [],
     "callbacksTruncados": 0,
     "errores": [],
     "consola": [],
-    "extra": {"valor":{"a":[0,0]}},
+    "extra": {"valor":{"a":[3,0]}},
     "internos": {
      "listeners": {
       "document:DOMContentLoaded": 2,
@@ -418,10 +453,10 @@
       "document:mouseup": 4,
       "window:beforeprint": 1,
       "window:afterprint": 1,
-      "nodo:click:remove": 1,
-      "nodo:click": 1,
-      "nodo:keydown:remove": 1,
-      "nodo:keydown": 1
+      "nodo:click:remove": 2,
+      "nodo:click": 2,
+      "nodo:keydown:remove": 2,
+      "nodo:keydown": 2
      },
      "intervalos": 1
     }
@@ -447,13 +482,56 @@
     ],
     "luz": "@=paso-anterior",
     "foco": "@=paso-anterior",
-    "eventos": [],
+    "eventos": [
+     {
+      "evento": "beforecellfocus",
+      "tabla": "t1",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[3]>td[0]","texto":"4"}},
+       "sender": {"$sender":"t1","esElemento":false},
+       "cancel": false
+      }
+     },
+     {
+      "evento": "leavecell",
+      "tabla": "t1",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[3]>td[0]","texto":"4"}},
+       "sender": {"$sender":"t1","esElemento":false}
+      }
+     },
+     {
+      "evento": "entercell",
+      "tabla": "t1",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[3]>td[0]","texto":"4"}},
+       "sender": {"$sender":"t1","esElemento":false}
+      }
+     }
+    ],
     "callbacks": [],
     "callbacksTruncados": 0,
     "errores": [],
     "consola": [],
     "extra": "@=paso-anterior",
-    "internos": "@=paso-anterior"
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 2,
+      "nodo:mousedown": 4,
+      "document:mousemove": 4,
+      "document:mouseup": 4,
+      "window:beforeprint": 1,
+      "window:afterprint": 1,
+      "nodo:click:remove": 3,
+      "nodo:click": 3,
+      "nodo:keydown:remove": 3,
+      "nodo:keydown": 3
+     },
+     "intervalos": 1
+    }
    }
   }
  ]

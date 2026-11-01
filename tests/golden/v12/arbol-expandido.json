@@ -738,7 +738,10 @@
       "evento": "leavecell",
       "tabla": "tbl_arbol",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"tbl_arbol","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_arbol)>div>table#tbl_arbol>tbody>tr#3[2]>td[1]","texto":"Elemento A1a"}},
+       "sender": {"$sender":"tbl_arbol","esElemento":false}
+      }
      },
      {
       "evento": "entercell",

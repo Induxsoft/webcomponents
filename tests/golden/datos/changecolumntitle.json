@@ -326,7 +326,20 @@
       "dom": {"$parche":[[17,1,["      \"Descripción\""]]]},
       "shadowEsElGuardado": "@=paso-anterior",
       "datos": "@=paso-anterior",
-      "columnas": "@=paso-anterior",
+      "columnas": [
+       {"field":"id","type":"NoEditable","title":"Id"},
+       {"field":"nombre","type":"Text","title":"Descripción"},
+       {"field":"cantidad","type":"Number","title":"Cantidad"},
+       {
+        "field": "precio",
+        "type": "Number",
+        "format": "true",
+        "decs": "2",
+        "thousandssep": "true",
+        "prefix": "$",
+        "title": "Precio"
+       }
+      ],
       "respaldo": "@=paso-anterior",
       "props": "@=paso-anterior",
       "estilos": "@=paso-anterior"
@@ -339,7 +352,7 @@
     "callbacksTruncados": 0,
     "errores": [],
     "consola": [],
-    "extra": {"valor":{"a":[true,false,"Nombre"]}},
+    "extra": {"valor":{"a":[true,false,"Descripción"]}},
     "internos": "@=paso-anterior"
    }
   }

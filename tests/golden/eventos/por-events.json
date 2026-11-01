@@ -865,7 +865,10 @@
       "evento": "leavecell",
       "tabla": "t1",
       "consumidor": true,
-      "args": {"td":null,"sender":{"$sender":"t1","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[2]","texto":"1"}},
+       "sender": {"$sender":"t1","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -1010,7 +1013,10 @@
       "evento": "leavecell",
       "tabla": "t1",
       "consumidor": true,
-      "args": {"td":null,"sender":{"$sender":"t1","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[1]>td[2]","texto":"8"}},
+       "sender": {"$sender":"t1","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -1057,8 +1063,8 @@
       "document:mouseup": 4,
       "window:beforeprint": 1,
       "window:afterprint": 1,
-      "nodo:click:remove": 25,
-      "nodo:click": 27,
+      "nodo:click:remove": 5,
+      "nodo:click": 7,
       "nodo:keydown:remove": 5,
       "nodo:keydown": 7
      },
@@ -1273,31 +1279,6 @@
       }
      },
      {
-      "evento": "beforecellfocus",
-      "tabla": "t1",
-      "consumidor": true,
-      "args": {
-       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[1]>td[2]>div"}},
-       "sender": {"$sender":"t1","esElemento":false},
-       "cancel": false
-      }
-     },
-     {
-      "evento": "leavecell",
-      "tabla": "t1",
-      "consumidor": true,
-      "args": {"td":null,"sender":{"$sender":"t1","esElemento":false}}
-     },
-     {
-      "evento": "entercell",
-      "tabla": "t1",
-      "consumidor": true,
-      "args": {
-       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[1]>td[2]","texto":"8"}},
-       "sender": {"$sender":"t1","esElemento":false}
-      }
-     },
-     {
       "evento": "startedition",
       "tabla": "t1",
       "consumidor": true,
@@ -1394,9 +1375,6 @@
       "BeforeCellFocus",
       "EnterCell",
       "RowChanged:4->1",
-      "BeforeCellFocus",
-      "LeaveCell",
-      "EnterCell",
       "StartEdition",
       "InputCreated",
       "BeforeSetInput",
@@ -1416,10 +1394,10 @@
       "document:mouseup": 4,
       "window:beforeprint": 1,
       "window:afterprint": 1,
-      "nodo:click:remove": 28,
-      "nodo:click": 31,
-      "nodo:keydown:remove": 8,
-      "nodo:keydown": 11
+      "nodo:click:remove": 7,
+      "nodo:click": 10,
+      "nodo:keydown:remove": 7,
+      "nodo:keydown": 10
      },
      "intervalos": 1
     }

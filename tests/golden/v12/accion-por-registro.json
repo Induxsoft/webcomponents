@@ -2798,7 +2798,10 @@
       "evento": "leavecell",
       "tabla": "tbl_acc",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"tbl_acc","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_acc)>div>table#tbl_acc>tbody>tr[7]>td[2]","texto":"Registro de prueba 4"}},
+       "sender": {"$sender":"tbl_acc","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -2947,7 +2950,10 @@
       "evento": "leavecell",
       "tabla": "tbl_acc",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"tbl_acc","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_acc)>div>table#tbl_acc>tbody>tr[17]>td[2]","texto":"Registro de prueba 14"}},
+       "sender": {"$sender":"tbl_acc","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -3073,7 +3079,10 @@
       "evento": "leavecell",
       "tabla": "tbl_acc",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"tbl_acc","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_acc)>div>table#tbl_acc>tbody>tr[2]>td[1]","texto":"PRB-037"}},
+       "sender": {"$sender":"tbl_acc","esElemento":false}
+      }
      },
      {
       "evento": "entercell",

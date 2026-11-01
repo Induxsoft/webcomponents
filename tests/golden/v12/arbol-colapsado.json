@@ -602,7 +602,10 @@
       "evento": "leavecell",
       "tabla": "tbl_arbol",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"tbl_arbol","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_arbol)>div>table#tbl_arbol>tbody>tr#5[4]>td[1]","texto":"Grupo B"}},
+       "sender": {"$sender":"tbl_arbol","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -842,7 +845,10 @@
       "evento": "leavecell",
       "tabla": "tbl_arbol",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"tbl_arbol","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_arbol)>div>table#tbl_arbol>tbody>tr#7[6]>td[1]","texto":"Grupo C"}},
+       "sender": {"$sender":"tbl_arbol","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -968,7 +974,10 @@
       "evento": "leavecell",
       "tabla": "tbl_arbol",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"tbl_arbol","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_arbol)>div>table#tbl_arbol>tbody>tr#4[3]>td[1]","texto":"Subgrupo A2"}},
+       "sender": {"$sender":"tbl_arbol","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -1005,7 +1014,10 @@
       "evento": "leavecell",
       "tabla": "tbl_arbol",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"tbl_arbol","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_arbol)>div>table#tbl_arbol>tbody>tr#2[1]>td[1]","texto":"Subgrupo A1"}},
+       "sender": {"$sender":"tbl_arbol","esElemento":false}
+      }
      },
      {
       "evento": "entercell",

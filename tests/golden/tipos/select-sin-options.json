@@ -451,11 +451,7 @@
       "modoShadowPedido": "@=paso-anterior",
       "dom": {
        "$parche": [
-        [
-         37,
-         3,
-         ["     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>"]
-        ],
+        [38,1,["      \"x\""]],
         [
          43,
          1,
@@ -468,7 +464,7 @@
        ]
       },
       "shadowEsElGuardado": "@=paso-anterior",
-      "datos": [{"id":1,"campo":"","otro":"texto"},{"id":2,"campo":"x","otro":"otra"}],
+      "datos": "@=paso-anterior",
       "columnas": "@=paso-anterior",
       "respaldo": "@=paso-anterior",
       "props": {
@@ -556,12 +552,6 @@
       }
      },
      {
-      "evento": "fieldupdated",
-      "tabla": "t1",
-      "consumidor": false,
-      "args": {"sender":{"$sender":"t1","esElemento":false},"row":0,"field":"campo","value":""}
-     },
-     {
       "evento": "entercell",
       "tabla": "t1",
       "consumidor": false,
@@ -604,15 +594,13 @@
       "dom": {
        "$parche": [
         [
-         37,
+         38,
          1,
          [
-          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
-          "      <select id=\"__table_input\" class=\"Editable-Input-Select\" {value=\"\" selectedIndex=-1 foco}></select>",
-          "     </div>"
+          "      <select id=\"__table_input\" class=\"Editable-Input-Select\" {value=\"\" selectedIndex=-1 foco}></select>"
          ]
         ],
-        [41,3,["      \"texto\""]]
+        [43,3,["      \"texto\""]]
        ]
       },
       "shadowEsElGuardado": "@=paso-anterior",
@@ -622,7 +610,6 @@
       "props": {
        "$parche": [
         [1,1,["Editing = true"]],
-        [49,1,["temp_html = \"\""]],
         [51,1,["CurrentColIndex() = 1"]],
         [55,1,["CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]\",\"texto\":\"\"}}"]]
        ]
@@ -669,7 +656,7 @@
       "tabla": "t1",
       "consumidor": false,
       "args": {
-       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]","texto":""}},
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]","texto":"x"}},
        "sender": {"$sender":"t1","esElemento":false},
        "cancel": false
       }
@@ -678,14 +665,17 @@
       "evento": "leavecell",
       "tabla": "t1",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"t1","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[2]","texto":"texto"}},
+       "sender": {"$sender":"t1","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
       "tabla": "t1",
       "consumidor": false,
       "args": {
-       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]","texto":""}},
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]","texto":"x"}},
        "sender": {"$sender":"t1","esElemento":false}
       }
      },
@@ -694,7 +684,7 @@
       "tabla": "t1",
       "consumidor": false,
       "args": {
-       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]","texto":""}},
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]","texto":"x"}},
        "sender": {"$sender":"t1","esElemento":false},
        "coldef": {"field":"campo","type":"Select","title":"Select sin options"},
        "text": ""
@@ -708,7 +698,7 @@
        "input": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]>div>select#__table_input","valor":""}},
        "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]","texto":""}},
        "sender": {"$sender":"t1","esElemento":false},
-       "text": "",
+       "text": "x",
        "coldef": {"field":"campo","type":"Select","title":"Select sin options"}
       }
      },
@@ -720,7 +710,7 @@
        "input": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]>div>select#__table_input","valor":""}},
        "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]","texto":""}},
        "sender": {"$sender":"t1","esElemento":false},
-       "text": "",
+       "text": "x",
        "coldef": {"field":"campo","type":"Select","title":"Select sin options"}
       }
      }
@@ -756,13 +746,28 @@
       "inicializada": "@=paso-anterior",
       "modoShadowPedido": "@=paso-anterior",
       "dom": {
-       "$parche": [[38,1,["      <div id=\"__table_selector\" class=\"EdiTable-Selector\" tabindex=\"0\" {foco}></div>"]]]
+       "$parche": [
+        [
+         38,
+         1,
+         [
+          "      <div id=\"__table_selector\" class=\"EdiTable-Selector\" tabindex=\"0\" {foco}>",
+          "       \"x\"",
+          "      </div>"
+         ]
+        ]
+       ]
       },
       "shadowEsElGuardado": "@=paso-anterior",
       "datos": "@=paso-anterior",
       "columnas": "@=paso-anterior",
       "respaldo": "@=paso-anterior",
-      "props": {"$parche":[[1,1,["Editing = false"]]]},
+      "props": {
+       "$parche": [
+        [1,1,["Editing = false"]],
+        [55,1,["CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]\",\"texto\":\"x\"}}"]]
+       ]
+      },
       "estilos": {
        "$parche": [
         [
@@ -787,7 +792,7 @@
       "tabla": "t1",
       "consumidor": false,
       "args": {
-       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]","texto":""}},
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]","texto":"x"}},
        "sender": {"$sender":"t1","esElemento":false},
        "cancel": false
       }
@@ -797,7 +802,7 @@
       "tabla": "t1",
       "consumidor": false,
       "args": {
-       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]","texto":""}},
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]","texto":"x"}},
        "sender": {"$sender":"t1","esElemento":false}
       }
      },
@@ -806,7 +811,7 @@
       "tabla": "t1",
       "consumidor": false,
       "args": {
-       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]","texto":""}},
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]","texto":"x"}},
        "sender": {"$sender":"t1","esElemento":false}
       }
      }
@@ -844,14 +849,10 @@
       "dom": {
        "$parche": [
         [30,1,["   <tr class=\"\">"]],
+        [38,3,["      \"x\""]],
+        [49,1,["   <tr class=\"EdiTable-Row-Selected\">"]],
         [
-         37,
-         3,
-         ["     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>"]
-        ],
-        [47,1,["   <tr class=\"EdiTable-Row-Selected\">"]],
-        [
-         55,
+         57,
          1,
          [
           "      <select id=\"__table_input\" class=\"Editable-Input-Select\" {value=\"\" selectedIndex=-1 foco}></select>"
@@ -867,7 +868,7 @@
        "$parche": [
         [1,1,["Editing = true"]],
         [38,1,["_current_row = 1"]],
-        [49,2,["temp_html = \"x\"","CurrentRowIndex() = 1"]],
+        [50,1,["CurrentRowIndex() = 1"]],
         [55,1,["CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(t1)>div>table#t1>tbody>tr[1]>td[1]\",\"texto\":\"\"}}"]]
        ]
       },
@@ -912,7 +913,10 @@
       "evento": "leavecell",
       "tabla": "t1",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"t1","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]","texto":"x"}},
+       "sender": {"$sender":"t1","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -1004,7 +1008,7 @@
       "dom": {
        "$parche": [
         [
-         53,
+         55,
          1,
          [
           "      <div id=\"__table_selector\" class=\"EdiTable-Selector\" tabindex=\"0\" {foco}>",

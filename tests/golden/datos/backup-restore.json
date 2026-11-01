@@ -676,7 +676,14 @@
        {"id":4,"nombre":"Producto de prueba 4","cantidad":9,"precio":17.7},
        {"id":5,"nombre":"Producto de prueba 5","cantidad":3,"precio":23.2}
       ],
-      "props": {"$parche":[[50,2,["CurrentRowIndex() = -1","CurrentColIndex() = -1"]],[55,1,["CurrentTd() = null"]]]},
+      "props": {
+       "$parche": [
+        [0,1,["IsDirty = false"]],
+        [37,1,["_count_isdirty = 0"]],
+        [50,2,["CurrentRowIndex() = -1","CurrentColIndex() = -1"]],
+        [55,1,["CurrentTd() = null"]]
+       ]
+      },
       "estilos": {"$parche":[[28,1,[]]]}
      }
     ],
@@ -693,7 +700,7 @@
      ]
     },
     "foco": {"documento":{"ruta":"html>body"},"shadow":null},
-    "eventos": [],
+    "eventos": [{"evento":"isdirtychanged","tabla":"t1","consumidor":false}],
     "callbacks": [],
     "callbacksTruncados": 0,
     "errores": [],
@@ -703,7 +710,7 @@
       "sinRespaldo": "!excepción: Cannot read properties of null (reading '0')",
       "backup": false,
       "estado": {"dirty":true,"f0":false,"f1":true,"cuenta":1},
-      "restoreRow": {"dirty":true,"f1":false}
+      "restoreRow": {"dirty":false,"f1":false}
      }
     },
     "internos": "@=paso-anterior"
@@ -723,19 +730,21 @@
       "datos": "@=paso-anterior",
       "columnas": "@=paso-anterior",
       "respaldo": "@=paso-anterior",
-      "props": {"$parche":[[37,1,["_count_isdirty = 2"]]]},
+      "props": "@=paso-anterior",
       "estilos": "@=paso-anterior"
      }
     ],
     "luz": "@=paso-anterior",
     "foco": "@=paso-anterior",
     "eventos": [
+     {"evento":"isdirtychanged","tabla":"t1","consumidor":false},
      {
       "evento": "fieldupdated",
       "tabla": "t1",
       "consumidor": false,
       "args": {"sender":{"$sender":"t1","esElemento":false},"row":2,"field":"cantidad","value":"999"}
-     }
+     },
+     {"evento":"isdirtychanged","tabla":"t1","consumidor":false}
     ],
     "callbacks": [],
     "callbacksTruncados": 0,
@@ -746,8 +755,8 @@
       "sinRespaldo": "!excepción: Cannot read properties of null (reading '0')",
       "backup": false,
       "estado": {"dirty":true,"f0":false,"f1":true,"cuenta":1},
-      "restoreRow": {"dirty":true,"f1":false},
-      "restore": {"dirty":true,"cuenta":2,"datos":{"id":3,"nombre":"Producto de prueba 3","cantidad":2,"precio":12.1}}
+      "restoreRow": {"dirty":false,"f1":false},
+      "restore": {"dirty":false,"cuenta":0,"datos":{"id":3,"nombre":"Producto de prueba 3","cantidad":2,"precio":12.1}}
      }
     },
     "internos": "@=paso-anterior"
@@ -773,13 +782,13 @@
        {"id":4,"nombre":"Producto de prueba 4","cantidad":9,"precio":17.7,"isDirty":true},
        {"id":5,"nombre":"Producto de prueba 5","cantidad":3,"precio":23.2}
       ],
-      "props": {"$parche":[[37,1,["_count_isdirty = 3"]]]},
+      "props": {"$parche":[[0,1,["IsDirty = true"]],[37,1,["_count_isdirty = 1"]]]},
       "estilos": "@=paso-anterior"
      }
     ],
     "luz": "@=paso-anterior",
     "foco": "@=paso-anterior",
-    "eventos": [],
+    "eventos": [{"evento":"isdirtychanged","tabla":"t1","consumidor":false}],
     "callbacks": [],
     "callbacksTruncados": 0,
     "errores": [],
@@ -789,9 +798,9 @@
       "sinRespaldo": "!excepción: Cannot read properties of null (reading '0')",
       "backup": false,
       "estado": {"dirty":true,"f0":false,"f1":true,"cuenta":1},
-      "restoreRow": {"dirty":true,"f1":false},
-      "restore": {"dirty":true,"cuenta":2,"datos":{"id":3,"nombre":"Producto de prueba 3","cantidad":2,"precio":12.1}},
-      "set": {"dirty":true,"cuenta":3}
+      "restoreRow": {"dirty":false,"f1":false},
+      "restore": {"dirty":false,"cuenta":0,"datos":{"id":3,"nombre":"Producto de prueba 3","cantidad":2,"precio":12.1}},
+      "set": {"dirty":true,"cuenta":1}
      }
     },
     "internos": "@=paso-anterior"
@@ -847,7 +856,7 @@
       ],
       "props": {
        "$parche": [
-        [37,2,["_count_isdirty = 4","_current_row = 5"]],
+        [37,2,["_count_isdirty = 2","_current_row = 5"]],
         [50,3,["CurrentRowIndex() = 5","CurrentColIndex() = 0","TRCount() = 6"]],
         [55,1,["CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(t1)>div>table#t1>tbody>tr[5]>td[0]\",\"texto\":\"\"}}"]]
        ]
@@ -963,10 +972,10 @@
       "sinRespaldo": "!excepción: Cannot read properties of null (reading '0')",
       "backup": false,
       "estado": {"dirty":true,"f0":false,"f1":true,"cuenta":1},
-      "restoreRow": {"dirty":true,"f1":false},
-      "restore": {"dirty":true,"cuenta":2,"datos":{"id":3,"nombre":"Producto de prueba 3","cantidad":2,"precio":12.1}},
-      "set": {"dirty":true,"cuenta":3},
-      "add": {"len":6,"f5":true,"cuenta":4}
+      "restoreRow": {"dirty":false,"f1":false},
+      "restore": {"dirty":false,"cuenta":0,"datos":{"id":3,"nombre":"Producto de prueba 3","cantidad":2,"precio":12.1}},
+      "set": {"dirty":true,"cuenta":1},
+      "add": {"len":6,"f5":true,"cuenta":2}
      }
     },
     "internos": {
@@ -977,8 +986,8 @@
       "document:mouseup": 4,
       "window:beforeprint": 1,
       "window:afterprint": 1,
-      "nodo:click:remove": 27,
-      "nodo:click": 28,
+      "nodo:click:remove": 3,
+      "nodo:click": 4,
       "nodo:keydown:remove": 3,
       "nodo:keydown": 4
      },

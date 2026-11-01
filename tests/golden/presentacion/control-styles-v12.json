@@ -1033,7 +1033,10 @@
       "evento": "leavecell",
       "tabla": "tbl_x",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"tbl_x","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_x)>div>table#tbl_x>tbody>tr[2]>td[1]","texto":"Producto de prueba 3"}},
+       "sender": {"$sender":"tbl_x","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -1070,7 +1073,10 @@
       "evento": "leavecell",
       "tabla": "tbl_x",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"tbl_x","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_x)>div>table#tbl_x>tbody>tr[3]>td[1]","texto":"Producto de prueba 4"}},
+       "sender": {"$sender":"tbl_x","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -1107,7 +1113,10 @@
       "evento": "leavecell",
       "tabla": "tbl_x",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"tbl_x","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_x)>div>table#tbl_x>tbody>tr[4]>td[1]","texto":"Producto de prueba 5"}},
+       "sender": {"$sender":"tbl_x","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -1144,7 +1153,10 @@
       "evento": "leavecell",
       "tabla": "tbl_x",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"tbl_x","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_x)>div>table#tbl_x>tbody>tr[5]>td[1]","texto":"Producto de prueba 6"}},
+       "sender": {"$sender":"tbl_x","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -1181,7 +1193,10 @@
       "evento": "leavecell",
       "tabla": "tbl_x",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"tbl_x","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_x)>div>table#tbl_x>tbody>tr[6]>td[1]","texto":"Producto de prueba 7"}},
+       "sender": {"$sender":"tbl_x","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -1218,7 +1233,10 @@
       "evento": "leavecell",
       "tabla": "tbl_x",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"tbl_x","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_x)>div>table#tbl_x>tbody>tr[7]>td[1]","texto":"Producto de prueba 8"}},
+       "sender": {"$sender":"tbl_x","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -1255,7 +1273,10 @@
       "evento": "leavecell",
       "tabla": "tbl_x",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"tbl_x","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_x)>div>table#tbl_x>tbody>tr[8]>td[1]","texto":"Producto de prueba 9"}},
+       "sender": {"$sender":"tbl_x","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -1292,7 +1313,10 @@
       "evento": "leavecell",
       "tabla": "tbl_x",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"tbl_x","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_x)>div>table#tbl_x>tbody>tr[9]>td[1]","texto":"Producto de prueba 10"}},
+       "sender": {"$sender":"tbl_x","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -1329,7 +1353,10 @@
       "evento": "leavecell",
       "tabla": "tbl_x",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"tbl_x","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_x)>div>table#tbl_x>tbody>tr[10]>td[1]","texto":"Producto de prueba 11"}},
+       "sender": {"$sender":"tbl_x","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -1366,7 +1393,10 @@
       "evento": "leavecell",
       "tabla": "tbl_x",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"tbl_x","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_x)>div>table#tbl_x>tbody>tr[11]>td[1]","texto":"Producto de prueba 12"}},
+       "sender": {"$sender":"tbl_x","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -1403,7 +1433,10 @@
       "evento": "leavecell",
       "tabla": "tbl_x",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"tbl_x","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_x)>div>table#tbl_x>tbody>tr[12]>td[1]","texto":"Producto de prueba 13"}},
+       "sender": {"$sender":"tbl_x","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -1440,7 +1473,10 @@
       "evento": "leavecell",
       "tabla": "tbl_x",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"tbl_x","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_x)>div>table#tbl_x>tbody>tr[13]>td[1]","texto":"Producto de prueba 14"}},
+       "sender": {"$sender":"tbl_x","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -1477,7 +1513,10 @@
       "evento": "leavecell",
       "tabla": "tbl_x",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"tbl_x","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_x)>div>table#tbl_x>tbody>tr[14]>td[1]","texto":"Producto de prueba 15"}},
+       "sender": {"$sender":"tbl_x","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -1514,7 +1553,10 @@
       "evento": "leavecell",
       "tabla": "tbl_x",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"tbl_x","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_x)>div>table#tbl_x>tbody>tr[15]>td[1]","texto":"Producto de prueba 16"}},
+       "sender": {"$sender":"tbl_x","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -1551,7 +1593,10 @@
       "evento": "leavecell",
       "tabla": "tbl_x",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"tbl_x","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_x)>div>table#tbl_x>tbody>tr[16]>td[1]","texto":"Producto de prueba 17"}},
+       "sender": {"$sender":"tbl_x","esElemento":false}
+      }
      },
      {
       "evento": "entercell",

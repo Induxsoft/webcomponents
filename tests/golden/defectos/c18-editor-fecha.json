@@ -1,0 +1,861 @@
+{
+ "id": "defectos/c18-editor-fecha",
+ "titulo": "C18: el editor nativo de Date y DateTime recibe el valor normalizado (espacio, segundos, Z u offset); 01/02/2026 abre vacío",
+ "etiquetas": ["correccion-f1"],
+ "archivo": "escenarios/defectos/correcciones-f1.mjs",
+ "pasos": [
+  {
+   "nombre": "inicio",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": true,
+      "modoShadowPedido": "closed",
+      "dom": [
+       "\"\\n                \"",
+       "<style>",
+       " @@ESTILO sha256:e02dcdadace9a84f",
+       "</style>",
+       "\"\\n            \"",
+       "<div style=\"min-height: 2rem; max-height: 100%; overflow: auto; padding-bottom: 5px\">",
+       " <table id=\"t1\">",
+       "  <thead>",
+       "   <tr>",
+       "    <th field=\"d\" type=\"Date\">",
+       "     <span>",
+       "      \"Date\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:123px;\"></div>",
+       "    </th>",
+       "    <th field=\"t\" type=\"DateTime\">",
+       "     <span>",
+       "      \"DateTime\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:123px;\"></div>",
+       "    </th>",
+       "   </tr>",
+       "  </thead>",
+       "  <tbody>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Date\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"2026-02-01 10:30:00\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"DateTime\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"2026-02-01 10:30:00\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Date\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"2026-02-01T00:00:00.000Z\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"DateTime\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"2026-02-01T16:30:00Z\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Date\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"01/02/2026\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"DateTime\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"2026-02-01T11:30:00-05:00\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "  </tbody>",
+       " </table>",
+       "</div>"
+      ],
+      "shadowEsElGuardado": true,
+      "datos": [
+       {"d":"2026-02-01 10:30:00","t":"2026-02-01 10:30:00"},
+       {"d":"2026-02-01T00:00:00.000Z","t":"2026-02-01T16:30:00Z"},
+       {"d":"01/02/2026","t":"2026-02-01T11:30:00-05:00"}
+      ],
+      "columnas": [{"field":"d","type":"Date","title":"Date"},{"field":"t","type":"DateTime","title":"DateTime"}],
+      "respaldo": [
+       {"d":"2026-02-01 10:30:00","t":"2026-02-01 10:30:00"},
+       {"d":"2026-02-01T00:00:00.000Z","t":"2026-02-01T16:30:00Z"},
+       {"d":"01/02/2026","t":"2026-02-01T11:30:00-05:00"}
+      ],
+      "props": [
+       "IsDirty = false",
+       "Editing = false",
+       "ReadOnly = false",
+       "AutoAddRow = true",
+       "AutoDelRow = true",
+       "EverMove = true",
+       "PagOffSet = 10",
+       "TheadRowIndex = 0",
+       "ColumnsDefaultType = \"Text\"",
+       "ShowAsTree = false",
+       "CanMoveRow = false",
+       "Key = \"id\"",
+       "ParentKey = \"idp\"",
+       "Childs = \"__items\"",
+       "TreeOptions = {}",
+       "sorTable = true",
+       "_sorTable = true",
+       "htmlEncode = false",
+       "autoConfirm = false",
+       "hiddeSelector = false",
+       "hiddeRowSelector = false",
+       "minRowHeight = \"none\"",
+       "maxRowHeight = \"none\"",
+       "rowHeight = \"100%\"",
+       "cardsResponsive = false",
+       "editableResponsive = false",
+       "tableId = \"t1\"",
+       "NumFormat = {\"default_decimals\":\".\",\"thousands\":\",\",\"decimals\":\".\"}",
+       "CSS = {\"Cell\":\"EdiTable-Cell\",\"RowSelected\":\"EdiTable-Row-Selected\"}",
+       "hideColumns = []",
+       "_expandOnStart = false",
+       "KeepSelectionVisible = true",
+       "CardsMode = null",
+       "CardsLayout = \"grid\"",
+       "CardsBreakpoint = \"768px\"",
+       "CardsBreakpointTarget = \"viewport\"",
+       "IsCardView = false",
+       "_count_isdirty = 0",
+       "_current_row = -1",
+       "attributes = [\"id\",\"style\",\"data\"]",
+       "BadgesField = \"__badges\"",
+       "BadgeTooltip = \"native\"",
+       "BadgeSelectsRow = false",
+       "NativeEvents = false",
+       "TemplateEncode = false",
+       "Locale = null",
+       "RowClassField = null",
+       "_TreeValueIndent = 1",
+       "_TreeUnitIndent = \"rem\"",
+       "temp_html = \"[undefined]\"",
+       "CurrentRowIndex() = -1",
+       "CurrentColIndex() = -1",
+       "TRCount() = 3",
+       "THCount() = 2",
+       "ColumnsCount() = 2",
+       "CurrentTd() = null",
+       "focusedTable==_getCurren() = false",
+       "Events reemplazado = 0",
+       "Events claves = [\"fieldupdated\",\"isdirtychanged\",\"maskinvalid\"]",
+       "scroll = {\"contenedor\":[0,0]}"
+      ],
+      "estilos": [
+       "host = display:inline;position:static;width:100%;height:auto;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "contenedor = display:block;position:static;width:968px;height:123px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:auto;overflow-y:auto",
+       "table = display:table;position:static;width:968px;height:123px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "thead = display:table-header-group;position:sticky;width:966px;height:27px;color:rgb(0, 0, 0);background-color:rgb(245, 245, 245);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[0] = display:table-cell;position:relative;width:461px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[1] = display:table-cell;position:relative;width:472px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0] = display:table-row;position:relative;width:966px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[0] = display:table-cell;position:relative;width:469px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[1] = display:table-cell;position:relative;width:480px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1] = display:table-row;position:relative;width:966px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[0] = display:table-cell;position:relative;width:469px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[1] = display:table-cell;position:relative;width:480px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2] = display:table-row;position:relative;width:966px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[0] = display:table-cell;position:relative;width:469px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[1] = display:table-cell;position:relative;width:480px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+      ]
+     }
+    ],
+    "luz": [
+     "<body {foco}>",
+     " \"\\n\"",
+     " <edit-table id=\"t1\" style=\"width:100%\" data=\"[{\\\"d\\\":\\\"2026-02-01 10:30:00\\\",\\\"t\\\":\\\"2026-02-01 10:30:00\\\"},{\\\"d\\\":\\\"2026-02-01T00:00:00.000Z\\\",\\\"t\\\":\\\"2026-02-01T16:30:00Z\\\"},{\\\"d\\\":\\\"01/02/2026\\\",\\\"t\\\":\\\"2026-02-01T11:30:00-05:00\\\"}]\">",
+     "  #shadow-root -> tablas[0]",
+     " </edit-table>",
+     " \"\\n\"",
+     " <script>",
+     "  \"\\nwindow.__ev = [];\\ndocument.addEventListener('DOMContentLoaded', () => {\\n  const t = ET('t1');\\n  t.backup();\\n  t.Events.fieldupdated = (e) => window.__ev.push(['fieldupdated', e.row, e.field, e.value]);\\n  t.Events.isdirtychanged = () => window.__ev.push(['isdirtychanged', t.IsDirty]);\\n  t.addEventListener('MaskInvalid', (e) => window.__ev.push(['maskinvalid', e.row, e.field, e.reason, e.cancel]));\\n});\\nwindow.__etExtra = () => ({ eventos: window.__ev.splice(0), datos: ET('t1').DataArray.map(r => Object.assign({}, r, { __tipos: Object.keys(r).map(k => k + ':' + typeof r[k]).join(',') })) });\\n\"",
+     " </script>",
+     " \"\\n\\n\"",
+     "</body>"
+    ],
+    "foco": {"documento":{"ruta":"html>body"},"shadow":null},
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": {
+     "valor": {
+      "eventos": [],
+      "datos": [
+       {"d":"2026-02-01 10:30:00","t":"2026-02-01 10:30:00","__tipos":"d:string,t:string"},
+       {"d":"2026-02-01T00:00:00.000Z","t":"2026-02-01T16:30:00Z","__tipos":"d:string,t:string"},
+       {"d":"01/02/2026","t":"2026-02-01T11:30:00-05:00","__tipos":"d:string,t:string"}
+      ]
+     }
+    },
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 3,
+      "nodo:mousedown": 2,
+      "document:mousemove": 2,
+      "document:mouseup": 2,
+      "window:beforeprint": 1,
+      "window:afterprint": 1
+     },
+     "intervalos": 1
+    }
+   }
+  },
+  {
+   "nombre": "Date fila 0: F2",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [24,1,["   <tr class=\"EdiTable-Row-Selected\">"]],
+        [
+         27,
+         1,
+         [
+          "      <input type=\"date\" id=\"__table_input\" class=\"Editable-Input-Date\" {value=\"2026-02-01\" foco}></input>"
+         ]
+        ]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": "@=paso-anterior",
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": {
+       "$parche": [
+        [1,1,["Editing = true"]],
+        [38,1,["_current_row = 0"]],
+        [49,3,["temp_html = \"2026-02-01 10:30:00\"","CurrentRowIndex() = 0","CurrentColIndex() = 0"]],
+        [
+         55,
+         2,
+         [
+          "CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(t1)>div>table#t1>tbody>tr[0]>td[0]\",\"texto\":\"\"}}",
+          "focusedTable==_getCurren() = true"
+         ]
+        ]
+       ]
+      },
+      "estilos": {
+       "$parche": [
+        [
+         6,
+         3,
+         [
+          "tr[0] = display:table-row;position:relative;width:966px;height:30px;color:rgb(255, 255, 255);background-color:rgb(61, 117, 221);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[0] = display:table-cell;position:relative;width:469px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[1] = display:table-cell;position:relative;width:480px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         15,
+         0,
+         [
+          "input = display:block;position:absolute;width:477px;height:30px;color:rgb(33, 37, 41);background-color:rgb(255, 255, 255);font-weight:400;text-align:start;visibility:visible;overflow-x:clip;overflow-y:clip"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": {
+     "$parche": [
+      [0,1,["<body>"]],
+      [
+       2,
+       1,
+       [
+        " <edit-table id=\"t1\" style=\"width:100%\" data=\"[{\\\"d\\\":\\\"2026-02-01 10:30:00\\\",\\\"t\\\":\\\"2026-02-01 10:30:00\\\"},{\\\"d\\\":\\\"2026-02-01T00:00:00.000Z\\\",\\\"t\\\":\\\"2026-02-01T16:30:00Z\\\"},{\\\"d\\\":\\\"01/02/2026\\\",\\\"t\\\":\\\"2026-02-01T11:30:00-05:00\\\"}]\" {foco}>"
+       ]
+      ]
+     ]
+    },
+    "foco": {
+     "documento": {"ruta":"body>edit-table#t1"},
+     "shadow": {"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[0]>div>input#__table_input","valor":"2026-02-01"}
+    },
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": "@=paso-anterior",
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 3,
+      "nodo:mousedown": 2,
+      "document:mousemove": 2,
+      "document:mouseup": 2,
+      "window:beforeprint": 1,
+      "window:afterprint": 1,
+      "nodo:click:remove": 1,
+      "nodo:click": 2,
+      "nodo:keydown:remove": 1,
+      "nodo:keydown": 2
+     },
+     "intervalos": 1
+    }
+   }
+  },
+  {
+   "nombre": "Escape; Date fila 1: F2",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [24,1,["   <tr class=\"\">"]],
+        [27,1,["      \"2026-02-01 10:30:00\""]],
+        [36,1,["   <tr class=\"EdiTable-Row-Selected\">"]],
+        [
+         39,
+         1,
+         [
+          "      <input type=\"date\" id=\"__table_input\" class=\"Editable-Input-Date\" {value=\"2026-02-01\" foco}></input>"
+         ]
+        ]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": "@=paso-anterior",
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": {
+       "$parche": [
+        [38,1,["_current_row = 1"]],
+        [49,2,["temp_html = \"2026-02-01T00:00:00.000Z\"","CurrentRowIndex() = 1"]],
+        [55,1,["CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(t1)>div>table#t1>tbody>tr[1]>td[0]\",\"texto\":\"\"}}"]]
+       ]
+      },
+      "estilos": {
+       "$parche": [
+        [
+         4,
+         8,
+         [
+          "th[0] = display:table-cell;position:relative;width:400px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[1] = display:table-cell;position:relative;width:533px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0] = display:table-row;position:relative;width:966px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[0] = display:table-cell;position:relative;width:408px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[1] = display:table-cell;position:relative;width:541px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1] = display:table-row;position:relative;width:966px;height:30px;color:rgb(255, 255, 255);background-color:rgb(61, 117, 221);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[0] = display:table-cell;position:relative;width:408px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[1] = display:table-cell;position:relative;width:541px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         13,
+         3,
+         [
+          "tr[2].td[0] = display:table-cell;position:relative;width:408px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[1] = display:table-cell;position:relative;width:541px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "input = display:block;position:absolute;width:416px;height:30px;color:rgb(33, 37, 41);background-color:rgb(255, 255, 255);font-weight:400;text-align:start;visibility:visible;overflow-x:clip;overflow-y:clip"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": "@=paso-anterior",
+    "foco": {
+     "documento": {"ruta":"body>edit-table#t1"},
+     "shadow": {"ruta":"shadow(t1)>div>table#t1>tbody>tr[1]>td[0]>div>input#__table_input","valor":"2026-02-01"}
+    },
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": "@=paso-anterior",
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 3,
+      "nodo:mousedown": 2,
+      "document:mousemove": 2,
+      "document:mouseup": 2,
+      "window:beforeprint": 1,
+      "window:afterprint": 1,
+      "nodo:click:remove": 3,
+      "nodo:click": 5,
+      "nodo:keydown:remove": 3,
+      "nodo:keydown": 5
+     },
+     "intervalos": 1
+    }
+   }
+  },
+  {
+   "nombre": "Escape; Date fila 2: F2 (vacío)",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [36,1,["   <tr class=\"\">"]],
+        [39,1,["      \"2026-02-01T00:00:00.000Z\""]],
+        [48,1,["   <tr class=\"EdiTable-Row-Selected\">"]],
+        [
+         51,
+         1,
+         ["      <input type=\"date\" id=\"__table_input\" class=\"Editable-Input-Date\" {value=\"\" foco}></input>"]
+        ]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": "@=paso-anterior",
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": {
+       "$parche": [
+        [38,1,["_current_row = 2"]],
+        [49,2,["temp_html = \"01/02/2026\"","CurrentRowIndex() = 2"]],
+        [55,1,["CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(t1)>div>table#t1>tbody>tr[2]>td[0]\",\"texto\":\"\"}}"]]
+       ]
+      },
+      "estilos": {
+       "$parche": [
+        [
+         4,
+         2,
+         [
+          "th[0] = display:table-cell;position:relative;width:461px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[1] = display:table-cell;position:relative;width:472px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         7,
+         9,
+         [
+          "tr[0].td[0] = display:table-cell;position:relative;width:469px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[1] = display:table-cell;position:relative;width:480px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1] = display:table-row;position:relative;width:966px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[0] = display:table-cell;position:relative;width:469px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[1] = display:table-cell;position:relative;width:480px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2] = display:table-row;position:relative;width:966px;height:30px;color:rgb(255, 255, 255);background-color:rgb(61, 117, 221);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[0] = display:table-cell;position:relative;width:469px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[1] = display:table-cell;position:relative;width:480px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "input = display:block;position:absolute;width:477px;height:30px;color:rgb(33, 37, 41);background-color:rgb(255, 255, 255);font-weight:400;text-align:start;visibility:visible;overflow-x:clip;overflow-y:clip"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": "@=paso-anterior",
+    "foco": {
+     "documento": {"ruta":"body>edit-table#t1"},
+     "shadow": {"ruta":"shadow(t1)>div>table#t1>tbody>tr[2]>td[0]>div>input#__table_input","valor":""}
+    },
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": "@=paso-anterior",
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 3,
+      "nodo:mousedown": 2,
+      "document:mousemove": 2,
+      "document:mouseup": 2,
+      "window:beforeprint": 1,
+      "window:afterprint": 1,
+      "nodo:click:remove": 5,
+      "nodo:click": 8,
+      "nodo:keydown:remove": 5,
+      "nodo:keydown": 8
+     },
+     "intervalos": 1
+    }
+   }
+  },
+  {
+   "nombre": "Escape; DateTime fila 0: F2",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [24,1,["   <tr class=\"EdiTable-Row-Selected\">"]],
+        [
+         32,
+         1,
+         [
+          "      <input type=\"datetime-local\" id=\"__table_input\" class=\"Editable-Input-DateTime\" {value=\"2026-02-01T10:30\" foco}></input>"
+         ]
+        ],
+        [48,1,["   <tr class=\"\">"]],
+        [51,1,["      \"01/02/2026\""]]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": "@=paso-anterior",
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": {
+       "$parche": [
+        [38,1,["_current_row = 0"]],
+        [49,3,["temp_html = \"2026-02-01 10:30:00\"","CurrentRowIndex() = 0","CurrentColIndex() = 1"]],
+        [55,1,["CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]\",\"texto\":\"\"}}"]]
+       ]
+      },
+      "estilos": {
+       "$parche": [
+        [
+         6,
+         3,
+         [
+          "tr[0] = display:table-row;position:relative;width:966px;height:30px;color:rgb(255, 255, 255);background-color:rgb(61, 117, 221);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[0] = display:table-cell;position:relative;width:469px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[1] = display:table-cell;position:relative;width:480px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         12,
+         4,
+         [
+          "tr[2] = display:table-row;position:relative;width:966px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[0] = display:table-cell;position:relative;width:469px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[1] = display:table-cell;position:relative;width:480px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "input = display:block;position:absolute;width:488px;height:30px;color:rgb(33, 37, 41);background-color:rgb(255, 255, 255);font-weight:400;text-align:start;visibility:visible;overflow-x:clip;overflow-y:clip"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": "@=paso-anterior",
+    "foco": {
+     "documento": {"ruta":"body>edit-table#t1"},
+     "shadow": {"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]>div>input#__table_input","valor":"2026-02-01T10:30"}
+    },
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": "@=paso-anterior",
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 3,
+      "nodo:mousedown": 2,
+      "document:mousemove": 2,
+      "document:mouseup": 2,
+      "window:beforeprint": 1,
+      "window:afterprint": 1,
+      "nodo:click:remove": 7,
+      "nodo:click": 11,
+      "nodo:keydown:remove": 7,
+      "nodo:keydown": 11
+     },
+     "intervalos": 1
+    }
+   }
+  },
+  {
+   "nombre": "Escape; DateTime fila 1 (Z → hora local): F2",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [24,1,["   <tr class=\"\">"]],
+        [32,1,["      \"2026-02-01 10:30:00\""]],
+        [36,1,["   <tr class=\"EdiTable-Row-Selected\">"]],
+        [
+         44,
+         1,
+         [
+          "      <input type=\"datetime-local\" id=\"__table_input\" class=\"Editable-Input-DateTime\" {value=\"2026-02-01T10:30\" foco}></input>"
+         ]
+        ]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": "@=paso-anterior",
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": {
+       "$parche": [
+        [38,1,["_current_row = 1"]],
+        [49,2,["temp_html = \"2026-02-01T16:30:00Z\"","CurrentRowIndex() = 1"]],
+        [55,1,["CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(t1)>div>table#t1>tbody>tr[1]>td[1]\",\"texto\":\"\"}}"]]
+       ]
+      },
+      "estilos": {
+       "$parche": [
+        [
+         6,
+         6,
+         [
+          "tr[0] = display:table-row;position:relative;width:966px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[0] = display:table-cell;position:relative;width:469px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[1] = display:table-cell;position:relative;width:480px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1] = display:table-row;position:relative;width:966px;height:30px;color:rgb(255, 255, 255);background-color:rgb(61, 117, 221);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[0] = display:table-cell;position:relative;width:469px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[1] = display:table-cell;position:relative;width:480px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": "@=paso-anterior",
+    "foco": {
+     "documento": {"ruta":"body>edit-table#t1"},
+     "shadow": {"ruta":"shadow(t1)>div>table#t1>tbody>tr[1]>td[1]>div>input#__table_input","valor":"2026-02-01T10:30"}
+    },
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": "@=paso-anterior",
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 3,
+      "nodo:mousedown": 2,
+      "document:mousemove": 2,
+      "document:mouseup": 2,
+      "window:beforeprint": 1,
+      "window:afterprint": 1,
+      "nodo:click:remove": 9,
+      "nodo:click": 14,
+      "nodo:keydown:remove": 9,
+      "nodo:keydown": 14
+     },
+     "intervalos": 1
+    }
+   }
+  },
+  {
+   "nombre": "Escape; DateTime fila 2 (-05:00 → hora local): F2",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [36,1,["   <tr class=\"\">"]],
+        [44,1,["      \"2026-02-01T16:30:00Z\""]],
+        [48,1,["   <tr class=\"EdiTable-Row-Selected\">"]],
+        [
+         56,
+         1,
+         [
+          "      <input type=\"datetime-local\" id=\"__table_input\" class=\"Editable-Input-DateTime\" {value=\"2026-02-01T10:30\" foco}></input>"
+         ]
+        ]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": "@=paso-anterior",
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": {
+       "$parche": [
+        [38,1,["_current_row = 2"]],
+        [49,2,["temp_html = \"2026-02-01T11:30:00-05:00\"","CurrentRowIndex() = 2"]],
+        [55,1,["CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(t1)>div>table#t1>tbody>tr[2]>td[1]\",\"texto\":\"\"}}"]]
+       ]
+      },
+      "estilos": {
+       "$parche": [
+        [
+         4,
+         2,
+         [
+          "th[0] = display:table-cell;position:relative;width:507px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[1] = display:table-cell;position:relative;width:426px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         7,
+         9,
+         [
+          "tr[0].td[0] = display:table-cell;position:relative;width:515px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[1] = display:table-cell;position:relative;width:434px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1] = display:table-row;position:relative;width:966px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[0] = display:table-cell;position:relative;width:515px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[1] = display:table-cell;position:relative;width:434px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2] = display:table-row;position:relative;width:966px;height:30px;color:rgb(255, 255, 255);background-color:rgb(61, 117, 221);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[0] = display:table-cell;position:relative;width:515px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[1] = display:table-cell;position:relative;width:434px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "input = display:block;position:absolute;width:442px;height:30px;color:rgb(33, 37, 41);background-color:rgb(255, 255, 255);font-weight:400;text-align:start;visibility:visible;overflow-x:clip;overflow-y:clip"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": "@=paso-anterior",
+    "foco": {
+     "documento": {"ruta":"body>edit-table#t1"},
+     "shadow": {"ruta":"shadow(t1)>div>table#t1>tbody>tr[2]>td[1]>div>input#__table_input","valor":"2026-02-01T10:30"}
+    },
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": "@=paso-anterior",
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 3,
+      "nodo:mousedown": 2,
+      "document:mousemove": 2,
+      "document:mouseup": 2,
+      "window:beforeprint": 1,
+      "window:afterprint": 1,
+      "nodo:click:remove": 11,
+      "nodo:click": 17,
+      "nodo:keydown:remove": 11,
+      "nodo:keydown": 17
+     },
+     "intervalos": 1
+    }
+   }
+  },
+  {
+   "nombre": "Escape",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [
+         56,
+         1,
+         [
+          "      <div id=\"__table_selector\" class=\"EdiTable-Selector\" tabindex=\"0\" {foco}>",
+          "       \"2026-02-01T11:30:00-05:00\"",
+          "      </div>"
+         ]
+        ]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": "@=paso-anterior",
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": {
+       "$parche": [
+        [1,1,["Editing = false"]],
+        [
+         55,
+         1,
+         [
+          "CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(t1)>div>table#t1>tbody>tr[2]>td[1]\",\"texto\":\"2026-02-01T11:30:00-05:00\"}}"
+         ]
+        ]
+       ]
+      },
+      "estilos": {
+       "$parche": [
+        [
+         4,
+         2,
+         [
+          "th[0] = display:table-cell;position:relative;width:459px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[1] = display:table-cell;position:relative;width:474px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         7,
+         2,
+         [
+          "tr[0].td[0] = display:table-cell;position:relative;width:467px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[1] = display:table-cell;position:relative;width:482px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         10,
+         2,
+         [
+          "tr[1].td[0] = display:table-cell;position:relative;width:467px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[1] = display:table-cell;position:relative;width:482px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         13,
+         3,
+         [
+          "tr[2].td[0] = display:table-cell;position:relative;width:467px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[1] = display:table-cell;position:relative;width:482px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "selector = display:flex;position:static;width:480px;height:22px;color:rgb(0, 0, 0);background-color:rgba(255, 255, 255, 0.7);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": "@=paso-anterior",
+    "foco": {
+     "documento": {"ruta":"body>edit-table#t1"},
+     "shadow": {"ruta":"shadow(t1)>div>table#t1>tbody>tr[2]>td[1]>div>div#__table_selector"}
+    },
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": "@=paso-anterior",
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 3,
+      "nodo:mousedown": 2,
+      "document:mousemove": 2,
+      "document:mouseup": 2,
+      "window:beforeprint": 1,
+      "window:afterprint": 1,
+      "nodo:click:remove": 12,
+      "nodo:click": 18,
+      "nodo:keydown:remove": 12,
+      "nodo:keydown": 18
+     },
+     "intervalos": 1
+    }
+   }
+  }
+ ]
+}

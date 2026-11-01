@@ -232,9 +232,7 @@
          32,
          1,
          [
-          "      <div id=\"__table_selector\" class=\"EdiTable-Selector\" tabindex=\"0\" {foco}>",
-          "       \"Producto de prueba 1\"",
-          "      </div>"
+          "      <input type=\"text\" id=\"__table_input\" class=\"Editable-Input-Text\" {value=\"Producto de prueba 1a\" foco}></input>"
          ]
         ]
        ]
@@ -245,13 +243,14 @@
       "respaldo": "@=paso-anterior",
       "props": {
        "$parche": [
+        [1,1,["Editing = true"]],
         [38,1,["_current_row = 0"]],
-        [50,2,["CurrentRowIndex() = 0","CurrentColIndex() = 1"]],
+        [49,3,["temp_html = \"Producto de prueba 1\"","CurrentRowIndex() = 0","CurrentColIndex() = 1"]],
         [
          55,
          2,
          [
-          "CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]\",\"texto\":\"Producto de prueba 1\"}}",
+          "CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]\",\"texto\":\"\"}}",
           "focusedTable==_getCurren() = true"
          ]
         ]
@@ -260,39 +259,19 @@
       "estilos": {
        "$parche": [
         [
-         4,
-         5,
+         6,
+         3,
          [
-          "th[0] = display:table-cell;position:relative;width:124px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "th[1] = display:table-cell;position:relative;width:809px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[0] = display:table-row;position:relative;width:966px;height:30px;color:rgb(255, 255, 255);background-color:rgb(61, 117, 221);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[0].td[0] = display:table-cell;position:relative;width:132px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[0].td[1] = display:table-cell;position:relative;width:817px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+          "tr[0].td[0] = display:table-cell;position:relative;width:133px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[1] = display:table-cell;position:relative;width:816px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
          ]
         ],
         [
-         10,
-         2,
+         18,
+         0,
          [
-          "tr[1].td[0] = display:table-cell;position:relative;width:132px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[1].td[1] = display:table-cell;position:relative;width:817px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
-         ]
-        ],
-        [
-         13,
-         2,
-         [
-          "tr[2].td[0] = display:table-cell;position:relative;width:132px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[2].td[1] = display:table-cell;position:relative;width:817px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
-         ]
-        ],
-        [
-         16,
-         2,
-         [
-          "tr[3].td[0] = display:table-cell;position:relative;width:132px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[3].td[1] = display:table-cell;position:relative;width:817px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "selector = display:flex;position:static;width:815px;height:22px;color:rgb(0, 0, 0);background-color:rgba(255, 255, 255, 0.7);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+          "input = display:block;position:absolute;width:824px;height:30px;color:rgb(33, 37, 41);background-color:rgb(255, 255, 255);font-weight:400;text-align:start;visibility:visible;overflow-x:clip;overflow-y:clip"
          ]
         ]
        ]
@@ -313,7 +292,7 @@
     },
     "foco": {
      "documento": {"ruta":"body>edit-table#t1"},
-     "shadow": {"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]>div>div#__table_selector"}
+     "shadow": {"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]>div>input#__table_input","valor":"Producto de prueba 1a"}
     },
     "eventos": [
      {
@@ -346,6 +325,41 @@
        "index": 0,
        "previous_index": -1
       }
+     },
+     {
+      "evento": "startedition",
+      "tabla": "t1",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]","texto":"Producto de prueba 1"}},
+       "sender": {"$sender":"t1","esElemento":false},
+       "coldef": {"field":"nombre","type":"Text","readonly":"false","title":"Nombre"},
+       "text": ""
+      }
+     },
+     {
+      "evento": "inputcreated",
+      "tabla": "t1",
+      "consumidor": false,
+      "args": {
+       "input": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]>div>input#__table_input","valor":""}},
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]","texto":""}},
+       "sender": {"$sender":"t1","esElemento":false},
+       "text": "Producto de prueba 1",
+       "coldef": {"field":"nombre","type":"Text","readonly":"false","title":"Nombre"}
+      }
+     },
+     {
+      "evento": "beforesetinput",
+      "tabla": "t1",
+      "consumidor": false,
+      "args": {
+       "input": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]>div>input#__table_input","valor":""}},
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]","texto":""}},
+       "sender": {"$sender":"t1","esElemento":false},
+       "text": "Producto de prueba 1",
+       "coldef": {"field":"nombre","type":"Text","readonly":"false","title":"Nombre"}
+      }
      }
     ],
     "callbacks": [],
@@ -362,9 +376,9 @@
       "window:beforeprint": 1,
       "window:afterprint": 1,
       "nodo:click:remove": 1,
-      "nodo:click": 1,
+      "nodo:click": 2,
       "nodo:keydown:remove": 1,
-      "nodo:keydown": 1
+      "nodo:keydown": 2
      },
      "intervalos": 1
     }

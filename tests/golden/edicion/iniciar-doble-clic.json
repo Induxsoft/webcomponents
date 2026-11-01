@@ -302,7 +302,7 @@
          71,
          1,
          [
-          "      <input type=\"number\" id=\"__table_input\" class=\"Editable-Input-Number\" {value=\"8\" foco}></input>"
+          "      <input type=\"number\" id=\"__table_input\" class=\"Editable-Input-Number\" step=\"any\" {value=\"8\" foco}></input>"
          ]
         ]
        ]

@@ -1200,7 +1200,10 @@
       "evento": "leavecell",
       "tabla": "tbl_a",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"tbl_a","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_a)>div>table#tbl_a>tbody>tr#7[6]>td[1]","texto":"Grupo C"}},
+       "sender": {"$sender":"tbl_a","esElemento":false}
+      }
      },
      {
       "evento": "entercell",

@@ -742,7 +742,10 @@
       "evento": "leavecell",
       "tabla": "editable",
       "consumidor": true,
-      "args": {"td":null,"sender":{"$sender":"editable","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(editable)>div>table#editable>tbody>tr[0]>td[2]","texto":"$ 123,456.79 MXN"}},
+       "sender": {"$sender":"editable","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -788,8 +791,8 @@
       "document:mouseup": 9,
       "window:beforeprint": 1,
       "window:afterprint": 1,
-      "nodo:click": 24,
-      "nodo:click:remove": 21,
+      "nodo:click": 6,
+      "nodo:click:remove": 3,
       "nodo:keydown:remove": 3,
       "nodo:keydown": 4
      },

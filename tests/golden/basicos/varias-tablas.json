@@ -979,7 +979,10 @@
       "evento": "leavecell",
       "tabla": "b",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"b","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(b)>div>table#b>tbody>tr[0]>td[2]","texto":"2"}},
+       "sender": {"$sender":"b","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -1192,8 +1195,8 @@
       "document:mouseup": 10,
       "window:beforeprint": 3,
       "window:afterprint": 3,
-      "nodo:click:remove": 6,
-      "nodo:click": 6,
+      "nodo:click:remove": 4,
+      "nodo:click": 4,
       "nodo:keydown:remove": 4,
       "nodo:keydown": 4
      },

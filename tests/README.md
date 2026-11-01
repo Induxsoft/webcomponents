@@ -134,7 +134,7 @@ de Chrome y la fecha). `--update` la reescribe **completa**. Solo se permite:
    escenarios cambiaron y por qué.
 3. Al cambiar de máquina o de Chrome, si solo cambian anchos calculados o PNG (se revisa antes).
 
-Nunca para «hacer pasar» una fase: F1 no tiene diferencias permitidas.
+Nunca para «hacer pasar» una fase. En F1 las únicas diferencias permitidas son las de las correcciones decididas (C1–C11, C13, C15, C17–C21), actualizadas escenario por escenario con `--update --filtro <id>` y documentadas en `CAMBIOS-F1.md`.
 
 Validación del banco: dos corridas seguidas contra `0ed1824` deben dar 0 diferencias, y cada mutación de
 `tools/mutaciones.mjs` debe hacer fallar al menos un escenario.
@@ -232,10 +232,13 @@ Conviene confirmar S1-S3 renderizando una lista, un árbol y una lista paginada 
 ## Pruebas de mutación
 
 `tools/mutaciones.mjs` crea en `/tmp/et-mutaciones/` copias con un cambio pequeño cada una (quitar la clase
-`EdiTable-Cell` de un camino de dibujo, quitar la regla `.hidde-row`, invertir el orden de `InputCreated` y
+`EdiTable-Cell` de los td que dibuja `_f1PintarCelda`, quitar la regla `.hidde-row`, invertir el orden de `InputCreated` y
 `BeforeSetInput`, desalinear `CurrentRowIndex()`, truncar en vez de redondear en `_format`, envolver la tabla en un
-`div`, agregar un `tfoot` vacío) y una corrección real (un solo listener de clic en `InsertRow`). Corre la batería con
-cada una y escribe `resumen.md`.
+`div`, agregar un `tfoot` vacío) y, desde F1, tres que deshacen lo nuevo: desalinear el mapa interno tr → índice, volver
+a acumular listeners de clic en `InsertRow` (deshace C1) y reescribir `DataArray` al confirmar sin cambios (deshace
+C17). Corre la batería con cada una y escribe `resumen.md`. Cada mutación debe hacer fallar al menos un escenario.
+
+Las correcciones de F1 y los escenarios cuya referencia cambió por ellas están en `CAMBIOS-F1.md`.
 
 ## Rendimiento
 

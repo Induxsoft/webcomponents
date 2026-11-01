@@ -21,9 +21,10 @@ const EXTRA = process.argv.flatMap((a, i) => (a === '--escenarios-extra' ? ['--e
 
 // [nombre, descripción, texto original (debe aparecer exactamente una vez), reemplazo]
 const MUTACIONES = [
-  ['quitar-clase-celda', 'Quitar la clase EdiTable-Cell de los td que dibuja _getFullTable (línea 309)',
-    "const td = this._createFullElement('td', { class:'EdiTable-Cell' });\n                    tr.appendChild(td);\n                    \n                    let coldf = this.GetColumnDefOfTd(td);\n                    let value = (this._isBadgesCol(column) ? '' : (data[column.field] ?? ''));\n                    \n                    let valideEncode = true;\n\n                    if(coldf.template) {\n                        valideEncode = false;\n                        value = this.applyTemplate(coldf.template, data);\n                    }\n\n                    this.SetTdValue(td, value, valideEncode, coldf);\n                    \n                    td.setAttribute('data-cell',(coldf?.title??''));\n                    if (this.onTdPaint) this.onTdPaint(td, idx, this.ColIndexOfTd(td), (coldf?.field??''));\n                });",
-    "const td = this._createFullElement('td', {});\n                    tr.appendChild(td);\n                    \n                    let coldf = this.GetColumnDefOfTd(td);\n                    let value = (this._isBadgesCol(column) ? '' : (data[column.field] ?? ''));\n                    \n                    let valideEncode = true;\n\n                    if(coldf.template) {\n                        valideEncode = false;\n                        value = this.applyTemplate(coldf.template, data);\n                    }\n\n                    this.SetTdValue(td, value, valideEncode, coldf);\n                    \n                    td.setAttribute('data-cell',(coldf?.title??''));\n                    if (this.onTdPaint) this.onTdPaint(td, idx, this.ColIndexOfTd(td), (coldf?.field??''));\n                });"],
+  // F1: _getFullTable y _printRows dibujan la celda con _f1PintarCelda; la mutación quita la clase en los dos caminos.
+  ['quitar-clase-celda', 'Quitar la clase EdiTable-Cell de los td que dibuja _f1PintarCelda (_getFullTable y _printRows)',
+    "        const td = this._createFullElement('td', { class:'EdiTable-Cell' });\n        tr.appendChild(td);\n\n        let coldf",
+    "        const td = this._createFullElement('td', {});\n        tr.appendChild(td);\n\n        let coldf"],
   ['quitar-regla-css', 'Quitar la regla CSS .hidde-row{ display: none; }',
     '.hidde-row{ display: none; }', ''],
   ['orden-eventos', 'Disparar BeforeSetInput antes que InputCreated (StartEdit, líneas 1892-1897)',
@@ -41,9 +42,16 @@ const MUTACIONES = [
   ['tfoot-vacio', 'Agregar un tfoot vacío a la tabla interna',
     "        table.appendChild(thead);\n        table.appendChild(tbody);",
     "        table.appendChild(thead);\n        table.appendChild(tbody);\n        table.appendChild(this._createFullElement('tfoot'));"],
-  ['corregir-listener-duplicado', 'Corrección (no mutación): un solo listener de clic por celda en InsertRow; debe verse SOLO en escenarios afectados',
-    "                td.removeEventListener('click', clickFunct);\n                td.addEventListener('click', clickFunct);",
-    "                if (!td.__etClic) { td.__etClic = true; td.addEventListener('click', clickFunct); }"],
+  // F1: mutaciones de lo que cambió en F1 (mapa de filas, C1, C17).
+  ['mapa-desalineado', 'El mapa tr → índice (F1, A1) devuelve el índice menos 1 a partir de la fila 3',
+    "        return (i ?? -1);\n    }\n    _f1TrDeIndice",
+    "        return ((i ?? -1) > 2 ? i - 1 : (i ?? -1));\n    }\n    _f1TrDeIndice"],
+  ['revertir-c1', 'Volver a agregar un listener de clic a todas las celdas en cada InsertRow (deshace C1)',
+    "            // F1 (A2): solo los td del tbody.\n            this._shadow.querySelectorAll(this.EdiTable.Const.HTML.TABLE+\"#\"+this.tableId+\" > \"+this.EdiTable.Const.HTML.TBODY+\" \"+this.EdiTable.Const.HTML.TD).forEach(td => {",
+    "            this._shadow.querySelectorAll(this.EdiTable.Const.HTML.TABLE+\"#\"+this.tableId+\" > \"+this.EdiTable.Const.HTML.TBODY+\" \"+this.EdiTable.Const.HTML.TD).forEach(td => {\n                td.addEventListener('click', (e) => { e.stopPropagation(); this.CellFocus(e.target); });"],
+  ['revertir-c17', 'Confirmar sin cambios vuelve a escribir DataArray (deshace C17)',
+    "f1SinCambio = (this._f1Edicion != null",
+    "f1SinCambio = false && (this._f1Edicion != null"],
 ];
 
 const src = fs.readFileSync(ORIG, 'utf8');
@@ -73,4 +81,4 @@ for (const f of filas) md.push(`## ${f.nombre}`, '', ...f.fallan.map(x => `- \`$
 fs.writeFileSync(path.join(DIR, 'resumen.md'), md.join('\n') + '\n');
 fs.writeFileSync(path.join(DIR, 'resumen.json'), JSON.stringify(filas, null, 1) + '\n');
 console.log('Resumen: ' + path.join(DIR, 'resumen.md'));
-process.exit(filas.every(f => f.nombre.startsWith('corregir-') || f.fallan.length) ? 0 : 1);
+process.exit(filas.every(f => f.fallan.length) ? 0 : 1);

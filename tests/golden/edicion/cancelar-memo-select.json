@@ -421,7 +421,10 @@
       "evento": "leavecell",
       "tabla": "t1",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"t1","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[0]","texto":"memo"}},
+       "sender": {"$sender":"t1","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -662,12 +665,6 @@
       }
      },
      {
-      "evento": "fieldupdated",
-      "tabla": "t1",
-      "consumidor": false,
-      "args": {"sender":{"$sender":"t1","esElemento":false},"row":0,"field":"s","value":"B"}
-     },
-     {
       "evento": "entercell",
       "tabla": "t1",
       "consumidor": false,
@@ -712,7 +709,10 @@
       "evento": "leavecell",
       "tabla": "t1",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"t1","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[1]>td[0]","texto":""}},
+       "sender": {"$sender":"t1","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -736,8 +736,8 @@
       "document:mouseup": 2,
       "window:beforeprint": 1,
       "window:afterprint": 1,
-      "nodo:click:remove": 10,
-      "nodo:click": 13,
+      "nodo:click:remove": 6,
+      "nodo:click": 9,
       "nodo:keydown:remove": 6,
       "nodo:keydown": 9
      },

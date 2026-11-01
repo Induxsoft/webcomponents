@@ -600,7 +600,10 @@
       "evento": "leavecell",
       "tabla": "t1",
       "consumidor": false,
-      "args": {"td":null,"sender":{"$sender":"t1","esElemento":false}}
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[1]>td[1]","texto":"Producto de prueba 2"}},
+       "sender": {"$sender":"t1","esElemento":false}
+      }
      },
      {
       "evento": "entercell",
@@ -647,8 +650,8 @@
       "document:mouseup": 4,
       "window:beforeprint": 1,
       "window:afterprint": 1,
-      "nodo:click:remove": 26,
-      "nodo:click": 26,
+      "nodo:click:remove": 2,
+      "nodo:click": 2,
       "nodo:keydown:remove": 2,
       "nodo:keydown": 2
      },

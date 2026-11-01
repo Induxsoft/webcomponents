@@ -8,15 +8,41 @@ class EditTable extends HTMLElement
     _current_row = null;
     _dataArrayBackup = null;
     _sorTable=true;
-    constructor() 
+    // F1: versión y funciones disponibles (R6). La lista se llena en las fases siguientes.
+    static version = "2.0.0-f1";
+    static features = [];
+
+    constructor()
     {
         super();
-        document.addEventListener('DOMContentLoaded', () => this.attributes = this.getAttributeNames());
+        // F1 (C11): si el documento ya cargó, ese DOMContentLoaded nunca llegaría; no se registra.
+        if (!EditTable._f1DocumentoCargado())
+            document.addEventListener('DOMContentLoaded', () => this.attributes = this.getAttributeNames());
     }
+
+    // F1 (C8): atributos observados. Los de §2-§9 de la spec se observan desde ya; en F1 solo
+    // show-tree, hidde-selector y hide-row-selector tienen efecto después de la carga.
+    static _f1Observados = ['show-tree', 'hidde-selector', 'hide-row-selector',
+        'summary-scope', 'multi-select', 'column-chooser', 'column-reorder',
+        'design-auto-save', 'design-key', 'design-auto-save-sort',
+        'virtual-rows', 'group-panel'];   // F1: P28 de la spec §13
 
     static get observedAttributes()
     {
-        return this.attributes;
+        return EditTable._f1Observados.slice();
+    }
+
+    // F1 (C9): true si DOMContentLoaded ya se disparó (o se está despachando).
+    static _f1DocumentoCargado()
+    {
+        if (document.readyState === 'complete') return true;
+        if (document.readyState === 'loading') return false;
+        // 'interactive': puede ser antes del DOMContentLoaded (scripts defer) o después (scripts dinámicos).
+        try {
+            const nav = performance.getEntriesByType('navigation')[0];
+            if (nav) return nav.domContentLoadedEventStart > 0;
+        } catch (e) { }
+        return true;
     }
 
     attributeChangeCallback(property, oldValue, newValue)
@@ -25,9 +51,73 @@ class EditTable extends HTMLElement
         this[property] = newValue;
     }
 
+    // F1 (C8): nombre estándar. Durante el parseo los atributos se leen al inicializar, como hoy.
+    attributeChangedCallback(name, oldValue, newValue)
+    {
+        if (newValue === oldValue || !this._f1Inicializada) return;
+        switch (name)
+        {
+            case 'hidde-selector':
+            {
+                this.hiddeSelector = (newValue == 'true');
+                const selector = this.EdiTable.GetSelector();
+                if (selector) selector.classList.toggle('transparent', this.hiddeSelector);
+                break;
+            }
+            case 'hide-row-selector':
+            {
+                this.hiddeRowSelector = (newValue == 'true');
+                const tbody = this._table?.querySelector('tbody');
+                if (tbody && this.CSS.RowSelected)
+                {
+                    if (this.hiddeRowSelector) tbody.querySelectorAll('tr.' + this.CSS.RowSelected).forEach(tr => tr.classList.remove(this.CSS.RowSelected));
+                    else { const tr = this.CurrentTd()?.closest('tr'); if (tr) tr.classList.add(this.CSS.RowSelected); }
+                }
+                break;
+            }
+            case 'show-tree':
+            {
+                this._initTreeValues();
+                this._printTreeData();
+                break;
+            }
+        }
+    }
+
+    // F1 (C9, C11): se inicializa una sola vez. Mientras la página carga, en DOMContentLoaded y en el
+    // mismo orden de hoy; si ya cargó, de inmediato. Al reconectar solo se vuelven a crear los
+    // listeners globales, el intervalo y los observadores.
+    _f1Inicializada = false;
+    _f1EsperandoCarga = false;
+
     connectedCallback()
     {
-        document.addEventListener('DOMContentLoaded', () => 
+        if (this._f1Inicializada) { this._f1Reconectar(); return; }
+        if (this._f1EsperandoCarga) return;
+
+        if (EditTable._f1DocumentoCargado())
+        {
+            this.attributes = this.getAttributeNames();
+            this._f1Inicializar();
+            return;
+        }
+
+        this._f1EsperandoCarga = true;
+        document.addEventListener('DOMContentLoaded', () =>
+        {
+            this._f1EsperandoCarga = false;
+            this._f1Inicializar();
+        });
+    }
+
+    disconnectedCallback()
+    {
+        // F1 (C11)
+        if (this._f1Inicializada) this._f1Liberar();
+    }
+
+    _f1Inicializar()
+    {
         {
             this._shadow = this.attachShadow({ mode: 'closed' });
             this._initOtherValues();
@@ -209,7 +299,8 @@ class EditTable extends HTMLElement
                 </style>
             `;
 
-            this.ReadOnly = this.hasAttribute("readonly");
+            // F1 (C5): readonly="false", "0" o "no" en el host significan editable.
+            this.ReadOnly = this.hasAttribute("readonly") && !this._f1EsFalso(this.getAttribute("readonly"));
             if (this.hasAttribute('data') && this.getAttribute('data').trim() != "")
             {
                 try{ this.DataArray = JSON.parse(this.getAttribute('data')); }
@@ -231,6 +322,12 @@ class EditTable extends HTMLElement
             if(this.hasAttribute('sorTable'))this._sorTable=this.getAttribute('sorTable').trim().toLowerCase()=="true";
             
             this.sorTable=this._sorTable;
+            // F1 (C7): la propiedad pública sorTable lee y escribe _sorTable (antes no tenía efecto).
+            Object.defineProperty(this, 'sorTable', {
+                configurable: true, enumerable: true,
+                get: () => this._sorTable,
+                set: (v) => { this._sorTable = v; }
+            });
             //this._processAtributesColumn();
             this._resizableGrid(this._table);
             this._setSortEvent();
@@ -241,23 +338,84 @@ class EditTable extends HTMLElement
             this._current_row = this.CurrentRowIndex();
 
             // Vista de impresión activada.
-            window.addEventListener('beforeprint', () => {
+            // F1 (C3): antes de ocultar se guarda el estado de cada columna de impresión.
+            // F1 (C11): los listeners de window quedan registrados para liberarlos al desconectar.
+            this._f1Global(window, 'beforeprint', () => {
+                this._f1EstadoImpresion = new Map();
                 this.Columns.forEach(col => {
                     if ((col?.class??"").includes("hide-on-print") || (col?.class??"").includes("no-print"))
+                    {
+                        if (col.field != undefined && !this._f1EstadoImpresion.has(col.field))
+                            this._f1EstadoImpresion.set(col.field, this._f1ColumnaOculta(col.field));
                         this.hideColumn(col.field, true);
+                    }
                 });
             });
             // Vista de impresión desactivada.
-            window.addEventListener('afterprint', () => {
+            // F1 (C3): cada columna vuelve exactamente al estado que tenía antes de imprimir.
+            this._f1Global(window, 'afterprint', () => {
+                const antes = this._f1EstadoImpresion ?? new Map();
+                this._f1EstadoImpresion = null;
                 this.Columns.forEach(col => {
                     if ((col?.class??"").includes("hide-on-print") || (col?.class??"").includes("no-print"))
-                        this.hideColumn(col.field, false);
+                        this.hideColumn(col.field, (antes.get(col.field) ?? false));
                 });
             });
-            
+
             this.setAutoConfirm();
             this.checkAndSetRowCards();
-        });
+        }
+        this._f1Inicializada = true;
+        // F1 (C11): si lo sacaron del documento antes de inicializarse, no deja nada activo.
+        if (!this.isConnected) this._f1Liberar();
+    }
+
+    // ========================= F1: listeners globales, intervalo y observadores (C11)
+
+    _f1Globales = [];          // [{target, type, fn}] de window y document
+    _f1Intervalos = [];        // ids de setAutoConfirm
+    _f1NumIntervalos = 0;      // cuántos había al desconectar
+    _f1Conectada = true;
+
+    _f1Global(target, type, fn)
+    {
+        this._f1Globales.push({ target, type, fn });
+        if (this._f1Conectada) target.addEventListener(type, fn);
+    }
+
+    _f1Liberar()
+    {
+        if (!this._f1Conectada) return;
+        this._f1Conectada = false;
+        this._f1Globales.forEach(g => g.target.removeEventListener(g.type, g.fn));
+        this._f1NumIntervalos = this._f1Intervalos.length;
+        this._f1Intervalos.forEach(id => clearInterval(id));
+        this._f1Intervalos = [];
+        try { this._teardownViewWatcher(); } catch (e) { }
+        if (this._selIO) { this._selIO.disconnect(); this._selIO = null; }
+        if (this._widthRO) { this._widthRO.disconnect(); this._widthRO = null; this._lastWidth = -1; }
+        if (this._ensureRaf) { cancelAnimationFrame(this._ensureRaf); this._ensureRaf = 0; }
+    }
+
+    _f1Reconectar()
+    {
+        if (this._f1Conectada) return;
+        this._f1Conectada = true;
+        this._f1Globales.forEach(g => g.target.addEventListener(g.type, g.fn));
+        const n = this._f1NumIntervalos;
+        this._f1NumIntervalos = 0;
+        for (let i = 0; i < n; i++) this.setAutoConfirm();
+        try {
+            this._setupViewWatcher();
+            this._setupSelectionKeeper();
+            if (this._selTr && this._selTr.isConnected) this._trackSelection(this._selTr);
+        } catch (e) { console.error('EditTable: error al reconectar', e); }
+    }
+
+    // F1 (C5): lectura de atributos booleanos: "false", "0" y "no" significan falso.
+    _f1EsFalso(value)
+    {
+        return ['false', '0', 'no'].includes(String(value ?? '').trim().toLowerCase());
     }
 
     _getFullTable=()=>
@@ -304,26 +462,8 @@ class EditTable extends HTMLElement
 
                 const tr = this._createFullElement('tr');
 
-                this.Columns.forEach(column => 
-                {
-                    const td = this._createFullElement('td', { class:'EdiTable-Cell' });
-                    tr.appendChild(td);
-                    
-                    let coldf = this.GetColumnDefOfTd(td);
-                    let value = (this._isBadgesCol(column) ? '' : (data[column.field] ?? ''));
-                    
-                    let valideEncode = true;
-
-                    if(coldf.template) {
-                        valideEncode = false;
-                        value = this.applyTemplate(coldf.template, data);
-                    }
-
-                    this.SetTdValue(td, value, valideEncode, coldf);
-                    
-                    td.setAttribute('data-cell',(coldf?.title??''));
-                    if (this.onTdPaint) this.onTdPaint(td, idx, this.ColIndexOfTd(td), (coldf?.field??''));
-                });
+                // F1 (A4): misma celda que antes, encapsulada; este camino no aplica árbol ni hideColumns.
+                this.Columns.forEach((column, i) => this._f1PintarCelda(tr, column, i, data, idx, false, false));
 
                 this._decorateRow(tr, idx, data);
                 tbody.appendChild(tr);
@@ -331,6 +471,42 @@ class EditTable extends HTMLElement
         }
 
         return table;
+    }
+    // F1 (A4): una celda de datos tal como la dibujaban _getFullTable y _printRows (mismo orden de
+    // operaciones). arbol: contenedor del botón de expandir en la primera celda; ocultas: aplica hideColumns.
+    // InsertRow sigue con su propio camino: unificarlo cambiaría el DOM (data-cell, plantillas, onTdPaint).
+    _f1PintarCelda=(tr, column, i, data, idx, arbol, ocultas)=>
+    {
+        const td = this._createFullElement('td', { class:'EdiTable-Cell' });
+        tr.appendChild(td);
+
+        let coldf = this.GetColumnDefOfTd(td);
+        let value = (this._isBadgesCol(column) ? '' : (data[column.field] ?? ''));
+
+        let valideEncode = true;
+
+        if(coldf.template) {
+            valideEncode = false;
+            value = this.applyTemplate(coldf.template, data);
+        }
+
+        let container = null;
+        if (i==0 && arbol)
+        {
+            container = this._createFullElement('div', { class:'container-cell-content' })
+            const content = this._createFullElement('div', { iscellcontent:'true', class:'cell-content' });
+            container.appendChild(content);
+            td.appendChild(container);
+        }
+
+        this.SetTdValue(td, value, valideEncode, coldf);
+
+        // F1 (C20): data-cell conserva el título declarado aunque changeColumnTitle cambie Columns[i].title
+        // (control-styles de los paquetes usa td[data-cell='<título>']).
+        td.setAttribute('data-cell',(this._f1TitulosDeclarados.has(td.cellIndex) ? this._f1TitulosDeclarados.get(td.cellIndex) : (coldf?.title??'')));
+        if (this.onTdPaint) this.onTdPaint(td, idx, this.ColIndexOfTd(td), (coldf?.field??''));
+        if (ocultas && this.hideColumns.includes(td.cellIndex)) td.classList.add('hidde-col');
+        return container;
     }
     _setColumnWith=(th)=>
     {
@@ -395,6 +571,40 @@ class EditTable extends HTMLElement
                 this.Columns[i] = settings;
             });
         }
+        // F1 (A3): estado de columnas por field (orden declarado, ancho y si está oculta).
+        this._f1EstadoColumnas = new Map();
+        this._f1Ocultas = [];
+        this.Columns.forEach((col, i) => {
+            if (col && col.field != undefined && !this._f1EstadoColumnas.has(col.field))
+                this._f1EstadoColumnas.set(col.field, { field: col.field, orden: i, ancho: (col.width ?? null), oculta: false });
+        });
+    }
+    // ========================= F1: estado de columnas por field (A3)
+    _f1EstadoColumnas = new Map();
+    _f1Ocultas = [];           // fields ocultos, en el orden en que se ocultaron
+    _f1EstadoColumna=(field)=>
+    {
+        let st = this._f1EstadoColumnas.get(field);
+        if (!st)
+        {
+            st = { field, orden: this._f1EstadoColumnas.size, ancho: null, oculta: false };
+            this._f1EstadoColumnas.set(field, st);
+        }
+        return st;
+    }
+    _f1ColumnaOculta=(field)=>
+    {
+        return !!this._f1EstadoColumnas.get(field)?.oculta;
+    }
+    // hideColumns se deriva del estado: índices de celda de los fields ocultos, en el orden en que se ocultaron.
+    _f1DerivarHideColumns=()=>
+    {
+        const idx = [];
+        this._f1Ocultas.forEach(field => {
+            const th = this._table?.querySelector(`thead th[field="${field}"]`);
+            if (th && !idx.includes(th.cellIndex)) idx.push(th.cellIndex);
+        });
+        return idx;
     }
     _getAttributeColumn=(attr, value)=>
     {
@@ -415,7 +625,8 @@ class EditTable extends HTMLElement
     }
     _resizableGrid=(table)=>
     {
-        const rows = table.querySelectorAll('tr');
+        // F1 (A2): solo las filas del thead (hoy la primera fila de la tabla es siempre la del thead).
+        const rows = (table.querySelector('thead') ?? table).querySelectorAll('tr');
         if (!rows || rows.length < 1) return;
         
         const cols = rows[0].querySelectorAll('th');
@@ -443,7 +654,8 @@ class EditTable extends HTMLElement
             if (nxtCol)
                 nxtColWidth = nxtCol.offsetWidth
         });
-        document.addEventListener('mousemove', (e) => {
+        // F1 (C11): listeners de document registrados para liberarlos al desconectar.
+        this._f1Global(document, 'mousemove', (e) => {
             e.stopPropagation();
             if (curCol) {
                 var diffX = e.pageX - pageX;
@@ -452,8 +664,13 @@ class EditTable extends HTMLElement
                 curCol.style.width = (curColWidth + diffX)+'px';
             }
         });
-        document.addEventListener('mouseup', (e) => { 
+        this._f1Global(document, 'mouseup', (e) => {
             e.stopPropagation();
+            // F1 (A3): el ancho queda también en el estado por field.
+            [curCol, nxtCol].forEach(th => {
+                const f = th?.getAttribute?.('field');
+                if (f != undefined && th.style.width) this._f1EstadoColumna(f).ancho = th.style.width;
+            });
             curCol = undefined;
             nxtCol = undefined;
             nxtCol = undefined;
@@ -464,10 +681,56 @@ class EditTable extends HTMLElement
     }
     _getRowIndex=(tr)=>
     {
-        let index = -1;
+        // F1 (A1): índice de DataArray a partir del mapa interno tr → índice.
         let tbody = tr?.parentElement;
-        if (tbody) tbody.querySelectorAll('tr').forEach((_tr, i) => { if (_tr === tr) index = i });
+        if (!tbody) return -1;
+        if (tbody === this._f1TBodyPrincipal()) return this._f1IndiceDeTr(tr, tbody);
+        // Un tr fuera del tbody principal (por ejemplo, de una tabla dentro de una plantilla): como antes.
+        let index = -1;
+        tbody.querySelectorAll('tr').forEach((_tr, i) => { if (_tr === tr) index = i });
         return index;
+    }
+    // ========================= F1: mapa interno tr → índice de DataArray (A1)
+    // WeakMap, sin atributos en el DOM. En F1 el índice es la posición del tr entre los tr del tbody
+    // (la misma cuenta que hacía _getRowIndex con querySelectorAll('tr')); el mapa se reconstruye solo
+    // cuando ya no coincide con el DOM, así que también sigue los cambios que haga un consumidor.
+    // A partir de F5/F6 (virtualización, agrupación) el mapa deja de ser la posición.
+    _f1Indices = new WeakMap();
+    _f1Orden = [];
+    _f1TBody = null;
+    _f1TBodyPrincipal=()=>
+    {
+        return this._table?.querySelector('tbody') ?? null;
+    }
+    _f1Reindexar=(tbody)=>
+    {
+        const filas = tbody.getElementsByTagName('tr');
+        this._f1Indices = new WeakMap();
+        this._f1Orden = new Array(filas.length);
+        for (let i = 0; i < filas.length; i++) { this._f1Indices.set(filas[i], i); this._f1Orden[i] = filas[i]; }
+        this._f1TBody = tbody;
+    }
+    _f1IndiceDeTr=(tr, tbody)=>
+    {
+        const filas = tbody.getElementsByTagName('tr');
+        let i = (this._f1TBody === tbody ? this._f1Indices.get(tr) : undefined);
+        if (i === undefined || filas[i] !== tr || this._f1Orden.length !== filas.length)
+        {
+            this._f1Reindexar(tbody);
+            i = this._f1Indices.get(tr);
+        }
+        return (i ?? -1);
+    }
+    _f1TrDeIndice=(row, tbody)=>
+    {
+        const filas = tbody.getElementsByTagName('tr');
+        let tr = (this._f1TBody === tbody ? this._f1Orden[row] : undefined);
+        if (!tr || filas[row] !== tr || this._f1Orden.length !== filas.length)
+        {
+            this._f1Reindexar(tbody);
+            tr = this._f1Orden[row];
+        }
+        return tr;
     }
     _getVisibleRowIndex=(tr)=>
     {
@@ -491,7 +754,8 @@ class EditTable extends HTMLElement
     }
     _setSortEvent=()=>
     {
-        const fields = this._table.querySelectorAll('th');
+        // F1 (A2): solo los th del thead (antes: todos los th de la tabla).
+        const fields = this._table.querySelectorAll('thead th');
         fields.forEach(field => {
             let par = 0;
             field.onclick = e => 
@@ -772,13 +1036,18 @@ class EditTable extends HTMLElement
         if (this.hasAttribute('row-height')) this.rowHeight = this.getAttribute('row-height');
         if (this.hasAttribute('cards-responsive')) this.cardsResponsive = (this.getAttribute('cards-responsive')=='true');
         if (this.hasAttribute('editable-responsive')) this.editableResponsive = (this.getAttribute('editable-responsive')=='true');
+        // F1 (P37): opción nueva, apagada por omisión.
+        if (this.hasAttribute('click-propagation')) this.ClickPropagation = (this.getAttribute('click-propagation')=='true');
         this._readVisualAttributes();
     }
     autoConfirm=false;
+    ClickPropagation=false;   // F1 (P37): true deja que el clic de una celda llegue a la fila y a los ancestros
     _fireBlur=true;
     setAutoConfirm()
     {
-        setInterval(()=>
+        // F1 (C11): el id queda registrado para liberarlo al desconectar.
+        if (!this._f1Conectada) { this._f1NumIntervalos++; return; }
+        this._f1Intervalos.push(setInterval(()=>
         {
             if (document.activeElement!=this)
             {
@@ -794,7 +1063,7 @@ class EditTable extends HTMLElement
                 }
             } 
             //else { this._fireBlur=false;}
-        },1000);
+        },1000));
     }
 
     checkAndSetRowCards()
@@ -871,7 +1140,8 @@ class EditTable extends HTMLElement
                 IsDirtyChanged:"isdirtychanged",
                 OnSort:"onsort",
                 BadgeClick:"badgeclick",
-                ViewModeChanged:"viewmodechanged"
+                ViewModeChanged:"viewmodechanged",
+                MaskInvalid:"maskinvalid"           // F1 (C15): badInput del control nativo de Number
             },
             SelectorId:"__table_selector",
             InputId:"__table_input",
@@ -974,6 +1244,16 @@ class EditTable extends HTMLElement
         SetSelectorKeyEventHandler:function(selector, _current)
         {
             const funct = (e) => {
+                // F1 (C2): Ctrl o Meta con una letra no empieza la edición. Ctrl/Meta + C, V, X y A
+                // conservan su comportamiento nativo (no se cancelan); AltGr (Ctrl+Alt) sigue escribiendo.
+                const f1Atajo = (e.ctrlKey || e.metaKey) && !e.altKey && !(e.getModifierState && e.getModifierState('AltGraph'))
+                    && (e.key ?? '').trim().length == 1;
+                if (f1Atajo)
+                {
+                    if (!['c', 'v', 'x', 'a'].includes(e.key.toLowerCase())) e.preventDefault();
+                    e.stopPropagation();
+                    return;
+                }
                 e.preventDefault();
                 switch(e.key)
                 {
@@ -1219,10 +1499,13 @@ class EditTable extends HTMLElement
     sorTable=true;
     Initialize = (tableId) =>
     {
-        let tds = this._shadow.querySelectorAll(this.EdiTable.Const.HTML.TABLE+"#"+tableId+" "+this.EdiTable.Const.HTML.TD);
+        // F1 (A2): solo los td del tbody (antes: todos los td de la tabla).
+        let tds = this._shadow.querySelectorAll(this.EdiTable.Const.HTML.TABLE+"#"+tableId+" > "+this.EdiTable.Const.HTML.TBODY+" "+this.EdiTable.Const.HTML.TD);
         tds.forEach(td => {
             td.onclick = e => {
-                e.stopPropagation();
+                // F1 (P37): con click-propagation="true" el clic sigue a la fila y a los ancestros.
+                if (!this.ClickPropagation) e.stopPropagation();
+                else if (e._f1EdiTableProcesado) return;   // ya lo procesó el selector (inició la edición)
                 this.CellFocus(td);
             }
         });
@@ -1279,7 +1562,11 @@ class EditTable extends HTMLElement
      */
     NavToEnd=()=>
     {
-        this.NavTo(this.TRCount()-1,(this._table.querySelectorAll('thead tr td:not(.hidde-col)').length-1));
+        // F1 (C6): última fila, en la columna actual (índice visible, el que recibe NavTo).
+        const td = this.CurrentTd();
+        let col = (td ? this._getVisibleColumnIndex(td) : 0);
+        if (col < 0) col = 0;
+        this.NavTo(this.TRCount()-1, col);
     }
     /**
      * Mueve el selector a la primer columna de la fila especificada.
@@ -1326,6 +1613,8 @@ class EditTable extends HTMLElement
         
         let tbody=this.GetTBody();
 
+        // F1 (A1): inverso del mapa interno índice → tr.
+        if (tbody === this._f1TBodyPrincipal()) return this._f1TrDeIndice(row, tbody);
         return tbody.querySelectorAll(this.EdiTable.Const.HTML.TR)[row];
     }
     /**
@@ -1540,13 +1829,17 @@ class EditTable extends HTMLElement
                             this.SetTdValue(cell,coldef.default);
                         }
             }
-            const clickFunct = (e) => {
-                e.stopPropagation();
-                this.CellFocus(e.target);
-            }
-            this._shadow.querySelectorAll(this.EdiTable.Const.HTML.TABLE+"#"+this.tableId+" "+this.EdiTable.Const.HTML.TD).forEach(td => {
-                td.removeEventListener('click', clickFunct);
-                td.addEventListener('click', clickFunct);
+            // F1 (C1): un solo manejador de clic por celda, igual al de Initialize (recibe el td, no el
+            // elemento interno). Antes cada InsertRow agregaba otro listener a todas las celdas.
+            Array.from(nr.cells).forEach(td => {
+                td.onclick = e => {
+                    if (!this.ClickPropagation) e.stopPropagation();   // F1 (P37)
+                    else if (e._f1EdiTableProcesado) return;
+                    this.CellFocus(td);
+                }
+            });
+            // F1 (A2): solo los td del tbody.
+            this._shadow.querySelectorAll(this.EdiTable.Const.HTML.TABLE+"#"+this.tableId+" > "+this.EdiTable.Const.HTML.TBODY+" "+this.EdiTable.Const.HTML.TD).forEach(td => {
                 if (this.hideColumns.includes(td.cellIndex)) td.classList.add('hidde-col');
             });
 
@@ -1787,8 +2080,12 @@ class EditTable extends HTMLElement
         if (this.ReadOnly) return;
         
         let columnDef=this.GetColumnDef();
-        
-        if ((columnDef?.readonly??false)) return;
+
+        // F1 (C5): readonly="false", "0" o "no" en la columna significan editable.
+        if ((columnDef?.readonly??false) && !this._f1EsFalso(columnDef.readonly)) return;
+        // F1 (C17): la edición se abrió con el valor de la celda (Enter, F2, clic), no con una tecla ni con Supr.
+        const f1ConValorActual = ((text==undefined || String(text).trim()==="") && !clear);
+        this._f1Edicion = null;
         if (columnDef.type==this.EdiTable.Const.Columns.Types.NoEditable || this._isBadgesCol(columnDef)) return;
 
         this.Editing=true;
@@ -1881,6 +2178,11 @@ class EditTable extends HTMLElement
             if (input) input.setAttribute('maxlength', columnDef.maxlength);
         }
 
+        // F1 (C13): el control nativo de Number acepta decimales (sin step, cualquier decimal queda :invalid).
+        // Se pone antes de InputCreated para que el consumidor todavía pueda cambiarlo.
+        if (input && input.tagName == 'INPUT' && (input.getAttribute('type') ?? '').toLowerCase() == 'number' && !input.hasAttribute('step'))
+            input.setAttribute('step', 'any');
+
         var eventArgs={
             input:input,
             td:td,
@@ -1888,6 +2190,7 @@ class EditTable extends HTMLElement
             text:text,
             coldef:columnDef
         };
+        const f1TextoAntesDeEventos = text;   // F1 (C17)
 
         if (this._getCurren().Events[this.EdiTable.Const.Events.InputCreated]!=undefined)
             this._getCurren().Events[this.EdiTable.Const.Events.InputCreated](eventArgs);
@@ -1896,7 +2199,17 @@ class EditTable extends HTMLElement
         if (this._getCurren().Events[this.EdiTable.Const.Events.BeforeSetInput]!=undefined)
             this._getCurren().Events[this.EdiTable.Const.Events.BeforeSetInput](eventArgs);
         
-        this.EdiTable.SetInputVal(input, eventArgs.text, this._getCurren(), columnDef);
+        // F1 (C18): el editor nativo de fecha recibe el valor en el formato que acepta.
+        let f1Texto = eventArgs.text;
+        const f1Tipo = (input?.tagName == 'INPUT' ? (input.getAttribute('type') ?? '').toLowerCase() : '');
+        if (f1Tipo == 'date' || f1Tipo == 'datetime-local') f1Texto = this._f1FechaParaEditor(f1Texto, f1Tipo);
+
+        this.EdiTable.SetInputVal(input, f1Texto, this._getCurren(), columnDef);
+
+        // F1 (C17): valor con el que se abrió el editor, para saber al confirmar si el usuario lo cambió.
+        // Si el consumidor propuso otro texto en InputCreated/BeforeSetInput, confirmar sí lo guarda, como hoy.
+        if (input && f1ConValorActual && eventArgs.text === f1TextoAntesDeEventos)
+            this._f1Edicion = { input, inicial: this.EdiTable.GetInputValue(input, this._getCurren(), columnDef) };
 
         input.focus();
         this.EdiTable.SetInputEventHandler(input,this._getCurren()); 
@@ -1927,9 +2240,39 @@ class EditTable extends HTMLElement
             cancel:false
         };
 
+        // F1 (C17): true si el usuario no cambió lo que mostraba el editor al abrirse.
+        let f1SinCambio = false;
+        let f1TextoLeido;
+
         if (input!=undefined)
         {
+            // F1 (C15): si el control nativo no entiende lo tecleado (badInput), no se confirma.
+            if (input.validity && input.validity.badInput && !this._f1BadInputAvisado.has(input))
+            {
+                const f1Args = { sender: this._getCurren(), td: td, input: input, row: this.RowIndexOfTd(td),
+                    field: columnDef.field, value: input.value, reason: 'badInput', cancel: true };
+                this._f1BadInputAvisado.add(input);
+                input.addEventListener('input', () => this._f1BadInputAvisado.delete(input));
+                this._fireEvent(this.EdiTable.Const.Events.MaskInvalid, f1Args);
+                if (f1Args.cancel)
+                {
+                    this._f1BadInputPendiente = input;
+                    this.Editing = true;
+                    if (input.isConnected) input.focus();
+                    return false;
+                }
+                this._f1BadInputPendiente = null;
+            }
+            else if (input.validity && input.validity.badInput && this._f1BadInputPendiente === input)
+            {
+                // Ya se avisó y el consumidor pidió no confirmar: sigue en edición sin volver a avisar.
+                this.Editing = true;
+                if (input.isConnected) input.focus();
+                return false;
+            }
+
             eventArgs.text=this.EdiTable.GetInputValue(input, this._getCurren(), columnDef);
+            f1SinCambio = (this._f1Edicion != null && this._f1Edicion.input === input && eventArgs.text === this._f1Edicion.inicial);
 
             if (columnDef.keyfield!=undefined && columnDef.type==this.EdiTable.Const.Columns.Types.Select)
             {
@@ -1938,9 +2281,10 @@ class EditTable extends HTMLElement
                     eventArgs.text="";
                 else
                     eventArgs.text=combo.options[combo.selectedIndex].text;
-                    
-                this.UpdateDataMember (this.RowIndexOfTd(eventArgs.td),columnDef.keyfield,input.value);
+
+                if (!f1SinCambio) this.UpdateDataMember (this.RowIndexOfTd(eventArgs.td),columnDef.keyfield,input.value);
             }
+            f1TextoLeido = eventArgs.text;
 
             if (this.Events[this.EdiTable.Const.Events.BeforeUpdateCell]!=undefined)
                 this.Events[this.EdiTable.Const.Events.BeforeUpdateCell](eventArgs);
@@ -1967,11 +2311,52 @@ class EditTable extends HTMLElement
             return true;
         }
         
+        // F1 (C17): sin cambios del usuario (ni del consumidor en los eventos), DataArray no se toca y
+        // no se disparan FieldUpdated ni IsDirtyChanged; la celda vuelve a mostrar lo de antes, como al cancelar.
+        this._f1Edicion = null;
+        if (f1SinCambio && eventArgs.text === f1TextoLeido)
+        {
+            if (this["temp_html"]!=undefined) this.SetTdValue(td, this["temp_html"], true);
+            return true;
+        }
+
         //td.innerHTML = eventArgs.text;
         this.SetTdValue(td, eventArgs.text, true);
         this.UpdateDataMember(this.RowIndexOfTd(td),columnDef.field,eventArgs.text);
 
         return true;
+    }
+    // ========================= F1: edición (C15, C18)
+    _f1BadInputAvisado = new WeakSet();
+    _f1BadInputPendiente = null;
+    _f1Edicion = null;
+    _f1Dos=(n)=> String(n).padStart(2, '0');
+    // F1 (C18): convierte el valor al formato que acepta el control nativo. Lo que no se puede convertir
+    // con seguridad (por ejemplo 01/02/2026) se deja igual: el control abre vacío y C17 evita perderlo.
+    _f1FechaParaEditor=(texto, tipo)=>
+    {
+        if (texto == undefined) return texto;
+        const t = String(texto).trim();
+        if (tipo == 'date')
+        {
+            if (/^\d{4}-\d{2}-\d{2}$/.test(t)) return texto;
+            const m = /^(\d{4}-\d{2}-\d{2})[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?\s*(?:Z|[+-]\d{2}:?\d{2})?$/i.exec(t);
+            return (m ? m[1] : texto);   // la fecha tal como viene, sin convertir zona horaria
+        }
+        if (tipo == 'datetime-local')
+        {
+            if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2})?$/.test(t)) return texto;
+            const m = /^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})(?::(\d{2})(?:\.\d+)?)?\s*(Z|[+-]\d{2}:?\d{2})?$/i.exec(t);
+            if (!m) return texto;
+            if (!m[7]) return `${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}` + (m[6] ? `:${m[6]}` : '');
+            // Con zona (Z u offset) se convierte a hora local.
+            const zona = (m[7].toUpperCase() == 'Z' ? 'Z' : (m[7].includes(':') ? m[7] : m[7].slice(0, 3) + ':' + m[7].slice(3)));
+            const d = new Date(`${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:${m[6] ?? '00'}${zona}`);
+            if (isNaN(d)) return texto;
+            const s = d.getSeconds();
+            return `${d.getFullYear()}-${this._f1Dos(d.getMonth()+1)}-${this._f1Dos(d.getDate())}T${this._f1Dos(d.getHours())}:${this._f1Dos(d.getMinutes())}` + (s ? `:${this._f1Dos(s)}` : '');
+        }
+        return texto;
     }
     /**
      * Cancela la edición de la celda *td* especificada y restablece su valor.
@@ -2043,10 +2428,12 @@ class EditTable extends HTMLElement
 
         if (selector!=undefined)
         {
-            this.SetTdValue(selector.closest('td'), selector.innerHTML, true);
+            // F1 (C19): la celda que se deja se toma antes de quitar el selector (antes LeaveCell recibía null).
+            const f1TdAnterior = selector.closest('td');
+            this.SetTdValue(f1TdAnterior, selector.innerHTML, true);
             if (this.EdiTable.focusedTable!=null)
             {
-                this.LeaveCell(selector.closest('td'));
+                this.LeaveCell(f1TdAnterior);
             }
 
             selector.remove();
@@ -2094,7 +2481,8 @@ class EditTable extends HTMLElement
         this.EnterCell(selector.closest('td'));
 
         const clickFunc = (e) => {
-            e.stopPropagation();
+            if (!this.ClickPropagation) e.stopPropagation();   // F1 (P37)
+            else e._f1EdiTableProcesado = true;
             this.StartEdit(selector.closest('td'),"");  
         }
         selector.removeEventListener('click', clickFunc);
@@ -2381,34 +2769,11 @@ class EditTable extends HTMLElement
                 const tr = this._createFullElement('tr', { id: (data[treeOptions.key]??''), parent: (data[treeOptions.parentkey]??''), indent: (data['__level__']??0) });
                 let container = null;
                 
-                this.Columns.forEach((column, i) => 
+                // F1 (A4): misma celda que _getFullTable, más el contenedor del árbol y hideColumns.
+                this.Columns.forEach((column, i) =>
                 {
-                    const td = this._createFullElement('td', { class:'EdiTable-Cell' });
-                    tr.appendChild(td);
-                    
-                    let coldf = this.GetColumnDefOfTd(td);
-                    let value = (this._isBadgesCol(column) ? '' : (data[column.field] ?? ''));
-                    
-                    let valideEncode = true;
-
-                    if(coldf.template) {
-                        valideEncode = false;
-                        value = this.applyTemplate(coldf.template, data);
-                    }
-
-                    if (i==0 && this.ShowAsTree)
-                    {
-                        container = this._createFullElement('div', { class:'container-cell-content' })
-                        const content = this._createFullElement('div', { iscellcontent:'true', class:'cell-content' });
-                        container.appendChild(content);
-                        td.appendChild(container);
-                    }
-
-                    this.SetTdValue(td, value, valideEncode, coldf);
-                    
-                    td.setAttribute('data-cell',(coldf?.title??''));
-                    if (this.onTdPaint) this.onTdPaint(td, idx, this.ColIndexOfTd(td), (coldf?.field??''));
-                    if (this.hideColumns.includes(td.cellIndex)) td.classList.add('hidde-col');
+                    const c = this._f1PintarCelda(tr, column, i, data, idx, this.ShowAsTree, true);
+                    if (c) container = c;
                 });
 
                 if (this.ShowAsTree)
@@ -2464,7 +2829,8 @@ class EditTable extends HTMLElement
     _getChildRows=(row)=>
     {
         let parent_id = (row.getAttribute('id')??'___');
-        const child_rows = this._table.querySelectorAll(`tr[parent='${parent_id}']`);
+        // F1 (A2): solo las filas del tbody.
+        const child_rows = this._table.querySelectorAll(`tbody tr[parent='${parent_id}']`);
         return child_rows;
     }
 
@@ -2659,7 +3025,14 @@ class EditTable extends HTMLElement
             let orientation = (!desc) ? "ASC" : "DESC";
             this.OnSort(field,orientation);
 
-            dataArray.sort((a,b) => 
+            // F1 (C10): si se ordena DataArray y hay respaldo alineado, el respaldo se reordena igual.
+            // Se ordenan índices con el mismo comparador (sort es estable): queda el mismo orden que antes.
+            const f1Respaldo = this._dataArrayBackup;
+            const f1ConRespaldo = (dataArray === this.DataArray && Array.isArray(f1Respaldo) && f1Respaldo.length === dataArray.length);
+            const f1Original = (f1ConRespaldo ? dataArray.slice() : null);
+            const f1Indices = (f1ConRespaldo ? dataArray.map((_, i) => i) : null);
+
+            const f1Comparar = (a,b) =>
             {
                 let valA = (a[field]??'');
                 let valB = (b[field]??'');
@@ -2673,7 +3046,15 @@ class EditTable extends HTMLElement
 
                 if (!desc) return (valA > valB ? 1 : valA < valB ? -1 : 0);
                 else return (valB > valA ? 1 : valB < valA ? -1 : 0);
-            });
+            };
+
+            if (!f1ConRespaldo) dataArray.sort(f1Comparar);
+            else
+            {
+                f1Indices.sort((i, j) => f1Comparar(f1Original[i], f1Original[j]));
+                const f1Back = f1Respaldo.slice();
+                f1Indices.forEach((k, pos) => { dataArray[pos] = f1Original[k]; f1Respaldo[pos] = f1Back[k]; });
+            }
         }
     }
     SortTree=(treeArray,field,desc, treeOptions=null)=>
@@ -2702,6 +3083,9 @@ class EditTable extends HTMLElement
                     if (!desc) return (valA > valB ? 1 : valA < valB ? -1 : 0);
                     else return (valB > valA ? 1 : valB < valA ? -1 : 0);
                 });
+                // F1 (C21): también los descendientes de las listas en que el comparador no se llamó
+                // (por ejemplo, una lista de un solo elemento). Ordenar dos veces lo ya ordenado no cambia nada.
+                list.forEach(o => { if ((o?.[treeOptions.childs]??[]).length > 0) sortData(o[treeOptions.childs]); });
             }
         }
 
@@ -2748,16 +3132,31 @@ class EditTable extends HTMLElement
 
         this._dataArrayBackup.forEach(data => delete data.isDirty);
         this.DataArray = JSON.parse(JSON.stringify(this._dataArrayBackup));
+        // F1 (C4): después de restaurar ya no hay cambios; IsDirtyChanged solo si el valor cambió.
+        this._f1ReiniciarIsDirty(0);
         this._refreshTable();
     }
     restoreRow(indexRow)
     {
         if (!this._dataArrayBackup) return;
-        
+
         let objBack = this._dataArrayBackup[indexRow];
+        // F1 (C4): la fila restaurada deja de contar como modificada.
+        const f1EraSucia = (objBack?.isDirty === true);
         delete objBack.isDirty;
         this.DataArray[indexRow] = JSON.parse(JSON.stringify(objBack));
+        if (f1EraSucia) this._f1ReiniciarIsDirty(Math.max(0, this._count_isdirty - 1));
         this.UpdateRow(indexRow);
+    }
+    _f1ReiniciarIsDirty(valor)
+    {
+        const antes = (this._count_isdirty > 0);
+        this._count_isdirty = valor;
+        if (antes != (this._count_isdirty > 0))
+        {
+            if (this._getCurren().Events[this.EdiTable.Const.Events.IsDirtyChanged]!=undefined)
+                this._getCurren().Events[this.EdiTable.Const.Events.IsDirtyChanged]();
+        }
     }
     _count_isdirty=0;
     get IsDirty()
@@ -2826,6 +3225,15 @@ class EditTable extends HTMLElement
         if (!th) return false;
 
         th.textContent = title;
+        // F1 (C20): Columns[i].title también cambia (la exportación CSV de V12 lo lee).
+        // i es la posición del th entre los th del thead, como en _processAtributesColumn.
+        const f1Th = th.closest('th');
+        const f1i = Array.from(this._table.querySelectorAll('thead th')).indexOf(f1Th);
+        if (f1i >= 0 && this.Columns[f1i])
+        {
+            if (!this._f1TitulosDeclarados.has(f1Th.cellIndex)) this._f1TitulosDeclarados.set(f1Th.cellIndex, this.Columns[f1i].title);
+            this.Columns[f1i].title = f1Th.textContent;
+        }
         return true;
     }
     // ========================= MEJORAS VISUALES: TARJETAS, BADGES Y DECORACIÓN DE FILAS
@@ -3890,15 +4298,18 @@ class EditTable extends HTMLElement
         this._table.querySelectorAll('tbody tr').forEach(tr => tr.cells[th.cellIndex].classList.toggle('hidde-col',hide));
         th.classList.toggle('hidde-col', hide);
 
-        if (hide){
-            if (!this.hideColumns.includes(th.cellIndex)) this.hideColumns.push(th.cellIndex);
-        }
-        else this.hideColumns = this.hideColumns.filter(idx => idx != th.cellIndex);
+        // F1 (A3): el estado se guarda por field; hideColumns (índices de celda) se deriva de él.
+        const f1Field = th.getAttribute('field');
+        this._f1EstadoColumna(f1Field).oculta = !!hide;
+        if (!hide) this._f1Ocultas = this._f1Ocultas.filter(f => f !== f1Field);
+        else if (!this._f1Ocultas.includes(f1Field)) this._f1Ocultas.push(f1Field);
+        this.hideColumns = this._f1DerivarHideColumns();
 
         this.RefreshBadges();
         return true;
     }
     hideColumns=[];
+    _f1TitulosDeclarados = new Map();   // F1 (C20): cellIndex → título declarado, para data-cell
 
     addEventListener(type, listener) {
         const known = Object.values(this.EdiTable.Const.Events);
@@ -3973,6 +4384,9 @@ class EditTable extends HTMLElement
                 break;
             case this.EdiTable.Const.Events.ViewModeChanged:
                 this._getCurren().Events[this.EdiTable.Const.Events.ViewModeChanged] = listener
+                break;
+            case this.EdiTable.Const.Events.MaskInvalid:   // F1 (C15, R4)
+                this._getCurren().Events[this.EdiTable.Const.Events.MaskInvalid] = listener
                 break;
         }
     }

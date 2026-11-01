@@ -658,7 +658,7 @@
         "class": "",
         "minwidth": "180px",
         "style": "min-width: 180px;",
-        "title": "Nombre",
+        "title": "Nombre nuevo",
         "sort": "ASC"
        },
        {
@@ -736,7 +736,7 @@
         "class": "",
         "minwidth": "180px",
         "style": "min-width: 180px;",
-        "title": "Nombre",
+        "title": "Nombre nuevo",
         "sort": "ASC"
        },
        "caption": "Nombre nuevo"
@@ -750,7 +750,7 @@
     "extra": {
      "valor": {
       "nombre": "lista-prueba.csv",
-      "csv": "Llave Primaria,Nombre,Importe,Sys Info,Acciones\n1001,\"Con, coma y &quot;comillas&quot;\",135.8,,\n1000,Registro de prueba 0,0,,\n1002,Registro de prueba 2,271.7,,\n1003,Registro de prueba 3,407.5,,"
+      "csv": "Llave Primaria,Nombre nuevo,Importe,Sys Info,Acciones\n1001,\"Con, coma y &quot;comillas&quot;\",135.8,,\n1000,Registro de prueba 0,0,,\n1002,Registro de prueba 2,271.7,,\n1003,Registro de prueba 3,407.5,,"
      }
     },
     "internos": "@=paso-anterior"
