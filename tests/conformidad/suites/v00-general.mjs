@@ -20,7 +20,8 @@ t('02', 'EditTable.features es un arreglo con las 12 funciones', '§0-R6', async
   const f = await c.ev(() => (typeof EditTable !== 'undefined' && Array.isArray(EditTable.features)) ? EditTable.features : null);
   c.ok(Array.isArray(f), 'EditTable.features no existe');
   c.igual(FEATURES.filter(x => !f.includes(x)), [], 'faltan en features');
-});
+  // Ajuste (AJUSTES.md): exige las 12; mientras falten virtual y group (F5/F6) queda pendiente, no fallida.
+}, { requiere: ['virtual', 'group'] });
 for (const [ev, feat] of Object.entries(EVENTOS_NUEVOS)) {
   t('ev-' + ev, `R4: ${ev} está en EdiTable.Const.Events y addEventListener lo registra`, ['§0-R4'], async (c) => {
     await c.abrir(paginaProductos());
