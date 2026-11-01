@@ -1,0 +1,1118 @@
+{
+ "id": "v12/paginacion-muchas",
+ "titulo": "Paginación con más de 5 páginas (puntos suspensivos y «Último»)",
+ "etiquetas": [],
+ "archivo": "escenarios/v12/dbeditable.mjs",
+ "pasos": [
+  {
+   "nombre": "inicio",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "tbl_pag",
+      "inicializada": true,
+      "modoShadowPedido": "closed",
+      "dom": [
+       "\"\\n                \"",
+       "<style>",
+       " @@ESTILO sha256:1a63b232221d5692",
+       "</style>",
+       "\"\\n            \"",
+       "<div style=\"min-height: 2rem; max-height: 100%; overflow: auto; padding-bottom: 5px\">",
+       " <table id=\"tbl_pag\" class=\"table-cards\">",
+       "  <thead>",
+       "   <tr>",
+       "    \"\\n\"",
+       "    <th type=\"NoEditable\" field=\"sys_pk\" textalign=\"\" format=\"false\" thousandssep=\"false\" decs=\"1\" prefix=\"\" sufix=\"\" class=\"\">",
+       "     <span>",
+       "      \"Llave\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:29px;\"></div>",
+       "    </th>",
+       "    \"\\n\"",
+       "    <th type=\"NoEditable\" field=\"nombre\" textalign=\"\" format=\"false\" thousandssep=\"false\" decs=\"1\" prefix=\"\" sufix=\"\" class=\"\">",
+       "     <span>",
+       "      \"Nombre\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:29px;\"></div>",
+       "    </th>",
+       "    \"\\n\"",
+       "   </tr>",
+       "  </thead>",
+       "  <tbody>",
+       "   <tr id=\"\" parent=\"\" indent=\"0\">",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1000\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Registro de prueba 0\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr id=\"\" parent=\"\" indent=\"0\">",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1001\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Registro de prueba 1\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr id=\"\" parent=\"\" indent=\"0\">",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1002\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Registro de prueba 2\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr id=\"\" parent=\"\" indent=\"0\">",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1003\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Registro de prueba 3\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr id=\"\" parent=\"\" indent=\"0\">",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1004\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Registro de prueba 4\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr id=\"\" parent=\"\" indent=\"0\">",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1005\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Registro de prueba 5\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr id=\"\" parent=\"\" indent=\"0\">",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1006\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Registro de prueba 6\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr id=\"\" parent=\"\" indent=\"0\">",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1007\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Registro de prueba 7\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr id=\"\" parent=\"\" indent=\"0\">",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1008\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Registro de prueba 8\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr id=\"\" parent=\"\" indent=\"0\">",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1009\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Registro de prueba 9\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "  </tbody>",
+       " </table>",
+       "</div>"
+      ],
+      "shadowEsElGuardado": true,
+      "datos": [
+       {
+        "sys_pk": 1000,
+        "sys_dtcreated": "2026-01-01 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-000",
+        "nombre": "Registro de prueba 0",
+        "importe": 0
+       },
+       {
+        "sys_pk": 1001,
+        "sys_dtcreated": "2026-02-02 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-037",
+        "nombre": "Registro de prueba 1",
+        "importe": 135.8
+       },
+       {
+        "sys_pk": 1002,
+        "sys_dtcreated": "2026-03-03 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-074",
+        "nombre": "Registro de prueba 2",
+        "importe": 271.7
+       },
+       {
+        "sys_pk": 1003,
+        "sys_dtcreated": "2026-04-04 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-111",
+        "nombre": "Registro de prueba 3",
+        "importe": 407.5
+       },
+       {
+        "sys_pk": 1004,
+        "sys_dtcreated": "2026-05-05 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-148",
+        "nombre": "Registro de prueba 4",
+        "importe": 543.4
+       },
+       {
+        "sys_pk": 1005,
+        "sys_dtcreated": "2026-06-06 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-185",
+        "nombre": "Registro de prueba 5",
+        "importe": 679.2
+       },
+       {
+        "sys_pk": 1006,
+        "sys_dtcreated": "2026-07-07 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-222",
+        "nombre": "Registro de prueba 6",
+        "importe": 815.1
+       },
+       {
+        "sys_pk": 1007,
+        "sys_dtcreated": "2026-08-08 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-259",
+        "nombre": "Registro de prueba 7",
+        "importe": 950.9
+       },
+       {
+        "sys_pk": 1008,
+        "sys_dtcreated": "2026-09-09 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-296",
+        "nombre": "Registro de prueba 8",
+        "importe": 1086.8
+       },
+       {
+        "sys_pk": 1009,
+        "sys_dtcreated": "2026-01-10 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-333",
+        "nombre": "Registro de prueba 9",
+        "importe": 1222.6
+       }
+      ],
+      "columnas": [
+       {
+        "type": "NoEditable",
+        "field": "sys_pk",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "",
+        "title": "Llave"
+       },
+       {
+        "type": "NoEditable",
+        "field": "nombre",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "",
+        "title": "Nombre"
+       }
+      ],
+      "respaldo": null,
+      "props": [
+       "IsDirty = false",
+       "Editing = false",
+       "ReadOnly = false",
+       "AutoAddRow = false",
+       "AutoDelRow = false",
+       "EverMove = false",
+       "PagOffSet = 10",
+       "TheadRowIndex = 0",
+       "ColumnsDefaultType = \"Text\"",
+       "ShowAsTree = false",
+       "CanMoveRow = false",
+       "Key = \"id\"",
+       "ParentKey = \"idp\"",
+       "Childs = \"__items\"",
+       "TreeOptions = {\"key\":\"id\",\"parentkey\":\"idp\",\"childs\":\"__items\"}",
+       "sorTable = true",
+       "_sorTable = true",
+       "htmlEncode = false",
+       "autoConfirm = false",
+       "hiddeSelector = true",
+       "hiddeRowSelector = false",
+       "minRowHeight = \"none\"",
+       "maxRowHeight = \"none\"",
+       "rowHeight = \"100%\"",
+       "cardsResponsive = true",
+       "editableResponsive = false",
+       "tableId = \"tbl_pag\"",
+       "NumFormat = {\"default_decimals\":\".\",\"thousands\":\",\",\"decimals\":\".\"}",
+       "CSS = {\"Cell\":\"EdiTable-Cell\",\"RowSelected\":\"EdiTable-Row-Selected\"}",
+       "hideColumns = []",
+       "_expandOnStart = false",
+       "KeepSelectionVisible = true",
+       "CardsMode = null",
+       "CardsLayout = \"grid\"",
+       "CardsBreakpoint = \"768px\"",
+       "CardsBreakpointTarget = \"viewport\"",
+       "IsCardView = false",
+       "_count_isdirty = 0",
+       "_current_row = -1",
+       "attributes = [\"id\",\"hidde-selector\",\"cards-responsive\",\"style\",\"control-styles\"]",
+       "BadgesField = \"__badges\"",
+       "BadgeTooltip = \"native\"",
+       "BadgeSelectsRow = false",
+       "NativeEvents = false",
+       "TemplateEncode = false",
+       "Locale = null",
+       "RowClassField = null",
+       "_TreeValueIndent = 1",
+       "_TreeUnitIndent = \"rem\"",
+       "temp_html = \"[undefined]\"",
+       "CurrentRowIndex() = -1",
+       "CurrentColIndex() = -1",
+       "TRCount() = 10",
+       "THCount() = 2",
+       "ColumnsCount() = 2",
+       "CurrentTd() = null",
+       "focusedTable==_getCurren() = false",
+       "Events reemplazado = 0",
+       "Events claves = [\"onsort\"]",
+       "scroll = {\"contenedor\":[0,0]}"
+      ],
+      "estilos": [
+       "host = display:inline;position:static;width:100%;height:auto;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "contenedor = display:block;position:static;width:968px;height:343px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "table = display:table;position:static;width:968px;height:343px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "thead = display:table-header-group;position:sticky;width:966px;height:27px;color:rgb(0, 0, 0);background-color:rgb(245, 245, 245);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[0] = display:table-cell;position:relative;width:225px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:500;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[1] = display:table-cell;position:relative;width:708px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:500;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0] = display:table-row;position:relative;width:966px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[0] = display:table-cell;position:relative;width:233px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[1] = display:table-cell;position:relative;width:716px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1] = display:table-row;position:relative;width:966px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[0] = display:table-cell;position:relative;width:233px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[1] = display:table-cell;position:relative;width:716px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2] = display:table-row;position:relative;width:966px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[0] = display:table-cell;position:relative;width:233px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[1] = display:table-cell;position:relative;width:716px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[9] = display:table-row;position:relative;width:966px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[9].td[0] = display:table-cell;position:relative;width:233px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[9].td[1] = display:table-cell;position:relative;width:716px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+      ]
+     }
+    ],
+    "luz": [
+     "<body {foco}>",
+     " \"\\n\"",
+     " <div id=\"work_area\" class=\"mt-1 p-2 pt-0\">",
+     "  <div style=\"height:100%;\">",
+     "   <div style=\"overflow-y:auto; max-height:75vh;\" id=\"list_table_container\">",
+     "    <edit-table id=\"tbl_pag\" hidde-selector=\"true\" cards-responsive=\"true\" style=\"width:100%;\" control-styles=\"                        div:has(table#tbl_pag) { overflow:revert !important; }\\n                        #tbl_pag tr th { font-weight:500; }\\n                    \\n                        @media print {\\n                            #tbl_pag { overflow:hidden; }\\n                        }\\n\\n                        \">",
+     "     #shadow-root -> tablas[0]",
+     "    </edit-table>",
+     "   </div>",
+     "   <small class=\"text-secondary hide-on-print\" id=\"tbl_pag_leyend\">",
+     "    \"Mostrando registros: 0 a 10 de 80\"",
+     "   </small>",
+     "   <div id=\"tbl_pag_pagination\" class=\"d-flex justify-content-center align-items-center gap-1 py-2\">",
+     "    \"\\n                                    \"",
+     "    <button type=\"button\" class=\"btn btn-sm btn-outline-secondary\" disabled=\"\" onclick=\"pagination.goto(0)\">",
+     "     \"\\n                                        <\\n                                    \"",
+     "    </button>",
+     "    \"\\n                                \\n                                        \"",
+     "    <button type=\"button\" class=\"btn btn-sm btn-secondary\" onclick=\"pagination.goto(1)\">",
+     "     \"\\n                                            1\\n                                        \"",
+     "    </button>",
+     "    \"\\n                                    \\n                                            \"",
+     "    <button type=\"button\" class=\"btn btn-sm btn-outline-secondary\" onclick=\"pagination.goto(2)\">",
+     "     \"\\n                                                2\\n                                            \"",
+     "    </button>",
+     "    \"\\n                                        \\n                                            \"",
+     "    <button type=\"button\" class=\"btn btn-sm btn-outline-secondary\" onclick=\"pagination.goto(3)\">",
+     "     \"\\n                                                3\\n                                            \"",
+     "    </button>",
+     "    \"\\n                                        \"",
+     "    <span class=\"px-1\">",
+     "     \"...\"",
+     "    </span>",
+     "    \"\\n                                        \"",
+     "    <button type=\"button\" class=\"btn btn-sm btn-outline-secondary\" onclick=\"pagination.goto(8)\">",
+     "     \"\\n                                            Último\\n                                        \"",
+     "    </button>",
+     "    \"\\n                                    \\n                                    \"",
+     "    <button type=\"button\" class=\"btn btn-sm btn-outline-secondary\" onclick=\"pagination.goto(2)\">",
+     "     \"\\n                                        >\\n                                    \"",
+     "    </button>",
+     "    \"\\n                                \"",
+     "   </div>",
+     "   <script type=\"text/javascript\" id=\"uie.dbeditable-script\">",
+     "    \"                document.addEventListener(\\\"DOMContentLoaded\\\", () => {\\n                    const table = document.getElementById(\\\"tbl_pag\\\");\\n                    const data = [{\\\"sys_pk\\\":1000,\\\"sys_dtcreated\\\":\\\"2026-01-01 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-000\\\",\\\"nombre\\\":\\\"Registro de prueba 0\\\",\\\"importe\\\":0},{\\\"sys_pk\\\":1001,\\\"sys_dtcreated\\\":\\\"2026-02-02 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-037\\\",\\\"nombre\\\":\\\"Registro de prueba 1\\\",\\\"importe\\\":135.8},{\\\"sys_pk\\\":1002,\\\"sys_dtcreated\\\":\\\"2026-03-03 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-074\\\",\\\"nombre\\\":\\\"Registro de prueba 2\\\",\\\"importe\\\":271.7},{\\\"sys_pk\\\":1003,\\\"sys_dtcreated\\\":\\\"2026-04-04 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-111\\\",\\\"nombre\\\":\\\"Registro de prueba 3\\\",\\\"importe\\\":407.5},{\\\"sys_pk\\\":1004,\\\"sys_dtcreated\\\":\\\"2026-05-05 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-148\\\",\\\"nombre\\\":\\\"Registro de prueba 4\\\",\\\"importe\\\":543.4},{\\\"sys_pk\\\":1005,\\\"sys_dtcreated\\\":\\\"2026-06-06 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-185\\\",\\\"nombre\\\":\\\"Registro de prueba 5\\\",\\\"importe\\\":679.2},{\\\"sys_pk\\\":1006,\\\"sys_dtcreated\\\":\\\"2026-07-07 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-222\\\",\\\"nombre\\\":\\\"Registro de prueba 6\\\",\\\"importe\\\":815.1},{\\\"sys_pk\\\":1007,\\\"sys_dtcreated\\\":\\\"2026-08-08 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-259\\\",\\\"nombre\\\":\\\"Registro de prueba 7\\\",\\\"importe\\\":950.9},{\\\"sys_pk\\\":1008,\\\"sys_dtcreated\\\":\\\"2026-09-09 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-296\\\",\\\"nombre\\\":\\\"Registro de prueba 8\\\",\\\"importe\\\":1086.8},{\\\"sys_pk\\\":1009,\\\"sys_dtcreated\\\":\\\"2026-01-10 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-333\\\",\\\"nombre\\\":\\\"Registro de prueba 9\\\",\\\"importe\\\":1222.6},{\\\"sys_pk\\\":1010,\\\"sys_dtcreated\\\":\\\"2026-02-11 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-370\\\",\\\"nombre\\\":\\\"Registro de prueba 10\\\",\\\"importe\\\":1358.5},{\\\"sys_pk\\\":1011,\\\"sys_dtcreated\\\":\\\"2026-03-12 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-407\\\",\\\"nombre\\\":\\\"Registro de prueba 11\\\",\\\"importe\\\":1494.3},{\\\"sys_pk\\\":1012,\\\"sys_dtcreated\\\":\\\"2026-04-13 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-444\\\",\\\"nombre\\\":\\\"Registro de prueba 12\\\",\\\"importe\\\":1630.2},{\\\"sys_pk\\\":1013,\\\"sys_dtcreated\\\":\\\"2026-05-14 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-481\\\",\\\"nombre\\\":\\\"Registro de prueba 13\\\",\\\"importe\\\":1766},{\\\"sys_pk\\\":1014,\\\"sys_dtcreated\\\":\\\"2026-06-15 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-518\\\",\\\"nombre\\\":\\\"Registro de prueba 14\\\",\\\"importe\\\":1901.9},{\\\"sys_pk\\\":1015,\\\"sys_dtcreated\\\":\\\"2026-07-16 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-555\\\",\\\"nombre\\\":\\\"Registro de prueba 15\\\",\\\"importe\\\":2037.7},{\\\"sys_pk\\\":1016,\\\"sys_dtcreated\\\":\\\"2026-08-17 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-592\\\",\\\"nombre\\\":\\\"Registro de prueba 16\\\",\\\"importe\\\":2173.6},{\\\"sys_pk\\\":1017,\\\"sys_dtcreated\\\":\\\"2026-09-18 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-629\\\",\\\"nombre\\\":\\\"Registro de prueba 17\\\",\\\"importe\\\":2309.4},{\\\"sys_pk\\\":1018,\\\"sys_dtcreated\\\":\\\"2026-01-19 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-666\\\",\\\"nombre\\\":\\\"Registro de prueba 18\\\",\\\"importe\\\":2445.2},{\\\"sys_pk\\\":1019,\\\"sys_dtcreated\\\":\\\"2026-02-20 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-703\\\",\\\"nombre\\\":\\\"Registro de prueba 19\\\",\\\"importe\\\":2581.1},{\\\"sys_pk\\\":1020,\\\"sys_dtcreated\\\":\\\"2026-03-21 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-740\\\",\\\"nombre\\\":\\\"Registro de prueba 20\\\",\\\"importe\\\":2716.9},{\\\"sys_pk\\\":1021,\\\"sys_dtcreated\\\":\\\"2026-04-22 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-777\\\",\\\"nombre\\\":\\\"Registro de prueba 21\\\",\\\"importe\\\":2852.8},{\\\"sys_pk\\\":1022,\\\"sys_dtcreated\\\":\\\"2026-05-23 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-814\\\",\\\"nombre\\\":\\\"Registro de prueba 22\\\",\\\"importe\\\":2988.6},{\\\"sys_pk\\\":1023,\\\"sys_dtcreated\\\":\\\"2026-06-24 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-851\\\",\\\"nombre\\\":\\\"Registro de prueba 23\\\",\\\"importe\\\":3124.5},{\\\"sys_pk\\\":1024,\\\"sys_dtcreated\\\":\\\"2026-07-25 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-888\\\",\\\"nombre\\\":\\\"Registro de prueba 24\\\",\\\"importe\\\":3260.3},{\\\"sys_pk\\\":1025,\\\"sys_dtcreated\\\":\\\"2026-08-26 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-925\\\",\\\"nombre\\\":\\\"Registro de prueba 25\\\",\\\"importe\\\":3396.2},{\\\"sys_pk\\\":1026,\\\"sys_dtcreated\\\":\\\"2026-09-27 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-962\\\",\\\"nombre\\\":\\\"Registro de prueba 26\\\",\\\"importe\\\":3532},{\\\"sys_pk\\\":1027,\\\"sys_dtcreated\\\":\\\"2026-01-01 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-002\\\",\\\"nombre\\\":\\\"Registro de prueba 27\\\",\\\"importe\\\":3667.9},{\\\"sys_pk\\\":1028,\\\"sys_dtcreated\\\":\\\"2026-02-02 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-039\\\",\\\"nombre\\\":\\\"Registro de prueba 28\\\",\\\"importe\\\":3803.7},{\\\"sys_pk\\\":1029,\\\"sys_dtcreated\\\":\\\"2026-03-03 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-076\\\",\\\"nombre\\\":\\\"Registro de prueba 29\\\",\\\"importe\\\":3939.6},{\\\"sys_pk\\\":1030,\\\"sys_dtcreated\\\":\\\"2026-04-04 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-113\\\",\\\"nombre\\\":\\\"Registro de prueba 30\\\",\\\"importe\\\":4075.4},{\\\"sys_pk\\\":1031,\\\"sys_dtcreated\\\":\\\"2026-05-05 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-150\\\",\\\"nombre\\\":\\\"Registro de prueba 31\\\",\\\"importe\\\":4211.3},{\\\"sys_pk\\\":1032,\\\"sys_dtcreated\\\":\\\"2026-06-06 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-187\\\",\\\"nombre\\\":\\\"Registro de prueba 32\\\",\\\"importe\\\":4347.1},{\\\"sys_pk\\\":1033,\\\"sys_dtcreated\\\":\\\"2026-07-07 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-224\\\",\\\"nombre\\\":\\\"Registro de prueba 33\\\",\\\"importe\\\":4483},{\\\"sys_pk\\\":1034,\\\"sys_dtcreated\\\":\\\"2026-08-08 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-261\\\",\\\"nombre\\\":\\\"Registro de prueba 34\\\",\\\"importe\\\":4618.8},{\\\"sys_pk\\\":1035,\\\"sys_dtcreated\\\":\\\"2026-09-09 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-298\\\",\\\"nombre\\\":\\\"Registro de prueba 35\\\",\\\"importe\\\":4754.6},{\\\"sys_pk\\\":1036,\\\"sys_dtcreated\\\":\\\"2026-01-10 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-335\\\",\\\"nombre\\\":\\\"Registro de prueba 36\\\",\\\"importe\\\":4890.5},{\\\"sys_pk\\\":1037,\\\"sys_dtcreated\\\":\\\"2026-02-11 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-372\\\",\\\"nombre\\\":\\\"Registro de prueba 37\\\",\\\"importe\\\":5026.3},{\\\"sys_pk\\\":1038,\\\"sys_dtcreated\\\":\\\"2026-03-12 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-409\\\",\\\"nombre\\\":\\\"Registro de prueba 38\\\",\\\"importe\\\":5162.2},{\\\"sys_pk\\\":1039,\\\"sys_dtcreated\\\":\\\"2026-04-13 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-446\\\",\\\"nombre\\\":\\\"Registro de prueba 39\\\",\\\"importe\\\":113},{\\\"sys_pk\\\":1040,\\\"sys_dtcreated\\\":\\\"2026-05-14 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-483\\\",\\\"nombre\\\":\\\"Registro de prueba 40\\\",\\\"importe\\\":248.9},{\\\"sys_pk\\\":1041,\\\"sys_dtcreated\\\":\\\"2026-06-15 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-520\\\",\\\"nombre\\\":\\\"Registro de prueba 41\\\",\\\"importe\\\":384.7},{\\\"sys_pk\\\":1042,\\\"sys_dtcreated\\\":\\\"2026-07-16 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-557\\\",\\\"nombre\\\":\\\"Registro de prueba 42\\\",\\\"importe\\\":520.6},{\\\"sys_pk\\\":1043,\\\"sys_dtcreated\\\":\\\"2026-08-17 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-594\\\",\\\"nombre\\\":\\\"Registro de prueba 43\\\",\\\"importe\\\":656.4},{\\\"sys_pk\\\":1044,\\\"sys_dtcreated\\\":\\\"2026-09-18 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-631\\\",\\\"nombre\\\":\\\"Registro de prueba 44\\\",\\\"importe\\\":792.3},{\\\"sys_pk\\\":1045,\\\"sys_dtcreated\\\":\\\"2026-01-19 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-668\\\",\\\"nombre\\\":\\\"Registro de prueba 45\\\",\\\"importe\\\":928.1},{\\\"sys_pk\\\":1046,\\\"sys_dtcreated\\\":\\\"2026-02-20 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-705\\\",\\\"nombre\\\":\\\"Registro de prueba 46\\\",\\\"importe\\\":1064},{\\\"sys_pk\\\":1047,\\\"sys_dtcreated\\\":\\\"2026-03-21 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-742\\\",\\\"nombre\\\":\\\"Registro de prueba 47\\\",\\\"importe\\\":1199.8},{\\\"sys_pk\\\":1048,\\\"sys_dtcreated\\\":\\\"2026-04-22 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-779\\\",\\\"nombre\\\":\\\"Registro de prueba 48\\\",\\\"importe\\\":1335.7},{\\\"sys_pk\\\":1049,\\\"sys_dtcreated\\\":\\\"2026-05-23 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-816\\\",\\\"nombre\\\":\\\"Registro de prueba 49\\\",\\\"importe\\\":1471.5},{\\\"sys_pk\\\":1050,\\\"sys_dtcreated\\\":\\\"2026-06-24 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-853\\\",\\\"nombre\\\":\\\"Registro de prueba 50\\\",\\\"importe\\\":1607.3},{\\\"sys_pk\\\":1051,\\\"sys_dtcreated\\\":\\\"2026-07-25 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-890\\\",\\\"nombre\\\":\\\"Registro de prueba 51\\\",\\\"importe\\\":1743.2},{\\\"sys_pk\\\":1052,\\\"sys_dtcreated\\\":\\\"2026-08-26 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-927\\\",\\\"nombre\\\":\\\"Registro de prueba 52\\\",\\\"importe\\\":1879},{\\\"sys_pk\\\":1053,\\\"sys_dtcreated\\\":\\\"2026-09-27 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-964\\\",\\\"nombre\\\":\\\"Registro de prueba 53\\\",\\\"importe\\\":2014.9},{\\\"sys_pk\\\":1054,\\\"sys_dtcreated\\\":\\\"2026-01-01 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-004\\\",\\\"nombre\\\":\\\"Registro de prueba 54\\\",\\\"importe\\\":2150.7},{\\\"sys_pk\\\":1055,\\\"sys_dtcreated\\\":\\\"2026-02-02 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-041\\\",\\\"nombre\\\":\\\"Registro de prueba 55\\\",\\\"importe\\\":2286.6},{\\\"sys_pk\\\":1056,\\\"sys_dtcreated\\\":\\\"2026-03-03 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-078\\\",\\\"nombre\\\":\\\"Registro de prueba 56\\\",\\\"importe\\\":2422.4},{\\\"sys_pk\\\":1057,\\\"sys_dtcreated\\\":\\\"2026-04-04 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-115\\\",\\\"nombre\\\":\\\"Registro de prueba 57\\\",\\\"importe\\\":2558.3},{\\\"sys_pk\\\":1058,\\\"sys_dtcreated\\\":\\\"2026-05-05 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-152\\\",\\\"nombre\\\":\\\"Registro de prueba 58\\\",\\\"importe\\\":2694.1},{\\\"sys_pk\\\":1059,\\\"sys_dtcreated\\\":\\\"2026-06-06 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-189\\\",\\\"nombre\\\":\\\"Registro de prueba 59\\\",\\\"importe\\\":2830},{\\\"sys_pk\\\":1060,\\\"sys_dtcreated\\\":\\\"2026-07-07 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-226\\\",\\\"nombre\\\":\\\"Registro de prueba 60\\\",\\\"importe\\\":2965.8},{\\\"sys_pk\\\":1061,\\\"sys_dtcreated\\\":\\\"2026-08-08 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-263\\\",\\\"nombre\\\":\\\"Registro de prueba 61\\\",\\\"importe\\\":3101.7},{\\\"sys_pk\\\":1062,\\\"sys_dtcreated\\\":\\\"2026-09-09 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-300\\\",\\\"nombre\\\":\\\"Registro de prueba 62\\\",\\\"importe\\\":3237.5},{\\\"sys_pk\\\":1063,\\\"sys_dtcreated\\\":\\\"2026-01-10 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-337\\\",\\\"nombre\\\":\\\"Registro de prueba 63\\\",\\\"importe\\\":3373.4},{\\\"sys_pk\\\":1064,\\\"sys_dtcreated\\\":\\\"2026-02-11 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-374\\\",\\\"nombre\\\":\\\"Registro de prueba 64\\\",\\\"importe\\\":3509.2},{\\\"sys_pk\\\":1065,\\\"sys_dtcreated\\\":\\\"2026-03-12 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-411\\\",\\\"nombre\\\":\\\"Registro de prueba 65\\\",\\\"importe\\\":3645.1},{\\\"sys_pk\\\":1066,\\\"sys_dtcreated\\\":\\\"2026-04-13 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-448\\\",\\\"nombre\\\":\\\"Registro de prueba 66\\\",\\\"importe\\\":3780.9},{\\\"sys_pk\\\":1067,\\\"sys_dtcreated\\\":\\\"2026-05-14 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-485\\\",\\\"nombre\\\":\\\"Registro de prueba 67\\\",\\\"importe\\\":3916.7},{\\\"sys_pk\\\":1068,\\\"sys_dtcreated\\\":\\\"2026-06-15 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-522\\\",\\\"nombre\\\":\\\"Registro de prueba 68\\\",\\\"importe\\\":4052.6},{\\\"sys_pk\\\":1069,\\\"sys_dtcreated\\\":\\\"2026-07-16 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-559\\\",\\\"nombre\\\":\\\"Registro de prueba 69\\\",\\\"importe\\\":4188.4},{\\\"sys_pk\\\":1070,\\\"sys_dtcreated\\\":\\\"2026-08-17 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-596\\\",\\\"nombre\\\":\\\"Registro de prueba 70\\\",\\\"importe\\\":4324.3},{\\\"sys_pk\\\":1071,\\\"sys_dtcreated\\\":\\\"2026-09-18 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-633\\\",\\\"nombre\\\":\\\"Registro de prueba 71\\\",\\\"importe\\\":4460.1},{\\\"sys_pk\\\":1072,\\\"sys_dtcreated\\\":\\\"2026-01-19 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-670\\\",\\\"nombre\\\":\\\"Registro de prueba 72\\\",\\\"importe\\\":4596},{\\\"sys_pk\\\":1073,\\\"sys_dtcreated\\\":\\\"2026-02-20 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-707\\\",\\\"nombre\\\":\\\"Registro de prueba 73\\\",\\\"importe\\\":4731.8},{\\\"sys_pk\\\":1074,\\\"sys_dtcreated\\\":\\\"2026-03-21 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-744\\\",\\\"nombre\\\":\\\"Registro de prueba 74\\\",\\\"importe\\\":4867.7},{\\\"sys_pk\\\":1075,\\\"sys_dtcreated\\\":\\\"2026-04-22 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-781\\\",\\\"nombre\\\":\\\"Registro de prueba 75\\\",\\\"importe\\\":5003.5},{\\\"sys_pk\\\":1076,\\\"sys_dtcreated\\\":\\\"2026-05-23 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-818\\\",\\\"nombre\\\":\\\"Registro de prueba 76\\\",\\\"importe\\\":5139.4},{\\\"sys_pk\\\":1077,\\\"sys_dtcreated\\\":\\\"2026-06-24 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-855\\\",\\\"nombre\\\":\\\"Registro de prueba 77\\\",\\\"importe\\\":90.2},{\\\"sys_pk\\\":1078,\\\"sys_dtcreated\\\":\\\"2026-07-25 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-892\\\",\\\"nombre\\\":\\\"Registro de prueba 78\\\",\\\"importe\\\":226.1},{\\\"sys_pk\\\":1079,\\\"sys_dtcreated\\\":\\\"2026-08-26 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-929\\\",\\\"nombre\\\":\\\"Registro de prueba 79\\\",\\\"importe\\\":361.9}];\\n                    const pages = {};\\n                    \\n                    if (table)\\n                    {\\n                        table.AutoAddRow = false;\\n                        table.AutoDelRow = false;\\n                        table.EverMove = false;\\n                        \\n                        // Vista con filas anidadas\\n                        if (false)\\n                        {\\n                            table.removeAttribute(\\\"data\\\");\\n                            table.DataArray = data;\\n                            table._expandOnStart = false;\\n                            table._printTreeData();\\n                        }\\n                        // Paginación\\n                        if (true)\\n                        {\\n                            let perPage = 10\\n                            let numItems = data.length\\n                            let numPages = Math.ceil(numItems / perPage)\\n                            let currentPage = 1\\n\\n                            for (let i = 0; i < numItems; i += perPage) {\\n                                pages[Object.keys(pages).length + 1] = data.slice(i, i + perPage)\\n                            }\\n\\n                            const renderPagination = () =>\\n                            {\\n                                const container = document.getElementById(\\\"tbl_pag_pagination\\\")\\n\\n                                if (!container || numPages <= 1) return\\n\\n                                let html = \\\"\\\"\\n\\n                                html += `\\n                                    <button type=\\\"button\\\"\\n                                        class=\\\"btn btn-sm btn-outline-secondary\\\"\\n                                        ${currentPage === 1 ? \\\"disabled\\\" : \\\"\\\"}\\n                                        onclick=\\\"pagination.goto(${currentPage - 1})\\\">\\n                                        &lt;\\n                                    </button>\\n                                `\\n\\n                                if (numPages <= 5)\\n                                {\\n                                    for (let page = 1; page <= numPages; page++)\\n                                    {\\n                                        html += `\\n                                            <button type=\\\"button\\\"\\n                                                class=\\\"btn btn-sm ${page === currentPage ? \\\"btn-secondary\\\" : \\\"btn-outline-secondary\\\"}\\\"\\n                                                onclick=\\\"pagination.goto(${page})\\\">\\n                                                ${page}\\n                                            </button>\\n                                        `\\n                                    }\\n                                }\\n                                else\\n                                {\\n                                    html += `\\n                                        <button type=\\\"button\\\"\\n                                            class=\\\"btn btn-sm ${currentPage === 1 ? \\\"btn-secondary\\\" : \\\"btn-outline-secondary\\\"}\\\"\\n                                            onclick=\\\"pagination.goto(1)\\\">\\n                                            1\\n                                        </button>\\n                                    `\\n\\n                                    if (currentPage > 3)\\n                                        html += `<span class=\\\"px-1\\\">...</span>`\\n\\n                                    let start = Math.max(2, currentPage - 1)\\n                                    let end = Math.min(numPages - 1, currentPage + 1)\\n\\n                                    if (currentPage <= 3)\\n                                    {\\n                                        start = 2\\n                                        end = 3\\n                                    }\\n\\n                                    if (currentPage >= numPages - 2)\\n                                    {\\n                                        start = numPages - 2\\n                                        end = numPages - 1\\n                                    }\\n\\n                                    for (let page = start; page <= end; page++)\\n                                    {\\n                                        html += `\\n                                            <button type=\\\"button\\\"\\n                                                class=\\\"btn btn-sm ${page === currentPage ? \\\"btn-secondary\\\" : \\\"btn-outline-secondary\\\"}\\\"\\n                                                onclick=\\\"pagination.goto(${page})\\\">\\n                                                ${page}\\n                                            </button>\\n                                        `\\n                                    }\\n\\n                                    if (currentPage < numPages - 2)\\n                                        html += `<span class=\\\"px-1\\\">...</span>`\\n\\n                                    html += `\\n                                        <button type=\\\"button\\\"\\n                                            class=\\\"btn btn-sm ${currentPage === numPages ? \\\"btn-secondary\\\" : \\\"btn-outline-secondary\\\"}\\\"\\n                                            onclick=\\\"pagination.goto(${numPages})\\\">\\n                                            Último\\n                                        </button>\\n                                    `\\n                                }\\n\\n                                html += `\\n                                    <button type=\\\"button\\\"\\n                                        class=\\\"btn btn-sm btn-outline-secondary\\\"\\n                                        ${currentPage === numPages ? \\\"disabled\\\" : \\\"\\\"}\\n                                        onclick=\\\"pagination.goto(${currentPage + 1})\\\">\\n                                        &gt;\\n                                    </button>\\n                                `\\n\\n                                container.innerHTML = html\\n                            }\\n\\n                            window.pagination = {\\n                                goto: (numPage) =>\\n                                {\\n                                    if (numPage < 1 || numPage > numPages) return\\n                                    \\n                                    const leyend = document.getElementById(\\\"tbl_pag_leyend\\\")\\n                                    currentPage = numPage\\n\\n                                    table.DataArray = pages[numPage] ?? []\\n                                    if (leyend)\\n                                    {\\n                                        let start = (numPage - 1) * perPage\\n                                        let end = start + table.DataArray.length\\n                                        let text = \\\"Mostrando registros: \\\" + start +\\\" a \\\"+ end +\\\" de \\\"+ numItems\\n                                        leyend.textContent = text\\n                                    }\\n                                    table._printRows()\\n\\n                                    renderPagination()\\n                                }\\n                            }\\n\\n                            table.removeAttribute(\\\"data\\\")\\n                            pagination.goto(1)\\n                        }\\n\\n                        table.Events[table.EdiTable.Const.Events.OnSort] = (e) =>\\n                        {\\n                            const table_leyend = document.getElementById(\\\"tbl_pag_leyend\\\");\\n                            let length = (table?.DataArray ?? []).length;\\n                            let leyend = \\\"No se encontraron resultados.\\\";\\n\\n                            if (length > 0) leyend = \\\"Mostrando los primeros \\\"+length+\\\" registros\\\";\\n                            if (e && length > 0) leyend += \\\" ordenados por \\\"+e.caption+\\\" \\\"+e.coldef.sort;\\n\\n                            table_leyend.textContent = leyend;\\n                        }\\n                    }\\n                });\"",
+     "   </script>",
+     "  </div>",
+     "  <script type=\"text/javascript\">",
+     "   \"                function getCurrentContext()\\n                {\\n                    const table = document.getElementById(\\\"tbl_pag\\\");\\n                    const id = (table?.DataArray[table.CurrentRowIndex()]?.sys_pk ?? \\\"\\\");\\n                    return { item_id:id, context: {} }\\n                }\"",
+     "  </script>",
+     "  <div id=\"_custom_area\"></div>",
+     " </div>",
+     " \"\\n\"",
+     " <script>",
+     "  \"\\nwindow.__etExtra = () => { try { return { contexto: getCurrentContext() }; } catch (e) { return { contexto: '!error ' + e.message }; } };\\n\"",
+     " </script>",
+     " \"\\n\\n\"",
+     "</body>"
+    ],
+    "foco": {"documento":{"ruta":"html>body"},"shadow":null},
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": {"valor":{"contexto":{"item_id":"","context":{}}}},
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 3,
+      "nodo:mousedown": 2,
+      "document:mousemove": 2,
+      "document:mouseup": 2,
+      "window:beforeprint": 1,
+      "window:afterprint": 1,
+      "otro:change": 1
+     },
+     "intervalos": 1
+    }
+   }
+  },
+  {
+   "nombre": "página 4",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "tbl_pag",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [30,1,["      \"1030\""]],
+        [35,1,["      \"Registro de prueba 30\""]],
+        [42,1,["      \"1031\""]],
+        [47,1,["      \"Registro de prueba 31\""]],
+        [54,1,["      \"1032\""]],
+        [59,1,["      \"Registro de prueba 32\""]],
+        [66,1,["      \"1033\""]],
+        [71,1,["      \"Registro de prueba 33\""]],
+        [78,1,["      \"1034\""]],
+        [83,1,["      \"Registro de prueba 34\""]],
+        [90,1,["      \"1035\""]],
+        [95,1,["      \"Registro de prueba 35\""]],
+        [102,1,["      \"1036\""]],
+        [107,1,["      \"Registro de prueba 36\""]],
+        [114,1,["      \"1037\""]],
+        [119,1,["      \"Registro de prueba 37\""]],
+        [126,1,["      \"1038\""]],
+        [131,1,["      \"Registro de prueba 38\""]],
+        [138,1,["      \"1039\""]],
+        [143,1,["      \"Registro de prueba 39\""]]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": [
+       {
+        "sys_pk": 1030,
+        "sys_dtcreated": "2026-04-04 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-113",
+        "nombre": "Registro de prueba 30",
+        "importe": 4075.4
+       },
+       {
+        "sys_pk": 1031,
+        "sys_dtcreated": "2026-05-05 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-150",
+        "nombre": "Registro de prueba 31",
+        "importe": 4211.3
+       },
+       {
+        "sys_pk": 1032,
+        "sys_dtcreated": "2026-06-06 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-187",
+        "nombre": "Registro de prueba 32",
+        "importe": 4347.1
+       },
+       {
+        "sys_pk": 1033,
+        "sys_dtcreated": "2026-07-07 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-224",
+        "nombre": "Registro de prueba 33",
+        "importe": 4483
+       },
+       {
+        "sys_pk": 1034,
+        "sys_dtcreated": "2026-08-08 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-261",
+        "nombre": "Registro de prueba 34",
+        "importe": 4618.8
+       },
+       {
+        "sys_pk": 1035,
+        "sys_dtcreated": "2026-09-09 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-298",
+        "nombre": "Registro de prueba 35",
+        "importe": 4754.6
+       },
+       {
+        "sys_pk": 1036,
+        "sys_dtcreated": "2026-01-10 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-335",
+        "nombre": "Registro de prueba 36",
+        "importe": 4890.5
+       },
+       {
+        "sys_pk": 1037,
+        "sys_dtcreated": "2026-02-11 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-372",
+        "nombre": "Registro de prueba 37",
+        "importe": 5026.3
+       },
+       {
+        "sys_pk": 1038,
+        "sys_dtcreated": "2026-03-12 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-409",
+        "nombre": "Registro de prueba 38",
+        "importe": 5162.2
+       },
+       {
+        "sys_pk": 1039,
+        "sys_dtcreated": "2026-04-13 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-446",
+        "nombre": "Registro de prueba 39",
+        "importe": 113
+       }
+      ],
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": "@=paso-anterior",
+      "estilos": {
+       "$parche": [
+        [
+         4,
+         2,
+         [
+          "th[0] = display:table-cell;position:relative;width:215px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:500;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[1] = display:table-cell;position:relative;width:718px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:500;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         7,
+         2,
+         [
+          "tr[0].td[0] = display:table-cell;position:relative;width:223px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[1] = display:table-cell;position:relative;width:726px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         10,
+         2,
+         [
+          "tr[1].td[0] = display:table-cell;position:relative;width:223px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[1] = display:table-cell;position:relative;width:726px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         13,
+         2,
+         [
+          "tr[2].td[0] = display:table-cell;position:relative;width:223px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[1] = display:table-cell;position:relative;width:726px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         16,
+         2,
+         [
+          "tr[9].td[0] = display:table-cell;position:relative;width:223px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[9].td[1] = display:table-cell;position:relative;width:726px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": {
+     "$parche": [
+      [10,1,["    \"Mostrando registros: 30 a 40 de 80\""]],
+      [
+       14,
+       1,
+       ["    <button type=\"button\" class=\"btn btn-sm btn-outline-secondary\" onclick=\"pagination.goto(3)\">"]
+      ],
+      [
+       18,
+       1,
+       ["    <button type=\"button\" class=\"btn btn-sm btn-outline-secondary\" onclick=\"pagination.goto(1)\">"]
+      ],
+      [
+       21,
+       5,
+       [
+        "    \"\\n                                    \"",
+        "    <span class=\"px-1\">",
+        "     \"...\"",
+        "    </span>",
+        "    \"\\n                                            \""
+       ]
+      ],
+      [
+       29,
+       0,
+       [
+        "    \"\\n                                        \\n                                            \"",
+        "    <button type=\"button\" class=\"btn btn-sm btn-secondary\" onclick=\"pagination.goto(4)\">",
+        "     \"\\n                                                4\\n                                            \"",
+        "    </button>",
+        "    \"\\n                                        \\n                                            \"",
+        "    <button type=\"button\" class=\"btn btn-sm btn-outline-secondary\" onclick=\"pagination.goto(5)\">",
+        "     \"\\n                                                5\\n                                            \"",
+        "    </button>"
+       ]
+      ],
+      [
+       38,
+       1,
+       ["    <button type=\"button\" class=\"btn btn-sm btn-outline-secondary\" onclick=\"pagination.goto(5)\">"]
+      ]
+     ]
+    },
+    "foco": "@=paso-anterior",
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": "@=paso-anterior",
+    "internos": "@=paso-anterior"
+   }
+  },
+  {
+   "nombre": "página 7",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "tbl_pag",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [30,1,["      \"1060\""]],
+        [35,1,["      \"Registro de prueba 60\""]],
+        [42,1,["      \"1061\""]],
+        [47,1,["      \"Registro de prueba 61\""]],
+        [54,1,["      \"1062\""]],
+        [59,1,["      \"Registro de prueba 62\""]],
+        [66,1,["      \"1063\""]],
+        [71,1,["      \"Registro de prueba 63\""]],
+        [78,1,["      \"1064\""]],
+        [83,1,["      \"Registro de prueba 64\""]],
+        [90,1,["      \"1065\""]],
+        [95,1,["      \"Registro de prueba 65\""]],
+        [102,1,["      \"1066\""]],
+        [107,1,["      \"Registro de prueba 66\""]],
+        [114,1,["      \"1067\""]],
+        [119,1,["      \"Registro de prueba 67\""]],
+        [126,1,["      \"1068\""]],
+        [131,1,["      \"Registro de prueba 68\""]],
+        [138,1,["      \"1069\""]],
+        [143,1,["      \"Registro de prueba 69\""]]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": [
+       {
+        "sys_pk": 1060,
+        "sys_dtcreated": "2026-07-07 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-226",
+        "nombre": "Registro de prueba 60",
+        "importe": 2965.8
+       },
+       {
+        "sys_pk": 1061,
+        "sys_dtcreated": "2026-08-08 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-263",
+        "nombre": "Registro de prueba 61",
+        "importe": 3101.7
+       },
+       {
+        "sys_pk": 1062,
+        "sys_dtcreated": "2026-09-09 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-300",
+        "nombre": "Registro de prueba 62",
+        "importe": 3237.5
+       },
+       {
+        "sys_pk": 1063,
+        "sys_dtcreated": "2026-01-10 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-337",
+        "nombre": "Registro de prueba 63",
+        "importe": 3373.4
+       },
+       {
+        "sys_pk": 1064,
+        "sys_dtcreated": "2026-02-11 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-374",
+        "nombre": "Registro de prueba 64",
+        "importe": 3509.2
+       },
+       {
+        "sys_pk": 1065,
+        "sys_dtcreated": "2026-03-12 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-411",
+        "nombre": "Registro de prueba 65",
+        "importe": 3645.1
+       },
+       {
+        "sys_pk": 1066,
+        "sys_dtcreated": "2026-04-13 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-448",
+        "nombre": "Registro de prueba 66",
+        "importe": 3780.9
+       },
+       {
+        "sys_pk": 1067,
+        "sys_dtcreated": "2026-05-14 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-485",
+        "nombre": "Registro de prueba 67",
+        "importe": 3916.7
+       },
+       {
+        "sys_pk": 1068,
+        "sys_dtcreated": "2026-06-15 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-522",
+        "nombre": "Registro de prueba 68",
+        "importe": 4052.6
+       },
+       {
+        "sys_pk": 1069,
+        "sys_dtcreated": "2026-07-16 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-559",
+        "nombre": "Registro de prueba 69",
+        "importe": 4188.4
+       }
+      ],
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": "@=paso-anterior",
+      "estilos": "@=paso-anterior"
+     }
+    ],
+    "luz": {
+     "$parche": [
+      [10,1,["    \"Mostrando registros: 60 a 70 de 80\""]],
+      [
+       14,
+       1,
+       ["    <button type=\"button\" class=\"btn btn-sm btn-outline-secondary\" onclick=\"pagination.goto(6)\">"]
+      ],
+      [
+       26,
+       2,
+       [
+        "    <button type=\"button\" class=\"btn btn-sm btn-outline-secondary\" onclick=\"pagination.goto(6)\">",
+        "     \"\\n                                                6\\n                                            \""
+       ]
+      ],
+      [
+       30,
+       2,
+       [
+        "    <button type=\"button\" class=\"btn btn-sm btn-secondary\" onclick=\"pagination.goto(7)\">",
+        "     \"\\n                                                7\\n                                            \""
+       ]
+      ],
+      [33,9,["    \"\\n                                        \\n                                        \""]],
+      [
+       46,
+       1,
+       ["    <button type=\"button\" class=\"btn btn-sm btn-outline-secondary\" onclick=\"pagination.goto(8)\">"]
+      ]
+     ]
+    },
+    "foco": "@=paso-anterior",
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": "@=paso-anterior",
+    "internos": "@=paso-anterior"
+   }
+  },
+  {
+   "nombre": "«Último»",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "tbl_pag",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [30,1,["      \"1070\""]],
+        [35,1,["      \"Registro de prueba 70\""]],
+        [42,1,["      \"1071\""]],
+        [47,1,["      \"Registro de prueba 71\""]],
+        [54,1,["      \"1072\""]],
+        [59,1,["      \"Registro de prueba 72\""]],
+        [66,1,["      \"1073\""]],
+        [71,1,["      \"Registro de prueba 73\""]],
+        [78,1,["      \"1074\""]],
+        [83,1,["      \"Registro de prueba 74\""]],
+        [90,1,["      \"1075\""]],
+        [95,1,["      \"Registro de prueba 75\""]],
+        [102,1,["      \"1076\""]],
+        [107,1,["      \"Registro de prueba 76\""]],
+        [114,1,["      \"1077\""]],
+        [119,1,["      \"Registro de prueba 77\""]],
+        [126,1,["      \"1078\""]],
+        [131,1,["      \"Registro de prueba 78\""]],
+        [138,1,["      \"1079\""]],
+        [143,1,["      \"Registro de prueba 79\""]]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": [
+       {
+        "sys_pk": 1070,
+        "sys_dtcreated": "2026-08-17 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-596",
+        "nombre": "Registro de prueba 70",
+        "importe": 4324.3
+       },
+       {
+        "sys_pk": 1071,
+        "sys_dtcreated": "2026-09-18 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-633",
+        "nombre": "Registro de prueba 71",
+        "importe": 4460.1
+       },
+       {
+        "sys_pk": 1072,
+        "sys_dtcreated": "2026-01-19 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-670",
+        "nombre": "Registro de prueba 72",
+        "importe": 4596
+       },
+       {
+        "sys_pk": 1073,
+        "sys_dtcreated": "2026-02-20 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-707",
+        "nombre": "Registro de prueba 73",
+        "importe": 4731.8
+       },
+       {
+        "sys_pk": 1074,
+        "sys_dtcreated": "2026-03-21 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-744",
+        "nombre": "Registro de prueba 74",
+        "importe": 4867.7
+       },
+       {
+        "sys_pk": 1075,
+        "sys_dtcreated": "2026-04-22 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-781",
+        "nombre": "Registro de prueba 75",
+        "importe": 5003.5
+       },
+       {
+        "sys_pk": 1076,
+        "sys_dtcreated": "2026-05-23 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-818",
+        "nombre": "Registro de prueba 76",
+        "importe": 5139.4
+       },
+       {
+        "sys_pk": 1077,
+        "sys_dtcreated": "2026-06-24 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-855",
+        "nombre": "Registro de prueba 77",
+        "importe": 90.2
+       },
+       {
+        "sys_pk": 1078,
+        "sys_dtcreated": "2026-07-25 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-892",
+        "nombre": "Registro de prueba 78",
+        "importe": 226.1
+       },
+       {
+        "sys_pk": 1079,
+        "sys_dtcreated": "2026-08-26 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-929",
+        "nombre": "Registro de prueba 79",
+        "importe": 361.9
+       }
+      ],
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": "@=paso-anterior",
+      "estilos": "@=paso-anterior"
+     }
+    ],
+    "luz": {
+     "$parche": [
+      [10,1,["    \"Mostrando registros: 70 a 80 de 80\""]],
+      [
+       14,
+       1,
+       ["    <button type=\"button\" class=\"btn btn-sm btn-outline-secondary\" onclick=\"pagination.goto(7)\">"]
+      ],
+      [
+       30,
+       1,
+       ["    <button type=\"button\" class=\"btn btn-sm btn-outline-secondary\" onclick=\"pagination.goto(7)\">"]
+      ],
+      [34,1,["    <button type=\"button\" class=\"btn btn-sm btn-secondary\" onclick=\"pagination.goto(8)\">"]],
+      [
+       38,
+       1,
+       [
+        "    <button type=\"button\" class=\"btn btn-sm btn-outline-secondary\" disabled=\"\" onclick=\"pagination.goto(9)\">"
+       ]
+      ]
+     ]
+    },
+    "foco": "@=paso-anterior",
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": "@=paso-anterior",
+    "internos": "@=paso-anterior"
+   }
+  },
+  {
+   "nombre": "clic en fila 3",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "tbl_pag",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [63,1,["   <tr id=\"\" parent=\"\" indent=\"0\" class=\"EdiTable-Row-Selected\">"]],
+        [
+         71,
+         1,
+         [
+          "      <div id=\"__table_selector\" class=\"EdiTable-Selector transparent\" tabindex=\"0\" {foco}>",
+          "       \"Registro de prueba 73\"",
+          "      </div>"
+         ]
+        ]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": "@=paso-anterior",
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": {
+       "$parche": [
+        [38,1,["_current_row = 3"]],
+        [50,2,["CurrentRowIndex() = 3","CurrentColIndex() = 1"]],
+        [
+         55,
+         2,
+         [
+          "CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(tbl_pag)>div>table#tbl_pag>tbody>tr[3]>td[1]\",\"texto\":\"Registro de prueba 73\"}}",
+          "focusedTable==_getCurren() = true"
+         ]
+        ]
+       ]
+      },
+      "estilos": {
+       "$parche": [
+        [
+         15,
+         0,
+         [
+          "tr[3] = display:table-row;position:relative;width:966px;height:30px;color:rgb(255, 255, 255);background-color:rgb(61, 117, 221);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[3].td[0] = display:table-cell;position:relative;width:223px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[3].td[1] = display:table-cell;position:relative;width:726px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         18,
+         0,
+         [
+          "selector = display:flex;position:static;width:726px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": {
+     "$parche": [
+      [0,1,["<body>"]],
+      [
+       5,
+       1,
+       [
+        "    <edit-table id=\"tbl_pag\" hidde-selector=\"true\" cards-responsive=\"true\" style=\"width:100%;\" control-styles=\"                        div:has(table#tbl_pag) { overflow:revert !important; }\\n                        #tbl_pag tr th { font-weight:500; }\\n                    \\n                        @media print {\\n                            #tbl_pag { overflow:hidden; }\\n                        }\\n\\n                        \" {foco}>"
+       ]
+      ]
+     ]
+    },
+    "foco": {
+     "documento": {"ruta":"body>div#work_area>div>div#list_table_container>edit-table#tbl_pag"},
+     "shadow": {"ruta":"shadow(tbl_pag)>div>table#tbl_pag>tbody>tr[3]>td[1]>div>div#__table_selector"}
+    },
+    "eventos": [
+     {
+      "evento": "beforecellfocus",
+      "tabla": "tbl_pag",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_pag)>div>table#tbl_pag>tbody>tr[3]>td[1]","texto":"Registro de prueba 73"}},
+       "sender": {"$sender":"tbl_pag","esElemento":false},
+       "cancel": false
+      }
+     },
+     {
+      "evento": "entercell",
+      "tabla": "tbl_pag",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_pag)>div>table#tbl_pag>tbody>tr[3]>td[1]","texto":"Registro de prueba 73"}},
+       "sender": {"$sender":"tbl_pag","esElemento":false}
+      }
+     },
+     {
+      "evento": "rowchanged",
+      "tabla": "tbl_pag",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_pag)>div>table#tbl_pag>tbody>tr[3]>td[1]","texto":"Registro de prueba 73"}},
+       "sender": {"$sender":"tbl_pag","esElemento":false},
+       "cancel": false,
+       "index": 3,
+       "previous_index": -1
+      }
+     }
+    ],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": {"valor":{"contexto":{"item_id":1073,"context":{}}}},
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 3,
+      "nodo:mousedown": 2,
+      "document:mousemove": 2,
+      "document:mouseup": 2,
+      "window:beforeprint": 1,
+      "window:afterprint": 1,
+      "otro:change": 1,
+      "nodo:click:remove": 1,
+      "nodo:click": 1,
+      "nodo:keydown:remove": 1,
+      "nodo:keydown": 1
+     },
+     "intervalos": 1
+    }
+   }
+  }
+ ]
+}

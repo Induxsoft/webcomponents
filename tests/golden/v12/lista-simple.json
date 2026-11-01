@@ -1,0 +1,2937 @@
+{
+ "id": "v12/lista-simple",
+ "titulo": "uie.dbeditable: lista simple con data, control-styles de V12, leyenda y acciones",
+ "etiquetas": [],
+ "archivo": "escenarios/v12/dbeditable.mjs",
+ "pasos": [
+  {
+   "nombre": "inicio",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "tbl_prueba",
+      "inicializada": true,
+      "modoShadowPedido": "closed",
+      "dom": [
+       "\"\\n                \"",
+       "<style>",
+       " @@ESTILO sha256:7e9e95893e95b5fa",
+       "</style>",
+       "\"\\n            \"",
+       "<div style=\"min-height: 2rem; max-height: 100%; overflow: auto; padding-bottom: 5px\">",
+       " <table id=\"tbl_prueba\" class=\"table-cards\">",
+       "  <thead>",
+       "   <tr>",
+       "    \"\\n\"",
+       "    <th type=\"NoEditable\" field=\"sys_pk\" textalign=\"\" format=\"false\" thousandssep=\"false\" decs=\"1\" prefix=\"\" sufix=\"\" class=\"\">",
+       "     <span>",
+       "      \"Llave Primaria\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:406px;\"></div>",
+       "    </th>",
+       "    \"\\n\"",
+       "    <th type=\"NoEditable\" field=\"codigo\" textalign=\"\" format=\"false\" thousandssep=\"false\" decs=\"1\" prefix=\"\" sufix=\"\" class=\"\">",
+       "     <span>",
+       "      \"Código\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:406px;\"></div>",
+       "    </th>",
+       "    \"\\n\"",
+       "    <th type=\"NoEditable\" field=\"nombre\" textalign=\"\" format=\"false\" thousandssep=\"false\" decs=\"1\" prefix=\"\" sufix=\"\" class=\"\" minwidth=\"180px\" style=\"min-width: 180px;\">",
+       "     <span>",
+       "      \"Nombre\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:406px;\"></div>",
+       "    </th>",
+       "    \"\\n\"",
+       "    <th type=\"NoEditable\" field=\"importe\" textalign=\"end\" format=\"true\" thousandssep=\"true\" decs=\"2\" prefix=\"$\" sufix=\"\" class=\"\">",
+       "     <span>",
+       "      \"Importe\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:406px;\"></div>",
+       "    </th>",
+       "    \"\\n\"",
+       "    <th type=\"NoEditable\" field=\"sys_dtcreated\" textalign=\"\" format=\"false\" thousandssep=\"false\" decs=\"1\" prefix=\"\" sufix=\"\" class=\"no-print\">",
+       "     <span>",
+       "      \"Fecha de creación\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:406px;\"></div>",
+       "    </th>",
+       "    \"\\n\"",
+       "    <th type=\"NoEditable\" field=\"sys_info\" textalign=\"\" format=\"false\" thousandssep=\"false\" decs=\"1\" prefix=\"\" sufix=\"\" class=\"\">",
+       "     <span>",
+       "      \"Sys Info\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:406px;\"></div>",
+       "    </th>",
+       "    \"\\n\"",
+       "    <th type=\"NoEditable\" field=\"_actions\" textalign=\"\" format=\"false\" thousandssep=\"false\" decs=\"1\" prefix=\"\" sufix=\"\" class=\"\" template=\"                    <div style=\\\"display:flex;gap:8px;justify-content:center;width:100%;\\\" class=\\\"no-print\\\">\\n                        <a href=\\\"./${DataRow.sys_pk}/\\\" style=\\\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\\\">Editar</a>\\n                        <button onclick=\\\"InduxsoftCrudlModel.Delete(${DataRow.sys_pk})\\\" style=\\\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\\\">Eliminar</button>\\n                    </div>\">",
+       "     <span>",
+       "      \"Acciones\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:406px;\"></div>",
+       "    </th>",
+       "    \"\\n\"",
+       "   </tr>",
+       "  </thead>",
+       "  <tbody>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave Primaria\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1000\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Código\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"PRB-000\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; min-width: 180px;\">",
+       "      \"Registro de prueba 0\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Importe\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; justify-content: end; text-align: end;\">",
+       "      \"$0.00\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Fecha de creación\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"2026-01-01 10:00:00\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Sys Info\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Acciones\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"                    \"",
+       "      <div style=\"display:flex;gap:8px;justify-content:center;width:100%;\" class=\"no-print\">",
+       "       \"\\n                        \"",
+       "       <a href=\"./1000/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">",
+       "        \"Editar\"",
+       "       </a>",
+       "       \"\\n                        \"",
+       "       <button onclick=\"InduxsoftCrudlModel.Delete(1000)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">",
+       "        \"Eliminar\"",
+       "       </button>",
+       "       \"\\n                    \"",
+       "      </div>",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave Primaria\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1001\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Código\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"PRB-037\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; min-width: 180px;\">",
+       "      \"Registro de prueba 1\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Importe\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; justify-content: end; text-align: end;\">",
+       "      \"$135.80\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Fecha de creación\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"2026-02-02 10:00:00\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Sys Info\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Acciones\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"                    \"",
+       "      <div style=\"display:flex;gap:8px;justify-content:center;width:100%;\" class=\"no-print\">",
+       "       \"\\n                        \"",
+       "       <a href=\"./1001/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">",
+       "        \"Editar\"",
+       "       </a>",
+       "       \"\\n                        \"",
+       "       <button onclick=\"InduxsoftCrudlModel.Delete(1001)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">",
+       "        \"Eliminar\"",
+       "       </button>",
+       "       \"\\n                    \"",
+       "      </div>",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave Primaria\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1002\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Código\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"PRB-074\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; min-width: 180px;\">",
+       "      \"Registro de prueba 2\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Importe\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; justify-content: end; text-align: end;\">",
+       "      \"$271.70\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Fecha de creación\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"2026-03-03 10:00:00\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Sys Info\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Acciones\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"                    \"",
+       "      <div style=\"display:flex;gap:8px;justify-content:center;width:100%;\" class=\"no-print\">",
+       "       \"\\n                        \"",
+       "       <a href=\"./1002/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">",
+       "        \"Editar\"",
+       "       </a>",
+       "       \"\\n                        \"",
+       "       <button onclick=\"InduxsoftCrudlModel.Delete(1002)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">",
+       "        \"Eliminar\"",
+       "       </button>",
+       "       \"\\n                    \"",
+       "      </div>",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave Primaria\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1003\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Código\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"PRB-111\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; min-width: 180px;\">",
+       "      \"Registro de prueba 3\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Importe\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; justify-content: end; text-align: end;\">",
+       "      \"$407.50\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Fecha de creación\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"2026-04-04 10:00:00\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Sys Info\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Acciones\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"                    \"",
+       "      <div style=\"display:flex;gap:8px;justify-content:center;width:100%;\" class=\"no-print\">",
+       "       \"\\n                        \"",
+       "       <a href=\"./1003/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">",
+       "        \"Editar\"",
+       "       </a>",
+       "       \"\\n                        \"",
+       "       <button onclick=\"InduxsoftCrudlModel.Delete(1003)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">",
+       "        \"Eliminar\"",
+       "       </button>",
+       "       \"\\n                    \"",
+       "      </div>",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave Primaria\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1004\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Código\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"PRB-148\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; min-width: 180px;\">",
+       "      \"Registro de prueba 4\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Importe\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; justify-content: end; text-align: end;\">",
+       "      \"$543.40\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Fecha de creación\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"2026-05-05 10:00:00\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Sys Info\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Acciones\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"                    \"",
+       "      <div style=\"display:flex;gap:8px;justify-content:center;width:100%;\" class=\"no-print\">",
+       "       \"\\n                        \"",
+       "       <a href=\"./1004/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">",
+       "        \"Editar\"",
+       "       </a>",
+       "       \"\\n                        \"",
+       "       <button onclick=\"InduxsoftCrudlModel.Delete(1004)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">",
+       "        \"Eliminar\"",
+       "       </button>",
+       "       \"\\n                    \"",
+       "      </div>",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave Primaria\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1005\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Código\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"PRB-185\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; min-width: 180px;\">",
+       "      \"Registro de prueba 5\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Importe\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; justify-content: end; text-align: end;\">",
+       "      \"$679.20\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Fecha de creación\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"2026-06-06 10:00:00\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Sys Info\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Acciones\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"                    \"",
+       "      <div style=\"display:flex;gap:8px;justify-content:center;width:100%;\" class=\"no-print\">",
+       "       \"\\n                        \"",
+       "       <a href=\"./1005/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">",
+       "        \"Editar\"",
+       "       </a>",
+       "       \"\\n                        \"",
+       "       <button onclick=\"InduxsoftCrudlModel.Delete(1005)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">",
+       "        \"Eliminar\"",
+       "       </button>",
+       "       \"\\n                    \"",
+       "      </div>",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave Primaria\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1006\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Código\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"PRB-222\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; min-width: 180px;\">",
+       "      \"Registro de prueba 6\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Importe\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; justify-content: end; text-align: end;\">",
+       "      \"$815.10\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Fecha de creación\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"2026-07-07 10:00:00\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Sys Info\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Acciones\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"                    \"",
+       "      <div style=\"display:flex;gap:8px;justify-content:center;width:100%;\" class=\"no-print\">",
+       "       \"\\n                        \"",
+       "       <a href=\"./1006/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">",
+       "        \"Editar\"",
+       "       </a>",
+       "       \"\\n                        \"",
+       "       <button onclick=\"InduxsoftCrudlModel.Delete(1006)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">",
+       "        \"Eliminar\"",
+       "       </button>",
+       "       \"\\n                    \"",
+       "      </div>",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave Primaria\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1007\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Código\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"PRB-259\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; min-width: 180px;\">",
+       "      \"Registro de prueba 7\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Importe\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; justify-content: end; text-align: end;\">",
+       "      \"$950.90\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Fecha de creación\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"2026-08-08 10:00:00\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Sys Info\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Acciones\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"                    \"",
+       "      <div style=\"display:flex;gap:8px;justify-content:center;width:100%;\" class=\"no-print\">",
+       "       \"\\n                        \"",
+       "       <a href=\"./1007/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">",
+       "        \"Editar\"",
+       "       </a>",
+       "       \"\\n                        \"",
+       "       <button onclick=\"InduxsoftCrudlModel.Delete(1007)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">",
+       "        \"Eliminar\"",
+       "       </button>",
+       "       \"\\n                    \"",
+       "      </div>",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave Primaria\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1008\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Código\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"PRB-296\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; min-width: 180px;\">",
+       "      \"Registro de prueba 8\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Importe\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; justify-content: end; text-align: end;\">",
+       "      \"$1,086.80\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Fecha de creación\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"2026-09-09 10:00:00\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Sys Info\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Acciones\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"                    \"",
+       "      <div style=\"display:flex;gap:8px;justify-content:center;width:100%;\" class=\"no-print\">",
+       "       \"\\n                        \"",
+       "       <a href=\"./1008/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">",
+       "        \"Editar\"",
+       "       </a>",
+       "       \"\\n                        \"",
+       "       <button onclick=\"InduxsoftCrudlModel.Delete(1008)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">",
+       "        \"Eliminar\"",
+       "       </button>",
+       "       \"\\n                    \"",
+       "      </div>",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave Primaria\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1009\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Código\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"PRB-333\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; min-width: 180px;\">",
+       "      \"Registro de prueba 9\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Importe\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; justify-content: end; text-align: end;\">",
+       "      \"$1,222.60\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Fecha de creación\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"2026-01-10 10:00:00\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Sys Info\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Acciones\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"                    \"",
+       "      <div style=\"display:flex;gap:8px;justify-content:center;width:100%;\" class=\"no-print\">",
+       "       \"\\n                        \"",
+       "       <a href=\"./1009/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">",
+       "        \"Editar\"",
+       "       </a>",
+       "       \"\\n                        \"",
+       "       <button onclick=\"InduxsoftCrudlModel.Delete(1009)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">",
+       "        \"Eliminar\"",
+       "       </button>",
+       "       \"\\n                    \"",
+       "      </div>",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave Primaria\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1010\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Código\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"PRB-370\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; min-width: 180px;\">",
+       "      \"Registro de prueba 10\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Importe\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; justify-content: end; text-align: end;\">",
+       "      \"$1,358.50\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Fecha de creación\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"2026-02-11 10:00:00\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Sys Info\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Acciones\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"                    \"",
+       "      <div style=\"display:flex;gap:8px;justify-content:center;width:100%;\" class=\"no-print\">",
+       "       \"\\n                        \"",
+       "       <a href=\"./1010/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">",
+       "        \"Editar\"",
+       "       </a>",
+       "       \"\\n                        \"",
+       "       <button onclick=\"InduxsoftCrudlModel.Delete(1010)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">",
+       "        \"Eliminar\"",
+       "       </button>",
+       "       \"\\n                    \"",
+       "      </div>",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave Primaria\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1011\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Código\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"PRB-407\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; min-width: 180px;\">",
+       "      \"Registro de prueba 11\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Importe\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; justify-content: end; text-align: end;\">",
+       "      \"$1,494.30\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Fecha de creación\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"2026-03-12 10:00:00\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Sys Info\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Acciones\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"                    \"",
+       "      <div style=\"display:flex;gap:8px;justify-content:center;width:100%;\" class=\"no-print\">",
+       "       \"\\n                        \"",
+       "       <a href=\"./1011/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">",
+       "        \"Editar\"",
+       "       </a>",
+       "       \"\\n                        \"",
+       "       <button onclick=\"InduxsoftCrudlModel.Delete(1011)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">",
+       "        \"Eliminar\"",
+       "       </button>",
+       "       \"\\n                    \"",
+       "      </div>",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "  </tbody>",
+       " </table>",
+       "</div>"
+      ],
+      "shadowEsElGuardado": true,
+      "datos": [
+       {
+        "sys_pk": 1000,
+        "sys_dtcreated": "2026-01-01 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-000",
+        "nombre": "Registro de prueba 0",
+        "importe": 0
+       },
+       {
+        "sys_pk": 1001,
+        "sys_dtcreated": "2026-02-02 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-037",
+        "nombre": "Registro de prueba 1",
+        "importe": 135.8
+       },
+       {
+        "sys_pk": 1002,
+        "sys_dtcreated": "2026-03-03 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-074",
+        "nombre": "Registro de prueba 2",
+        "importe": 271.7
+       },
+       {
+        "sys_pk": 1003,
+        "sys_dtcreated": "2026-04-04 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-111",
+        "nombre": "Registro de prueba 3",
+        "importe": 407.5
+       },
+       {
+        "sys_pk": 1004,
+        "sys_dtcreated": "2026-05-05 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-148",
+        "nombre": "Registro de prueba 4",
+        "importe": 543.4
+       },
+       {
+        "sys_pk": 1005,
+        "sys_dtcreated": "2026-06-06 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-185",
+        "nombre": "Registro de prueba 5",
+        "importe": 679.2
+       },
+       {
+        "sys_pk": 1006,
+        "sys_dtcreated": "2026-07-07 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-222",
+        "nombre": "Registro de prueba 6",
+        "importe": 815.1
+       },
+       {
+        "sys_pk": 1007,
+        "sys_dtcreated": "2026-08-08 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-259",
+        "nombre": "Registro de prueba 7",
+        "importe": 950.9
+       },
+       {
+        "sys_pk": 1008,
+        "sys_dtcreated": "2026-09-09 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-296",
+        "nombre": "Registro de prueba 8",
+        "importe": 1086.8
+       },
+       {
+        "sys_pk": 1009,
+        "sys_dtcreated": "2026-01-10 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-333",
+        "nombre": "Registro de prueba 9",
+        "importe": 1222.6
+       },
+       {
+        "sys_pk": 1010,
+        "sys_dtcreated": "2026-02-11 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-370",
+        "nombre": "Registro de prueba 10",
+        "importe": 1358.5
+       },
+       {
+        "sys_pk": 1011,
+        "sys_dtcreated": "2026-03-12 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-407",
+        "nombre": "Registro de prueba 11",
+        "importe": 1494.3
+       }
+      ],
+      "columnas": [
+       {
+        "type": "NoEditable",
+        "field": "sys_pk",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "",
+        "title": "Llave Primaria"
+       },
+       {
+        "type": "NoEditable",
+        "field": "codigo",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "",
+        "title": "Código"
+       },
+       {
+        "type": "NoEditable",
+        "field": "nombre",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "",
+        "minwidth": "180px",
+        "style": "min-width: 180px;",
+        "title": "Nombre"
+       },
+       {
+        "type": "NoEditable",
+        "field": "importe",
+        "textalign": "end",
+        "format": "true",
+        "thousandssep": "true",
+        "decs": "2",
+        "prefix": "$",
+        "sufix": "",
+        "class": "",
+        "title": "Importe"
+       },
+       {
+        "type": "NoEditable",
+        "field": "sys_dtcreated",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "no-print",
+        "title": "Fecha de creación"
+       },
+       {
+        "type": "NoEditable",
+        "field": "sys_info",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "",
+        "title": "Sys Info"
+       },
+       {
+        "type": "NoEditable",
+        "field": "_actions",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "",
+        "template": "                    <div style=\"display:flex;gap:8px;justify-content:center;width:100%;\" class=\"no-print\">\n                        <a href=\"./${DataRow.sys_pk}/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">Editar</a>\n                        <button onclick=\"InduxsoftCrudlModel.Delete(${DataRow.sys_pk})\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">Eliminar</button>\n                    </div>",
+        "title": "Acciones"
+       }
+      ],
+      "respaldo": null,
+      "props": [
+       "IsDirty = false",
+       "Editing = false",
+       "ReadOnly = false",
+       "AutoAddRow = false",
+       "AutoDelRow = false",
+       "EverMove = false",
+       "PagOffSet = 10",
+       "TheadRowIndex = 0",
+       "ColumnsDefaultType = \"Text\"",
+       "ShowAsTree = false",
+       "CanMoveRow = false",
+       "Key = \"id\"",
+       "ParentKey = \"idp\"",
+       "Childs = \"__items\"",
+       "TreeOptions = {}",
+       "sorTable = true",
+       "_sorTable = true",
+       "htmlEncode = false",
+       "autoConfirm = false",
+       "hiddeSelector = true",
+       "hiddeRowSelector = false",
+       "minRowHeight = \"none\"",
+       "maxRowHeight = \"none\"",
+       "rowHeight = \"100%\"",
+       "cardsResponsive = true",
+       "editableResponsive = false",
+       "tableId = \"tbl_prueba\"",
+       "NumFormat = {\"default_decimals\":\".\",\"thousands\":\",\",\"decimals\":\".\"}",
+       "CSS = {\"Cell\":\"EdiTable-Cell\",\"RowSelected\":\"EdiTable-Row-Selected\"}",
+       "hideColumns = []",
+       "_expandOnStart = false",
+       "KeepSelectionVisible = true",
+       "CardsMode = null",
+       "CardsLayout = \"grid\"",
+       "CardsBreakpoint = \"768px\"",
+       "CardsBreakpointTarget = \"viewport\"",
+       "IsCardView = false",
+       "_count_isdirty = 0",
+       "_current_row = -1",
+       "attributes = [\"id\",\"data\",\"hidde-selector\",\"cards-responsive\",\"style\",\"control-styles\"]",
+       "BadgesField = \"__badges\"",
+       "BadgeTooltip = \"native\"",
+       "BadgeSelectsRow = false",
+       "NativeEvents = false",
+       "TemplateEncode = false",
+       "Locale = null",
+       "RowClassField = null",
+       "_TreeValueIndent = 1",
+       "_TreeUnitIndent = \"rem\"",
+       "temp_html = \"[undefined]\"",
+       "CurrentRowIndex() = -1",
+       "CurrentColIndex() = -1",
+       "TRCount() = 12",
+       "THCount() = 7",
+       "ColumnsCount() = 7",
+       "CurrentTd() = null",
+       "focusedTable==_getCurren() = false",
+       "Events reemplazado = 0",
+       "Events claves = [\"onsort\"]",
+       "scroll = {\"contenedor\":[0,0]}"
+      ],
+      "estilos": [
+       "host = display:inline;position:static;width:100%;height:auto;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "contenedor = display:block;position:static;width:968px;height:406px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "table = display:table;position:static;width:968px;height:406px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "thead = display:table-header-group;position:sticky;width:966px;height:27px;color:rgb(0, 0, 0);background-color:rgb(245, 245, 245);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[0] = display:table-cell;position:relative;width:124px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:500;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[1] = display:table-cell;position:relative;width:66px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:500;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[2] = display:table-cell;position:relative;width:195px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:500;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[3] = display:table-cell;position:relative;width:80px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:500;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[4] = display:table-cell;position:relative;width:175px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:500;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[5] = display:table-cell;position:relative;width:69px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:500;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[6] = display:table-cell;position:relative;width:138px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:500;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0] = display:table-row;position:relative;width:966px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[0] = display:table-cell;position:relative;width:132px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[1] = display:table-cell;position:relative;width:74px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[2] = display:table-cell;position:relative;width:203px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[3] = display:table-cell;position:relative;width:88px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[4] = display:table-cell;position:relative;width:183px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[5] = display:table-cell;position:relative;width:77px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[6] = display:table-cell;position:relative;width:146px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1] = display:table-row;position:relative;width:966px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[0] = display:table-cell;position:relative;width:132px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[1] = display:table-cell;position:relative;width:74px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[2] = display:table-cell;position:relative;width:203px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[3] = display:table-cell;position:relative;width:88px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[4] = display:table-cell;position:relative;width:183px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[5] = display:table-cell;position:relative;width:77px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[6] = display:table-cell;position:relative;width:146px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2] = display:table-row;position:relative;width:966px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[0] = display:table-cell;position:relative;width:132px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[1] = display:table-cell;position:relative;width:74px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[2] = display:table-cell;position:relative;width:203px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[3] = display:table-cell;position:relative;width:88px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[4] = display:table-cell;position:relative;width:183px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[5] = display:table-cell;position:relative;width:77px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[6] = display:table-cell;position:relative;width:146px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[11] = display:table-row;position:relative;width:966px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[11].td[0] = display:table-cell;position:relative;width:132px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[11].td[1] = display:table-cell;position:relative;width:74px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[11].td[2] = display:table-cell;position:relative;width:203px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[11].td[3] = display:table-cell;position:relative;width:88px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[11].td[4] = display:table-cell;position:relative;width:183px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[11].td[5] = display:table-cell;position:relative;width:77px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[11].td[6] = display:table-cell;position:relative;width:146px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+      ]
+     }
+    ],
+    "luz": [
+     "<body {foco}>",
+     " \"\\n\"",
+     " <div id=\"work_area\" class=\"mt-1 p-2 pt-0\">",
+     "  <div style=\"height:100%;\">",
+     "   <div style=\"overflow-y:auto; max-height:75vh;\" id=\"list_table_container\">",
+     "    <edit-table id=\"tbl_prueba\" data=\"[{\\\"sys_pk\\\":1000,\\\"sys_dtcreated\\\":\\\"2026-01-01 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-000\\\",\\\"nombre\\\":\\\"Registro de prueba 0\\\",\\\"importe\\\":0},{\\\"sys_pk\\\":1001,\\\"sys_dtcreated\\\":\\\"2026-02-02 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-037\\\",\\\"nombre\\\":\\\"Registro de prueba 1\\\",\\\"importe\\\":135.8},{\\\"sys_pk\\\":1002,\\\"sys_dtcreated\\\":\\\"2026-03-03 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-074\\\",\\\"nombre\\\":\\\"Registro de prueba 2\\\",\\\"importe\\\":271.7},{\\\"sys_pk\\\":1003,\\\"sys_dtcreated\\\":\\\"2026-04-04 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-111\\\",\\\"nombre\\\":\\\"Registro de prueba 3\\\",\\\"importe\\\":407.5},{\\\"sys_pk\\\":1004,\\\"sys_dtcreated\\\":\\\"2026-05-05 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-148\\\",\\\"nombre\\\":\\\"Registro de prueba 4\\\",\\\"importe\\\":543.4},{\\\"sys_pk\\\":1005,\\\"sys_dtcreated\\\":\\\"2026-06-06 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-185\\\",\\\"nombre\\\":\\\"Registro de prueba 5\\\",\\\"importe\\\":679.2},{\\\"sys_pk\\\":1006,\\\"sys_dtcreated\\\":\\\"2026-07-07 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-222\\\",\\\"nombre\\\":\\\"Registro de prueba 6\\\",\\\"importe\\\":815.1},{\\\"sys_pk\\\":1007,\\\"sys_dtcreated\\\":\\\"2026-08-08 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-259\\\",\\\"nombre\\\":\\\"Registro de prueba 7\\\",\\\"importe\\\":950.9},{\\\"sys_pk\\\":1008,\\\"sys_dtcreated\\\":\\\"2026-09-09 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-296\\\",\\\"nombre\\\":\\\"Registro de prueba 8\\\",\\\"importe\\\":1086.8},{\\\"sys_pk\\\":1009,\\\"sys_dtcreated\\\":\\\"2026-01-10 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-333\\\",\\\"nombre\\\":\\\"Registro de prueba 9\\\",\\\"importe\\\":1222.6},{\\\"sys_pk\\\":1010,\\\"sys_dtcreated\\\":\\\"2026-02-11 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-370\\\",\\\"nombre\\\":\\\"Registro de prueba 10\\\",\\\"importe\\\":1358.5},{\\\"sys_pk\\\":1011,\\\"sys_dtcreated\\\":\\\"2026-03-12 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-407\\\",\\\"nombre\\\":\\\"Registro de prueba 11\\\",\\\"importe\\\":1494.3}]\" hidde-selector=\"true\" cards-responsive=\"true\" style=\"width:100%;\" control-styles=\"                        div:has(table#tbl_prueba) { overflow:revert !important; }\\n                        #tbl_prueba tr th { font-weight:500; }\\n                    \\n                        @media print {\\n                            #tbl_prueba { overflow:hidden; }\\n                        }\\n\\n                        \">",
+     "     #shadow-root -> tablas[0]",
+     "    </edit-table>",
+     "   </div>",
+     "   <small class=\"text-secondary hide-on-print\" id=\"tbl_prueba_leyend\">",
+     "    \"Mostrando los primeros 12 registros ordenados por código\"",
+     "   </small>",
+     "   <script type=\"text/javascript\" id=\"uie.dbeditable-script\">",
+     "    \"                document.addEventListener(\\\"DOMContentLoaded\\\", () => {\\n                    const table = document.getElementById(\\\"tbl_prueba\\\");\\n                    const data = [{\\\"sys_pk\\\":1000,\\\"sys_dtcreated\\\":\\\"2026-01-01 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-000\\\",\\\"nombre\\\":\\\"Registro de prueba 0\\\",\\\"importe\\\":0},{\\\"sys_pk\\\":1001,\\\"sys_dtcreated\\\":\\\"2026-02-02 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-037\\\",\\\"nombre\\\":\\\"Registro de prueba 1\\\",\\\"importe\\\":135.8},{\\\"sys_pk\\\":1002,\\\"sys_dtcreated\\\":\\\"2026-03-03 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-074\\\",\\\"nombre\\\":\\\"Registro de prueba 2\\\",\\\"importe\\\":271.7},{\\\"sys_pk\\\":1003,\\\"sys_dtcreated\\\":\\\"2026-04-04 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-111\\\",\\\"nombre\\\":\\\"Registro de prueba 3\\\",\\\"importe\\\":407.5},{\\\"sys_pk\\\":1004,\\\"sys_dtcreated\\\":\\\"2026-05-05 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-148\\\",\\\"nombre\\\":\\\"Registro de prueba 4\\\",\\\"importe\\\":543.4},{\\\"sys_pk\\\":1005,\\\"sys_dtcreated\\\":\\\"2026-06-06 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-185\\\",\\\"nombre\\\":\\\"Registro de prueba 5\\\",\\\"importe\\\":679.2},{\\\"sys_pk\\\":1006,\\\"sys_dtcreated\\\":\\\"2026-07-07 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-222\\\",\\\"nombre\\\":\\\"Registro de prueba 6\\\",\\\"importe\\\":815.1},{\\\"sys_pk\\\":1007,\\\"sys_dtcreated\\\":\\\"2026-08-08 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-259\\\",\\\"nombre\\\":\\\"Registro de prueba 7\\\",\\\"importe\\\":950.9},{\\\"sys_pk\\\":1008,\\\"sys_dtcreated\\\":\\\"2026-09-09 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-296\\\",\\\"nombre\\\":\\\"Registro de prueba 8\\\",\\\"importe\\\":1086.8},{\\\"sys_pk\\\":1009,\\\"sys_dtcreated\\\":\\\"2026-01-10 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-333\\\",\\\"nombre\\\":\\\"Registro de prueba 9\\\",\\\"importe\\\":1222.6},{\\\"sys_pk\\\":1010,\\\"sys_dtcreated\\\":\\\"2026-02-11 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-370\\\",\\\"nombre\\\":\\\"Registro de prueba 10\\\",\\\"importe\\\":1358.5},{\\\"sys_pk\\\":1011,\\\"sys_dtcreated\\\":\\\"2026-03-12 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-407\\\",\\\"nombre\\\":\\\"Registro de prueba 11\\\",\\\"importe\\\":1494.3}];\\n                    const pages = {};\\n                    \\n                    if (table)\\n                    {\\n                        table.AutoAddRow = false;\\n                        table.AutoDelRow = false;\\n                        table.EverMove = false;\\n                        \\n                        // Vista con filas anidadas\\n                        if (false)\\n                        {\\n                            table.removeAttribute(\\\"data\\\");\\n                            table.DataArray = data;\\n                            table._expandOnStart = false;\\n                            table._printTreeData();\\n                        }\\n                        // Paginación\\n                        if (false)\\n                        {\\n                            let perPage = 250\\n                            let numItems = data.length\\n                            let numPages = Math.ceil(numItems / perPage)\\n                            let currentPage = 1\\n\\n                            for (let i = 0; i < numItems; i += perPage) {\\n                                pages[Object.keys(pages).length + 1] = data.slice(i, i + perPage)\\n                            }\\n\\n                            const renderPagination = () =>\\n                            {\\n                                const container = document.getElementById(\\\"tbl_prueba_pagination\\\")\\n\\n                                if (!container || numPages <= 1) return\\n\\n                                let html = \\\"\\\"\\n\\n                                html += `\\n                                    <button type=\\\"button\\\"\\n                                        class=\\\"btn btn-sm btn-outline-secondary\\\"\\n                                        ${currentPage === 1 ? \\\"disabled\\\" : \\\"\\\"}\\n                                        onclick=\\\"pagination.goto(${currentPage - 1})\\\">\\n                                        &lt;\\n                                    </button>\\n                                `\\n\\n                                if (numPages <= 5)\\n                                {\\n                                    for (let page = 1; page <= numPages; page++)\\n                                    {\\n                                        html += `\\n                                            <button type=\\\"button\\\"\\n                                                class=\\\"btn btn-sm ${page === currentPage ? \\\"btn-secondary\\\" : \\\"btn-outline-secondary\\\"}\\\"\\n                                                onclick=\\\"pagination.goto(${page})\\\">\\n                                                ${page}\\n                                            </button>\\n                                        `\\n                                    }\\n                                }\\n                                else\\n                                {\\n                                    html += `\\n                                        <button type=\\\"button\\\"\\n                                            class=\\\"btn btn-sm ${currentPage === 1 ? \\\"btn-secondary\\\" : \\\"btn-outline-secondary\\\"}\\\"\\n                                            onclick=\\\"pagination.goto(1)\\\">\\n                                            1\\n                                        </button>\\n                                    `\\n\\n                                    if (currentPage > 3)\\n                                        html += `<span class=\\\"px-1\\\">...</span>`\\n\\n                                    let start = Math.max(2, currentPage - 1)\\n                                    let end = Math.min(numPages - 1, currentPage + 1)\\n\\n                                    if (currentPage <= 3)\\n                                    {\\n                                        start = 2\\n                                        end = 3\\n                                    }\\n\\n                                    if (currentPage >= numPages - 2)\\n                                    {\\n                                        start = numPages - 2\\n                                        end = numPages - 1\\n                                    }\\n\\n                                    for (let page = start; page <= end; page++)\\n                                    {\\n                                        html += `\\n                                            <button type=\\\"button\\\"\\n                                                class=\\\"btn btn-sm ${page === currentPage ? \\\"btn-secondary\\\" : \\\"btn-outline-secondary\\\"}\\\"\\n                                                onclick=\\\"pagination.goto(${page})\\\">\\n                                                ${page}\\n                                            </button>\\n                                        `\\n                                    }\\n\\n                                    if (currentPage < numPages - 2)\\n                                        html += `<span class=\\\"px-1\\\">...</span>`\\n\\n                                    html += `\\n                                        <button type=\\\"button\\\"\\n                                            class=\\\"btn btn-sm ${currentPage === numPages ? \\\"btn-secondary\\\" : \\\"btn-outline-secondary\\\"}\\\"\\n                                            onclick=\\\"pagination.goto(${numPages})\\\">\\n                                            Último\\n                                        </button>\\n                                    `\\n                                }\\n\\n                                html += `\\n                                    <button type=\\\"button\\\"\\n                                        class=\\\"btn btn-sm btn-outline-secondary\\\"\\n                                        ${currentPage === numPages ? \\\"disabled\\\" : \\\"\\\"}\\n                                        onclick=\\\"pagination.goto(${currentPage + 1})\\\">\\n                                        &gt;\\n                                    </button>\\n                                `\\n\\n                                container.innerHTML = html\\n                            }\\n\\n                            window.pagination = {\\n                                goto: (numPage) =>\\n                                {\\n                                    if (numPage < 1 || numPage > numPages) return\\n                                    \\n                                    const leyend = document.getElementById(\\\"tbl_prueba_leyend\\\")\\n                                    currentPage = numPage\\n\\n                                    table.DataArray = pages[numPage] ?? []\\n                                    if (leyend)\\n                                    {\\n                                        let start = (numPage - 1) * perPage\\n                                        let end = start + table.DataArray.length\\n                                        let text = \\\"Mostrando registros: \\\" + start +\\\" a \\\"+ end +\\\" de \\\"+ numItems\\n                                        leyend.textContent = text\\n                                    }\\n                                    table._printRows()\\n\\n                                    renderPagination()\\n                                }\\n                            }\\n\\n                            table.removeAttribute(\\\"data\\\")\\n                            pagination.goto(1)\\n                        }\\n\\n                        table.Events[table.EdiTable.Const.Events.OnSort] = (e) =>\\n                        {\\n                            const table_leyend = document.getElementById(\\\"tbl_prueba_leyend\\\");\\n                            let length = (table?.DataArray ?? []).length;\\n                            let leyend = \\\"No se encontraron resultados.\\\";\\n\\n                            if (length > 0) leyend = \\\"Mostrando los primeros \\\"+length+\\\" registros\\\";\\n                            if (e && length > 0) leyend += \\\" ordenados por \\\"+e.caption+\\\" \\\"+e.coldef.sort;\\n\\n                            table_leyend.textContent = leyend;\\n                        }\\n                    }\\n                });\"",
+     "   </script>",
+     "  </div>",
+     "  <script type=\"text/javascript\">",
+     "   \"                function getCurrentContext()\\n                {\\n                    const table = document.getElementById(\\\"tbl_prueba\\\");\\n                    const id = (table?.DataArray[table.CurrentRowIndex()]?.sys_pk ?? \\\"\\\");\\n                    return { item_id:id, context: {} }\\n                }\"",
+     "  </script>",
+     "  <div id=\"_custom_area\"></div>",
+     " </div>",
+     " \"\\n\"",
+     " <script>",
+     "  \"\\nwindow.__etExtra = () => { try { return { contexto: getCurrentContext() }; } catch (e) { return { contexto: '!error ' + e.message }; } };\\n\"",
+     " </script>",
+     " \"\\n\\n\"",
+     "</body>"
+    ],
+    "foco": {"documento":{"ruta":"html>body"},"shadow":null},
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": {"valor":{"contexto":{"item_id":"","context":{}}}},
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 3,
+      "nodo:mousedown": 7,
+      "document:mousemove": 7,
+      "document:mouseup": 7,
+      "window:beforeprint": 1,
+      "window:afterprint": 1,
+      "otro:change": 1
+     },
+     "intervalos": 1
+    }
+   }
+  },
+  {
+   "nombre": "clic en la fila 3 (acción por registro)",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "tbl_prueba",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [200,1,["   <tr class=\"EdiTable-Row-Selected\">"]],
+        [
+         208,
+         1,
+         [
+          "      <div id=\"__table_selector\" class=\"EdiTable-Selector transparent\" tabindex=\"0\" {foco}>",
+          "       \"PRB-111\"",
+          "      </div>"
+         ]
+        ]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": "@=paso-anterior",
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": {
+       "$parche": [
+        [38,1,["_current_row = 3"]],
+        [50,2,["CurrentRowIndex() = 3","CurrentColIndex() = 1"]],
+        [
+         55,
+         2,
+         [
+          "CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(tbl_prueba)>div>table#tbl_prueba>tbody>tr[3]>td[1]\",\"texto\":\"PRB-111\"}}",
+          "focusedTable==_getCurren() = true"
+         ]
+        ]
+       ]
+      },
+      "estilos": {
+       "$parche": [
+        [
+         35,
+         0,
+         [
+          "tr[3] = display:table-row;position:relative;width:966px;height:30px;color:rgb(255, 255, 255);background-color:rgb(61, 117, 221);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[3].td[0] = display:table-cell;position:relative;width:132px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[3].td[1] = display:table-cell;position:relative;width:74px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[3].td[2] = display:table-cell;position:relative;width:203px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[3].td[3] = display:table-cell;position:relative;width:88px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[3].td[4] = display:table-cell;position:relative;width:183px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[3].td[5] = display:table-cell;position:relative;width:77px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[3].td[6] = display:table-cell;position:relative;width:146px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         43,
+         0,
+         [
+          "selector = display:flex;position:static;width:74px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": {
+     "$parche": [
+      [0,1,["<body>"]],
+      [
+       5,
+       1,
+       [
+        "    <edit-table id=\"tbl_prueba\" data=\"[{\\\"sys_pk\\\":1000,\\\"sys_dtcreated\\\":\\\"2026-01-01 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-000\\\",\\\"nombre\\\":\\\"Registro de prueba 0\\\",\\\"importe\\\":0},{\\\"sys_pk\\\":1001,\\\"sys_dtcreated\\\":\\\"2026-02-02 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-037\\\",\\\"nombre\\\":\\\"Registro de prueba 1\\\",\\\"importe\\\":135.8},{\\\"sys_pk\\\":1002,\\\"sys_dtcreated\\\":\\\"2026-03-03 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-074\\\",\\\"nombre\\\":\\\"Registro de prueba 2\\\",\\\"importe\\\":271.7},{\\\"sys_pk\\\":1003,\\\"sys_dtcreated\\\":\\\"2026-04-04 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-111\\\",\\\"nombre\\\":\\\"Registro de prueba 3\\\",\\\"importe\\\":407.5},{\\\"sys_pk\\\":1004,\\\"sys_dtcreated\\\":\\\"2026-05-05 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-148\\\",\\\"nombre\\\":\\\"Registro de prueba 4\\\",\\\"importe\\\":543.4},{\\\"sys_pk\\\":1005,\\\"sys_dtcreated\\\":\\\"2026-06-06 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-185\\\",\\\"nombre\\\":\\\"Registro de prueba 5\\\",\\\"importe\\\":679.2},{\\\"sys_pk\\\":1006,\\\"sys_dtcreated\\\":\\\"2026-07-07 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-222\\\",\\\"nombre\\\":\\\"Registro de prueba 6\\\",\\\"importe\\\":815.1},{\\\"sys_pk\\\":1007,\\\"sys_dtcreated\\\":\\\"2026-08-08 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-259\\\",\\\"nombre\\\":\\\"Registro de prueba 7\\\",\\\"importe\\\":950.9},{\\\"sys_pk\\\":1008,\\\"sys_dtcreated\\\":\\\"2026-09-09 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-296\\\",\\\"nombre\\\":\\\"Registro de prueba 8\\\",\\\"importe\\\":1086.8},{\\\"sys_pk\\\":1009,\\\"sys_dtcreated\\\":\\\"2026-01-10 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-333\\\",\\\"nombre\\\":\\\"Registro de prueba 9\\\",\\\"importe\\\":1222.6},{\\\"sys_pk\\\":1010,\\\"sys_dtcreated\\\":\\\"2026-02-11 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-370\\\",\\\"nombre\\\":\\\"Registro de prueba 10\\\",\\\"importe\\\":1358.5},{\\\"sys_pk\\\":1011,\\\"sys_dtcreated\\\":\\\"2026-03-12 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-407\\\",\\\"nombre\\\":\\\"Registro de prueba 11\\\",\\\"importe\\\":1494.3}]\" hidde-selector=\"true\" cards-responsive=\"true\" style=\"width:100%;\" control-styles=\"                        div:has(table#tbl_prueba) { overflow:revert !important; }\\n                        #tbl_prueba tr th { font-weight:500; }\\n                    \\n                        @media print {\\n                            #tbl_prueba { overflow:hidden; }\\n                        }\\n\\n                        \" {foco}>"
+       ]
+      ]
+     ]
+    },
+    "foco": {
+     "documento": {"ruta":"body>div#work_area>div>div#list_table_container>edit-table#tbl_prueba"},
+     "shadow": {"ruta":"shadow(tbl_prueba)>div>table#tbl_prueba>tbody>tr[3]>td[1]>div>div#__table_selector"}
+    },
+    "eventos": [
+     {
+      "evento": "beforecellfocus",
+      "tabla": "tbl_prueba",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_prueba)>div>table#tbl_prueba>tbody>tr[3]>td[1]","texto":"PRB-111"}},
+       "sender": {"$sender":"tbl_prueba","esElemento":false},
+       "cancel": false
+      }
+     },
+     {
+      "evento": "entercell",
+      "tabla": "tbl_prueba",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_prueba)>div>table#tbl_prueba>tbody>tr[3]>td[1]","texto":"PRB-111"}},
+       "sender": {"$sender":"tbl_prueba","esElemento":false}
+      }
+     },
+     {
+      "evento": "rowchanged",
+      "tabla": "tbl_prueba",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_prueba)>div>table#tbl_prueba>tbody>tr[3]>td[1]","texto":"PRB-111"}},
+       "sender": {"$sender":"tbl_prueba","esElemento":false},
+       "cancel": false,
+       "index": 3,
+       "previous_index": -1
+      }
+     }
+    ],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": {"valor":{"contexto":{"item_id":1003,"context":{}}}},
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 3,
+      "nodo:mousedown": 7,
+      "document:mousemove": 7,
+      "document:mouseup": 7,
+      "window:beforeprint": 1,
+      "window:afterprint": 1,
+      "otro:change": 1,
+      "nodo:click:remove": 1,
+      "nodo:click": 1,
+      "nodo:keydown:remove": 1,
+      "nodo:keydown": 1
+     },
+     "intervalos": 1
+    }
+   }
+  },
+  {
+   "nombre": "ordenar por Nombre (OnSort de V12 cambia la leyenda)",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "tbl_prueba",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [
+         24,
+         1,
+         [
+          "    <th type=\"NoEditable\" field=\"nombre\" textalign=\"\" format=\"false\" thousandssep=\"false\" decs=\"1\" prefix=\"\" sufix=\"\" class=\"descendent\" minwidth=\"180px\" style=\"min-width: 180px;\">"
+         ]
+        ],
+        [62,1,["   <tr id=\"\" parent=\"\" indent=\"0\">"]],
+        [108,1,["   <tr id=\"\" parent=\"\" indent=\"0\">"]],
+        [154,1,["   <tr id=\"\" parent=\"\" indent=\"0\">"]],
+        [157,1,["      \"1010\""]],
+        [162,1,["      \"PRB-370\""]],
+        [167,1,["      \"Registro de prueba 10\""]],
+        [172,1,["      \"$1,358.50\""]],
+        [177,1,["      \"2026-02-11 10:00:00\""]],
+        [
+         188,
+         1,
+         [
+          "       <a href=\"./1010/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         192,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1010)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [200,1,["   <tr id=\"\" parent=\"\" indent=\"0\">"]],
+        [203,1,["      \"1011\""]],
+        [208,3,["      \"PRB-407\""]],
+        [215,1,["      \"Registro de prueba 11\""]],
+        [220,1,["      \"$1,494.30\""]],
+        [225,1,["      \"2026-03-12 10:00:00\""]],
+        [
+         236,
+         1,
+         [
+          "       <a href=\"./1011/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         240,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1011)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [248,1,["   <tr id=\"\" parent=\"\" indent=\"0\">"]],
+        [251,1,["      \"1002\""]],
+        [256,1,["      \"PRB-074\""]],
+        [261,1,["      \"Registro de prueba 2\""]],
+        [266,1,["      \"$271.70\""]],
+        [271,1,["      \"2026-03-03 10:00:00\""]],
+        [
+         282,
+         1,
+         [
+          "       <a href=\"./1002/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         286,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1002)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [294,1,["   <tr id=\"\" parent=\"\" indent=\"0\">"]],
+        [297,1,["      \"1003\""]],
+        [302,1,["      \"PRB-111\""]],
+        [307,1,["      \"Registro de prueba 3\""]],
+        [312,1,["      \"$407.50\""]],
+        [317,1,["      \"2026-04-04 10:00:00\""]],
+        [
+         328,
+         1,
+         [
+          "       <a href=\"./1003/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         332,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1003)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [340,1,["   <tr id=\"\" parent=\"\" indent=\"0\">"]],
+        [343,1,["      \"1004\""]],
+        [348,1,["      \"PRB-148\""]],
+        [353,1,["      \"Registro de prueba 4\""]],
+        [358,1,["      \"$543.40\""]],
+        [363,1,["      \"2026-05-05 10:00:00\""]],
+        [
+         374,
+         1,
+         [
+          "       <a href=\"./1004/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         378,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1004)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [386,1,["   <tr id=\"\" parent=\"\" indent=\"0\">"]],
+        [389,1,["      \"1005\""]],
+        [394,1,["      \"PRB-185\""]],
+        [399,1,["      \"Registro de prueba 5\""]],
+        [404,1,["      \"$679.20\""]],
+        [409,1,["      \"2026-06-06 10:00:00\""]],
+        [
+         420,
+         1,
+         [
+          "       <a href=\"./1005/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         424,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1005)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [432,1,["   <tr id=\"\" parent=\"\" indent=\"0\">"]],
+        [435,1,["      \"1006\""]],
+        [440,1,["      \"PRB-222\""]],
+        [445,1,["      \"Registro de prueba 6\""]],
+        [450,1,["      \"$815.10\""]],
+        [455,1,["      \"2026-07-07 10:00:00\""]],
+        [
+         466,
+         1,
+         [
+          "       <a href=\"./1006/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         470,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1006)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [478,1,["   <tr id=\"\" parent=\"\" indent=\"0\">"]],
+        [481,1,["      \"1007\""]],
+        [486,1,["      \"PRB-259\""]],
+        [491,1,["      \"Registro de prueba 7\""]],
+        [496,1,["      \"$950.90\""]],
+        [501,1,["      \"2026-08-08 10:00:00\""]],
+        [
+         512,
+         1,
+         [
+          "       <a href=\"./1007/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         516,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1007)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [524,1,["   <tr id=\"\" parent=\"\" indent=\"0\">"]],
+        [527,1,["      \"1008\""]],
+        [532,1,["      \"PRB-296\""]],
+        [537,1,["      \"Registro de prueba 8\""]],
+        [542,1,["      \"$1,086.80\""]],
+        [547,1,["      \"2026-09-09 10:00:00\""]],
+        [
+         558,
+         1,
+         [
+          "       <a href=\"./1008/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         562,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1008)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [570,1,["   <tr id=\"\" parent=\"\" indent=\"0\">"]],
+        [573,1,["      \"1009\""]],
+        [578,1,["      \"PRB-333\""]],
+        [583,1,["      \"Registro de prueba 9\""]],
+        [588,1,["      \"$1,222.60\""]],
+        [593,1,["      \"2026-01-10 10:00:00\""]],
+        [
+         604,
+         1,
+         [
+          "       <a href=\"./1009/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         608,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1009)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": [
+       {
+        "sys_pk": 1000,
+        "sys_dtcreated": "2026-01-01 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-000",
+        "nombre": "Registro de prueba 0",
+        "importe": 0
+       },
+       {
+        "sys_pk": 1001,
+        "sys_dtcreated": "2026-02-02 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-037",
+        "nombre": "Registro de prueba 1",
+        "importe": 135.8
+       },
+       {
+        "sys_pk": 1010,
+        "sys_dtcreated": "2026-02-11 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-370",
+        "nombre": "Registro de prueba 10",
+        "importe": 1358.5
+       },
+       {
+        "sys_pk": 1011,
+        "sys_dtcreated": "2026-03-12 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-407",
+        "nombre": "Registro de prueba 11",
+        "importe": 1494.3
+       },
+       {
+        "sys_pk": 1002,
+        "sys_dtcreated": "2026-03-03 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-074",
+        "nombre": "Registro de prueba 2",
+        "importe": 271.7
+       },
+       {
+        "sys_pk": 1003,
+        "sys_dtcreated": "2026-04-04 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-111",
+        "nombre": "Registro de prueba 3",
+        "importe": 407.5
+       },
+       {
+        "sys_pk": 1004,
+        "sys_dtcreated": "2026-05-05 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-148",
+        "nombre": "Registro de prueba 4",
+        "importe": 543.4
+       },
+       {
+        "sys_pk": 1005,
+        "sys_dtcreated": "2026-06-06 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-185",
+        "nombre": "Registro de prueba 5",
+        "importe": 679.2
+       },
+       {
+        "sys_pk": 1006,
+        "sys_dtcreated": "2026-07-07 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-222",
+        "nombre": "Registro de prueba 6",
+        "importe": 815.1
+       },
+       {
+        "sys_pk": 1007,
+        "sys_dtcreated": "2026-08-08 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-259",
+        "nombre": "Registro de prueba 7",
+        "importe": 950.9
+       },
+       {
+        "sys_pk": 1008,
+        "sys_dtcreated": "2026-09-09 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-296",
+        "nombre": "Registro de prueba 8",
+        "importe": 1086.8
+       },
+       {
+        "sys_pk": 1009,
+        "sys_dtcreated": "2026-01-10 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-333",
+        "nombre": "Registro de prueba 9",
+        "importe": 1222.6
+       }
+      ],
+      "columnas": [
+       {
+        "type": "NoEditable",
+        "field": "sys_pk",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "",
+        "title": "Llave Primaria"
+       },
+       {
+        "type": "NoEditable",
+        "field": "codigo",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "",
+        "title": "Código"
+       },
+       {
+        "type": "NoEditable",
+        "field": "nombre",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "",
+        "minwidth": "180px",
+        "style": "min-width: 180px;",
+        "title": "Nombre",
+        "sort": "ASC"
+       },
+       {
+        "type": "NoEditable",
+        "field": "importe",
+        "textalign": "end",
+        "format": "true",
+        "thousandssep": "true",
+        "decs": "2",
+        "prefix": "$",
+        "sufix": "",
+        "class": "",
+        "title": "Importe"
+       },
+       {
+        "type": "NoEditable",
+        "field": "sys_dtcreated",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "no-print",
+        "title": "Fecha de creación"
+       },
+       {
+        "type": "NoEditable",
+        "field": "sys_info",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "",
+        "title": "Sys Info"
+       },
+       {
+        "type": "NoEditable",
+        "field": "_actions",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "",
+        "template": "                    <div style=\"display:flex;gap:8px;justify-content:center;width:100%;\" class=\"no-print\">\n                        <a href=\"./${DataRow.sys_pk}/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">Editar</a>\n                        <button onclick=\"InduxsoftCrudlModel.Delete(${DataRow.sys_pk})\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">Eliminar</button>\n                    </div>",
+        "title": "Acciones"
+       }
+      ],
+      "respaldo": "@=paso-anterior",
+      "props": {
+       "$parche": [
+        [14,1,["TreeOptions = {\"key\":\"id\",\"parentkey\":\"idp\",\"childs\":\"__items\"}"]],
+        [50,2,["CurrentRowIndex() = -1","CurrentColIndex() = -1"]],
+        [55,1,["CurrentTd() = null"]]
+       ]
+      },
+      "estilos": {"$parche":[[35,8,[]],[51,1,[]]]}
+     }
+    ],
+    "luz": {
+     "$parche": [
+      [0,1,["<body {foco}>"]],
+      [
+       5,
+       1,
+       [
+        "    <edit-table id=\"tbl_prueba\" data=\"[{\\\"sys_pk\\\":1000,\\\"sys_dtcreated\\\":\\\"2026-01-01 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-000\\\",\\\"nombre\\\":\\\"Registro de prueba 0\\\",\\\"importe\\\":0},{\\\"sys_pk\\\":1001,\\\"sys_dtcreated\\\":\\\"2026-02-02 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-037\\\",\\\"nombre\\\":\\\"Registro de prueba 1\\\",\\\"importe\\\":135.8},{\\\"sys_pk\\\":1002,\\\"sys_dtcreated\\\":\\\"2026-03-03 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-074\\\",\\\"nombre\\\":\\\"Registro de prueba 2\\\",\\\"importe\\\":271.7},{\\\"sys_pk\\\":1003,\\\"sys_dtcreated\\\":\\\"2026-04-04 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-111\\\",\\\"nombre\\\":\\\"Registro de prueba 3\\\",\\\"importe\\\":407.5},{\\\"sys_pk\\\":1004,\\\"sys_dtcreated\\\":\\\"2026-05-05 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-148\\\",\\\"nombre\\\":\\\"Registro de prueba 4\\\",\\\"importe\\\":543.4},{\\\"sys_pk\\\":1005,\\\"sys_dtcreated\\\":\\\"2026-06-06 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-185\\\",\\\"nombre\\\":\\\"Registro de prueba 5\\\",\\\"importe\\\":679.2},{\\\"sys_pk\\\":1006,\\\"sys_dtcreated\\\":\\\"2026-07-07 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-222\\\",\\\"nombre\\\":\\\"Registro de prueba 6\\\",\\\"importe\\\":815.1},{\\\"sys_pk\\\":1007,\\\"sys_dtcreated\\\":\\\"2026-08-08 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-259\\\",\\\"nombre\\\":\\\"Registro de prueba 7\\\",\\\"importe\\\":950.9},{\\\"sys_pk\\\":1008,\\\"sys_dtcreated\\\":\\\"2026-09-09 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-296\\\",\\\"nombre\\\":\\\"Registro de prueba 8\\\",\\\"importe\\\":1086.8},{\\\"sys_pk\\\":1009,\\\"sys_dtcreated\\\":\\\"2026-01-10 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-333\\\",\\\"nombre\\\":\\\"Registro de prueba 9\\\",\\\"importe\\\":1222.6},{\\\"sys_pk\\\":1010,\\\"sys_dtcreated\\\":\\\"2026-02-11 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-370\\\",\\\"nombre\\\":\\\"Registro de prueba 10\\\",\\\"importe\\\":1358.5},{\\\"sys_pk\\\":1011,\\\"sys_dtcreated\\\":\\\"2026-03-12 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-407\\\",\\\"nombre\\\":\\\"Registro de prueba 11\\\",\\\"importe\\\":1494.3}]\" hidde-selector=\"true\" cards-responsive=\"true\" style=\"width:100%;\" control-styles=\"                        div:has(table#tbl_prueba) { overflow:revert !important; }\\n                        #tbl_prueba tr th { font-weight:500; }\\n                    \\n                        @media print {\\n                            #tbl_prueba { overflow:hidden; }\\n                        }\\n\\n                        \">"
+       ]
+      ],
+      [10,1,["    \"Mostrando los primeros 12 registros ordenados por Nombre ASC\""]]
+     ]
+    },
+    "foco": {"documento":{"ruta":"html>body"},"shadow":null},
+    "eventos": [
+     {
+      "evento": "onsort",
+      "tabla": "tbl_prueba",
+      "consumidor": true,
+      "args": {
+       "th": {"$nodo":{"ruta":"shadow(tbl_prueba)>div>table#tbl_prueba>thead>tr[0]>th[2]","texto":"Nombre"}},
+       "coldef": {
+        "type": "NoEditable",
+        "field": "nombre",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "",
+        "minwidth": "180px",
+        "style": "min-width: 180px;",
+        "title": "Nombre",
+        "sort": "ASC"
+       },
+       "caption": "Nombre"
+      }
+     }
+    ],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": {"valor":{"contexto":{"item_id":"","context":{}}}},
+    "internos": "@=paso-anterior"
+   }
+  },
+  {
+   "nombre": "clic en la fila 0 tras ordenar",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "tbl_prueba",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [62,1,["   <tr id=\"\" parent=\"\" indent=\"0\" class=\"EdiTable-Row-Selected\">"]],
+        [
+         70,
+         1,
+         [
+          "      <div id=\"__table_selector\" class=\"EdiTable-Selector transparent\" tabindex=\"0\" {foco}>",
+          "       \"PRB-000\"",
+          "      </div>"
+         ]
+        ]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": "@=paso-anterior",
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": {
+       "$parche": [
+        [38,1,["_current_row = 0"]],
+        [50,2,["CurrentRowIndex() = 0","CurrentColIndex() = 1"]],
+        [
+         55,
+         1,
+         [
+          "CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(tbl_prueba)>div>table#tbl_prueba>tbody>tr[0]>td[1]\",\"texto\":\"PRB-000\"}}"
+         ]
+        ]
+       ]
+      },
+      "estilos": {
+       "$parche": [
+        [
+         11,
+         8,
+         [
+          "tr[0] = display:table-row;position:relative;width:966px;height:30px;color:rgb(255, 255, 255);background-color:rgb(61, 117, 221);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[0] = display:table-cell;position:relative;width:132px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[1] = display:table-cell;position:relative;width:74px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[2] = display:table-cell;position:relative;width:203px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[3] = display:table-cell;position:relative;width:88px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[4] = display:table-cell;position:relative;width:183px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[5] = display:table-cell;position:relative;width:77px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[6] = display:table-cell;position:relative;width:146px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         43,
+         0,
+         [
+          "selector = display:flex;position:static;width:74px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": {
+     "$parche": [
+      [0,1,["<body>"]],
+      [
+       5,
+       1,
+       [
+        "    <edit-table id=\"tbl_prueba\" data=\"[{\\\"sys_pk\\\":1000,\\\"sys_dtcreated\\\":\\\"2026-01-01 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-000\\\",\\\"nombre\\\":\\\"Registro de prueba 0\\\",\\\"importe\\\":0},{\\\"sys_pk\\\":1001,\\\"sys_dtcreated\\\":\\\"2026-02-02 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-037\\\",\\\"nombre\\\":\\\"Registro de prueba 1\\\",\\\"importe\\\":135.8},{\\\"sys_pk\\\":1002,\\\"sys_dtcreated\\\":\\\"2026-03-03 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-074\\\",\\\"nombre\\\":\\\"Registro de prueba 2\\\",\\\"importe\\\":271.7},{\\\"sys_pk\\\":1003,\\\"sys_dtcreated\\\":\\\"2026-04-04 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-111\\\",\\\"nombre\\\":\\\"Registro de prueba 3\\\",\\\"importe\\\":407.5},{\\\"sys_pk\\\":1004,\\\"sys_dtcreated\\\":\\\"2026-05-05 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-148\\\",\\\"nombre\\\":\\\"Registro de prueba 4\\\",\\\"importe\\\":543.4},{\\\"sys_pk\\\":1005,\\\"sys_dtcreated\\\":\\\"2026-06-06 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-185\\\",\\\"nombre\\\":\\\"Registro de prueba 5\\\",\\\"importe\\\":679.2},{\\\"sys_pk\\\":1006,\\\"sys_dtcreated\\\":\\\"2026-07-07 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-222\\\",\\\"nombre\\\":\\\"Registro de prueba 6\\\",\\\"importe\\\":815.1},{\\\"sys_pk\\\":1007,\\\"sys_dtcreated\\\":\\\"2026-08-08 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-259\\\",\\\"nombre\\\":\\\"Registro de prueba 7\\\",\\\"importe\\\":950.9},{\\\"sys_pk\\\":1008,\\\"sys_dtcreated\\\":\\\"2026-09-09 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-296\\\",\\\"nombre\\\":\\\"Registro de prueba 8\\\",\\\"importe\\\":1086.8},{\\\"sys_pk\\\":1009,\\\"sys_dtcreated\\\":\\\"2026-01-10 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-333\\\",\\\"nombre\\\":\\\"Registro de prueba 9\\\",\\\"importe\\\":1222.6},{\\\"sys_pk\\\":1010,\\\"sys_dtcreated\\\":\\\"2026-02-11 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-370\\\",\\\"nombre\\\":\\\"Registro de prueba 10\\\",\\\"importe\\\":1358.5},{\\\"sys_pk\\\":1011,\\\"sys_dtcreated\\\":\\\"2026-03-12 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-407\\\",\\\"nombre\\\":\\\"Registro de prueba 11\\\",\\\"importe\\\":1494.3}]\" hidde-selector=\"true\" cards-responsive=\"true\" style=\"width:100%;\" control-styles=\"                        div:has(table#tbl_prueba) { overflow:revert !important; }\\n                        #tbl_prueba tr th { font-weight:500; }\\n                    \\n                        @media print {\\n                            #tbl_prueba { overflow:hidden; }\\n                        }\\n\\n                        \" {foco}>"
+       ]
+      ]
+     ]
+    },
+    "foco": {
+     "documento": {"ruta":"body>div#work_area>div>div#list_table_container>edit-table#tbl_prueba"},
+     "shadow": {"ruta":"shadow(tbl_prueba)>div>table#tbl_prueba>tbody>tr[0]>td[1]>div>div#__table_selector"}
+    },
+    "eventos": [
+     {
+      "evento": "beforecellfocus",
+      "tabla": "tbl_prueba",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_prueba)>div>table#tbl_prueba>tbody>tr[0]>td[1]","texto":"PRB-000"}},
+       "sender": {"$sender":"tbl_prueba","esElemento":false},
+       "cancel": false
+      }
+     },
+     {
+      "evento": "entercell",
+      "tabla": "tbl_prueba",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_prueba)>div>table#tbl_prueba>tbody>tr[0]>td[1]","texto":"PRB-000"}},
+       "sender": {"$sender":"tbl_prueba","esElemento":false}
+      }
+     },
+     {
+      "evento": "rowchanged",
+      "tabla": "tbl_prueba",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_prueba)>div>table#tbl_prueba>tbody>tr[0]>td[1]","texto":"PRB-000"}},
+       "sender": {"$sender":"tbl_prueba","esElemento":false},
+       "cancel": false,
+       "index": 0,
+       "previous_index": 3
+      }
+     }
+    ],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": {"valor":{"contexto":{"item_id":1000,"context":{}}}},
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 3,
+      "nodo:mousedown": 7,
+      "document:mousemove": 7,
+      "document:mouseup": 7,
+      "window:beforeprint": 1,
+      "window:afterprint": 1,
+      "otro:change": 1,
+      "nodo:click:remove": 2,
+      "nodo:click": 2,
+      "nodo:keydown:remove": 2,
+      "nodo:keydown": 2
+     },
+     "intervalos": 1
+    }
+   }
+  },
+  {
+   "nombre": "ordenar otra vez (descendente)",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "tbl_prueba",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [
+         24,
+         1,
+         [
+          "    <th type=\"NoEditable\" field=\"nombre\" textalign=\"\" format=\"false\" thousandssep=\"false\" decs=\"1\" prefix=\"\" sufix=\"\" class=\"ascendent\" minwidth=\"180px\" style=\"min-width: 180px;\">"
+         ]
+        ],
+        [62,1,["   <tr id=\"\" parent=\"\" indent=\"0\">"]],
+        [65,1,["      \"1009\""]],
+        [70,3,["      \"PRB-333\""]],
+        [77,1,["      \"Registro de prueba 9\""]],
+        [82,1,["      \"$1,222.60\""]],
+        [87,1,["      \"2026-01-10 10:00:00\""]],
+        [
+         98,
+         1,
+         [
+          "       <a href=\"./1009/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         102,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1009)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [113,1,["      \"1008\""]],
+        [118,1,["      \"PRB-296\""]],
+        [123,1,["      \"Registro de prueba 8\""]],
+        [128,1,["      \"$1,086.80\""]],
+        [133,1,["      \"2026-09-09 10:00:00\""]],
+        [
+         144,
+         1,
+         [
+          "       <a href=\"./1008/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         148,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1008)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [159,1,["      \"1007\""]],
+        [164,1,["      \"PRB-259\""]],
+        [169,1,["      \"Registro de prueba 7\""]],
+        [174,1,["      \"$950.90\""]],
+        [179,1,["      \"2026-08-08 10:00:00\""]],
+        [
+         190,
+         1,
+         [
+          "       <a href=\"./1007/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         194,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1007)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [205,1,["      \"1006\""]],
+        [210,1,["      \"PRB-222\""]],
+        [215,1,["      \"Registro de prueba 6\""]],
+        [220,1,["      \"$815.10\""]],
+        [225,1,["      \"2026-07-07 10:00:00\""]],
+        [
+         236,
+         1,
+         [
+          "       <a href=\"./1006/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         240,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1006)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [251,1,["      \"1005\""]],
+        [256,1,["      \"PRB-185\""]],
+        [261,1,["      \"Registro de prueba 5\""]],
+        [266,1,["      \"$679.20\""]],
+        [271,1,["      \"2026-06-06 10:00:00\""]],
+        [
+         282,
+         1,
+         [
+          "       <a href=\"./1005/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         286,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1005)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [297,1,["      \"1004\""]],
+        [302,1,["      \"PRB-148\""]],
+        [307,1,["      \"Registro de prueba 4\""]],
+        [312,1,["      \"$543.40\""]],
+        [317,1,["      \"2026-05-05 10:00:00\""]],
+        [
+         328,
+         1,
+         [
+          "       <a href=\"./1004/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         332,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1004)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [343,1,["      \"1003\""]],
+        [348,1,["      \"PRB-111\""]],
+        [353,1,["      \"Registro de prueba 3\""]],
+        [358,1,["      \"$407.50\""]],
+        [363,1,["      \"2026-04-04 10:00:00\""]],
+        [
+         374,
+         1,
+         [
+          "       <a href=\"./1003/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         378,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1003)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [389,1,["      \"1002\""]],
+        [394,1,["      \"PRB-074\""]],
+        [399,1,["      \"Registro de prueba 2\""]],
+        [404,1,["      \"$271.70\""]],
+        [409,1,["      \"2026-03-03 10:00:00\""]],
+        [
+         420,
+         1,
+         [
+          "       <a href=\"./1002/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         424,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1002)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [435,1,["      \"1011\""]],
+        [440,1,["      \"PRB-407\""]],
+        [445,1,["      \"Registro de prueba 11\""]],
+        [450,1,["      \"$1,494.30\""]],
+        [455,1,["      \"2026-03-12 10:00:00\""]],
+        [
+         466,
+         1,
+         [
+          "       <a href=\"./1011/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         470,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1011)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [481,1,["      \"1010\""]],
+        [486,1,["      \"PRB-370\""]],
+        [491,1,["      \"Registro de prueba 10\""]],
+        [496,1,["      \"$1,358.50\""]],
+        [501,1,["      \"2026-02-11 10:00:00\""]],
+        [
+         512,
+         1,
+         [
+          "       <a href=\"./1010/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         516,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1010)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [527,1,["      \"1001\""]],
+        [532,1,["      \"PRB-037\""]],
+        [537,1,["      \"Registro de prueba 1\""]],
+        [542,1,["      \"$135.80\""]],
+        [547,1,["      \"2026-02-02 10:00:00\""]],
+        [
+         558,
+         1,
+         [
+          "       <a href=\"./1001/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         562,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1001)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [573,1,["      \"1000\""]],
+        [578,1,["      \"PRB-000\""]],
+        [583,1,["      \"Registro de prueba 0\""]],
+        [588,1,["      \"$0.00\""]],
+        [593,1,["      \"2026-01-01 10:00:00\""]],
+        [
+         604,
+         1,
+         [
+          "       <a href=\"./1000/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         608,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1000)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": [
+       {
+        "sys_pk": 1009,
+        "sys_dtcreated": "2026-01-10 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-333",
+        "nombre": "Registro de prueba 9",
+        "importe": 1222.6
+       },
+       {
+        "sys_pk": 1008,
+        "sys_dtcreated": "2026-09-09 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-296",
+        "nombre": "Registro de prueba 8",
+        "importe": 1086.8
+       },
+       {
+        "sys_pk": 1007,
+        "sys_dtcreated": "2026-08-08 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-259",
+        "nombre": "Registro de prueba 7",
+        "importe": 950.9
+       },
+       {
+        "sys_pk": 1006,
+        "sys_dtcreated": "2026-07-07 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-222",
+        "nombre": "Registro de prueba 6",
+        "importe": 815.1
+       },
+       {
+        "sys_pk": 1005,
+        "sys_dtcreated": "2026-06-06 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-185",
+        "nombre": "Registro de prueba 5",
+        "importe": 679.2
+       },
+       {
+        "sys_pk": 1004,
+        "sys_dtcreated": "2026-05-05 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-148",
+        "nombre": "Registro de prueba 4",
+        "importe": 543.4
+       },
+       {
+        "sys_pk": 1003,
+        "sys_dtcreated": "2026-04-04 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-111",
+        "nombre": "Registro de prueba 3",
+        "importe": 407.5
+       },
+       {
+        "sys_pk": 1002,
+        "sys_dtcreated": "2026-03-03 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-074",
+        "nombre": "Registro de prueba 2",
+        "importe": 271.7
+       },
+       {
+        "sys_pk": 1011,
+        "sys_dtcreated": "2026-03-12 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-407",
+        "nombre": "Registro de prueba 11",
+        "importe": 1494.3
+       },
+       {
+        "sys_pk": 1010,
+        "sys_dtcreated": "2026-02-11 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-370",
+        "nombre": "Registro de prueba 10",
+        "importe": 1358.5
+       },
+       {
+        "sys_pk": 1001,
+        "sys_dtcreated": "2026-02-02 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-037",
+        "nombre": "Registro de prueba 1",
+        "importe": 135.8
+       },
+       {
+        "sys_pk": 1000,
+        "sys_dtcreated": "2026-01-01 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-000",
+        "nombre": "Registro de prueba 0",
+        "importe": 0
+       }
+      ],
+      "columnas": [
+       {
+        "type": "NoEditable",
+        "field": "sys_pk",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "",
+        "title": "Llave Primaria"
+       },
+       {
+        "type": "NoEditable",
+        "field": "codigo",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "",
+        "title": "Código"
+       },
+       {
+        "type": "NoEditable",
+        "field": "nombre",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "",
+        "minwidth": "180px",
+        "style": "min-width: 180px;",
+        "title": "Nombre",
+        "sort": "DESC"
+       },
+       {
+        "type": "NoEditable",
+        "field": "importe",
+        "textalign": "end",
+        "format": "true",
+        "thousandssep": "true",
+        "decs": "2",
+        "prefix": "$",
+        "sufix": "",
+        "class": "",
+        "title": "Importe"
+       },
+       {
+        "type": "NoEditable",
+        "field": "sys_dtcreated",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "no-print",
+        "title": "Fecha de creación"
+       },
+       {
+        "type": "NoEditable",
+        "field": "sys_info",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "",
+        "title": "Sys Info"
+       },
+       {
+        "type": "NoEditable",
+        "field": "_actions",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "",
+        "template": "                    <div style=\"display:flex;gap:8px;justify-content:center;width:100%;\" class=\"no-print\">\n                        <a href=\"./${DataRow.sys_pk}/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">Editar</a>\n                        <button onclick=\"InduxsoftCrudlModel.Delete(${DataRow.sys_pk})\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">Eliminar</button>\n                    </div>",
+        "title": "Acciones"
+       }
+      ],
+      "respaldo": "@=paso-anterior",
+      "props": {"$parche":[[50,2,["CurrentRowIndex() = -1","CurrentColIndex() = -1"]],[55,1,["CurrentTd() = null"]]]},
+      "estilos": {
+       "$parche": [
+        [
+         11,
+         8,
+         [
+          "tr[0] = display:table-row;position:relative;width:966px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[0] = display:table-cell;position:relative;width:132px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[1] = display:table-cell;position:relative;width:74px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[2] = display:table-cell;position:relative;width:203px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[3] = display:table-cell;position:relative;width:88px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[4] = display:table-cell;position:relative;width:183px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[5] = display:table-cell;position:relative;width:77px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[6] = display:table-cell;position:relative;width:146px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [43,1,[]]
+       ]
+      }
+     }
+    ],
+    "luz": {
+     "$parche": [
+      [0,1,["<body {foco}>"]],
+      [
+       5,
+       1,
+       [
+        "    <edit-table id=\"tbl_prueba\" data=\"[{\\\"sys_pk\\\":1000,\\\"sys_dtcreated\\\":\\\"2026-01-01 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-000\\\",\\\"nombre\\\":\\\"Registro de prueba 0\\\",\\\"importe\\\":0},{\\\"sys_pk\\\":1001,\\\"sys_dtcreated\\\":\\\"2026-02-02 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-037\\\",\\\"nombre\\\":\\\"Registro de prueba 1\\\",\\\"importe\\\":135.8},{\\\"sys_pk\\\":1002,\\\"sys_dtcreated\\\":\\\"2026-03-03 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-074\\\",\\\"nombre\\\":\\\"Registro de prueba 2\\\",\\\"importe\\\":271.7},{\\\"sys_pk\\\":1003,\\\"sys_dtcreated\\\":\\\"2026-04-04 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-111\\\",\\\"nombre\\\":\\\"Registro de prueba 3\\\",\\\"importe\\\":407.5},{\\\"sys_pk\\\":1004,\\\"sys_dtcreated\\\":\\\"2026-05-05 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-148\\\",\\\"nombre\\\":\\\"Registro de prueba 4\\\",\\\"importe\\\":543.4},{\\\"sys_pk\\\":1005,\\\"sys_dtcreated\\\":\\\"2026-06-06 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-185\\\",\\\"nombre\\\":\\\"Registro de prueba 5\\\",\\\"importe\\\":679.2},{\\\"sys_pk\\\":1006,\\\"sys_dtcreated\\\":\\\"2026-07-07 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-222\\\",\\\"nombre\\\":\\\"Registro de prueba 6\\\",\\\"importe\\\":815.1},{\\\"sys_pk\\\":1007,\\\"sys_dtcreated\\\":\\\"2026-08-08 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-259\\\",\\\"nombre\\\":\\\"Registro de prueba 7\\\",\\\"importe\\\":950.9},{\\\"sys_pk\\\":1008,\\\"sys_dtcreated\\\":\\\"2026-09-09 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-296\\\",\\\"nombre\\\":\\\"Registro de prueba 8\\\",\\\"importe\\\":1086.8},{\\\"sys_pk\\\":1009,\\\"sys_dtcreated\\\":\\\"2026-01-10 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-333\\\",\\\"nombre\\\":\\\"Registro de prueba 9\\\",\\\"importe\\\":1222.6},{\\\"sys_pk\\\":1010,\\\"sys_dtcreated\\\":\\\"2026-02-11 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-370\\\",\\\"nombre\\\":\\\"Registro de prueba 10\\\",\\\"importe\\\":1358.5},{\\\"sys_pk\\\":1011,\\\"sys_dtcreated\\\":\\\"2026-03-12 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-407\\\",\\\"nombre\\\":\\\"Registro de prueba 11\\\",\\\"importe\\\":1494.3}]\" hidde-selector=\"true\" cards-responsive=\"true\" style=\"width:100%;\" control-styles=\"                        div:has(table#tbl_prueba) { overflow:revert !important; }\\n                        #tbl_prueba tr th { font-weight:500; }\\n                    \\n                        @media print {\\n                            #tbl_prueba { overflow:hidden; }\\n                        }\\n\\n                        \">"
+       ]
+      ],
+      [10,1,["    \"Mostrando los primeros 12 registros ordenados por Nombre DESC\""]]
+     ]
+    },
+    "foco": {"documento":{"ruta":"html>body"},"shadow":null},
+    "eventos": [
+     {
+      "evento": "onsort",
+      "tabla": "tbl_prueba",
+      "consumidor": true,
+      "args": {
+       "th": {"$nodo":{"ruta":"shadow(tbl_prueba)>div>table#tbl_prueba>thead>tr[0]>th[2]","texto":"Nombre"}},
+       "coldef": {
+        "type": "NoEditable",
+        "field": "nombre",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "",
+        "minwidth": "180px",
+        "style": "min-width: 180px;",
+        "title": "Nombre",
+        "sort": "DESC"
+       },
+       "caption": "Nombre"
+      }
+     }
+    ],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": {"valor":{"contexto":{"item_id":"","context":{}}}},
+    "internos": "@=paso-anterior"
+   }
+  },
+  {
+   "nombre": "flechas abajo x2 (sys_pk de la fila elegida)",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "tbl_prueba",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": "@=paso-anterior",
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": "@=paso-anterior",
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": "@=paso-anterior",
+      "estilos": "@=paso-anterior"
+     }
+    ],
+    "luz": "@=paso-anterior",
+    "foco": "@=paso-anterior",
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": "@=paso-anterior",
+    "internos": "@=paso-anterior"
+   }
+  },
+  {
+   "nombre": "ordenar por Importe (número)",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "tbl_prueba",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [
+         24,
+         1,
+         [
+          "    <th type=\"NoEditable\" field=\"nombre\" textalign=\"\" format=\"false\" thousandssep=\"false\" decs=\"1\" prefix=\"\" sufix=\"\" class=\"\" minwidth=\"180px\" style=\"min-width: 180px;\">"
+         ]
+        ],
+        [
+         31,
+         1,
+         [
+          "    <th type=\"NoEditable\" field=\"importe\" textalign=\"end\" format=\"true\" thousandssep=\"true\" decs=\"2\" prefix=\"$\" sufix=\"\" class=\"descendent\">"
+         ]
+        ],
+        [65,1,["      \"1000\""]],
+        [70,1,["      \"PRB-000\""]],
+        [75,1,["      \"Registro de prueba 0\""]],
+        [80,1,["      \"$0.00\""]],
+        [85,1,["      \"2026-01-01 10:00:00\""]],
+        [
+         96,
+         1,
+         [
+          "       <a href=\"./1000/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         100,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1000)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [111,1,["      \"1001\""]],
+        [116,1,["      \"PRB-037\""]],
+        [121,1,["      \"Registro de prueba 1\""]],
+        [126,1,["      \"$135.80\""]],
+        [131,1,["      \"2026-02-02 10:00:00\""]],
+        [
+         142,
+         1,
+         [
+          "       <a href=\"./1001/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         146,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1001)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [157,1,["      \"1002\""]],
+        [162,1,["      \"PRB-074\""]],
+        [167,1,["      \"Registro de prueba 2\""]],
+        [172,1,["      \"$271.70\""]],
+        [177,1,["      \"2026-03-03 10:00:00\""]],
+        [
+         188,
+         1,
+         [
+          "       <a href=\"./1002/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         192,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1002)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [203,1,["      \"1003\""]],
+        [208,1,["      \"PRB-111\""]],
+        [213,1,["      \"Registro de prueba 3\""]],
+        [218,1,["      \"$407.50\""]],
+        [223,1,["      \"2026-04-04 10:00:00\""]],
+        [
+         234,
+         1,
+         [
+          "       <a href=\"./1003/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         238,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1003)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [249,1,["      \"1004\""]],
+        [254,1,["      \"PRB-148\""]],
+        [259,1,["      \"Registro de prueba 4\""]],
+        [264,1,["      \"$543.40\""]],
+        [269,1,["      \"2026-05-05 10:00:00\""]],
+        [
+         280,
+         1,
+         [
+          "       <a href=\"./1004/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         284,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1004)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [295,1,["      \"1005\""]],
+        [300,1,["      \"PRB-185\""]],
+        [305,1,["      \"Registro de prueba 5\""]],
+        [310,1,["      \"$679.20\""]],
+        [315,1,["      \"2026-06-06 10:00:00\""]],
+        [
+         326,
+         1,
+         [
+          "       <a href=\"./1005/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         330,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1005)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [341,1,["      \"1006\""]],
+        [346,1,["      \"PRB-222\""]],
+        [351,1,["      \"Registro de prueba 6\""]],
+        [356,1,["      \"$815.10\""]],
+        [361,1,["      \"2026-07-07 10:00:00\""]],
+        [
+         372,
+         1,
+         [
+          "       <a href=\"./1006/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         376,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1006)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [387,1,["      \"1007\""]],
+        [392,1,["      \"PRB-259\""]],
+        [397,1,["      \"Registro de prueba 7\""]],
+        [402,1,["      \"$950.90\""]],
+        [407,1,["      \"2026-08-08 10:00:00\""]],
+        [
+         418,
+         1,
+         [
+          "       <a href=\"./1007/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         422,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1007)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [433,1,["      \"1008\""]],
+        [438,1,["      \"PRB-296\""]],
+        [443,1,["      \"Registro de prueba 8\""]],
+        [448,1,["      \"$1,086.80\""]],
+        [453,1,["      \"2026-09-09 10:00:00\""]],
+        [
+         464,
+         1,
+         [
+          "       <a href=\"./1008/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         468,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1008)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [479,1,["      \"1009\""]],
+        [484,1,["      \"PRB-333\""]],
+        [489,1,["      \"Registro de prueba 9\""]],
+        [494,1,["      \"$1,222.60\""]],
+        [499,1,["      \"2026-01-10 10:00:00\""]],
+        [
+         510,
+         1,
+         [
+          "       <a href=\"./1009/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         514,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1009)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [525,1,["      \"1010\""]],
+        [530,1,["      \"PRB-370\""]],
+        [535,1,["      \"Registro de prueba 10\""]],
+        [540,1,["      \"$1,358.50\""]],
+        [545,1,["      \"2026-02-11 10:00:00\""]],
+        [
+         556,
+         1,
+         [
+          "       <a href=\"./1010/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         560,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1010)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [571,1,["      \"1011\""]],
+        [576,1,["      \"PRB-407\""]],
+        [581,1,["      \"Registro de prueba 11\""]],
+        [586,1,["      \"$1,494.30\""]],
+        [591,1,["      \"2026-03-12 10:00:00\""]],
+        [
+         602,
+         1,
+         [
+          "       <a href=\"./1011/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ],
+        [
+         606,
+         1,
+         [
+          "       <button onclick=\"InduxsoftCrudlModel.Delete(1011)\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">"
+         ]
+        ]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": [
+       {
+        "sys_pk": 1000,
+        "sys_dtcreated": "2026-01-01 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-000",
+        "nombre": "Registro de prueba 0",
+        "importe": 0
+       },
+       {
+        "sys_pk": 1001,
+        "sys_dtcreated": "2026-02-02 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-037",
+        "nombre": "Registro de prueba 1",
+        "importe": 135.8
+       },
+       {
+        "sys_pk": 1002,
+        "sys_dtcreated": "2026-03-03 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-074",
+        "nombre": "Registro de prueba 2",
+        "importe": 271.7
+       },
+       {
+        "sys_pk": 1003,
+        "sys_dtcreated": "2026-04-04 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-111",
+        "nombre": "Registro de prueba 3",
+        "importe": 407.5
+       },
+       {
+        "sys_pk": 1004,
+        "sys_dtcreated": "2026-05-05 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-148",
+        "nombre": "Registro de prueba 4",
+        "importe": 543.4
+       },
+       {
+        "sys_pk": 1005,
+        "sys_dtcreated": "2026-06-06 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-185",
+        "nombre": "Registro de prueba 5",
+        "importe": 679.2
+       },
+       {
+        "sys_pk": 1006,
+        "sys_dtcreated": "2026-07-07 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-222",
+        "nombre": "Registro de prueba 6",
+        "importe": 815.1
+       },
+       {
+        "sys_pk": 1007,
+        "sys_dtcreated": "2026-08-08 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-259",
+        "nombre": "Registro de prueba 7",
+        "importe": 950.9
+       },
+       {
+        "sys_pk": 1008,
+        "sys_dtcreated": "2026-09-09 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-296",
+        "nombre": "Registro de prueba 8",
+        "importe": 1086.8
+       },
+       {
+        "sys_pk": 1009,
+        "sys_dtcreated": "2026-01-10 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-333",
+        "nombre": "Registro de prueba 9",
+        "importe": 1222.6
+       },
+       {
+        "sys_pk": 1010,
+        "sys_dtcreated": "2026-02-11 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-370",
+        "nombre": "Registro de prueba 10",
+        "importe": 1358.5
+       },
+       {
+        "sys_pk": 1011,
+        "sys_dtcreated": "2026-03-12 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-407",
+        "nombre": "Registro de prueba 11",
+        "importe": 1494.3
+       }
+      ],
+      "columnas": [
+       {
+        "type": "NoEditable",
+        "field": "sys_pk",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "",
+        "title": "Llave Primaria"
+       },
+       {
+        "type": "NoEditable",
+        "field": "codigo",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "",
+        "title": "Código"
+       },
+       {
+        "type": "NoEditable",
+        "field": "nombre",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "",
+        "minwidth": "180px",
+        "style": "min-width: 180px;",
+        "title": "Nombre"
+       },
+       {
+        "type": "NoEditable",
+        "field": "importe",
+        "textalign": "end",
+        "format": "true",
+        "thousandssep": "true",
+        "decs": "2",
+        "prefix": "$",
+        "sufix": "",
+        "class": "",
+        "title": "Importe",
+        "sort": "ASC"
+       },
+       {
+        "type": "NoEditable",
+        "field": "sys_dtcreated",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "no-print",
+        "title": "Fecha de creación"
+       },
+       {
+        "type": "NoEditable",
+        "field": "sys_info",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "",
+        "title": "Sys Info"
+       },
+       {
+        "type": "NoEditable",
+        "field": "_actions",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "",
+        "template": "                    <div style=\"display:flex;gap:8px;justify-content:center;width:100%;\" class=\"no-print\">\n                        <a href=\"./${DataRow.sys_pk}/\" style=\"cursor:pointer; text-decoration: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">Editar</a>\n                        <button onclick=\"InduxsoftCrudlModel.Delete(${DataRow.sys_pk})\" style=\"cursor:pointer; border: none; outline: none; padding: 0px 8px; background-color: #F5F5F5; color: #000;\">Eliminar</button>\n                    </div>",
+        "title": "Acciones"
+       }
+      ],
+      "respaldo": "@=paso-anterior",
+      "props": "@=paso-anterior",
+      "estilos": {
+       "$parche": [
+        [
+         6,
+         2,
+         [
+          "th[2] = display:table-cell;position:relative;width:194px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:500;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[3] = display:table-cell;position:relative;width:82px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:500;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         14,
+         2,
+         [
+          "tr[0].td[2] = display:table-cell;position:relative;width:202px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[3] = display:table-cell;position:relative;width:90px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         22,
+         2,
+         [
+          "tr[1].td[2] = display:table-cell;position:relative;width:202px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[3] = display:table-cell;position:relative;width:90px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         30,
+         2,
+         [
+          "tr[2].td[2] = display:table-cell;position:relative;width:202px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[3] = display:table-cell;position:relative;width:90px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         38,
+         2,
+         [
+          "tr[11].td[2] = display:table-cell;position:relative;width:202px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[11].td[3] = display:table-cell;position:relative;width:90px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": {"$parche":[[10,1,["    \"Mostrando los primeros 12 registros ordenados por Importe ASC\""]]]},
+    "foco": "@=paso-anterior",
+    "eventos": [
+     {
+      "evento": "onsort",
+      "tabla": "tbl_prueba",
+      "consumidor": true,
+      "args": {
+       "th": {"$nodo":{"ruta":"shadow(tbl_prueba)>div>table#tbl_prueba>thead>tr[0]>th[3]","texto":"Importe"}},
+       "coldef": {
+        "type": "NoEditable",
+        "field": "importe",
+        "textalign": "end",
+        "format": "true",
+        "thousandssep": "true",
+        "decs": "2",
+        "prefix": "$",
+        "sufix": "",
+        "class": "",
+        "title": "Importe",
+        "sort": "ASC"
+       },
+       "caption": "Importe"
+      }
+     },
+     {"evento":"lostfocus","tabla":"tbl_prueba","consumidor":false}
+    ],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": "@=paso-anterior",
+    "internos": "@=paso-anterior"
+   }
+  },
+  {
+   "nombre": "clic en la fila 5",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "tbl_prueba",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [292,1,["   <tr id=\"\" parent=\"\" indent=\"0\" class=\"EdiTable-Row-Selected\">"]],
+        [
+         295,
+         1,
+         [
+          "      <div id=\"__table_selector\" class=\"EdiTable-Selector transparent\" tabindex=\"0\" {foco}>",
+          "       \"1005\"",
+          "      </div>"
+         ]
+        ]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": "@=paso-anterior",
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": {
+       "$parche": [
+        [38,1,["_current_row = 5"]],
+        [50,2,["CurrentRowIndex() = 5","CurrentColIndex() = 0"]],
+        [
+         55,
+         1,
+         [
+          "CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(tbl_prueba)>div>table#tbl_prueba>tbody>tr[5]>td[0]\",\"texto\":\"1005\"}}"
+         ]
+        ]
+       ]
+      },
+      "estilos": {
+       "$parche": [
+        [
+         35,
+         0,
+         [
+          "tr[5] = display:table-row;position:relative;width:966px;height:30px;color:rgb(255, 255, 255);background-color:rgb(61, 117, 221);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[5].td[0] = display:table-cell;position:relative;width:132px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[5].td[1] = display:table-cell;position:relative;width:74px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[5].td[2] = display:table-cell;position:relative;width:202px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[5].td[3] = display:table-cell;position:relative;width:90px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[5].td[4] = display:table-cell;position:relative;width:183px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[5].td[5] = display:table-cell;position:relative;width:77px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[5].td[6] = display:table-cell;position:relative;width:146px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         43,
+         0,
+         [
+          "selector = display:flex;position:static;width:132px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": {
+     "$parche": [
+      [0,1,["<body>"]],
+      [
+       5,
+       1,
+       [
+        "    <edit-table id=\"tbl_prueba\" data=\"[{\\\"sys_pk\\\":1000,\\\"sys_dtcreated\\\":\\\"2026-01-01 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-000\\\",\\\"nombre\\\":\\\"Registro de prueba 0\\\",\\\"importe\\\":0},{\\\"sys_pk\\\":1001,\\\"sys_dtcreated\\\":\\\"2026-02-02 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-037\\\",\\\"nombre\\\":\\\"Registro de prueba 1\\\",\\\"importe\\\":135.8},{\\\"sys_pk\\\":1002,\\\"sys_dtcreated\\\":\\\"2026-03-03 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-074\\\",\\\"nombre\\\":\\\"Registro de prueba 2\\\",\\\"importe\\\":271.7},{\\\"sys_pk\\\":1003,\\\"sys_dtcreated\\\":\\\"2026-04-04 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-111\\\",\\\"nombre\\\":\\\"Registro de prueba 3\\\",\\\"importe\\\":407.5},{\\\"sys_pk\\\":1004,\\\"sys_dtcreated\\\":\\\"2026-05-05 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-148\\\",\\\"nombre\\\":\\\"Registro de prueba 4\\\",\\\"importe\\\":543.4},{\\\"sys_pk\\\":1005,\\\"sys_dtcreated\\\":\\\"2026-06-06 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-185\\\",\\\"nombre\\\":\\\"Registro de prueba 5\\\",\\\"importe\\\":679.2},{\\\"sys_pk\\\":1006,\\\"sys_dtcreated\\\":\\\"2026-07-07 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-222\\\",\\\"nombre\\\":\\\"Registro de prueba 6\\\",\\\"importe\\\":815.1},{\\\"sys_pk\\\":1007,\\\"sys_dtcreated\\\":\\\"2026-08-08 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-259\\\",\\\"nombre\\\":\\\"Registro de prueba 7\\\",\\\"importe\\\":950.9},{\\\"sys_pk\\\":1008,\\\"sys_dtcreated\\\":\\\"2026-09-09 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-296\\\",\\\"nombre\\\":\\\"Registro de prueba 8\\\",\\\"importe\\\":1086.8},{\\\"sys_pk\\\":1009,\\\"sys_dtcreated\\\":\\\"2026-01-10 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-333\\\",\\\"nombre\\\":\\\"Registro de prueba 9\\\",\\\"importe\\\":1222.6},{\\\"sys_pk\\\":1010,\\\"sys_dtcreated\\\":\\\"2026-02-11 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-370\\\",\\\"nombre\\\":\\\"Registro de prueba 10\\\",\\\"importe\\\":1358.5},{\\\"sys_pk\\\":1011,\\\"sys_dtcreated\\\":\\\"2026-03-12 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-407\\\",\\\"nombre\\\":\\\"Registro de prueba 11\\\",\\\"importe\\\":1494.3}]\" hidde-selector=\"true\" cards-responsive=\"true\" style=\"width:100%;\" control-styles=\"                        div:has(table#tbl_prueba) { overflow:revert !important; }\\n                        #tbl_prueba tr th { font-weight:500; }\\n                    \\n                        @media print {\\n                            #tbl_prueba { overflow:hidden; }\\n                        }\\n\\n                        \" {foco}>"
+       ]
+      ]
+     ]
+    },
+    "foco": {
+     "documento": {"ruta":"body>div#work_area>div>div#list_table_container>edit-table#tbl_prueba"},
+     "shadow": {"ruta":"shadow(tbl_prueba)>div>table#tbl_prueba>tbody>tr[5]>td[0]>div>div#__table_selector"}
+    },
+    "eventos": [
+     {
+      "evento": "beforecellfocus",
+      "tabla": "tbl_prueba",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_prueba)>div>table#tbl_prueba>tbody>tr[5]>td[0]","texto":"1005"}},
+       "sender": {"$sender":"tbl_prueba","esElemento":false},
+       "cancel": false
+      }
+     },
+     {
+      "evento": "entercell",
+      "tabla": "tbl_prueba",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_prueba)>div>table#tbl_prueba>tbody>tr[5]>td[0]","texto":"1005"}},
+       "sender": {"$sender":"tbl_prueba","esElemento":false}
+      }
+     },
+     {
+      "evento": "rowchanged",
+      "tabla": "tbl_prueba",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_prueba)>div>table#tbl_prueba>tbody>tr[5]>td[0]","texto":"1005"}},
+       "sender": {"$sender":"tbl_prueba","esElemento":false},
+       "cancel": false,
+       "index": 5,
+       "previous_index": 0
+      }
+     }
+    ],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": {"valor":{"contexto":{"item_id":1005,"context":{}}}},
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 3,
+      "nodo:mousedown": 7,
+      "document:mousemove": 7,
+      "document:mouseup": 7,
+      "window:beforeprint": 1,
+      "window:afterprint": 1,
+      "otro:change": 1,
+      "nodo:click:remove": 3,
+      "nodo:click": 3,
+      "nodo:keydown:remove": 3,
+      "nodo:keydown": 3
+     },
+     "intervalos": 1
+    }
+   }
+  }
+ ]
+}

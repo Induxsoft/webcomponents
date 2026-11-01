@@ -1,0 +1,553 @@
+{
+ "id": "presentacion/columna-oculta-visual",
+ "titulo": "hideColumn: celdas y th con hidde-col; badges se mueven a la siguiente visible",
+ "etiquetas": [],
+ "archivo": "escenarios/presentacion/presentacion.mjs",
+ "pasos": [
+  {
+   "nombre": "inicio",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": true,
+      "modoShadowPedido": "closed",
+      "dom": [
+       "\"\\n                \"",
+       "<style>",
+       " @@ESTILO sha256:e02dcdadace9a84f",
+       "</style>",
+       "\"\\n            \"",
+       "<div style=\"min-height: 2rem; max-height: 100%; overflow: auto; padding-bottom: 5px\">",
+       " <table id=\"t1\">",
+       "  <thead>",
+       "   <tr>",
+       "    <th field=\"id\" type=\"NoEditable\">",
+       "     <span>",
+       "      \"Id\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:128px;\"></div>",
+       "    </th>",
+       "    <th field=\"nombre\" type=\"Text\">",
+       "     <span>",
+       "      \"Nombre\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:128px;\"></div>",
+       "    </th>",
+       "    <th field=\"cantidad\" type=\"Number\">",
+       "     <span>",
+       "      \"Cantidad\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:128px;\"></div>",
+       "    </th>",
+       "    <th field=\"precio\" type=\"Number\" format=\"true\" decs=\"2\" thousandssep=\"true\" prefix=\"$\">",
+       "     <span>",
+       "      \"Precio\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:128px;\"></div>",
+       "    </th>",
+       "   </tr>",
+       "  </thead>",
+       "  <tbody>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell et-badge-host\" data-cell=\"Id\">",
+       "     <div class=\"et-badge-wrap\">",
+       "      <span class=\"et-badges et-badges-start\" part=\"badges\">",
+       "       <span class=\"et-badge\" part=\"badge\">",
+       "        \"b0\"",
+       "       </span>",
+       "      </span>",
+       "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "       \"1\"",
+       "      </div>",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Producto de prueba 1\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Cantidad\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Precio\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"$1.00\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell et-badge-host\" data-cell=\"Id\">",
+       "     <div class=\"et-badge-wrap\">",
+       "      <span class=\"et-badges et-badges-start\" part=\"badges\">",
+       "       <span class=\"et-badge\" part=\"badge\">",
+       "        \"b1\"",
+       "       </span>",
+       "      </span>",
+       "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "       \"2\"",
+       "      </div>",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Producto de prueba 2\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Cantidad\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"8\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Precio\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"$6.60\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell et-badge-host\" data-cell=\"Id\">",
+       "     <div class=\"et-badge-wrap\">",
+       "      <span class=\"et-badges et-badges-start\" part=\"badges\">",
+       "       <span class=\"et-badge\" part=\"badge\">",
+       "        \"b2\"",
+       "       </span>",
+       "      </span>",
+       "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "       \"3\"",
+       "      </div>",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Producto de prueba 3\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Cantidad\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"2\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Precio\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"$12.10\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "  </tbody>",
+       " </table>",
+       "</div>"
+      ],
+      "shadowEsElGuardado": true,
+      "datos": [
+       {"id":1,"nombre":"Producto de prueba 1","cantidad":1,"precio":1},
+       {"id":2,"nombre":"Producto de prueba 2","cantidad":8,"precio":6.6},
+       {"id":3,"nombre":"Producto de prueba 3","cantidad":2,"precio":12.1}
+      ],
+      "columnas": [
+       {"field":"id","type":"NoEditable","title":"Id"},
+       {"field":"nombre","type":"Text","title":"Nombre"},
+       {"field":"cantidad","type":"Number","title":"Cantidad"},
+       {
+        "field": "precio",
+        "type": "Number",
+        "format": "true",
+        "decs": "2",
+        "thousandssep": "true",
+        "prefix": "$",
+        "title": "Precio"
+       }
+      ],
+      "respaldo": null,
+      "props": [
+       "IsDirty = false",
+       "Editing = false",
+       "ReadOnly = false",
+       "AutoAddRow = true",
+       "AutoDelRow = true",
+       "EverMove = true",
+       "PagOffSet = 10",
+       "TheadRowIndex = 0",
+       "ColumnsDefaultType = \"Text\"",
+       "ShowAsTree = false",
+       "CanMoveRow = false",
+       "Key = \"id\"",
+       "ParentKey = \"idp\"",
+       "Childs = \"__items\"",
+       "TreeOptions = {}",
+       "sorTable = true",
+       "_sorTable = true",
+       "htmlEncode = false",
+       "autoConfirm = false",
+       "hiddeSelector = false",
+       "hiddeRowSelector = false",
+       "minRowHeight = \"none\"",
+       "maxRowHeight = \"none\"",
+       "rowHeight = \"100%\"",
+       "cardsResponsive = false",
+       "editableResponsive = false",
+       "tableId = \"t1\"",
+       "NumFormat = {\"default_decimals\":\".\",\"thousands\":\",\",\"decimals\":\".\"}",
+       "CSS = {\"Cell\":\"EdiTable-Cell\",\"RowSelected\":\"EdiTable-Row-Selected\"}",
+       "hideColumns = []",
+       "_expandOnStart = false",
+       "KeepSelectionVisible = true",
+       "CardsMode = null",
+       "CardsLayout = \"grid\"",
+       "CardsBreakpoint = \"768px\"",
+       "CardsBreakpointTarget = \"viewport\"",
+       "IsCardView = false",
+       "_count_isdirty = 0",
+       "_current_row = -1",
+       "attributes = [\"id\",\"style\",\"data\"]",
+       "BadgesField = \"__badges\"",
+       "BadgeTooltip = \"native\"",
+       "BadgeSelectsRow = false",
+       "NativeEvents = false",
+       "TemplateEncode = false",
+       "Locale = null",
+       "RowClassField = null",
+       "_TreeValueIndent = 1",
+       "_TreeUnitIndent = \"rem\"",
+       "temp_html = \"[undefined]\"",
+       "CurrentRowIndex() = -1",
+       "CurrentColIndex() = -1",
+       "TRCount() = 3",
+       "THCount() = 4",
+       "ColumnsCount() = 4",
+       "CurrentTd() = null",
+       "focusedTable==_getCurren() = false",
+       "Events reemplazado = 0",
+       "Events claves = []",
+       "scroll = {\"contenedor\":[0,0]}"
+      ],
+      "estilos": [
+       "host = display:inline;position:static;width:100%;height:auto;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "contenedor = display:block;position:static;width:968px;height:128px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:auto;overflow-y:auto",
+       "table = display:table;position:static;width:968px;height:128px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "thead = display:table-header-group;position:sticky;width:966px;height:27px;color:rgb(0, 0, 0);background-color:rgb(245, 245, 245);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[0] = display:table-cell;position:relative;width:107px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[1] = display:table-cell;position:relative;width:440px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[2] = display:table-cell;position:relative;width:206px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[3] = display:table-cell;position:relative;width:147px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0] = display:table-row;position:relative;width:966px;height:32px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[0] = display:table-cell;position:relative;width:115px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[1] = display:table-cell;position:relative;width:448px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[2] = display:table-cell;position:relative;width:214px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[3] = display:table-cell;position:relative;width:155px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1] = display:table-row;position:relative;width:966px;height:32px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[0] = display:table-cell;position:relative;width:115px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[1] = display:table-cell;position:relative;width:448px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[2] = display:table-cell;position:relative;width:214px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[3] = display:table-cell;position:relative;width:155px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2] = display:table-row;position:relative;width:966px;height:32px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[0] = display:table-cell;position:relative;width:115px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[1] = display:table-cell;position:relative;width:448px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[2] = display:table-cell;position:relative;width:214px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[3] = display:table-cell;position:relative;width:155px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+      ]
+     }
+    ],
+    "luz": [
+     "<body {foco}>",
+     " \"\\n\"",
+     " <edit-table id=\"t1\" style=\"width:100%\" data=\"[{\\\"id\\\":1,\\\"nombre\\\":\\\"Producto de prueba 1\\\",\\\"cantidad\\\":1,\\\"precio\\\":1},{\\\"id\\\":2,\\\"nombre\\\":\\\"Producto de prueba 2\\\",\\\"cantidad\\\":8,\\\"precio\\\":6.6},{\\\"id\\\":3,\\\"nombre\\\":\\\"Producto de prueba 3\\\",\\\"cantidad\\\":2,\\\"precio\\\":12.1}]\">",
+     "  #shadow-root -> tablas[0]",
+     " </edit-table>",
+     " \"\\n\"",
+     " <script>",
+     "  \"\\nET('t1').RowBadges = (r, i) => ({ text: 'b' + i });\\n\"",
+     " </script>",
+     " \"\\n\\n\"",
+     "</body>"
+    ],
+    "foco": {"documento":{"ruta":"html>body"},"shadow":null},
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 2,
+      "nodo:click": 3,
+      "nodo:keydown": 3,
+      "nodo:mousedown": 4,
+      "document:mousemove": 4,
+      "document:mouseup": 4,
+      "window:beforeprint": 1,
+      "window:afterprint": 1
+     },
+     "intervalos": 1
+    }
+   }
+  },
+  {
+   "nombre": "ocultar Id",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [9,1,["    <th field=\"id\" type=\"NoEditable\" class=\"hidde-col\">"]],
+        [37,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Id\">"]],
+        [
+         39,
+         0,
+         [
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"1\"",
+          "      </div>",
+          "     </div>",
+          "    </td>",
+          "    <td class=\"EdiTable-Cell et-badge-host\" data-cell=\"Nombre\">",
+          "     <div class=\"et-badge-wrap\">"
+         ]
+        ],
+        [45,1,["       \"Producto de prueba 1\""]],
+        [49,5,[]],
+        [66,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Id\">"]],
+        [
+         68,
+         0,
+         [
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"2\"",
+          "      </div>",
+          "     </div>",
+          "    </td>",
+          "    <td class=\"EdiTable-Cell et-badge-host\" data-cell=\"Nombre\">",
+          "     <div class=\"et-badge-wrap\">"
+         ]
+        ],
+        [74,1,["       \"Producto de prueba 2\""]],
+        [78,5,[]],
+        [95,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Id\">"]],
+        [
+         97,
+         0,
+         [
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"3\"",
+          "      </div>",
+          "     </div>",
+          "    </td>",
+          "    <td class=\"EdiTable-Cell et-badge-host\" data-cell=\"Nombre\">",
+          "     <div class=\"et-badge-wrap\">"
+         ]
+        ],
+        [103,1,["       \"Producto de prueba 3\""]],
+        [107,5,[]]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": "@=paso-anterior",
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": {"$parche":[[29,1,["hideColumns = [0]"]]]},
+      "estilos": {
+       "$parche": [
+        [
+         4,
+         4,
+         [
+          "th[0] = display:none;position:relative;width:auto;height:auto;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[1] = display:table-cell;position:relative;width:544px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[2] = display:table-cell;position:relative;width:217px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[3] = display:table-cell;position:relative;width:155px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         9,
+         4,
+         [
+          "tr[0].td[0] = display:none;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[1] = display:table-cell;position:relative;width:552px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[2] = display:table-cell;position:relative;width:225px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[3] = display:table-cell;position:relative;width:163px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         14,
+         4,
+         [
+          "tr[1].td[0] = display:none;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[1] = display:table-cell;position:relative;width:552px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[2] = display:table-cell;position:relative;width:225px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[3] = display:table-cell;position:relative;width:163px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         19,
+         4,
+         [
+          "tr[2].td[0] = display:none;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[1] = display:table-cell;position:relative;width:552px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[2] = display:table-cell;position:relative;width:225px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[3] = display:table-cell;position:relative;width:163px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": "@=paso-anterior",
+    "foco": "@=paso-anterior",
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 2,
+      "nodo:click": 6,
+      "nodo:keydown": 6,
+      "nodo:mousedown": 4,
+      "document:mousemove": 4,
+      "document:mouseup": 4,
+      "window:beforeprint": 1,
+      "window:afterprint": 1
+     },
+     "intervalos": 1
+    }
+   }
+  },
+  {
+   "nombre": "mostrar Id",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [9,1,["    <th field=\"id\" type=\"NoEditable\" class=\"\">"]],
+        [37,1,["    <td class=\"EdiTable-Cell et-badge-host\" data-cell=\"Id\">"]],
+        [
+         39,
+         0,
+         [
+          "      <span class=\"et-badges et-badges-start\" part=\"badges\">",
+          "       <span class=\"et-badge\" part=\"badge\">",
+          "        \"b0\"",
+          "       </span>",
+          "      </span>"
+         ]
+        ],
+        [44,1,["    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">"]],
+        [46,5,[]],
+        [68,1,["    <td class=\"EdiTable-Cell et-badge-host\" data-cell=\"Id\">"]],
+        [
+         70,
+         0,
+         [
+          "      <span class=\"et-badges et-badges-start\" part=\"badges\">",
+          "       <span class=\"et-badge\" part=\"badge\">",
+          "        \"b1\"",
+          "       </span>",
+          "      </span>"
+         ]
+        ],
+        [75,1,["    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">"]],
+        [77,5,[]],
+        [99,1,["    <td class=\"EdiTable-Cell et-badge-host\" data-cell=\"Id\">"]],
+        [
+         101,
+         0,
+         [
+          "      <span class=\"et-badges et-badges-start\" part=\"badges\">",
+          "       <span class=\"et-badge\" part=\"badge\">",
+          "        \"b2\"",
+          "       </span>",
+          "      </span>"
+         ]
+        ],
+        [106,1,["    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">"]],
+        [108,5,[]]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": "@=paso-anterior",
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": {"$parche":[[29,1,["hideColumns = []"]]]},
+      "estilos": {
+       "$parche": [
+        [
+         4,
+         4,
+         [
+          "th[0] = display:table-cell;position:relative;width:107px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[1] = display:table-cell;position:relative;width:440px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[2] = display:table-cell;position:relative;width:206px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[3] = display:table-cell;position:relative;width:147px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         9,
+         4,
+         [
+          "tr[0].td[0] = display:table-cell;position:relative;width:115px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[1] = display:table-cell;position:relative;width:448px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[2] = display:table-cell;position:relative;width:214px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[3] = display:table-cell;position:relative;width:155px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         14,
+         4,
+         [
+          "tr[1].td[0] = display:table-cell;position:relative;width:115px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[1] = display:table-cell;position:relative;width:448px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[2] = display:table-cell;position:relative;width:214px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[3] = display:table-cell;position:relative;width:155px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         19,
+         4,
+         [
+          "tr[2].td[0] = display:table-cell;position:relative;width:115px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[1] = display:table-cell;position:relative;width:448px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[2] = display:table-cell;position:relative;width:214px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[3] = display:table-cell;position:relative;width:155px;height:24px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": "@=paso-anterior",
+    "foco": "@=paso-anterior",
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 2,
+      "nodo:click": 9,
+      "nodo:keydown": 9,
+      "nodo:mousedown": 4,
+      "document:mousemove": 4,
+      "document:mouseup": 4,
+      "window:beforeprint": 1,
+      "window:afterprint": 1
+     },
+     "intervalos": 1
+    }
+   }
+  }
+ ]
+}

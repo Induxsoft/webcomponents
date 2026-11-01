@@ -1,0 +1,395 @@
+{
+ "id": "edicion/stopfire-defaults",
+ "titulo": "Valores default de InsertRow con stopfire (sin FieldUpdated)",
+ "etiquetas": [],
+ "archivo": "escenarios/edicion/edicion.mjs",
+ "pasos": [
+  {
+   "nombre": "inicio",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": true,
+      "modoShadowPedido": "closed",
+      "dom": [
+       "\"\\n                \"",
+       "<style>",
+       " @@ESTILO sha256:e02dcdadace9a84f",
+       "</style>",
+       "\"\\n            \"",
+       "<div style=\"min-height: 2rem; max-height: 100%; overflow: auto; padding-bottom: 5px\">",
+       " <table id=\"t1\">",
+       "  <thead>",
+       "   <tr>",
+       "    <th field=\"id\" type=\"NoEditable\" default=\"0\">",
+       "     <span>",
+       "      \"Id\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:61px;\"></div>",
+       "    </th>",
+       "    <th field=\"nombre\" type=\"Text\" default=\"Nuevo\">",
+       "     <span>",
+       "      \"Nombre\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:61px;\"></div>",
+       "    </th>",
+       "    <th field=\"cantidad\" type=\"Number\" default=\"1\">",
+       "     <span>",
+       "      \"Cantidad\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:61px;\"></div>",
+       "    </th>",
+       "    <th field=\"nota\" type=\"Text\">",
+       "     <span>",
+       "      \"Nota\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:61px;\"></div>",
+       "    </th>",
+       "   </tr>",
+       "  </thead>",
+       "  <tbody>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Id\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Producto de prueba 1\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Cantidad\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nota\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "  </tbody>",
+       " </table>",
+       "</div>"
+      ],
+      "shadowEsElGuardado": true,
+      "datos": [{"id":1,"nombre":"Producto de prueba 1","cantidad":1,"precio":1}],
+      "columnas": [
+       {"field":"id","type":"NoEditable","default":"0","title":"Id"},
+       {"field":"nombre","type":"Text","default":"Nuevo","title":"Nombre"},
+       {"field":"cantidad","type":"Number","default":"1","title":"Cantidad"},
+       {"field":"nota","type":"Text","title":"Nota"}
+      ],
+      "respaldo": null,
+      "props": [
+       "IsDirty = false",
+       "Editing = false",
+       "ReadOnly = false",
+       "AutoAddRow = true",
+       "AutoDelRow = true",
+       "EverMove = true",
+       "PagOffSet = 10",
+       "TheadRowIndex = 0",
+       "ColumnsDefaultType = \"Text\"",
+       "ShowAsTree = false",
+       "CanMoveRow = false",
+       "Key = \"id\"",
+       "ParentKey = \"idp\"",
+       "Childs = \"__items\"",
+       "TreeOptions = {}",
+       "sorTable = true",
+       "_sorTable = true",
+       "htmlEncode = false",
+       "autoConfirm = false",
+       "hiddeSelector = false",
+       "hiddeRowSelector = false",
+       "minRowHeight = \"none\"",
+       "maxRowHeight = \"none\"",
+       "rowHeight = \"100%\"",
+       "cardsResponsive = false",
+       "editableResponsive = false",
+       "tableId = \"t1\"",
+       "NumFormat = {\"default_decimals\":\".\",\"thousands\":\",\",\"decimals\":\".\"}",
+       "CSS = {\"Cell\":\"EdiTable-Cell\",\"RowSelected\":\"EdiTable-Row-Selected\"}",
+       "hideColumns = []",
+       "_expandOnStart = false",
+       "KeepSelectionVisible = true",
+       "CardsMode = null",
+       "CardsLayout = \"grid\"",
+       "CardsBreakpoint = \"768px\"",
+       "CardsBreakpointTarget = \"viewport\"",
+       "IsCardView = false",
+       "_count_isdirty = 0",
+       "_current_row = -1",
+       "attributes = [\"id\",\"style\",\"data\"]",
+       "BadgesField = \"__badges\"",
+       "BadgeTooltip = \"native\"",
+       "BadgeSelectsRow = false",
+       "NativeEvents = false",
+       "TemplateEncode = false",
+       "Locale = null",
+       "RowClassField = null",
+       "_TreeValueIndent = 1",
+       "_TreeUnitIndent = \"rem\"",
+       "temp_html = \"[undefined]\"",
+       "CurrentRowIndex() = -1",
+       "CurrentColIndex() = -1",
+       "TRCount() = 1",
+       "THCount() = 4",
+       "ColumnsCount() = 4",
+       "CurrentTd() = null",
+       "focusedTable==_getCurren() = false",
+       "Events reemplazado = 0",
+       "Events claves = []",
+       "scroll = {\"contenedor\":[0,0]}"
+      ],
+      "estilos": [
+       "host = display:inline;position:static;width:100%;height:auto;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "contenedor = display:block;position:static;width:968px;height:61px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:auto;overflow-y:auto",
+       "table = display:table;position:static;width:968px;height:61px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "thead = display:table-header-group;position:sticky;width:966px;height:27px;color:rgb(0, 0, 0);background-color:rgb(245, 245, 245);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[0] = display:table-cell;position:relative;width:68px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[1] = display:table-cell;position:relative;width:476px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[2] = display:table-cell;position:relative;width:224px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[3] = display:table-cell;position:relative;width:131px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0] = display:table-row;position:relative;width:966px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[0] = display:table-cell;position:relative;width:76px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[1] = display:table-cell;position:relative;width:484px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[2] = display:table-cell;position:relative;width:232px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[3] = display:table-cell;position:relative;width:139px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+      ]
+     }
+    ],
+    "luz": [
+     "<body {foco}>",
+     " \"\\n\"",
+     " <edit-table id=\"t1\" style=\"width:100%\" data=\"[{\\\"id\\\":1,\\\"nombre\\\":\\\"Producto de prueba 1\\\",\\\"cantidad\\\":1,\\\"precio\\\":1}]\">",
+     "  #shadow-root -> tablas[0]",
+     " </edit-table>",
+     " \"\\n\\n\\n\"",
+     "</body>"
+    ],
+    "foco": {"documento":{"ruta":"html>body"},"shadow":null},
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 2,
+      "nodo:mousedown": 4,
+      "document:mousemove": 4,
+      "document:mouseup": 4,
+      "window:beforeprint": 1,
+      "window:afterprint": 1
+     },
+     "intervalos": 1
+    }
+   }
+  },
+  {
+   "nombre": "AddRow",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [
+         56,
+         0,
+         [
+          "   <tr class=\"EdiTable-Row-Selected\">",
+          "    <td class=\"EdiTable-Cell\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      <div id=\"__table_selector\" class=\"EdiTable-Selector\" tabindex=\"0\" {foco}>",
+          "       \"0\"",
+          "      </div>",
+          "     </div>",
+          "    </td>",
+          "    <td class=\"EdiTable-Cell\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"Nuevo\"",
+          "     </div>",
+          "    </td>",
+          "    <td class=\"EdiTable-Cell\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"1\"",
+          "     </div>",
+          "    </td>",
+          "    <td class=\"EdiTable-Cell\"></td>",
+          "   </tr>"
+         ]
+        ]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": [{"id":1,"nombre":"Producto de prueba 1","cantidad":1,"precio":1},{"id":"0","nombre":"Nuevo","cantidad":"1"}],
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": {
+       "$parche": [
+        [38,1,["_current_row = 1"]],
+        [50,3,["CurrentRowIndex() = 1","CurrentColIndex() = 0","TRCount() = 2"]],
+        [
+         55,
+         2,
+         [
+          "CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(t1)>div>table#t1>tbody>tr[1]>td[0]\",\"texto\":\"0\"}}",
+          "focusedTable==_getCurren() = true"
+         ]
+        ]
+       ]
+      },
+      "estilos": {
+       "$parche": [
+        [
+         1,
+         2,
+         [
+          "contenedor = display:block;position:static;width:968px;height:92px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:auto;overflow-y:auto",
+          "table = display:table;position:static;width:968px;height:92px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         13,
+         0,
+         [
+          "tr[1] = display:table-row;position:relative;width:966px;height:30px;color:rgb(255, 255, 255);background-color:rgb(61, 117, 221);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[0] = display:table-cell;position:relative;width:76px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[1] = display:table-cell;position:relative;width:484px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[2] = display:table-cell;position:relative;width:232px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[3] = display:table-cell;position:relative;width:139px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "selector = display:flex;position:static;width:74px;height:22px;color:rgb(0, 0, 0);background-color:rgba(255, 255, 255, 0.7);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": {
+     "$parche": [
+      [0,1,["<body>"]],
+      [
+       2,
+       1,
+       [
+        " <edit-table id=\"t1\" style=\"width:100%\" data=\"[{\\\"id\\\":1,\\\"nombre\\\":\\\"Producto de prueba 1\\\",\\\"cantidad\\\":1,\\\"precio\\\":1}]\" {foco}>"
+       ]
+      ]
+     ]
+    },
+    "foco": {
+     "documento": {"ruta":"body>edit-table#t1"},
+     "shadow": {"ruta":"shadow(t1)>div>table#t1>tbody>tr[1]>td[0]>div>div#__table_selector"}
+    },
+    "eventos": [
+     {
+      "evento": "beforecellfocus",
+      "tabla": "t1",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[1]>td[0]","texto":"0"}},
+       "sender": {"$sender":"t1","esElemento":false},
+       "cancel": false
+      }
+     },
+     {
+      "evento": "entercell",
+      "tabla": "t1",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[1]>td[0]","texto":"0"}},
+       "sender": {"$sender":"t1","esElemento":false}
+      }
+     },
+     {
+      "evento": "rowchanged",
+      "tabla": "t1",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[1]>td[0]","texto":"0"}},
+       "sender": {"$sender":"t1","esElemento":false},
+       "cancel": false,
+       "index": 1,
+       "previous_index": -1
+      }
+     },
+     {
+      "evento": "rowadded",
+      "tabla": "t1",
+      "consumidor": false,
+      "args": {
+       "sender": {"$sender":"t1","esElemento":false},
+       "tr": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[1]"}},
+       "rowIndex": 1
+      }
+     }
+    ],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 2,
+      "nodo:mousedown": 4,
+      "document:mousemove": 4,
+      "document:mouseup": 4,
+      "window:beforeprint": 1,
+      "window:afterprint": 1,
+      "nodo:click:remove": 9,
+      "nodo:click": 9,
+      "nodo:keydown:remove": 1,
+      "nodo:keydown": 1
+     },
+     "intervalos": 1
+    }
+   }
+  },
+  {
+   "nombre": "UpdateDataMember con y sin stopfire",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": "@=paso-anterior",
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": [
+       {"id":1,"nombre":"Producto de prueba 1","cantidad":1,"precio":1,"nota":"sin evento"},
+       {"id":"0","nombre":"Nuevo","cantidad":"1"}
+      ],
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": "@=paso-anterior",
+      "estilos": "@=paso-anterior"
+     }
+    ],
+    "luz": "@=paso-anterior",
+    "foco": "@=paso-anterior",
+    "eventos": [
+     {
+      "evento": "fieldupdated",
+      "tabla": "t1",
+      "consumidor": false,
+      "args": {"sender":{"$sender":"t1","esElemento":false},"row":0,"field":"nota","value":"con evento"}
+     }
+    ],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "internos": "@=paso-anterior"
+   }
+  }
+ ]
+}

@@ -1,0 +1,12 @@
+
+        table { width:100%; margin-bottom:1rem; caption-side:bottom; border-collapse:collapse; color:#212529; border-color:#dee2e6; }
+        table>:not(caption)>* { border-width: 1px 0; }
+        table>:not(caption)>*>* { border-width: 0 1px; padding: .25rem .25rem; }
+        tr th { background-color:#DCDCDC; text-align:center; font-size:.9rem; font-weight:500; outline:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; -o-text-overflow:ellipsis; }
+        tr th > .sizable-border { height:unset!important; }
+        tr td { background-color:#FFFFFF; color:#000000; font-size:.8rem; }
+        
+        /* .bg-light-gray { background-color: #DCDCDC !important; }
+        .bg-yellow { background-color: #ffe484 !important; }
+        .fw-500 { font-weight: 500 !important; } */
+    

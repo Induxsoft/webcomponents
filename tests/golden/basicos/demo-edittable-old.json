@@ -1,0 +1,539 @@
+{
+ "id": "basicos/demo-edittable-old",
+ "titulo": "examples/_EdiTable-demo.html (ruta del componente corregida en pruebas): edit-tbody, keyfield, Custom",
+ "etiquetas": [],
+ "archivo": "escenarios/basicos/demos.mjs",
+ "pasos": [
+  {
+   "nombre": "inicio",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "tabla-demo",
+      "inicializada": true,
+      "modoShadowPedido": "closed",
+      "dom": [
+       "\"\\n                \"",
+       "<style>",
+       " @@ESTILO sha256:565e3d82d5f3241d",
+       "</style>",
+       "\"\\n            \"",
+       "<div style=\"min-height: 2rem; max-height: 100%; overflow: auto; padding-bottom: 5px\">",
+       " <table id=\"tabla-demo\">",
+       "  <thead>",
+       "   \"\\n                    \"",
+       "   <tr>",
+       "    \"\\n                        \"",
+       "    <th type=\"Text\" field=\"titulo\">",
+       "     <span>",
+       "      \"Título\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:99px;\"></div>",
+       "    </th>",
+       "    \"\\n                        \"",
+       "    <th type=\"Text\" field=\"director\">",
+       "     <span>",
+       "      \"Director\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:99px;\"></div>",
+       "    </th>",
+       "    \"\\n                        \"",
+       "    <th type=\"Select\" field=\"genero\" options=\"{\\\"01\\\":\\\"Acción\\\",\\\"02\\\":\\\"Drama\\\",\\\"03\\\":\\\"Comedia\\\",\\\"04\\\":\\\"Historia\\\"}\">",
+       "     <span>",
+       "      \"Género\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:99px;\"></div>",
+       "    </th>",
+       "    \"\\n                        \"",
+       "    <th type=\"Memo\" field=\"sinopsis\">",
+       "     <span>",
+       "      \"Sinopsis\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:99px;\"></div>",
+       "    </th>",
+       "    \"\\n                        \"",
+       "    <th type=\"Date\" field=\"estreno\">",
+       "     <span>",
+       "      \"F. Estreno\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:99px;\"></div>",
+       "    </th>",
+       "    \"\\n                        \"",
+       "    <th type=\"Number\" field=\"recaudacion\">",
+       "     <span>",
+       "      \"Dinero recaudado\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:99px;\"></div>",
+       "    </th>",
+       "    \"\\n                        \"",
+       "    <th type=\"Check\" field=\"solo_adultos\" default=\"No\">",
+       "     <span>",
+       "      \"Solo adultos\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:99px;\"></div>",
+       "    </th>",
+       "    \"\\n                        \"",
+       "    <th>",
+       "     <span>",
+       "      \"País\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:99px;\"></div>",
+       "    </th>",
+       "    \" \"",
+       "    <!--\" Intencionalmente la columna index=7 (País) no actualiza al objeto subyacente \"-->",
+       "    \"\\n                        \"",
+       "    <th type=\"Custom\" field=\"estrellas\">",
+       "     <span>",
+       "      \"Calificación\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:99px;\"></div>",
+       "    </th>",
+       "    \"\\n                        \"",
+       "    <th type=\"Select\" field=\"posicion\" options=\"{\\\"1\\\":\\\"Primero\\\",\\\"2\\\":\\\"Segundo\\\",\\\"3\\\":\\\"Tercero\\\",\\\"4\\\":\\\"Cuarto\\\",\\\"5\\\":\\\"Quinto\\\"}\">",
+       "     <span>",
+       "      \"Lugar por Ingresos\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:99px;\"></div>",
+       "    </th>",
+       "    \"\\n                        \"",
+       "    <th type=\"Select\" field=\"tipo\" options=\"{\\\"Live Action\\\":\\\"Live Action\\\",\\\"Animación\\\":\\\"Animación\\\"}\">",
+       "     <span>",
+       "      \"Tipo de película\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:99px;\"></div>",
+       "    </th>",
+       "    \"\\n                        \"",
+       "    <th type=\"Select\" keyfield=\"opcion_clave\" options=\"{\\\"a\\\":\\\"Opción 1\\\",\\\"b\\\":\\\"Opción 2\\\",\\\"c\\\":\\\"Opción 3\\\",\\\"d\\\":\\\"Opción 4\\\"}\">",
+       "     <span>",
+       "      \"Opciones\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:99px;\"></div>",
+       "    </th>",
+       "    \"\\n                    \"",
+       "   </tr>",
+       "   \"\\n                \"",
+       "  </thead>",
+       "  <tbody>",
+       "   \"\\n                    \"",
+       "   <tr>",
+       "    \"\\n                        \"",
+       "    <td class=\"EdiTable-Cell\">",
+       "     \"El hombre araña\"",
+       "    </td>",
+       "    \"\\n                        \"",
+       "    <td class=\"EdiTable-Cell\">",
+       "     \"Sam Raimi\"",
+       "    </td>",
+       "    \"\\n                        \"",
+       "    <td class=\"EdiTable-Cell\">",
+       "     \"Acción\"",
+       "    </td>",
+       "    \"\\n                        \"",
+       "    <td class=\"EdiTable-Cell\"></td>",
+       "    \"\\n                        \"",
+       "    <td class=\"EdiTable-Cell\">",
+       "     \"2006-09-03\"",
+       "    </td>",
+       "    \"\\n                        \"",
+       "    <td class=\"EdiTable-Cell\"></td>",
+       "    \"\\n                        \"",
+       "    <td class=\"EdiTable-Cell\">",
+       "     \"No\"",
+       "    </td>",
+       "    \"\\n                        \"",
+       "    <td class=\"EdiTable-Cell\"></td>",
+       "    \"\\n                        \"",
+       "    <td class=\"EdiTable-Cell\"></td>",
+       "    \"\\n                        \"",
+       "    <td class=\"EdiTable-Cell\"></td>",
+       "    \"\\n                        \"",
+       "    <td class=\"EdiTable-Cell\">",
+       "     \"Live Action\"",
+       "    </td>",
+       "    \"\\n                        \"",
+       "    <td class=\"EdiTable-Cell\"></td>",
+       "    \"\\n                    \"",
+       "   </tr>",
+       "   \" \\n                \"",
+       "  </tbody>",
+       " </table>",
+       "</div>"
+      ],
+      "shadowEsElGuardado": true,
+      "datos": [
+       {
+        "solo_adultos": "No",
+        "titulo": "El hombre araña",
+        "director": "Sam Raimi",
+        "id_genero": "01",
+        "genero": "Acción",
+        "sinopsis": "",
+        "estreno": "2006-09-03",
+        "tipo": "Live Action"
+       }
+      ],
+      "columnas": [
+       {"type":"Text","field":"titulo","title":"Título"},
+       {"type":"Text","field":"director","title":"Director"},
+       {
+        "type": "Select",
+        "field": "genero",
+        "options": {"01":"Acción","02":"Drama","03":"Comedia","04":"Historia"},
+        "title": "Género"
+       },
+       {"type":"Memo","field":"sinopsis","title":"Sinopsis"},
+       {"type":"Date","field":"estreno","title":"F. Estreno"},
+       {"type":"Number","field":"recaudacion","title":"Dinero recaudado"},
+       {"type":"Check","field":"solo_adultos","default":"No","title":"Solo adultos"},
+       {"title":"País"},
+       {"type":"Custom","field":"estrellas","title":"Calificación"},
+       {
+        "type": "Select",
+        "field": "posicion",
+        "options": {"1":"Primero","2":"Segundo","3":"Tercero","4":"Cuarto","5":"Quinto"},
+        "title": "Lugar por Ingresos"
+       },
+       {
+        "type": "Select",
+        "field": "tipo",
+        "options": {"Live Action":"Live Action","Animación":"Animación"},
+        "title": "Tipo de película"
+       },
+       {
+        "type": "Select",
+        "keyfield": "opcion_clave",
+        "options": {"a":"Opción 1","b":"Opción 2","c":"Opción 3","d":"Opción 4"},
+        "title": "Opciones"
+       }
+      ],
+      "respaldo": null,
+      "props": [
+       "IsDirty = false",
+       "Editing = false",
+       "ReadOnly = false",
+       "AutoAddRow = true",
+       "AutoDelRow = true",
+       "EverMove = true",
+       "PagOffSet = 10",
+       "TheadRowIndex = 0",
+       "ColumnsDefaultType = \"Text\"",
+       "ShowAsTree = false",
+       "CanMoveRow = false",
+       "Key = \"id\"",
+       "ParentKey = \"idp\"",
+       "Childs = \"__items\"",
+       "TreeOptions = {}",
+       "sorTable = true",
+       "_sorTable = true",
+       "htmlEncode = false",
+       "autoConfirm = false",
+       "hiddeSelector = false",
+       "hiddeRowSelector = false",
+       "minRowHeight = \"none\"",
+       "maxRowHeight = \"none\"",
+       "rowHeight = \"100%\"",
+       "cardsResponsive = false",
+       "editableResponsive = false",
+       "tableId = \"tabla-demo\"",
+       "NumFormat = {\"default_decimals\":\".\",\"thousands\":\",\",\"decimals\":\".\"}",
+       "CSS = {\"Cell\":\"EdiTable-Cell\",\"RowSelected\":\"EdiTable-Row-Selected\"}",
+       "hideColumns = []",
+       "_expandOnStart = false",
+       "KeepSelectionVisible = true",
+       "CardsMode = null",
+       "CardsLayout = \"grid\"",
+       "CardsBreakpoint = \"768px\"",
+       "CardsBreakpointTarget = \"viewport\"",
+       "IsCardView = false",
+       "_count_isdirty = 0",
+       "_current_row = -1",
+       "attributes = [\"control-styles\",\"id\",\"style\",\"data\"]",
+       "BadgesField = \"__badges\"",
+       "BadgeTooltip = \"native\"",
+       "BadgeSelectsRow = false",
+       "NativeEvents = false",
+       "TemplateEncode = false",
+       "Locale = null",
+       "RowClassField = null",
+       "_TreeValueIndent = 1",
+       "_TreeUnitIndent = \"rem\"",
+       "temp_html = \"[undefined]\"",
+       "CurrentRowIndex() = -1",
+       "CurrentColIndex() = -1",
+       "TRCount() = 1",
+       "THCount() = 12",
+       "ColumnsCount() = 12",
+       "CurrentTd() = null",
+       "focusedTable==_getCurren() = false",
+       "Events reemplazado = 0",
+       "Events claves = [\"beforesetinput\",\"beforeupdatecell\",\"entercell\",\"startedition\"]",
+       "scroll = {\"contenedor\":[0,0]}"
+      ],
+      "estilos": [
+       "host = display:block;position:static;width:1042px;height:104px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "contenedor = display:block;position:static;width:1042px;height:99px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:auto;overflow-y:auto",
+       "table = display:table;position:static;width:1042px;height:99px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "thead = display:table-header-group;position:sticky;width:1040px;height:48px;color:rgb(0, 0, 0);background-color:rgb(245, 245, 245);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[0] = display:table-cell;position:relative;width:69px;height:40px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[1] = display:table-cell;position:relative;width:63px;height:40px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[2] = display:table-cell;position:relative;width:55px;height:40px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[3] = display:table-cell;position:relative;width:64px;height:40px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[4] = display:table-cell;position:relative;width:66px;height:40px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[5] = display:table-cell;position:relative;width:97px;height:40px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[6] = display:table-cell;position:relative;width:67px;height:40px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[7] = display:table-cell;position:relative;width:32px;height:40px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[8] = display:table-cell;position:relative;width:89px;height:40px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[9] = display:table-cell;position:relative;width:88px;height:40px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[10] = display:table-cell;position:relative;width:76px;height:40px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[11] = display:table-cell;position:relative;width:72px;height:40px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0] = display:table-row;position:relative;width:1040px;height:48px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[0] = display:table-cell;position:relative;width:77px;height:40px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[1] = display:table-cell;position:relative;width:71px;height:40px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[2] = display:table-cell;position:relative;width:63px;height:40px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[3] = display:table-cell;position:relative;width:72px;height:40px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[4] = display:table-cell;position:relative;width:74px;height:40px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[5] = display:table-cell;position:relative;width:105px;height:40px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[6] = display:table-cell;position:relative;width:75px;height:40px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[7] = display:table-cell;position:relative;width:40px;height:40px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[8] = display:table-cell;position:relative;width:97px;height:40px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[9] = display:table-cell;position:relative;width:96px;height:40px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[10] = display:table-cell;position:relative;width:84px;height:40px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[11] = display:table-cell;position:relative;width:80px;height:40px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+      ]
+     }
+    ],
+    "luz": [
+     "<body style=\"font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;\" {foco}>",
+     " \"\\n    \"",
+     " <div style=\"max-width: 100vw; padding: 8px 16px; border: 1px solid #DDD;border-radius: 5px; padding-bottom: 32px; margin:4px;\">",
+     "  \"\\n        \\n        \"",
+     "  <div style=\"display: flex; gap: 8px; padding: 1rem 0; align-items: center;\">",
+     "   \"\\n            \"",
+     "   <h3 style=\"margin: 0;\">",
+     "    \"Edit Table\"",
+     "   </h3>",
+     "   \"\\n            \"",
+     "   <button onclick=\"document.querySelector('#tabla-demo').AddRow();\" style=\"color: #888;\">",
+     "    \"+\"",
+     "   </button>",
+     "   \"\\n            \"",
+     "   <button onclick=\"copyData()\" style=\"color: #000;\">",
+     "    \"Copiar datos\"",
+     "   </button>",
+     "   \"\\n        \"",
+     "  </div>",
+     "  \"\\n\\n        \"",
+     "  <div style=\"max-height: 50vh; display: flex;\">",
+     "   \"\\n            \"",
+     "   <edit-table control-styles=\"tr td{height: 2rem !important;}\" id=\"tabla-demo\" style=\"width: 100%;\" data=\"[{\\\"solo_adultos\\\":\\\"No\\\",\\\"titulo\\\":\\\"El hombre araña\\\",\\\"director\\\":\\\"Sam Raimi\\\",\\\"id_genero\\\":\\\"01\\\",\\\"genero\\\":\\\"Acción\\\",\\\"sinopsis\\\":\\\"\\\",\\\"estreno\\\":\\\"2006-09-03\\\",\\\"tipo\\\":\\\"Live Action\\\"}]\">",
+     "    #shadow-root -> tablas[0]",
+     "   </edit-table>",
+     "   \"\\n        \"",
+     "  </div>",
+     "  \"\\n    \"",
+     " </div>",
+     " \"\\n\\n\\n    \"",
+     " <script>",
+     "  \"\\n        function copyData()\\n        {\\n            navigator.clipboard.writeText(JSON.stringify(document.querySelector('#tabla-demo').DataArray)).then(()=>{\\n                console.log('¡Datos copiados al portapapeles!');\\n            }, ()=> {\\n                console.log('¡Ocurrió un error al copiar los datos!');\\n            });\\n        }\\n        document.addEventListener('DOMContentLoaded', () => \\n        {\\n            var table = document.querySelector('#tabla-demo');\\n\\n            table.Events[table.EdiTable.Const.Events.EnterCell]=function(e)\\n            {\\n                console.log(\\\"Tabla:\\\"+e.sender.tableId);\\n                console.log(\\\"Fila:\\\"+e.sender.CurrentRowIndex().toString()+\\\", Columna:\\\"+e.sender.CurrentColIndex().toString());\\n            };\\n\\n            //Ejemplo de implementación de la edición usando una columna personalizada\\n            table.Events[table.EdiTable.Const.Events.StartEdition]=function(e)\\n            {\\n                if (e.coldef.field==\\\"estrellas\\\")\\n                {\\n                    let obj=e.sender.DataArray[e.sender.RowIndexOfTd(e.td)];\\n\\n                    let contador=parseInt(obj[e.coldef.field]);\\n\\n                    if (isNaN(contador))\\n                        contador=0;\\n\\n                    contador++;\\n                    obj[e.coldef.field]=contador;\\n\\n                    //  Para actualizar la tabla, se puede optar por:\\n                    //  1-Actualizar el objeto subyacente y luego toda la fila:\\n                    //  La ventaja de actualizar toda la fila es que se pueden actualizar valores a otras columnas\\n                    if (contador==4)\\n                        obj[\\\"director\\\"]=\\\"CUATRO\\\";\\n\\n                    e.sender.UpdateRow(e.sender.RowIndexOfTd(e.td));\\n\\n                    //  2-O confirmar la edición de la celda:\\n                    // e.sender.ConfirmEdit(e.td,contador.toString());\\n\\n                    e.sender.CellFocus(e.td); //Esta línea vuelve a seleccionar la celda editada\\n                }\\n            }\\n\\n            //Ejemplo de validación de entrada y almacenamiento de la clave de una opción de Select en un miembro\\n            table.Events[table.EdiTable.Const.Events.BeforeUpdateCell]=function(e)\\n            {\\n                if (e.text==\\\"juan\\\" && e.coldef.field==\\\"titulo\\\")\\n                {\\n                    alert(\\\"NO debes escribir juan en la columna 'Título'\\\");\\n                    e.cancel=true;\\n                }\\n                if (e.coldef.field==\\\"genero\\\")\\n                {\\n                    var combo=e.input;\\n                    if (combo.selectedIndex<0)\\n                        e.text=\\\"\\\";\\n                    else\\n                        e.text=combo.options[combo.selectedIndex].text;\\n                        \\n                    e.sender.UpdateDataMember (e.sender.RowIndexOfTd(e.td),\\\"id_genero\\\",e.input.value);\\n                }\\n            };\\n            //Usa la clave almacenada para establecer el valor del Select\\n            table.Events[table.EdiTable.Const.Events.BeforeSetInput]=function(e){\\n                if (e.coldef.field==\\\"genero\\\")\\n                {\\n                    e.text=e.sender.DataArray[e.sender.RowIndexOfTd(e.td)].id_genero;\\n                }\\n            };\\n        });\\n    \"",
+     " </script>",
+     " \"\\n\\n\"",
+     "</body>"
+    ],
+    "foco": {"documento":{"ruta":"html>body"},"shadow":null},
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 3,
+      "nodo:mousedown": 12,
+      "document:mousemove": 12,
+      "document:mouseup": 12,
+      "window:beforeprint": 1,
+      "window:afterprint": 1
+     },
+     "intervalos": 1
+    }
+   }
+  },
+  {
+   "nombre": "clic en la primera celda",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "tabla-demo",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [102,1,["   <tr class=\"EdiTable-Row-Selected\">"]],
+        [
+         105,
+         1,
+         [
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      <div id=\"__table_selector\" class=\"EdiTable-Selector\" tabindex=\"0\" {foco}>",
+          "       \"El hombre araña\"",
+          "      </div>",
+          "     </div>"
+         ]
+        ]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": "@=paso-anterior",
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": {
+       "$parche": [
+        [38,1,["_current_row = 0"]],
+        [50,2,["CurrentRowIndex() = 0","CurrentColIndex() = 0"]],
+        [
+         55,
+         2,
+         [
+          "CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(tabla-demo)>div>table#tabla-demo>tbody>tr[0]>td[0]\",\"texto\":\"El hombre araña\"}}",
+          "focusedTable==_getCurren() = true"
+         ]
+        ]
+       ]
+      },
+      "estilos": {
+       "$parche": [
+        [
+         0,
+         3,
+         [
+          "host = display:block;position:static;width:1042px;height:106px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "contenedor = display:block;position:static;width:1042px;height:101px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:auto;overflow-y:auto",
+          "table = display:table;position:static;width:1042px;height:101px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         4,
+         1,
+         [
+          "th[0] = display:table-cell;position:relative;width:71px;height:40px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         9,
+         2,
+         [
+          "th[5] = display:table-cell;position:relative;width:96px;height:40px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[6] = display:table-cell;position:relative;width:66px;height:40px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         13,
+         1,
+         [
+          "th[9] = display:table-cell;position:relative;width:87px;height:40px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         16,
+         13,
+         [
+          "tr[0] = display:table-row;position:relative;width:1040px;height:50px;color:rgb(255, 255, 255);background-color:rgb(61, 117, 221);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[0] = display:table-cell;position:relative;width:79px;height:42px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[1] = display:table-cell;position:relative;width:71px;height:42px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[2] = display:table-cell;position:relative;width:63px;height:42px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[3] = display:table-cell;position:relative;width:72px;height:42px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[4] = display:table-cell;position:relative;width:74px;height:42px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[5] = display:table-cell;position:relative;width:104px;height:42px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[6] = display:table-cell;position:relative;width:74px;height:42px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[7] = display:table-cell;position:relative;width:40px;height:42px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[8] = display:table-cell;position:relative;width:97px;height:42px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[9] = display:table-cell;position:relative;width:95px;height:42px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[10] = display:table-cell;position:relative;width:84px;height:42px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[11] = display:table-cell;position:relative;width:80px;height:42px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "selector = display:flex;position:static;width:77px;height:42px;color:rgb(0, 0, 0);background-color:rgba(255, 255, 255, 0.7);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": {
+     "$parche": [
+      [
+       0,
+       1,
+       [
+        "<body style=\"font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;\">"
+       ]
+      ],
+      [
+       22,
+       1,
+       [
+        "   <edit-table control-styles=\"tr td{height: 2rem !important;}\" id=\"tabla-demo\" style=\"width: 100%;\" data=\"[{\\\"solo_adultos\\\":\\\"No\\\",\\\"titulo\\\":\\\"El hombre araña\\\",\\\"director\\\":\\\"Sam Raimi\\\",\\\"id_genero\\\":\\\"01\\\",\\\"genero\\\":\\\"Acción\\\",\\\"sinopsis\\\":\\\"\\\",\\\"estreno\\\":\\\"2006-09-03\\\",\\\"tipo\\\":\\\"Live Action\\\"}]\" {foco}>"
+       ]
+      ]
+     ]
+    },
+    "foco": {
+     "documento": {"ruta":"body>div>div>edit-table#tabla-demo"},
+     "shadow": {"ruta":"shadow(tabla-demo)>div>table#tabla-demo>tbody>tr[0]>td[0]>div>div#__table_selector"}
+    },
+    "eventos": [
+     {
+      "evento": "beforecellfocus",
+      "tabla": "tabla-demo",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tabla-demo)>div>table#tabla-demo>tbody>tr[0]>td[0]","texto":"El hombre araña"}},
+       "sender": {"$sender":"tabla-demo","esElemento":false},
+       "cancel": false
+      }
+     },
+     {
+      "evento": "entercell",
+      "tabla": "tabla-demo",
+      "consumidor": true,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tabla-demo)>div>table#tabla-demo>tbody>tr[0]>td[0]","texto":"El hombre araña"}},
+       "sender": {"$sender":"tabla-demo","esElemento":false}
+      }
+     },
+     {
+      "evento": "rowchanged",
+      "tabla": "tabla-demo",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tabla-demo)>div>table#tabla-demo>tbody>tr[0]>td[0]","texto":"El hombre araña"}},
+       "sender": {"$sender":"tabla-demo","esElemento":false},
+       "cancel": false,
+       "index": 0,
+       "previous_index": -1
+      }
+     }
+    ],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": ["log: Tabla:tabla-demo","log: Fila:0, Columna:0"],
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 3,
+      "nodo:mousedown": 12,
+      "document:mousemove": 12,
+      "document:mouseup": 12,
+      "window:beforeprint": 1,
+      "window:afterprint": 1,
+      "nodo:click:remove": 1,
+      "nodo:click": 1,
+      "nodo:keydown:remove": 1,
+      "nodo:keydown": 1
+     },
+     "intervalos": 1
+    }
+   }
+  }
+ ]
+}

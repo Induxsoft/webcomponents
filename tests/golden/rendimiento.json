@@ -1,0 +1,76 @@
+{
+ "fecha": "2026-11-01T13:49:59.678Z",
+ "chrome": "153.0.8010.12",
+ "plataforma": "linux x64",
+ "cpus": "Intel(R) Xeon(R) Processor @ 2.80GHz x2",
+ "src": "src/js/induxsoft.controls.editable.js",
+ "srcSha256": "a2f431a54296c81cb4e0b4c3c1febb2ea11e26259fe573efa877796789f2619d",
+ "mediciones": {
+  "rendimiento/lista-1000": {
+   "_printRows": 121,
+   "NavTo(80 %)": 12,
+   "flecha abajo (NavDown)": 10,
+   "AvPág (NavTo +10)": 11,
+   "ordenar (clic en encabezado)": 136,
+   "editar una celda (CellFocus+StartEdit+ConfirmEdit)": 40,
+   "UpdateRow": 2,
+   "AddRow": 32,
+   "UpdateData": 355
+  },
+  "rendimiento/arbol-1000": {
+   "_printTreeData (inicial, colapsado)": 250,
+   "_expandOnStart + _printTreeData": 225,
+   "_printRows": 125,
+   "NavTo(80 %)": 21,
+   "flecha abajo (NavDown)": 13,
+   "ordenar en árbol (clic en encabezado)": 303,
+   "editar una celda (CellFocus+StartEdit+ConfirmEdit)": 57,
+   "UpdateRow": 10,
+   "UpdateData": 945
+  },
+  "rendimiento/lista-5000": {
+   "_printRows": 499,
+   "NavTo(80 %)": 392,
+   "flecha abajo (NavDown)": 76,
+   "AvPág (NavTo +10)": 83,
+   "ordenar (clic en encabezado)": 1372,
+   "editar una celda (CellFocus+StartEdit+ConfirmEdit)": 1128,
+   "UpdateRow": 6,
+   "AddRow": 653,
+   "UpdateData": 26552
+  },
+  "rendimiento/arbol-5000": {
+   "_printTreeData (inicial, colapsado)": 1671,
+   "_expandOnStart + _printTreeData": 1867,
+   "_printRows": 1200,
+   "NavTo(80 %)": 347,
+   "flecha abajo (NavDown)": 100,
+   "ordenar en árbol (clic en encabezado)": 1919,
+   "editar una celda (CellFocus+StartEdit+ConfirmEdit)": 171,
+   "UpdateRow": 4,
+   "UpdateData": 10220
+  },
+  "rendimiento/lista-20000": {
+   "_printRows": 1891,
+   "NavTo(80 %)": 1072,
+   "flecha abajo (NavDown)": 344,
+   "AvPág (NavTo +10)": 328,
+   "ordenar (clic en encabezado)": 2716,
+   "editar una celda (CellFocus+StartEdit+ConfirmEdit)": 768,
+   "UpdateRow": 12,
+   "AddRow": 897,
+   "UpdateData": "> 60000 (cortado)"
+  },
+  "rendimiento/arbol-20000": {
+   "_printTreeData (inicial, colapsado)": 18329,
+   "_expandOnStart + _printTreeData": 24931,
+   "_printRows": 13270,
+   "NavTo(80 %)": 1576,
+   "flecha abajo (NavDown)": 343,
+   "ordenar en árbol (clic en encabezado)": 28880,
+   "editar una celda (CellFocus+StartEdit+ConfirmEdit)": 730,
+   "UpdateRow": 13,
+   "UpdateData": "> 60000 (cortado)"
+  }
+ }
+}

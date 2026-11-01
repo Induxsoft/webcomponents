@@ -1,0 +1,3 @@
+out/
+# Las capturas de referencia no se versionan (ver README, «Qué se compara»); se generan con --update.
+golden/**/*.png

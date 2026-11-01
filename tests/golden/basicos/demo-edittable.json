@@ -1,0 +1,909 @@
+{
+ "id": "basicos/demo-edittable",
+ "titulo": "examples/EditTable-demo.html: los 9 tipos, data, formato, botón y todos los eventos",
+ "etiquetas": [],
+ "archivo": "escenarios/basicos/demos.mjs",
+ "pasos": [
+  {
+   "nombre": "inicio",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "editable",
+      "inicializada": true,
+      "modoShadowPedido": "closed",
+      "dom": [
+       "\"\\n                \"",
+       "<style>",
+       " @@ESTILO sha256:e02dcdadace9a84f",
+       "</style>",
+       "\"\\n            \"",
+       "<div style=\"min-height: 2rem; max-height: 100%; overflow: auto; padding-bottom: 5px\">",
+       " <table id=\"editable\">",
+       "  <thead>",
+       "   \"\\n                    \"",
+       "   <tr>",
+       "    \"\\n                        \"",
+       "    <th type=\"NoEditable\" field=\"uno\">",
+       "     <span>",
+       "      \"NoEditable\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:118px;\"></div>",
+       "    </th>",
+       "    \"\\n                        \"",
+       "    <th type=\"Text\" field=\"dos\" maxlength=\"25\">",
+       "     <span>",
+       "      \"Text\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:118px;\"></div>",
+       "    </th>",
+       "    \"\\n                        \"",
+       "    <th type=\"Number\" field=\"tres\" textalign=\"end\" format=\"true\" thousandssep=\"true\" decs=\"2\" prefix=\"$ \" sufix=\" MXN\" default=\"0.00\">",
+       "     <span>",
+       "      \"Number\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:118px;\"></div>",
+       "    </th>",
+       "    \"\\n                        \"",
+       "    <th type=\"Select\" field=\"cuatro\" options=\"{\\\"PZA\\\":\\\"PIEZA\\\",\\\"PAQ\\\":\\\"PAQUETE\\\",\\\"CAJA\\\":\\\"CAJA\\\"}\">",
+       "     <span>",
+       "      \"Select\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:118px;\"></div>",
+       "    </th>",
+       "    \"\\n                        \"",
+       "    <th type=\"Date\" field=\"cinco\" textalign=\"center\">",
+       "     <span>",
+       "      \"Date\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:118px;\"></div>",
+       "    </th>",
+       "    \"\\n                        \"",
+       "    <th type=\"DateTime\" field=\"seis\" textalign=\"center\">",
+       "     <span>",
+       "      \"DateTime\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:118px;\"></div>",
+       "    </th>",
+       "    \"\\n                        \"",
+       "    <th type=\"Check\" field=\"siete\" textalign=\"center\" default=\"No\">",
+       "     <span>",
+       "      \"Check\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:118px;\"></div>",
+       "    </th>",
+       "    \"\\n                        \"",
+       "    <th type=\"Custom\" field=\"ocho\" button=\"true\">",
+       "     <span>",
+       "      \"Custom\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:118px;\"></div>",
+       "    </th>",
+       "    \"\\n                        \"",
+       "    <th type=\"Memo\" field=\"nueve\" minwidth=\"100px\" maxwidth=\"300px\" style=\"min-width: 100px; max-width: 300px;\">",
+       "     <span>",
+       "      \"Memo\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:118px;\"></div>",
+       "    </th>",
+       "    \"\\n                    \"",
+       "   </tr>",
+       "   \"\\n                \"",
+       "  </thead>",
+       "  <tbody>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"NoEditable\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"min-height: 1rem; max-height: 5rem; height: 100%; display: block;\"></div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Text\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"min-height: 1rem; max-height: 5rem; height: 100%; display: block;\">",
+       "      \"Cillum consequat laboris mollit irure.\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Number\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"min-height: 1rem; max-height: 5rem; height: 100%; justify-content: end; text-align: end; display: block;\">",
+       "      \"$ 123,456.79 MXN\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Select\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"min-height: 1rem; max-height: 5rem; height: 100%; display: block;\">",
+       "      \"PAQ\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Date\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"min-height: 1rem; max-height: 5rem; height: 100%; justify-content: center; text-align: center; display: block;\">",
+       "      \"2025-01-01\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"DateTime\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"min-height: 1rem; max-height: 5rem; height: 100%; justify-content: center; text-align: center; display: block;\">",
+       "      \"2025-01-03 12:00\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Check\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"min-height: 1rem; max-height: 5rem; height: 100%; justify-content: center; text-align: center; display: block;\">",
+       "      \"Sí\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Custom\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"min-height: 1rem; max-height: 5rem; height: 100%; display: block;\"></div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Memo\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"min-height: 1rem; max-height: 5rem; height: 100%; min-width: 100px; max-width: 300px; display: block;\">",
+       "      \"Occaecat exercitation cillum esse. Dolor cupidatat fugiat duis ea ipsum officia dolore ullamco nulla laborum. Exercitation laborum qui Lorem laboris fugiat nostrud sunt. Dolore dolor labore dolor cillum in velit ad non in eiusmod irure ullamco officia veniam esse. Dolor ut ad eiusmod sit ullamco culpa mollit laboris aute. Lorem amet proident exercitation elit mollit magna elit exercitation est voluptate quis velit sunt velit esse.\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "  </tbody>",
+       " </table>",
+       "</div>"
+      ],
+      "shadowEsElGuardado": true,
+      "datos": [
+       {
+        "uno": "",
+        "dos": "Cillum consequat laboris mollit irure.",
+        "tres": 123456.789,
+        "cuatro": "PAQ",
+        "cinco": "2025-01-01",
+        "seis": "2025-01-03 12:00",
+        "siete": "Sí",
+        "ocho": "",
+        "nueve": "Occaecat exercitation cillum esse. Dolor cupidatat fugiat duis ea ipsum officia dolore ullamco nulla laborum. Exercitation laborum qui Lorem laboris fugiat nostrud sunt. Dolore dolor labore dolor cillum in velit ad non in eiusmod irure ullamco officia veniam esse. Dolor ut ad eiusmod sit ullamco culpa mollit laboris aute. Lorem amet proident exercitation elit mollit magna elit exercitation est voluptate quis velit sunt velit esse."
+       }
+      ],
+      "columnas": [
+       {"type":"NoEditable","field":"uno","title":"NoEditable"},
+       {"type":"Text","field":"dos","maxlength":"25","title":"Text"},
+       {
+        "type": "Number",
+        "field": "tres",
+        "textalign": "end",
+        "format": "true",
+        "thousandssep": "true",
+        "decs": "2",
+        "prefix": "$ ",
+        "sufix": " MXN",
+        "default": "0.00",
+        "title": "Number"
+       },
+       {"type":"Select","field":"cuatro","options":{"PZA":"PIEZA","PAQ":"PAQUETE","CAJA":"CAJA"},"title":"Select"},
+       {"type":"Date","field":"cinco","textalign":"center","title":"Date"},
+       {"type":"DateTime","field":"seis","textalign":"center","title":"DateTime"},
+       {"type":"Check","field":"siete","textalign":"center","default":"No","title":"Check"},
+       {"type":"Custom","field":"ocho","button":"true","title":"Custom"},
+       {
+        "type": "Memo",
+        "field": "nueve",
+        "minwidth": "100px",
+        "maxwidth": "300px",
+        "style": "min-width: 100px; max-width: 300px;",
+        "title": "Memo"
+       }
+      ],
+      "respaldo": null,
+      "props": [
+       "IsDirty = false",
+       "Editing = false",
+       "ReadOnly = false",
+       "AutoAddRow = false",
+       "AutoDelRow = false",
+       "EverMove = true",
+       "PagOffSet = 10",
+       "TheadRowIndex = 0",
+       "ColumnsDefaultType = \"Text\"",
+       "ShowAsTree = false",
+       "CanMoveRow = false",
+       "Key = \"id\"",
+       "ParentKey = \"idp\"",
+       "Childs = \"__items\"",
+       "TreeOptions = {}",
+       "sorTable = true",
+       "_sorTable = true",
+       "htmlEncode = false",
+       "autoConfirm = false",
+       "hiddeSelector = false",
+       "hiddeRowSelector = false",
+       "minRowHeight = \"1rem\"",
+       "maxRowHeight = \"5rem\"",
+       "rowHeight = \"100%\"",
+       "cardsResponsive = false",
+       "editableResponsive = false",
+       "tableId = \"editable\"",
+       "NumFormat = {\"default_decimals\":\".\",\"thousands\":\",\",\"decimals\":\".\"}",
+       "CSS = {\"Cell\":\"EdiTable-Cell\",\"RowSelected\":\"EdiTable-Row-Selected\"}",
+       "hideColumns = []",
+       "_expandOnStart = false",
+       "KeepSelectionVisible = true",
+       "CardsMode = null",
+       "CardsLayout = \"grid\"",
+       "CardsBreakpoint = \"768px\"",
+       "CardsBreakpointTarget = \"viewport\"",
+       "IsCardView = false",
+       "_count_isdirty = 0",
+       "_current_row = -1",
+       "attributes = [\"style\",\"id\",\"min-row-height\",\"max-row-height\",\"data\"]",
+       "BadgesField = \"__badges\"",
+       "BadgeTooltip = \"native\"",
+       "BadgeSelectsRow = false",
+       "NativeEvents = false",
+       "TemplateEncode = false",
+       "Locale = null",
+       "RowClassField = null",
+       "_TreeValueIndent = 1",
+       "_TreeUnitIndent = \"rem\"",
+       "temp_html = \"[undefined]\"",
+       "CurrentRowIndex() = -1",
+       "CurrentColIndex() = -1",
+       "TRCount() = 1",
+       "THCount() = 9",
+       "ColumnsCount() = 9",
+       "CurrentTd() = null",
+       "focusedTable==_getCurren() = false",
+       "Events reemplazado = 0",
+       "Events claves = [\"beforecellfocus\",\"beforemoverow\",\"beforerowdelete\",\"beforesetinput\",\"beforeupdatecell\",\"canceledition\",\"confirmedition\",\"entercell\",\"fieldupdated\",\"inputcreated\",\"isdirtychanged\",\"leavecell\",\"lostfocus\",\"onsort\",\"rowadded\",\"rowchanged\",\"rowdeleted\",\"rowmoved\",\"startedition\"]",
+       "scroll = {\"contenedor\":[0,0]}"
+      ],
+      "estilos": [
+       "host = display:block;position:static;width:1250px;height:123px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "contenedor = display:block;position:static;width:1250px;height:118px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:auto;overflow-y:auto",
+       "table = display:table;position:static;width:1250px;height:118px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "thead = display:table-header-group;position:sticky;width:1248px;height:27px;color:rgb(0, 0, 0);background-color:rgb(245, 245, 245);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[0] = display:table-cell;position:relative;width:96px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[1] = display:table-cell;position:relative;width:273px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[2] = display:table-cell;position:relative;width:129px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[3] = display:table-cell;position:relative;width:58px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[4] = display:table-cell;position:relative;width:74px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[5] = display:table-cell;position:relative;width:125px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[6] = display:table-cell;position:relative;width:48px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[7] = display:table-cell;position:relative;width:58px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[8] = display:table-cell;position:relative;width:236px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0] = display:table-row;position:relative;width:1248px;height:88px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[0] = display:table-cell;position:relative;width:104px;height:80px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[1] = display:table-cell;position:relative;width:281px;height:80px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[2] = display:table-cell;position:relative;width:137px;height:80px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[3] = display:table-cell;position:relative;width:66px;height:80px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[4] = display:table-cell;position:relative;width:82px;height:80px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[5] = display:table-cell;position:relative;width:133px;height:80px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[6] = display:table-cell;position:relative;width:56px;height:80px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[7] = display:table-cell;position:relative;width:66px;height:80px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[8] = display:table-cell;position:relative;width:244px;height:80px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+      ]
+     }
+    ],
+    "luz": [
+     "<body style=\"font-family: monospace;\" {foco}>",
+     " \"\\n    \"",
+     " <div style=\"max-width: 100vw; padding: 0px 16px 8px; border: 1px solid #DDD; border-radius: 5px;\">",
+     "  \"\\n        \"",
+     "  <div style=\"display: flex; align-items: center; gap: .5rem;\">",
+     "   \"\\n            \"",
+     "   <h3>",
+     "    \"Edit Table\"",
+     "   </h3>",
+     "   \"\\n\\n            \"",
+     "   <button id=\"btn-add-row\">",
+     "    \"+\"",
+     "   </button>",
+     "   \"\\n            \"",
+     "   <button id=\"btn-del-row\">",
+     "    \"-\"",
+     "   </button>",
+     "   \"\\n        \"",
+     "  </div>",
+     "  \"\\n\\n        \"",
+     "  <div style=\"display: flex; width: auto; min-width: 100%;\">",
+     "   \"\\n            \"",
+     "   <edit-table style=\"width: 100%;\" id=\"editable\" min-row-height=\"1rem\" max-row-height=\"5rem\" data=\"[\\n                    {\\n                        \\\"uno\\\": \\\"\\\",\\n                        \\\"dos\\\": \\\"Cillum consequat laboris mollit irure.\\\",\\n                        \\\"tres\\\": 123456.789,\\n                        \\\"cuatro\\\": \\\"PAQ\\\",\\n                        \\\"cinco\\\": \\\"2025-01-01\\\",\\n                        \\\"seis\\\": \\\"2025-01-03 12:00\\\",\\n                        \\\"siete\\\": \\\"Sí\\\",\\n                        \\\"ocho\\\": \\\"\\\",\\n                        \\\"nueve\\\": \\\"Occaecat exercitation cillum esse. Dolor cupidatat fugiat duis ea ipsum officia dolore ullamco nulla laborum. Exercitation laborum qui Lorem laboris fugiat nostrud sunt. Dolore dolor labore dolor cillum in velit ad non in eiusmod irure ullamco officia veniam esse. Dolor ut ad eiusmod sit ullamco culpa mollit laboris aute. Lorem amet proident exercitation elit mollit magna elit exercitation est voluptate quis velit sunt velit esse.\\\"\\n                    }\\n                ]\">",
+     "    #shadow-root -> tablas[0]",
+     "   </edit-table>",
+     "   \"\\n        \"",
+     "  </div>",
+     "  \"\\n    \"",
+     " </div>",
+     " \"\\n\\n    \"",
+     " <script>",
+     "  \"\\n        document.addEventListener(\\\"DOMContentLoaded\\\", () => {\\n            const table = document.getElementById(\\\"editable\\\");\\n\\n            function disableShortcuts() {\\n                table.AutoAddRow = false;\\n                table.AutoDelRow = false;\\n            }\\n\\n            function cellsButtonClickHandler(irow,icol,coldef) {\\n                let field = coldef.field;\\n\\n                switch (field) {\\n                    case \\\"ocho\\\":\\n                        table.DataArray[irow][field] = prompt(\\\"Escribe el contenido aqui...\\\",\\\"\\\");\\n                        table.UpdateRow(irow);\\n                        break;\\n                }\\n            }\\n\\n            function setTableEvents() {\\n                const events = table.EdiTable.Const.Events;\\n\\n                table.Events[events.BeforeCellFocus] = (e) => {\\n                    /**\\n                     * Argumentos del evento.\\n                     * \\n                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.\\n                     * td: (HTMLTableCellElement) Referencia al elemento <td> seleccionado.\\n                     * cancel: (boolean) Detiene la ejecución de los procesos descendientes.\\n                    */\\n\\n                    // implementación...\\n                };\\n                table.Events[events.EnterCell] = (e) => {\\n                    /**\\n                     * Argumentos de evento.\\n                     * \\n                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.\\n                     * td: (HTMLTableCellElement) Referencia al elemento <td> seleccionado.\\n                    */\\n\\n                    // implementación...\\n                };\\n                table.Events[events.LeaveCell] = (e) => {\\n                    /**\\n                     * Argumentos de evento.\\n                     * \\n                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.\\n                     * td: (HTMLTableCellElement) Referencia al elemento <td> seleccionado.\\n                    */\\n\\n                    // implementación...\\n                };\\n                table.Events[events.StartEdition] = (e) => {\\n                    /**\\n                     * Argumentos de evento.\\n                     * \\n                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.\\n                     * coldef: (array) Objeto con la información de la columna.\\n                     * td: (HTMLTableCellElement) Referencia al elemento <td> seleccionado.\\n                     * text: (string) Texto que se pasará como parámetro en los eventos descendientes.\\n                    */\\n\\n                    // implementación...\\n                };\\n                table.Events[events.ConfirmEdition] = (e) => {\\n                    /**\\n                     * Argumentos de evento.\\n                     * \\n                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.\\n                     * coldef: (array) Objeto con la información de la columna.\\n                     * td: (HTMLTableCellElement) Referencia al elemento <td> seleccionado.\\n                     * text: (string) Texto que se pasará como parámetro en los eventos descendientes.\\n                     * cancel: (boolean) Detiene la ejecución de los procesos descendientes.\\n                    */\\n\\n                    // implementación...\\n                };\\n                table.Events[events.CancelEdition] = (e) => {\\n                    /**\\n                     * Argumentos de evento.\\n                     * \\n                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.\\n                     * td: (HTMLTableCellElement) Referencia al elemento <td> seleccionado.\\n                    */\\n\\n                    // implementación...\\n                };\\n                table.Events[events.InputCreated] = (e) => {\\n                    /**\\n                     * Argumentos de evento.\\n                     * \\n                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.\\n                     * coldef: (array) Objeto con la información de la columna.\\n                     * td: (HTMLTableCellElement) Referencia al elemento <td> seleccionado.\\n                     * input: (HTMLElement) Referencia al elemento <input> creado.\\n                     * text: (string) Contenido de la celda seleccionada/especificada.\\n                    */\\n\\n                    // implementación...\\n                };\\n                table.Events[events.BeforeSetInput] = (e) => {\\n                    /**\\n                     * Argumentos de evento.\\n                     * \\n                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.\\n                     * coldef: (array) Objeto con la información de la columna.\\n                     * td: (HTMLTableCellElement) Referencia al elemento <td> seleccionado.\\n                     * input: (HTMLElement) Referencia al elemento <input> creado.\\n                     * text: (string) Contenido de la celda seleccionada/especificada.\\n                    */\\n\\n                    // implementación...\\n                };\\n                table.Events[events.BeforeUpdateCell] = (e) => {\\n                    /**\\n                     * Argumentos de evento.\\n                     * \\n                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.\\n                     * coldef: (array) Objeto con la información de la columna.\\n                     * td: (HTMLTableCellElement) Referencia al elemento <td> seleccionado.\\n                     * input: (HTMLElement) Referencia al elemento <input> creado.\\n                     * text: (string) Contenido de la celda seleccionada/especificada.\\n                     * cancel: (boolean) Detiene la ejecución de los procesos descendientes.\\n                    */\\n\\n                    // implementación...\\n                };\\n                table.Events[events.FieldUpdated] = (e) => {\\n                    /**\\n                     * Argumentos de evento.\\n                     * \\n                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.\\n                     * row: (number) Índice de la fila seleccionada.\\n                     * field: (string) Nombre de la celda seleccionada.\\n                     * value: (string) Valor establecido.\\n                    */\\n\\n                    // implementación...\\n                };\\n                table.Events[events.RowAdded] = (e) => {\\n                    /**\\n                     * Argumentos de evento.\\n                     * \\n                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.\\n                     * tr: (HTMLTableRowElement) Referencia al elemento <tr> creado.\\n                     * rowIndex: (number) Índice de la nueva fila creada.\\n                    */\\n\\n                    // implementación...\\n                };\\n                table.Events[events.BeforeRowDelete] = (e) => {\\n                    /**\\n                     * Argumentos de evento.\\n                     * \\n                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.\\n                     * rowIndex: (number) Índice de la fila a eliminar.\\n                     * cancel: (boolean) Detiene la ejecución de los procesos descendientes.\\n                    */\\n\\n                    // implementación...\\n                };\\n                table.Events[events.RowDeleted] = (e) => {\\n                    /**\\n                     * Argumentos de evento.\\n                     * \\n                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.\\n                     * rowIndex: (number) Índice de la fila eliminada.\\n                    */\\n\\n                    // implementación...\\n                };\\n                table.Events[events.BeforeMoveRow] = (e) => {\\n                    /**\\n                     * Argumentos de evento.\\n                     * \\n                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.\\n                     * source: (array) Objeto con la información de la fila que se esta moviendo.\\n                     * target: (array) Objeto con la información de la fila objetivo.\\n                     * child: (boolean) Indica si la fila se moverá como un elemento hijo de otra fila.\\n                     * cancel: (boolean) Detiene la ejecución de los procesos descendientes.\\n                    */\\n\\n                    // implementación...\\n                };\\n                table.Events[events.RowMoved] = (e) => {\\n                    /**\\n                     * Argumentos de evento.\\n                     * \\n                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.\\n                     * source: (array) Objeto con la información de la fila que se esta moviendo.\\n                     * target: (array) Objeto con la información de la fila objetivo.\\n                     * child: (boolean) Indica si la fila se movió como un elemento hijo de la fila objetivo.\\n                    */\\n\\n                    // implementación...\\n                };\\n                table.Events[events.RowChanged] = (e) => {\\n                    /**\\n                     * Argumentos del evento.\\n                     * \\n                     * sender: (array) Un objeto que representa la instancia del <edit-table> remitente.\\n                     * td: (HTMLTableCellElement) Referencia al elemento <td> seleccionado.\\n                     * previous_index: (number) Índice previo/anterior a la fila seleccionada.\\n                     * index: (number) Índice actual de la fila seleccionada.\\n                    */\\n\\n                    // implementación...\\n                };\\n                table.Events[events.LostFocus] = () => {/*implementación*/};\\n                table.Events[events.IsDirtyChanged] = () => {/*implementación*/};\\n                table.Events[events.OnSort] = (e) => {\\n                    /**\\n                     * Argumentos del evento.\\n                     * \\n                     * coldef: (array) Objeto con la información de la columna: {type:\\\"\\\", field:\\\"\\\", sort:\\\"ASC/DESC\\\", ...}\\n                     * th: (HTMLTableCellElement) Referencia al elemento <th> seleccionado.\\n                     * caption: (string) Título de la columna seleccionada.\\n                    */\\n\\n                    // implementación...\\n                };\\n\\n                /**\\n                 * irow: (number) Índice de la fila seleccionada/especificada.\\n                 * icol: (number) Índice de la celda seleccionada/especificada.\\n                 * coldef: (array) Objeto con la información de la columna: {type:\\\"\\\", field:\\\"\\\", ...}\\n                */\\n                table.ButtonOnClick = (irow,icol,coldef) => cellsButtonClickHandler(irow,icol,coldef);\\n                /**\\n                 * td: (HTMLTableCellElement) Referencia al elemento <td> creado.\\n                 * irow: (number) Índice de la fila creada.\\n                 * icol: (number) Índice de la celda creada.\\n                 * field: (string) Nombre de la celda creada.\\n                */\\n                table.onTdPaint = (td,irow,icol,field) => {/*implementación*/};\\n            }\\n\\n            function setEvents() {\\n                const add = document.getElementById(\\\"btn-add-row\\\");\\n                const del = document.getElementById(\\\"btn-del-row\\\");\\n\\n                add.addEventListener(\\\"click\\\", () => table.AddRow());\\n                del.addEventListener(\\\"click\\\", () => table.DeleteCurrentRow());\\n            }\\n\\n            function setData() {\\n                let data = [\\n                    {\\n                        uno: \\\"\\\",\\n                        dos: \\\"Cillum consequat laboris mollit irure.\\\",\\n                        tres: 123456.789,\\n                        cuatro: \\\"PAQ\\\",\\n                        cinco: \\\"2025-01-01\\\",\\n                        seis: \\\"2025-01-03 12:00\\\",\\n                        siete: \\\"Sí\\\",\\n                        ocho: \\\"\\\",\\n                        nueve: \\\"Occaecat exercitation cillum esse. Dolor cupidatat fugiat duis ea ipsum officia dolore ullamco nulla laborum. Exercitation laborum qui Lorem laboris fugiat nostrud sunt. Dolore dolor labore dolor cillum in velit ad non in eiusmod irure ullamco officia veniam esse. Dolor ut ad eiusmod sit ullamco culpa mollit laboris aute. Lorem amet proident exercitation elit mollit magna elit exercitation est voluptate quis velit sunt velit esse.\\\"\\n                    }\\n                ];\\n\\n                table.DataArray = data;\\n                table._printRows();\\n            }\\n\\n            disableShortcuts();\\n            setTableEvents();\\n            setEvents();\\n            // setData();\\n        });\\n    \"",
+     " </script>",
+     " \"\\n\\n\\n\"",
+     "</body>"
+    ],
+    "foco": {"documento":{"ruta":"html>body"},"shadow":null},
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 3,
+      "nodo:mousedown": 9,
+      "document:mousemove": 9,
+      "document:mouseup": 9,
+      "window:beforeprint": 1,
+      "window:afterprint": 1,
+      "nodo:click": 2
+     },
+     "intervalos": 1
+    }
+   }
+  },
+  {
+   "nombre": "clic en Text y editar",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "editable",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [78,1,["   <tr class=\"EdiTable-Row-Selected\">"]],
+        [84,1,["      \"Demo\""]],
+        [
+         89,
+         1,
+         [
+          "      <div id=\"__table_selector\" class=\"EdiTable-Selector\" tabindex=\"0\" {foco}>",
+          "       \"123456.79\"",
+          "      </div>"
+         ]
+        ]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": [
+       {
+        "uno": "",
+        "dos": "Demo",
+        "tres": 123456.789,
+        "cuatro": "PAQ",
+        "cinco": "2025-01-01",
+        "seis": "2025-01-03 12:00",
+        "siete": "Sí",
+        "ocho": "",
+        "nueve": "Occaecat exercitation cillum esse. Dolor cupidatat fugiat duis ea ipsum officia dolore ullamco nulla laborum. Exercitation laborum qui Lorem laboris fugiat nostrud sunt. Dolore dolor labore dolor cillum in velit ad non in eiusmod irure ullamco officia veniam esse. Dolor ut ad eiusmod sit ullamco culpa mollit laboris aute. Lorem amet proident exercitation elit mollit magna elit exercitation est voluptate quis velit sunt velit esse."
+       }
+      ],
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": {
+       "$parche": [
+        [38,1,["_current_row = 0"]],
+        [
+         49,
+         3,
+         ["temp_html = \"Cillum consequat laboris mollit irure.\"","CurrentRowIndex() = 0","CurrentColIndex() = 2"]
+        ],
+        [
+         55,
+         2,
+         [
+          "CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(editable)>div>table#editable>tbody>tr[0]>td[2]\",\"texto\":\"123456.79\"}}",
+          "focusedTable==_getCurren() = true"
+         ]
+        ]
+       ]
+      },
+      "estilos": {
+       "$parche": [
+        [
+         4,
+         19,
+         [
+          "th[0] = display:table-cell;position:relative;width:117px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[1] = display:table-cell;position:relative;width:48px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[2] = display:table-cell;position:relative;width:98px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[3] = display:table-cell;position:relative;width:71px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[4] = display:table-cell;position:relative;width:107px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[5] = display:table-cell;position:relative;width:176px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[6] = display:table-cell;position:relative;width:60px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[7] = display:table-cell;position:relative;width:71px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[8] = display:table-cell;position:relative;width:348px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0] = display:table-row;position:relative;width:1248px;height:88px;color:rgb(255, 255, 255);background-color:rgb(61, 117, 221);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[0] = display:table-cell;position:relative;width:125px;height:80px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[1] = display:table-cell;position:relative;width:56px;height:80px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[2] = display:table-cell;position:relative;width:106px;height:80px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[3] = display:table-cell;position:relative;width:79px;height:80px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[4] = display:table-cell;position:relative;width:115px;height:80px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[5] = display:table-cell;position:relative;width:184px;height:80px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[6] = display:table-cell;position:relative;width:68px;height:80px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[7] = display:table-cell;position:relative;width:79px;height:80px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[8] = display:table-cell;position:relative;width:356px;height:80px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "selector = display:flex;position:static;width:106px;height:80px;color:rgb(0, 0, 0);background-color:rgba(255, 255, 255, 0.7);font-weight:400;text-align:end;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": {
+     "$parche": [
+      [0,1,["<body style=\"font-family: monospace;\">"]],
+      [
+       22,
+       1,
+       [
+        "   <edit-table style=\"width: 100%;\" id=\"editable\" min-row-height=\"1rem\" max-row-height=\"5rem\" data=\"[\\n                    {\\n                        \\\"uno\\\": \\\"\\\",\\n                        \\\"dos\\\": \\\"Cillum consequat laboris mollit irure.\\\",\\n                        \\\"tres\\\": 123456.789,\\n                        \\\"cuatro\\\": \\\"PAQ\\\",\\n                        \\\"cinco\\\": \\\"2025-01-01\\\",\\n                        \\\"seis\\\": \\\"2025-01-03 12:00\\\",\\n                        \\\"siete\\\": \\\"Sí\\\",\\n                        \\\"ocho\\\": \\\"\\\",\\n                        \\\"nueve\\\": \\\"Occaecat exercitation cillum esse. Dolor cupidatat fugiat duis ea ipsum officia dolore ullamco nulla laborum. Exercitation laborum qui Lorem laboris fugiat nostrud sunt. Dolore dolor labore dolor cillum in velit ad non in eiusmod irure ullamco officia veniam esse. Dolor ut ad eiusmod sit ullamco culpa mollit laboris aute. Lorem amet proident exercitation elit mollit magna elit exercitation est voluptate quis velit sunt velit esse.\\\"\\n                    }\\n                ]\" {foco}>"
+       ]
+      ]
+     ]
+    },
+    "foco": {
+     "documento": {"ruta":"body>div>div>edit-table#editable"},
+     "shadow": {"ruta":"shadow(editable)>div>table#editable>tbody>tr[0]>td[2]>div>div#__table_selector"}
+    },
+    "eventos": [
+     {
+      "evento": "beforecellfocus",
+      "tabla": "editable",
+      "consumidor": true,
+      "args": {
+       "td": {
+        "$nodo": {
+         "ruta": "shadow(editable)>div>table#editable>tbody>tr[0]>td[1]",
+         "texto": "Cillum consequat laboris mollit irure."
+        }
+       },
+       "sender": {"$sender":"editable","esElemento":false},
+       "cancel": false
+      }
+     },
+     {
+      "evento": "entercell",
+      "tabla": "editable",
+      "consumidor": true,
+      "args": {
+       "td": {
+        "$nodo": {
+         "ruta": "shadow(editable)>div>table#editable>tbody>tr[0]>td[1]",
+         "texto": "Cillum consequat laboris mollit irure."
+        }
+       },
+       "sender": {"$sender":"editable","esElemento":false}
+      }
+     },
+     {
+      "evento": "rowchanged",
+      "tabla": "editable",
+      "consumidor": true,
+      "args": {
+       "td": {
+        "$nodo": {
+         "ruta": "shadow(editable)>div>table#editable>tbody>tr[0]>td[1]",
+         "texto": "Cillum consequat laboris mollit irure."
+        }
+       },
+       "sender": {"$sender":"editable","esElemento":false},
+       "cancel": false,
+       "index": 0,
+       "previous_index": -1
+      }
+     },
+     {
+      "evento": "startedition",
+      "tabla": "editable",
+      "consumidor": true,
+      "args": {
+       "td": {
+        "$nodo": {
+         "ruta": "shadow(editable)>div>table#editable>tbody>tr[0]>td[1]",
+         "texto": "Cillum consequat laboris mollit irure."
+        }
+       },
+       "sender": {"$sender":"editable","esElemento":false},
+       "coldef": {"type":"Text","field":"dos","maxlength":"25","title":"Text"},
+       "text": ""
+      }
+     },
+     {
+      "evento": "inputcreated",
+      "tabla": "editable",
+      "consumidor": true,
+      "args": {
+       "input": {"$nodo":{"ruta":"shadow(editable)>div>table#editable>tbody>tr[0]>td[1]>div>input#__table_input","valor":""}},
+       "td": {"$nodo":{"ruta":"shadow(editable)>div>table#editable>tbody>tr[0]>td[1]","texto":""}},
+       "sender": {"$sender":"editable","esElemento":false},
+       "text": "Cillum consequat laboris mollit irure.",
+       "coldef": {"type":"Text","field":"dos","maxlength":"25","title":"Text"}
+      }
+     },
+     {
+      "evento": "beforesetinput",
+      "tabla": "editable",
+      "consumidor": true,
+      "args": {
+       "input": {"$nodo":{"ruta":"shadow(editable)>div>table#editable>tbody>tr[0]>td[1]>div>input#__table_input","valor":""}},
+       "td": {"$nodo":{"ruta":"shadow(editable)>div>table#editable>tbody>tr[0]>td[1]","texto":""}},
+       "sender": {"$sender":"editable","esElemento":false},
+       "text": "Cillum consequat laboris mollit irure.",
+       "coldef": {"type":"Text","field":"dos","maxlength":"25","title":"Text"}
+      }
+     },
+     {
+      "evento": "beforecellfocus",
+      "tabla": "editable",
+      "consumidor": true,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(editable)>div>table#editable>tbody>tr[0]>td[2]","texto":"$ 123,456.79 MXN"}},
+       "sender": {"$sender":"editable","esElemento":false},
+       "cancel": false
+      }
+     },
+     {
+      "evento": "beforeupdatecell",
+      "tabla": "editable",
+      "consumidor": true,
+      "args": {
+       "input": {
+        "$nodo": {"ruta":"shadow(editable)>div>table#editable>tbody>tr[0]>td[1]>div>input#__table_input","valor":"Demo"}
+       },
+       "text": "Demo",
+       "td": {"$nodo":{"ruta":"shadow(editable)>div>table#editable>tbody>tr[0]>td[1]","texto":""}},
+       "sender": {"$sender":"editable","esElemento":false},
+       "coldef": {"type":"Text","field":"dos","maxlength":"25","title":"Text"},
+       "cancel": false
+      }
+     },
+     {
+      "evento": "confirmedition",
+      "tabla": "editable",
+      "consumidor": true,
+      "args": {
+       "input": "[undefined]",
+       "text": "Demo",
+       "td": {"$nodo":{"ruta":"shadow(editable)>div>table#editable>tbody>tr[0]>td[1]","texto":""}},
+       "sender": {"$sender":"editable","esElemento":false},
+       "coldef": {"type":"Text","field":"dos","maxlength":"25","title":"Text"},
+       "cancel": false
+      }
+     },
+     {
+      "evento": "fieldupdated",
+      "tabla": "editable",
+      "consumidor": true,
+      "args": {"sender":{"$sender":"editable","esElemento":false},"row":0,"field":"dos","value":"Demo"}
+     },
+     {
+      "evento": "entercell",
+      "tabla": "editable",
+      "consumidor": true,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(editable)>div>table#editable>tbody>tr[0]>td[2]","texto":"123456.79"}},
+       "sender": {"$sender":"editable","esElemento":false}
+      }
+     }
+    ],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 3,
+      "nodo:mousedown": 9,
+      "document:mousemove": 9,
+      "document:mouseup": 9,
+      "window:beforeprint": 1,
+      "window:afterprint": 1,
+      "nodo:click": 5,
+      "nodo:click:remove": 2,
+      "nodo:keydown:remove": 2,
+      "nodo:keydown": 3
+     },
+     "intervalos": 1
+    }
+   }
+  },
+  {
+   "nombre": "botón + (AddRow)",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "editable",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [78,1,["   <tr class=\"\">"]],
+        [89,3,["      \"$ 123,456.79 MXN\""]],
+        [
+         123,
+         0,
+         [
+          "   <tr class=\"EdiTable-Row-Selected\">",
+          "    <td class=\"EdiTable-Cell\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"min-height: 1rem; max-height: 5rem; height: 100%; display: block;\">",
+          "      <div id=\"__table_selector\" class=\"EdiTable-Selector\" tabindex=\"0\" {foco}></div>",
+          "     </div>",
+          "    </td>",
+          "    <td class=\"EdiTable-Cell\"></td>",
+          "    <td class=\"EdiTable-Cell\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"min-height: 1rem; max-height: 5rem; height: 100%; justify-content: end; text-align: end; display: block;\">",
+          "      \"$ 0.00 MXN\"",
+          "     </div>",
+          "    </td>",
+          "    <td class=\"EdiTable-Cell\"></td>",
+          "    <td class=\"EdiTable-Cell\"></td>",
+          "    <td class=\"EdiTable-Cell\"></td>",
+          "    <td class=\"EdiTable-Cell\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"min-height: 1rem; max-height: 5rem; height: 100%; justify-content: center; text-align: center; display: block;\">",
+          "      \"No\"",
+          "     </div>",
+          "    </td>",
+          "    <td class=\"EdiTable-Cell\"></td>",
+          "    <td class=\"EdiTable-Cell\"></td>",
+          "   </tr>"
+         ]
+        ]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": [
+       {
+        "uno": "",
+        "dos": "Demo",
+        "tres": 123456.789,
+        "cuatro": "PAQ",
+        "cinco": "2025-01-01",
+        "seis": "2025-01-03 12:00",
+        "siete": "Sí",
+        "ocho": "",
+        "nueve": "Occaecat exercitation cillum esse. Dolor cupidatat fugiat duis ea ipsum officia dolore ullamco nulla laborum. Exercitation laborum qui Lorem laboris fugiat nostrud sunt. Dolore dolor labore dolor cillum in velit ad non in eiusmod irure ullamco officia veniam esse. Dolor ut ad eiusmod sit ullamco culpa mollit laboris aute. Lorem amet proident exercitation elit mollit magna elit exercitation est voluptate quis velit sunt velit esse."
+       },
+       {"tres":"0.00","siete":"No"}
+      ],
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": {
+       "$parche": [
+        [38,1,["_current_row = 1"]],
+        [50,3,["CurrentRowIndex() = 1","CurrentColIndex() = 0","TRCount() = 2"]],
+        [
+         55,
+         1,
+         [
+          "CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(editable)>div>table#editable>tbody>tr[1]>td[0]\",\"texto\":\"\"}}"
+         ]
+        ]
+       ]
+      },
+      "estilos": {
+       "$parche": [
+        [
+         0,
+         3,
+         [
+          "host = display:block;position:static;width:1250px;height:154px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "contenedor = display:block;position:static;width:1250px;height:149px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:auto;overflow-y:auto",
+          "table = display:table;position:static;width:1250px;height:149px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         4,
+         20,
+         [
+          "th[0] = display:table-cell;position:relative;width:109px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[1] = display:table-cell;position:relative;width:45px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[2] = display:table-cell;position:relative;width:164px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[3] = display:table-cell;position:relative;width:66px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[4] = display:table-cell;position:relative;width:100px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[5] = display:table-cell;position:relative;width:164px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[6] = display:table-cell;position:relative;width:55px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[7] = display:table-cell;position:relative;width:66px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[8] = display:table-cell;position:relative;width:327px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0] = display:table-row;position:relative;width:1248px;height:88px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[0] = display:table-cell;position:relative;width:117px;height:80px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[1] = display:table-cell;position:relative;width:53px;height:80px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[2] = display:table-cell;position:relative;width:172px;height:80px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[3] = display:table-cell;position:relative;width:74px;height:80px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[4] = display:table-cell;position:relative;width:108px;height:80px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[5] = display:table-cell;position:relative;width:172px;height:80px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[6] = display:table-cell;position:relative;width:63px;height:80px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[7] = display:table-cell;position:relative;width:74px;height:80px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[8] = display:table-cell;position:relative;width:335px;height:80px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1] = display:table-row;position:relative;width:1248px;height:30px;color:rgb(255, 255, 255);background-color:rgb(61, 117, 221);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[0] = display:table-cell;position:relative;width:117px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[1] = display:table-cell;position:relative;width:53px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[2] = display:table-cell;position:relative;width:172px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[3] = display:table-cell;position:relative;width:74px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[4] = display:table-cell;position:relative;width:108px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[5] = display:table-cell;position:relative;width:172px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[6] = display:table-cell;position:relative;width:63px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[7] = display:table-cell;position:relative;width:74px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[8] = display:table-cell;position:relative;width:335px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "selector = display:flex;position:static;width:117px;height:22px;color:rgb(0, 0, 0);background-color:rgba(255, 255, 255, 0.7);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": "@=paso-anterior",
+    "foco": {
+     "documento": {"ruta":"body>div>div>edit-table#editable"},
+     "shadow": {"ruta":"shadow(editable)>div>table#editable>tbody>tr[1]>td[0]>div>div#__table_selector"}
+    },
+    "eventos": [
+     {
+      "evento": "beforecellfocus",
+      "tabla": "editable",
+      "consumidor": true,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(editable)>div>table#editable>tbody>tr[1]>td[0]","texto":""}},
+       "sender": {"$sender":"editable","esElemento":false},
+       "cancel": false
+      }
+     },
+     {
+      "evento": "leavecell",
+      "tabla": "editable",
+      "consumidor": true,
+      "args": {"td":null,"sender":{"$sender":"editable","esElemento":false}}
+     },
+     {
+      "evento": "entercell",
+      "tabla": "editable",
+      "consumidor": true,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(editable)>div>table#editable>tbody>tr[1]>td[0]","texto":""}},
+       "sender": {"$sender":"editable","esElemento":false}
+      }
+     },
+     {
+      "evento": "rowchanged",
+      "tabla": "editable",
+      "consumidor": true,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(editable)>div>table#editable>tbody>tr[1]>td[0]","texto":""}},
+       "sender": {"$sender":"editable","esElemento":false},
+       "cancel": false,
+       "index": 1,
+       "previous_index": 0
+      }
+     },
+     {
+      "evento": "rowadded",
+      "tabla": "editable",
+      "consumidor": true,
+      "args": {
+       "sender": {"$sender":"editable","esElemento":false},
+       "tr": {"$nodo":{"ruta":"shadow(editable)>div>table#editable>tbody>tr[1]"}},
+       "rowIndex": 1
+      }
+     }
+    ],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 3,
+      "nodo:mousedown": 9,
+      "document:mousemove": 9,
+      "document:mouseup": 9,
+      "window:beforeprint": 1,
+      "window:afterprint": 1,
+      "nodo:click": 24,
+      "nodo:click:remove": 21,
+      "nodo:keydown:remove": 3,
+      "nodo:keydown": 4
+     },
+     "intervalos": 1
+    }
+   }
+  },
+  {
+   "nombre": "botón - (DeleteCurrentRow)",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "editable",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {"$parche":[[121,23,[]]]},
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": [
+       {
+        "uno": "",
+        "dos": "Demo",
+        "tres": 123456.789,
+        "cuatro": "PAQ",
+        "cinco": "2025-01-01",
+        "seis": "2025-01-03 12:00",
+        "siete": "Sí",
+        "ocho": "",
+        "nueve": "Occaecat exercitation cillum esse. Dolor cupidatat fugiat duis ea ipsum officia dolore ullamco nulla laborum. Exercitation laborum qui Lorem laboris fugiat nostrud sunt. Dolore dolor labore dolor cillum in velit ad non in eiusmod irure ullamco officia veniam esse. Dolor ut ad eiusmod sit ullamco culpa mollit laboris aute. Lorem amet proident exercitation elit mollit magna elit exercitation est voluptate quis velit sunt velit esse."
+       }
+      ],
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": {
+       "$parche": [[50,3,["CurrentRowIndex() = -1","CurrentColIndex() = -1","TRCount() = 1"]],[55,1,["CurrentTd() = null"]]]
+      },
+      "estilos": {
+       "$parche": [
+        [
+         0,
+         3,
+         [
+          "host = display:block;position:static;width:1250px;height:123px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "contenedor = display:block;position:static;width:1250px;height:118px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:auto;overflow-y:auto",
+          "table = display:table;position:static;width:1250px;height:118px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [23,11,[]]
+       ]
+      }
+     }
+    ],
+    "luz": {
+     "$parche": [
+      [14,1,["   <button id=\"btn-del-row\" {foco}>"]],
+      [
+       22,
+       1,
+       [
+        "   <edit-table style=\"width: 100%;\" id=\"editable\" min-row-height=\"1rem\" max-row-height=\"5rem\" data=\"[\\n                    {\\n                        \\\"uno\\\": \\\"\\\",\\n                        \\\"dos\\\": \\\"Cillum consequat laboris mollit irure.\\\",\\n                        \\\"tres\\\": 123456.789,\\n                        \\\"cuatro\\\": \\\"PAQ\\\",\\n                        \\\"cinco\\\": \\\"2025-01-01\\\",\\n                        \\\"seis\\\": \\\"2025-01-03 12:00\\\",\\n                        \\\"siete\\\": \\\"Sí\\\",\\n                        \\\"ocho\\\": \\\"\\\",\\n                        \\\"nueve\\\": \\\"Occaecat exercitation cillum esse. Dolor cupidatat fugiat duis ea ipsum officia dolore ullamco nulla laborum. Exercitation laborum qui Lorem laboris fugiat nostrud sunt. Dolore dolor labore dolor cillum in velit ad non in eiusmod irure ullamco officia veniam esse. Dolor ut ad eiusmod sit ullamco culpa mollit laboris aute. Lorem amet proident exercitation elit mollit magna elit exercitation est voluptate quis velit sunt velit esse.\\\"\\n                    }\\n                ]\">"
+       ]
+      ]
+     ]
+    },
+    "foco": {"documento":{"ruta":"body>div>div>button#btn-del-row"},"shadow":null},
+    "eventos": [
+     {
+      "evento": "beforerowdelete",
+      "tabla": "editable",
+      "consumidor": true,
+      "args": {"sender":{"$sender":"editable","esElemento":false},"rowIndex":1,"cancel":false}
+     },
+     {
+      "evento": "rowdeleted",
+      "tabla": "editable",
+      "consumidor": true,
+      "args": {"sender":{"$sender":"editable","esElemento":false},"rowIndex":1,"cancel":false}
+     },
+     {"evento":"lostfocus","tabla":"editable","consumidor":true}
+    ],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "internos": "@=paso-anterior"
+   }
+  },
+  {
+   "nombre": "recorrer con Tab",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "editable",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": "@=paso-anterior",
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": "@=paso-anterior",
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": "@=paso-anterior",
+      "estilos": "@=paso-anterior"
+     }
+    ],
+    "luz": "@=paso-anterior",
+    "foco": "@=paso-anterior",
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "internos": "@=paso-anterior"
+   }
+  }
+ ]
+}

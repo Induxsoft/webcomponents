@@ -1,0 +1,1251 @@
+{
+ "id": "v12/accion-paginacion-arbol",
+ "titulo": "getCurrentContext() con paginación y con árbol colapsado",
+ "etiquetas": [],
+ "archivo": "escenarios/v12/dbeditable.mjs",
+ "pasos": [
+  {
+   "nombre": "inicio",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "tbl_p",
+      "inicializada": true,
+      "modoShadowPedido": "closed",
+      "dom": [
+       "\"\\n                \"",
+       "<style>",
+       " @@ESTILO sha256:327b3da74cfcf189",
+       "</style>",
+       "\"\\n            \"",
+       "<div style=\"min-height: 2rem; max-height: 100%; overflow: auto; padding-bottom: 5px\">",
+       " <table id=\"tbl_p\" class=\"table-cards\">",
+       "  <thead>",
+       "   <tr>",
+       "    \"\\n\"",
+       "    <th type=\"NoEditable\" field=\"sys_pk\" textalign=\"\" format=\"false\" thousandssep=\"false\" decs=\"1\" prefix=\"\" sufix=\"\" class=\"\">",
+       "     <span>",
+       "      \"Llave\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:29px;\"></div>",
+       "    </th>",
+       "    \"\\n\"",
+       "    <th type=\"NoEditable\" field=\"nombre\" textalign=\"\" format=\"false\" thousandssep=\"false\" decs=\"1\" prefix=\"\" sufix=\"\" class=\"\">",
+       "     <span>",
+       "      \"Nombre\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:29px;\"></div>",
+       "    </th>",
+       "    \"\\n\"",
+       "   </tr>",
+       "  </thead>",
+       "  <tbody>",
+       "   <tr id=\"\" parent=\"\" indent=\"0\">",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1000\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Registro de prueba 0\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr id=\"\" parent=\"\" indent=\"0\">",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1001\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Registro de prueba 1\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr id=\"\" parent=\"\" indent=\"0\">",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1002\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Registro de prueba 2\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr id=\"\" parent=\"\" indent=\"0\">",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1003\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Registro de prueba 3\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr id=\"\" parent=\"\" indent=\"0\">",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1004\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Registro de prueba 4\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr id=\"\" parent=\"\" indent=\"0\">",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1005\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Registro de prueba 5\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr id=\"\" parent=\"\" indent=\"0\">",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1006\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Registro de prueba 6\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr id=\"\" parent=\"\" indent=\"0\">",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1007\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Registro de prueba 7\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr id=\"\" parent=\"\" indent=\"0\">",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1008\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Registro de prueba 8\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr id=\"\" parent=\"\" indent=\"0\">",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Llave\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"1009\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Registro de prueba 9\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "  </tbody>",
+       " </table>",
+       "</div>"
+      ],
+      "shadowEsElGuardado": true,
+      "datos": [
+       {
+        "sys_pk": 1000,
+        "sys_dtcreated": "2026-01-01 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-000",
+        "nombre": "Registro de prueba 0",
+        "importe": 0
+       },
+       {
+        "sys_pk": 1001,
+        "sys_dtcreated": "2026-02-02 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-037",
+        "nombre": "Registro de prueba 1",
+        "importe": 135.8
+       },
+       {
+        "sys_pk": 1002,
+        "sys_dtcreated": "2026-03-03 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-074",
+        "nombre": "Registro de prueba 2",
+        "importe": 271.7
+       },
+       {
+        "sys_pk": 1003,
+        "sys_dtcreated": "2026-04-04 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-111",
+        "nombre": "Registro de prueba 3",
+        "importe": 407.5
+       },
+       {
+        "sys_pk": 1004,
+        "sys_dtcreated": "2026-05-05 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-148",
+        "nombre": "Registro de prueba 4",
+        "importe": 543.4
+       },
+       {
+        "sys_pk": 1005,
+        "sys_dtcreated": "2026-06-06 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-185",
+        "nombre": "Registro de prueba 5",
+        "importe": 679.2
+       },
+       {
+        "sys_pk": 1006,
+        "sys_dtcreated": "2026-07-07 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-222",
+        "nombre": "Registro de prueba 6",
+        "importe": 815.1
+       },
+       {
+        "sys_pk": 1007,
+        "sys_dtcreated": "2026-08-08 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-259",
+        "nombre": "Registro de prueba 7",
+        "importe": 950.9
+       },
+       {
+        "sys_pk": 1008,
+        "sys_dtcreated": "2026-09-09 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-296",
+        "nombre": "Registro de prueba 8",
+        "importe": 1086.8
+       },
+       {
+        "sys_pk": 1009,
+        "sys_dtcreated": "2026-01-10 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-333",
+        "nombre": "Registro de prueba 9",
+        "importe": 1222.6
+       }
+      ],
+      "columnas": [
+       {
+        "type": "NoEditable",
+        "field": "sys_pk",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "",
+        "title": "Llave"
+       },
+       {
+        "type": "NoEditable",
+        "field": "nombre",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "",
+        "title": "Nombre"
+       }
+      ],
+      "respaldo": null,
+      "props": [
+       "IsDirty = false",
+       "Editing = false",
+       "ReadOnly = false",
+       "AutoAddRow = false",
+       "AutoDelRow = false",
+       "EverMove = false",
+       "PagOffSet = 10",
+       "TheadRowIndex = 0",
+       "ColumnsDefaultType = \"Text\"",
+       "ShowAsTree = false",
+       "CanMoveRow = false",
+       "Key = \"id\"",
+       "ParentKey = \"idp\"",
+       "Childs = \"__items\"",
+       "TreeOptions = {\"key\":\"id\",\"parentkey\":\"idp\",\"childs\":\"__items\"}",
+       "sorTable = true",
+       "_sorTable = true",
+       "htmlEncode = false",
+       "autoConfirm = false",
+       "hiddeSelector = true",
+       "hiddeRowSelector = false",
+       "minRowHeight = \"none\"",
+       "maxRowHeight = \"none\"",
+       "rowHeight = \"100%\"",
+       "cardsResponsive = true",
+       "editableResponsive = false",
+       "tableId = \"tbl_p\"",
+       "NumFormat = {\"default_decimals\":\".\",\"thousands\":\",\",\"decimals\":\".\"}",
+       "CSS = {\"Cell\":\"EdiTable-Cell\",\"RowSelected\":\"EdiTable-Row-Selected\"}",
+       "hideColumns = []",
+       "_expandOnStart = false",
+       "KeepSelectionVisible = true",
+       "CardsMode = null",
+       "CardsLayout = \"grid\"",
+       "CardsBreakpoint = \"768px\"",
+       "CardsBreakpointTarget = \"viewport\"",
+       "IsCardView = false",
+       "_count_isdirty = 0",
+       "_current_row = -1",
+       "attributes = [\"id\",\"hidde-selector\",\"cards-responsive\",\"style\",\"control-styles\"]",
+       "BadgesField = \"__badges\"",
+       "BadgeTooltip = \"native\"",
+       "BadgeSelectsRow = false",
+       "NativeEvents = false",
+       "TemplateEncode = false",
+       "Locale = null",
+       "RowClassField = null",
+       "_TreeValueIndent = 1",
+       "_TreeUnitIndent = \"rem\"",
+       "temp_html = \"[undefined]\"",
+       "CurrentRowIndex() = -1",
+       "CurrentColIndex() = -1",
+       "TRCount() = 10",
+       "THCount() = 2",
+       "ColumnsCount() = 2",
+       "CurrentTd() = null",
+       "focusedTable==_getCurren() = false",
+       "Events reemplazado = 0",
+       "Events claves = [\"onsort\"]",
+       "scroll = {\"contenedor\":[0,0]}"
+      ]
+     },
+     {
+      "indice": 1,
+      "id": "tbl_a",
+      "inicializada": true,
+      "modoShadowPedido": "closed",
+      "dom": [
+       "\"\\n                \"",
+       "<style>",
+       " @@ESTILO sha256:21972bfc7b483839",
+       "</style>",
+       "\"\\n            \"",
+       "<div style=\"min-height: 2rem; max-height: 100%; overflow: auto; padding-bottom: 5px\">",
+       " <table id=\"tbl_a\" class=\"table-cards\">",
+       "  <thead>",
+       "   <tr>",
+       "    \"\\n\"",
+       "    <th type=\"NoEditable\" field=\"codigo\" textalign=\"\" format=\"false\" thousandssep=\"false\" decs=\"1\" prefix=\"\" sufix=\"\" class=\"\">",
+       "     <span>",
+       "      \"Código\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:29px;\"></div>",
+       "    </th>",
+       "    \"\\n\"",
+       "    <th type=\"NoEditable\" field=\"nombre\" textalign=\"\" format=\"false\" thousandssep=\"false\" decs=\"1\" prefix=\"\" sufix=\"\" class=\"\">",
+       "     <span>",
+       "      \"Nombre\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:29px;\"></div>",
+       "    </th>",
+       "    \"\\n\"",
+       "    <th type=\"NoEditable\" field=\"importe\" textalign=\"end\" format=\"true\" thousandssep=\"false\" decs=\"2\" prefix=\"\" sufix=\"\" class=\"\">",
+       "     <span>",
+       "      \"Importe\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:29px;\"></div>",
+       "    </th>",
+       "    \"\\n\"",
+       "   </tr>",
+       "  </thead>",
+       "  <tbody>",
+       "   <tr id=\"1\" parent=\"\" indent=\"0\">",
+       "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Código\" style=\"padding-left: 0rem;\">",
+       "     <div class=\"container-cell-content\">",
+       "      <span class=\"collapse-btn\" expanded=\"false\">",
+       "       <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\" fill=\"currentColor\" class=\"bi bi-caret-right-fill\" viewBox=\"0 0 16 16\">",
+       "        <path d=\"m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z\"></path>",
+       "       </svg>",
+       "      </span>",
+       "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "       \"A\"",
+       "      </div>",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Grupo A\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Importe\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; justify-content: end; text-align: end;\">",
+       "      \"100.00\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr id=\"2\" parent=\"1\" indent=\"1\" class=\"hidde-row\">",
+       "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Código\" style=\"padding-left: 1rem;\">",
+       "     <div class=\"container-cell-content\">",
+       "      <span class=\"collapse-btn\" expanded=\"false\">",
+       "       <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\" fill=\"currentColor\" class=\"bi bi-caret-right-fill\" viewBox=\"0 0 16 16\">",
+       "        <path d=\"m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z\"></path>",
+       "       </svg>",
+       "      </span>",
+       "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "       \"A1\"",
+       "      </div>",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Subgrupo A1\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Importe\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; justify-content: end; text-align: end;\">",
+       "      \"40.00\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr id=\"3\" parent=\"2\" indent=\"2\" class=\"hidde-row\">",
+       "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Código\" style=\"padding-left: 2.7rem;\">",
+       "     <div class=\"container-cell-content\">",
+       "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "       \"A1a\"",
+       "      </div>",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Elemento A1a\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Importe\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; justify-content: end; text-align: end;\">",
+       "      \"15.00\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr id=\"4\" parent=\"1\" indent=\"1\" class=\"hidde-row\">",
+       "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Código\" style=\"padding-left: 1.7rem;\">",
+       "     <div class=\"container-cell-content\">",
+       "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "       \"A2\"",
+       "      </div>",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Subgrupo A2\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Importe\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; justify-content: end; text-align: end;\">",
+       "      \"60.00\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr id=\"5\" parent=\"\" indent=\"0\">",
+       "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Código\" style=\"padding-left: 0rem;\">",
+       "     <div class=\"container-cell-content\">",
+       "      <span class=\"collapse-btn\" expanded=\"false\">",
+       "       <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\" fill=\"currentColor\" class=\"bi bi-caret-right-fill\" viewBox=\"0 0 16 16\">",
+       "        <path d=\"m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z\"></path>",
+       "       </svg>",
+       "      </span>",
+       "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "       \"B\"",
+       "      </div>",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Grupo B\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Importe\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; justify-content: end; text-align: end;\">",
+       "      \"7.00\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr id=\"6\" parent=\"5\" indent=\"1\" class=\"hidde-row\">",
+       "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Código\" style=\"padding-left: 1.7rem;\">",
+       "     <div class=\"container-cell-content\">",
+       "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "       \"B1\"",
+       "      </div>",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Subgrupo B1\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Importe\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; justify-content: end; text-align: end;\">",
+       "      \"7.00\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr id=\"7\" parent=\"\" indent=\"0\">",
+       "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Código\" style=\"padding-left: 0.7rem;\">",
+       "     <div class=\"container-cell-content\">",
+       "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "       \"C\"",
+       "      </div>",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Grupo C\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Importe\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; justify-content: end; text-align: end;\">",
+       "      \"0.00\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "  </tbody>",
+       " </table>",
+       "</div>"
+      ],
+      "shadowEsElGuardado": true,
+      "datos": [
+       {"sys_pk":1,"parent":null,"codigo":"A","nombre":"Grupo A","importe":100},
+       {"sys_pk":2,"parent":1,"codigo":"A1","nombre":"Subgrupo A1","importe":40},
+       {"sys_pk":3,"parent":2,"codigo":"A1a","nombre":"Elemento A1a","importe":15},
+       {"sys_pk":4,"parent":1,"codigo":"A2","nombre":"Subgrupo A2","importe":60},
+       {"sys_pk":5,"parent":null,"codigo":"B","nombre":"Grupo B","importe":7},
+       {"sys_pk":6,"parent":5,"codigo":"B1","nombre":"Subgrupo B1","importe":7},
+       {"sys_pk":7,"parent":null,"codigo":"C","nombre":"Grupo C","importe":0}
+      ],
+      "columnas": [
+       {
+        "type": "NoEditable",
+        "field": "codigo",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "",
+        "title": "Código"
+       },
+       {
+        "type": "NoEditable",
+        "field": "nombre",
+        "textalign": "",
+        "format": "false",
+        "thousandssep": "false",
+        "decs": "1",
+        "prefix": "",
+        "sufix": "",
+        "class": "",
+        "title": "Nombre"
+       },
+       {
+        "type": "NoEditable",
+        "field": "importe",
+        "textalign": "end",
+        "format": "true",
+        "thousandssep": "false",
+        "decs": "2",
+        "prefix": "",
+        "sufix": "",
+        "class": "",
+        "title": "Importe"
+       }
+      ],
+      "respaldo": null,
+      "props": [
+       "IsDirty = false",
+       "Editing = false",
+       "ReadOnly = false",
+       "AutoAddRow = false",
+       "AutoDelRow = false",
+       "EverMove = false",
+       "PagOffSet = 10",
+       "TheadRowIndex = 0",
+       "ColumnsDefaultType = \"Text\"",
+       "ShowAsTree = true",
+       "CanMoveRow = false",
+       "Key = \"sys_pk\"",
+       "ParentKey = \"parent\"",
+       "Childs = \"__items\"",
+       "TreeOptions = {\"key\":\"sys_pk\",\"parentkey\":\"parent\",\"childs\":\"__items\"}",
+       "sorTable = true",
+       "_sorTable = true",
+       "htmlEncode = false",
+       "autoConfirm = false",
+       "hiddeSelector = true",
+       "hiddeRowSelector = false",
+       "minRowHeight = \"none\"",
+       "maxRowHeight = \"none\"",
+       "rowHeight = \"100%\"",
+       "cardsResponsive = true",
+       "editableResponsive = false",
+       "tableId = \"tbl_a\"",
+       "NumFormat = {\"default_decimals\":\".\",\"thousands\":\",\",\"decimals\":\".\"}",
+       "CSS = {\"Cell\":\"EdiTable-Cell\",\"RowSelected\":\"EdiTable-Row-Selected\"}",
+       "hideColumns = []",
+       "_expandOnStart = false",
+       "KeepSelectionVisible = true",
+       "CardsMode = null",
+       "CardsLayout = \"grid\"",
+       "CardsBreakpoint = \"768px\"",
+       "CardsBreakpointTarget = \"viewport\"",
+       "IsCardView = false",
+       "_count_isdirty = 0",
+       "_current_row = -1",
+       "attributes = [\"id\",\"show-tree\",\"key\",\"parentkey\",\"childs-field\",\"can-move-row\",\"hidde-selector\",\"cards-responsive\",\"style\",\"control-styles\"]",
+       "BadgesField = \"__badges\"",
+       "BadgeTooltip = \"native\"",
+       "BadgeSelectsRow = false",
+       "NativeEvents = false",
+       "TemplateEncode = false",
+       "Locale = null",
+       "RowClassField = null",
+       "_TreeValueIndent = 1",
+       "_TreeUnitIndent = \"rem\"",
+       "temp_html = \"[undefined]\"",
+       "CurrentRowIndex() = -1",
+       "CurrentColIndex() = -1",
+       "TRCount() = 7",
+       "THCount() = 3",
+       "ColumnsCount() = 3",
+       "CurrentTd() = null",
+       "focusedTable==_getCurren() = false",
+       "Events reemplazado = 0",
+       "Events claves = [\"onsort\"]",
+       "scroll = {\"contenedor\":[0,0]}"
+      ]
+     }
+    ],
+    "luz": [
+     "<body {foco}>",
+     " \"\\n\"",
+     " <div id=\"work_area\">",
+     "  <div style=\"height:100%;\">",
+     "   <div style=\"overflow-y:auto; max-height:75vh;\" id=\"list_table_container\">",
+     "    <edit-table id=\"tbl_p\" hidde-selector=\"true\" cards-responsive=\"true\" style=\"width:100%;\" control-styles=\"                        div:has(table#tbl_p) { overflow:revert !important; }\\n                        #tbl_p tr th { font-weight:500; }\\n                    \\n                        @media print {\\n                            #tbl_p { overflow:hidden; }\\n                        }\\n\\n                        \">",
+     "     #shadow-root -> tablas[0]",
+     "    </edit-table>",
+     "   </div>",
+     "   <small class=\"text-secondary hide-on-print\" id=\"tbl_p_leyend\">",
+     "    \"Mostrando registros: 0 a 10 de 30\"",
+     "   </small>",
+     "   <div id=\"tbl_p_pagination\" class=\"d-flex justify-content-center align-items-center gap-1 py-2\">",
+     "    \"\\n                                    \"",
+     "    <button type=\"button\" class=\"btn btn-sm btn-outline-secondary\" disabled=\"\" onclick=\"pagination.goto(0)\">",
+     "     \"\\n                                        <\\n                                    \"",
+     "    </button>",
+     "    \"\\n                                \\n                                            \"",
+     "    <button type=\"button\" class=\"btn btn-sm btn-secondary\" onclick=\"pagination.goto(1)\">",
+     "     \"\\n                                                1\\n                                            \"",
+     "    </button>",
+     "    \"\\n                                        \\n                                            \"",
+     "    <button type=\"button\" class=\"btn btn-sm btn-outline-secondary\" onclick=\"pagination.goto(2)\">",
+     "     \"\\n                                                2\\n                                            \"",
+     "    </button>",
+     "    \"\\n                                        \\n                                            \"",
+     "    <button type=\"button\" class=\"btn btn-sm btn-outline-secondary\" onclick=\"pagination.goto(3)\">",
+     "     \"\\n                                                3\\n                                            \"",
+     "    </button>",
+     "    \"\\n                                        \\n                                    \"",
+     "    <button type=\"button\" class=\"btn btn-sm btn-outline-secondary\" onclick=\"pagination.goto(2)\">",
+     "     \"\\n                                        >\\n                                    \"",
+     "    </button>",
+     "    \"\\n                                \"",
+     "   </div>",
+     "   <script type=\"text/javascript\" id=\"uie.dbeditable-script\">",
+     "    \"                document.addEventListener(\\\"DOMContentLoaded\\\", () => {\\n                    const table = document.getElementById(\\\"tbl_p\\\");\\n                    const data = [{\\\"sys_pk\\\":1000,\\\"sys_dtcreated\\\":\\\"2026-01-01 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-000\\\",\\\"nombre\\\":\\\"Registro de prueba 0\\\",\\\"importe\\\":0},{\\\"sys_pk\\\":1001,\\\"sys_dtcreated\\\":\\\"2026-02-02 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-037\\\",\\\"nombre\\\":\\\"Registro de prueba 1\\\",\\\"importe\\\":135.8},{\\\"sys_pk\\\":1002,\\\"sys_dtcreated\\\":\\\"2026-03-03 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-074\\\",\\\"nombre\\\":\\\"Registro de prueba 2\\\",\\\"importe\\\":271.7},{\\\"sys_pk\\\":1003,\\\"sys_dtcreated\\\":\\\"2026-04-04 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-111\\\",\\\"nombre\\\":\\\"Registro de prueba 3\\\",\\\"importe\\\":407.5},{\\\"sys_pk\\\":1004,\\\"sys_dtcreated\\\":\\\"2026-05-05 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-148\\\",\\\"nombre\\\":\\\"Registro de prueba 4\\\",\\\"importe\\\":543.4},{\\\"sys_pk\\\":1005,\\\"sys_dtcreated\\\":\\\"2026-06-06 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-185\\\",\\\"nombre\\\":\\\"Registro de prueba 5\\\",\\\"importe\\\":679.2},{\\\"sys_pk\\\":1006,\\\"sys_dtcreated\\\":\\\"2026-07-07 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-222\\\",\\\"nombre\\\":\\\"Registro de prueba 6\\\",\\\"importe\\\":815.1},{\\\"sys_pk\\\":1007,\\\"sys_dtcreated\\\":\\\"2026-08-08 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-259\\\",\\\"nombre\\\":\\\"Registro de prueba 7\\\",\\\"importe\\\":950.9},{\\\"sys_pk\\\":1008,\\\"sys_dtcreated\\\":\\\"2026-09-09 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-296\\\",\\\"nombre\\\":\\\"Registro de prueba 8\\\",\\\"importe\\\":1086.8},{\\\"sys_pk\\\":1009,\\\"sys_dtcreated\\\":\\\"2026-01-10 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-333\\\",\\\"nombre\\\":\\\"Registro de prueba 9\\\",\\\"importe\\\":1222.6},{\\\"sys_pk\\\":1010,\\\"sys_dtcreated\\\":\\\"2026-02-11 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-370\\\",\\\"nombre\\\":\\\"Registro de prueba 10\\\",\\\"importe\\\":1358.5},{\\\"sys_pk\\\":1011,\\\"sys_dtcreated\\\":\\\"2026-03-12 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-407\\\",\\\"nombre\\\":\\\"Registro de prueba 11\\\",\\\"importe\\\":1494.3},{\\\"sys_pk\\\":1012,\\\"sys_dtcreated\\\":\\\"2026-04-13 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-444\\\",\\\"nombre\\\":\\\"Registro de prueba 12\\\",\\\"importe\\\":1630.2},{\\\"sys_pk\\\":1013,\\\"sys_dtcreated\\\":\\\"2026-05-14 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-481\\\",\\\"nombre\\\":\\\"Registro de prueba 13\\\",\\\"importe\\\":1766},{\\\"sys_pk\\\":1014,\\\"sys_dtcreated\\\":\\\"2026-06-15 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-518\\\",\\\"nombre\\\":\\\"Registro de prueba 14\\\",\\\"importe\\\":1901.9},{\\\"sys_pk\\\":1015,\\\"sys_dtcreated\\\":\\\"2026-07-16 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-555\\\",\\\"nombre\\\":\\\"Registro de prueba 15\\\",\\\"importe\\\":2037.7},{\\\"sys_pk\\\":1016,\\\"sys_dtcreated\\\":\\\"2026-08-17 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-592\\\",\\\"nombre\\\":\\\"Registro de prueba 16\\\",\\\"importe\\\":2173.6},{\\\"sys_pk\\\":1017,\\\"sys_dtcreated\\\":\\\"2026-09-18 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-629\\\",\\\"nombre\\\":\\\"Registro de prueba 17\\\",\\\"importe\\\":2309.4},{\\\"sys_pk\\\":1018,\\\"sys_dtcreated\\\":\\\"2026-01-19 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-666\\\",\\\"nombre\\\":\\\"Registro de prueba 18\\\",\\\"importe\\\":2445.2},{\\\"sys_pk\\\":1019,\\\"sys_dtcreated\\\":\\\"2026-02-20 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-703\\\",\\\"nombre\\\":\\\"Registro de prueba 19\\\",\\\"importe\\\":2581.1},{\\\"sys_pk\\\":1020,\\\"sys_dtcreated\\\":\\\"2026-03-21 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-740\\\",\\\"nombre\\\":\\\"Registro de prueba 20\\\",\\\"importe\\\":2716.9},{\\\"sys_pk\\\":1021,\\\"sys_dtcreated\\\":\\\"2026-04-22 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-777\\\",\\\"nombre\\\":\\\"Registro de prueba 21\\\",\\\"importe\\\":2852.8},{\\\"sys_pk\\\":1022,\\\"sys_dtcreated\\\":\\\"2026-05-23 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-814\\\",\\\"nombre\\\":\\\"Registro de prueba 22\\\",\\\"importe\\\":2988.6},{\\\"sys_pk\\\":1023,\\\"sys_dtcreated\\\":\\\"2026-06-24 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-851\\\",\\\"nombre\\\":\\\"Registro de prueba 23\\\",\\\"importe\\\":3124.5},{\\\"sys_pk\\\":1024,\\\"sys_dtcreated\\\":\\\"2026-07-25 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-888\\\",\\\"nombre\\\":\\\"Registro de prueba 24\\\",\\\"importe\\\":3260.3},{\\\"sys_pk\\\":1025,\\\"sys_dtcreated\\\":\\\"2026-08-26 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-925\\\",\\\"nombre\\\":\\\"Registro de prueba 25\\\",\\\"importe\\\":3396.2},{\\\"sys_pk\\\":1026,\\\"sys_dtcreated\\\":\\\"2026-09-27 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-962\\\",\\\"nombre\\\":\\\"Registro de prueba 26\\\",\\\"importe\\\":3532},{\\\"sys_pk\\\":1027,\\\"sys_dtcreated\\\":\\\"2026-01-01 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-002\\\",\\\"nombre\\\":\\\"Registro de prueba 27\\\",\\\"importe\\\":3667.9},{\\\"sys_pk\\\":1028,\\\"sys_dtcreated\\\":\\\"2026-02-02 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-039\\\",\\\"nombre\\\":\\\"Registro de prueba 28\\\",\\\"importe\\\":3803.7},{\\\"sys_pk\\\":1029,\\\"sys_dtcreated\\\":\\\"2026-03-03 10:00:00\\\",\\\"sys_info\\\":\\\"\\\",\\\"codigo\\\":\\\"PRB-076\\\",\\\"nombre\\\":\\\"Registro de prueba 29\\\",\\\"importe\\\":3939.6}];\\n                    const pages = {};\\n                    \\n                    if (table)\\n                    {\\n                        table.AutoAddRow = false;\\n                        table.AutoDelRow = false;\\n                        table.EverMove = false;\\n                        \\n                        // Vista con filas anidadas\\n                        if (false)\\n                        {\\n                            table.removeAttribute(\\\"data\\\");\\n                            table.DataArray = data;\\n                            table._expandOnStart = false;\\n                            table._printTreeData();\\n                        }\\n                        // Paginación\\n                        if (true)\\n                        {\\n                            let perPage = 10\\n                            let numItems = data.length\\n                            let numPages = Math.ceil(numItems / perPage)\\n                            let currentPage = 1\\n\\n                            for (let i = 0; i < numItems; i += perPage) {\\n                                pages[Object.keys(pages).length + 1] = data.slice(i, i + perPage)\\n                            }\\n\\n                            const renderPagination = () =>\\n                            {\\n                                const container = document.getElementById(\\\"tbl_p_pagination\\\")\\n\\n                                if (!container || numPages <= 1) return\\n\\n                                let html = \\\"\\\"\\n\\n                                html += `\\n                                    <button type=\\\"button\\\"\\n                                        class=\\\"btn btn-sm btn-outline-secondary\\\"\\n                                        ${currentPage === 1 ? \\\"disabled\\\" : \\\"\\\"}\\n                                        onclick=\\\"pagination.goto(${currentPage - 1})\\\">\\n                                        &lt;\\n                                    </button>\\n                                `\\n\\n                                if (numPages <= 5)\\n                                {\\n                                    for (let page = 1; page <= numPages; page++)\\n                                    {\\n                                        html += `\\n                                            <button type=\\\"button\\\"\\n                                                class=\\\"btn btn-sm ${page === currentPage ? \\\"btn-secondary\\\" : \\\"btn-outline-secondary\\\"}\\\"\\n                                                onclick=\\\"pagination.goto(${page})\\\">\\n                                                ${page}\\n                                            </button>\\n                                        `\\n                                    }\\n                                }\\n                                else\\n                                {\\n                                    html += `\\n                                        <button type=\\\"button\\\"\\n                                            class=\\\"btn btn-sm ${currentPage === 1 ? \\\"btn-secondary\\\" : \\\"btn-outline-secondary\\\"}\\\"\\n                                            onclick=\\\"pagination.goto(1)\\\">\\n                                            1\\n                                        </button>\\n                                    `\\n\\n                                    if (currentPage > 3)\\n                                        html += `<span class=\\\"px-1\\\">...</span>`\\n\\n                                    let start = Math.max(2, currentPage - 1)\\n                                    let end = Math.min(numPages - 1, currentPage + 1)\\n\\n                                    if (currentPage <= 3)\\n                                    {\\n                                        start = 2\\n                                        end = 3\\n                                    }\\n\\n                                    if (currentPage >= numPages - 2)\\n                                    {\\n                                        start = numPages - 2\\n                                        end = numPages - 1\\n                                    }\\n\\n                                    for (let page = start; page <= end; page++)\\n                                    {\\n                                        html += `\\n                                            <button type=\\\"button\\\"\\n                                                class=\\\"btn btn-sm ${page === currentPage ? \\\"btn-secondary\\\" : \\\"btn-outline-secondary\\\"}\\\"\\n                                                onclick=\\\"pagination.goto(${page})\\\">\\n                                                ${page}\\n                                            </button>\\n                                        `\\n                                    }\\n\\n                                    if (currentPage < numPages - 2)\\n                                        html += `<span class=\\\"px-1\\\">...</span>`\\n\\n                                    html += `\\n                                        <button type=\\\"button\\\"\\n                                            class=\\\"btn btn-sm ${currentPage === numPages ? \\\"btn-secondary\\\" : \\\"btn-outline-secondary\\\"}\\\"\\n                                            onclick=\\\"pagination.goto(${numPages})\\\">\\n                                            Último\\n                                        </button>\\n                                    `\\n                                }\\n\\n                                html += `\\n                                    <button type=\\\"button\\\"\\n                                        class=\\\"btn btn-sm btn-outline-secondary\\\"\\n                                        ${currentPage === numPages ? \\\"disabled\\\" : \\\"\\\"}\\n                                        onclick=\\\"pagination.goto(${currentPage + 1})\\\">\\n                                        &gt;\\n                                    </button>\\n                                `\\n\\n                                container.innerHTML = html\\n                            }\\n\\n                            window.pagination = {\\n                                goto: (numPage) =>\\n                                {\\n                                    if (numPage < 1 || numPage > numPages) return\\n                                    \\n                                    const leyend = document.getElementById(\\\"tbl_p_leyend\\\")\\n                                    currentPage = numPage\\n\\n                                    table.DataArray = pages[numPage] ?? []\\n                                    if (leyend)\\n                                    {\\n                                        let start = (numPage - 1) * perPage\\n                                        let end = start + table.DataArray.length\\n                                        let text = \\\"Mostrando registros: \\\" + start +\\\" a \\\"+ end +\\\" de \\\"+ numItems\\n                                        leyend.textContent = text\\n                                    }\\n                                    table._printRows()\\n\\n                                    renderPagination()\\n                                }\\n                            }\\n\\n                            table.removeAttribute(\\\"data\\\")\\n                            pagination.goto(1)\\n                        }\\n\\n                        table.Events[table.EdiTable.Const.Events.OnSort] = (e) =>\\n                        {\\n                            const table_leyend = document.getElementById(\\\"tbl_p_leyend\\\");\\n                            let length = (table?.DataArray ?? []).length;\\n                            let leyend = \\\"No se encontraron resultados.\\\";\\n\\n                            if (length > 0) leyend = \\\"Mostrando los primeros \\\"+length+\\\" registros\\\";\\n                            if (e && length > 0) leyend += \\\" ordenados por \\\"+e.caption+\\\" \\\"+e.coldef.sort;\\n\\n                            table_leyend.textContent = leyend;\\n                        }\\n                    }\\n                });\"",
+     "   </script>",
+     "  </div>",
+     "  \"\\n\"",
+     "  <script>",
+     "   \"                function ctxP()\\n                {\\n                    const table = document.getElementById(\\\"tbl_p\\\");\\n                    const id = (table?.DataArray[table.CurrentRowIndex()]?.sys_pk ?? \\\"\\\");\\n                    return { item_id:id, context: {} }\\n                }\"",
+     "  </script>",
+     " </div>",
+     " \"\\n\"",
+     " <div id=\"work_area2\">",
+     "  <div style=\"height:100%;\">",
+     "   <div style=\"overflow-y:auto; max-height:75vh;\" id=\"list_table_container2\">",
+     "    <edit-table id=\"tbl_a\" show-tree=\"true\" key=\"sys_pk\" parentkey=\"parent\" childs-field=\"__items\" can-move-row=\"false\" hidde-selector=\"true\" cards-responsive=\"true\" style=\"width:100%;\" control-styles=\"                        div:has(table#tbl_a) { overflow:revert !important; }\\n                        #tbl_a tr th { font-weight:500; }\\n                    \\n                        @media print {\\n                            #tbl_a { overflow:hidden; }\\n                        }\\n\\n                        \">",
+     "     #shadow-root -> tablas[1]",
+     "    </edit-table>",
+     "   </div>",
+     "   <small class=\"text-secondary hide-on-print\" id=\"tbl_a_leyend\">",
+     "    \"Mostrando los primeros 7 registros ordenados por código\"",
+     "   </small>",
+     "   <script type=\"text/javascript\" id=\"uie.dbeditable-script\">",
+     "    \"                document.addEventListener(\\\"DOMContentLoaded\\\", () => {\\n                    const table = document.getElementById(\\\"tbl_a\\\");\\n                    const data = [{\\\"sys_pk\\\":1,\\\"parent\\\":null,\\\"codigo\\\":\\\"A\\\",\\\"nombre\\\":\\\"Grupo A\\\",\\\"importe\\\":100},{\\\"sys_pk\\\":2,\\\"parent\\\":1,\\\"codigo\\\":\\\"A1\\\",\\\"nombre\\\":\\\"Subgrupo A1\\\",\\\"importe\\\":40},{\\\"sys_pk\\\":3,\\\"parent\\\":2,\\\"codigo\\\":\\\"A1a\\\",\\\"nombre\\\":\\\"Elemento A1a\\\",\\\"importe\\\":15},{\\\"sys_pk\\\":4,\\\"parent\\\":1,\\\"codigo\\\":\\\"A2\\\",\\\"nombre\\\":\\\"Subgrupo A2\\\",\\\"importe\\\":60},{\\\"sys_pk\\\":5,\\\"parent\\\":null,\\\"codigo\\\":\\\"B\\\",\\\"nombre\\\":\\\"Grupo B\\\",\\\"importe\\\":7},{\\\"sys_pk\\\":6,\\\"parent\\\":5,\\\"codigo\\\":\\\"B1\\\",\\\"nombre\\\":\\\"Subgrupo B1\\\",\\\"importe\\\":7},{\\\"sys_pk\\\":7,\\\"parent\\\":null,\\\"codigo\\\":\\\"C\\\",\\\"nombre\\\":\\\"Grupo C\\\",\\\"importe\\\":0}];\\n                    const pages = {};\\n                    \\n                    if (table)\\n                    {\\n                        table.AutoAddRow = false;\\n                        table.AutoDelRow = false;\\n                        table.EverMove = false;\\n                        \\n                        // Vista con filas anidadas\\n                        if (true)\\n                        {\\n                            table.removeAttribute(\\\"data\\\");\\n                            table.DataArray = data;\\n                            table._expandOnStart = false;\\n                            table._printTreeData();\\n                        }\\n                        // Paginación\\n                        if (false)\\n                        {\\n                            let perPage = 250\\n                            let numItems = data.length\\n                            let numPages = Math.ceil(numItems / perPage)\\n                            let currentPage = 1\\n\\n                            for (let i = 0; i < numItems; i += perPage) {\\n                                pages[Object.keys(pages).length + 1] = data.slice(i, i + perPage)\\n                            }\\n\\n                            const renderPagination = () =>\\n                            {\\n                                const container = document.getElementById(\\\"tbl_a_pagination\\\")\\n\\n                                if (!container || numPages <= 1) return\\n\\n                                let html = \\\"\\\"\\n\\n                                html += `\\n                                    <button type=\\\"button\\\"\\n                                        class=\\\"btn btn-sm btn-outline-secondary\\\"\\n                                        ${currentPage === 1 ? \\\"disabled\\\" : \\\"\\\"}\\n                                        onclick=\\\"pagination.goto(${currentPage - 1})\\\">\\n                                        &lt;\\n                                    </button>\\n                                `\\n\\n                                if (numPages <= 5)\\n                                {\\n                                    for (let page = 1; page <= numPages; page++)\\n                                    {\\n                                        html += `\\n                                            <button type=\\\"button\\\"\\n                                                class=\\\"btn btn-sm ${page === currentPage ? \\\"btn-secondary\\\" : \\\"btn-outline-secondary\\\"}\\\"\\n                                                onclick=\\\"pagination.goto(${page})\\\">\\n                                                ${page}\\n                                            </button>\\n                                        `\\n                                    }\\n                                }\\n                                else\\n                                {\\n                                    html += `\\n                                        <button type=\\\"button\\\"\\n                                            class=\\\"btn btn-sm ${currentPage === 1 ? \\\"btn-secondary\\\" : \\\"btn-outline-secondary\\\"}\\\"\\n                                            onclick=\\\"pagination.goto(1)\\\">\\n                                            1\\n                                        </button>\\n                                    `\\n\\n                                    if (currentPage > 3)\\n                                        html += `<span class=\\\"px-1\\\">...</span>`\\n\\n                                    let start = Math.max(2, currentPage - 1)\\n                                    let end = Math.min(numPages - 1, currentPage + 1)\\n\\n                                    if (currentPage <= 3)\\n                                    {\\n                                        start = 2\\n                                        end = 3\\n                                    }\\n\\n                                    if (currentPage >= numPages - 2)\\n                                    {\\n                                        start = numPages - 2\\n                                        end = numPages - 1\\n                                    }\\n\\n                                    for (let page = start; page <= end; page++)\\n                                    {\\n                                        html += `\\n                                            <button type=\\\"button\\\"\\n                                                class=\\\"btn btn-sm ${page === currentPage ? \\\"btn-secondary\\\" : \\\"btn-outline-secondary\\\"}\\\"\\n                                                onclick=\\\"pagination.goto(${page})\\\">\\n                                                ${page}\\n                                            </button>\\n                                        `\\n                                    }\\n\\n                                    if (currentPage < numPages - 2)\\n                                        html += `<span class=\\\"px-1\\\">...</span>`\\n\\n                                    html += `\\n                                        <button type=\\\"button\\\"\\n                                            class=\\\"btn btn-sm ${currentPage === numPages ? \\\"btn-secondary\\\" : \\\"btn-outline-secondary\\\"}\\\"\\n                                            onclick=\\\"pagination.goto(${numPages})\\\">\\n                                            Último\\n                                        </button>\\n                                    `\\n                                }\\n\\n                                html += `\\n                                    <button type=\\\"button\\\"\\n                                        class=\\\"btn btn-sm btn-outline-secondary\\\"\\n                                        ${currentPage === numPages ? \\\"disabled\\\" : \\\"\\\"}\\n                                        onclick=\\\"pagination.goto(${currentPage + 1})\\\">\\n                                        &gt;\\n                                    </button>\\n                                `\\n\\n                                container.innerHTML = html\\n                            }\\n\\n                            window.pagination = {\\n                                goto: (numPage) =>\\n                                {\\n                                    if (numPage < 1 || numPage > numPages) return\\n                                    \\n                                    const leyend = document.getElementById(\\\"tbl_a_leyend\\\")\\n                                    currentPage = numPage\\n\\n                                    table.DataArray = pages[numPage] ?? []\\n                                    if (leyend)\\n                                    {\\n                                        let start = (numPage - 1) * perPage\\n                                        let end = start + table.DataArray.length\\n                                        let text = \\\"Mostrando registros: \\\" + start +\\\" a \\\"+ end +\\\" de \\\"+ numItems\\n                                        leyend.textContent = text\\n                                    }\\n                                    table._printRows()\\n\\n                                    renderPagination()\\n                                }\\n                            }\\n\\n                            table.removeAttribute(\\\"data\\\")\\n                            pagination.goto(1)\\n                        }\\n\\n                        table.Events[table.EdiTable.Const.Events.OnSort] = (e) =>\\n                        {\\n                            const table_leyend = document.getElementById(\\\"tbl_a_leyend\\\");\\n                            let length = (table?.DataArray ?? []).length;\\n                            let leyend = \\\"No se encontraron resultados.\\\";\\n\\n                            if (length > 0) leyend = \\\"Mostrando los primeros \\\"+length+\\\" registros\\\";\\n                            if (e && length > 0) leyend += \\\" ordenados por \\\"+e.caption+\\\" \\\"+e.coldef.sort;\\n\\n                            table_leyend.textContent = leyend;\\n                        }\\n                    }\\n                });\"",
+     "   </script>",
+     "  </div>",
+     "  \"\\n\"",
+     "  <script>",
+     "   \"                function ctxA()\\n                {\\n                    const table = document.getElementById(\\\"tbl_a\\\");\\n                    const id = (table?.DataArray[table.CurrentRowIndex()]?.sys_pk ?? \\\"\\\");\\n                    return { item_id:id, context: {} }\\n                }\"",
+     "  </script>",
+     " </div>",
+     " \"\\n\"",
+     " <script>",
+     "  \"\\nwindow.__etExtra = () => ({ paginada: ctxP(), arbol: ctxA() });\\n\"",
+     " </script>",
+     " \"\\n\\n\"",
+     "</body>"
+    ],
+    "foco": {"documento":{"ruta":"html>body"},"shadow":null},
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": {"valor":{"paginada":{"item_id":"","context":{}},"arbol":{"item_id":"","context":{}}}},
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 6,
+      "nodo:mousedown": 5,
+      "document:mousemove": 5,
+      "document:mouseup": 5,
+      "window:beforeprint": 2,
+      "window:afterprint": 2,
+      "otro:change": 2
+     },
+     "intervalos": 2
+    }
+   }
+  },
+  {
+   "nombre": "página 2, fila 4",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "tbl_p",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [30,1,["      \"1010\""]],
+        [35,1,["      \"Registro de prueba 10\""]],
+        [42,1,["      \"1011\""]],
+        [47,1,["      \"Registro de prueba 11\""]],
+        [54,1,["      \"1012\""]],
+        [59,1,["      \"Registro de prueba 12\""]],
+        [66,1,["      \"1013\""]],
+        [71,1,["      \"Registro de prueba 13\""]],
+        [75,1,["   <tr id=\"\" parent=\"\" indent=\"0\" class=\"EdiTable-Row-Selected\">"]],
+        [78,1,["      \"1014\""]],
+        [
+         83,
+         1,
+         [
+          "      <div id=\"__table_selector\" class=\"EdiTable-Selector transparent\" tabindex=\"0\" {foco}>",
+          "       \"Registro de prueba 14\"",
+          "      </div>"
+         ]
+        ],
+        [90,1,["      \"1015\""]],
+        [95,1,["      \"Registro de prueba 15\""]],
+        [102,1,["      \"1016\""]],
+        [107,1,["      \"Registro de prueba 16\""]],
+        [114,1,["      \"1017\""]],
+        [119,1,["      \"Registro de prueba 17\""]],
+        [126,1,["      \"1018\""]],
+        [131,1,["      \"Registro de prueba 18\""]],
+        [138,1,["      \"1019\""]],
+        [143,1,["      \"Registro de prueba 19\""]]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": [
+       {
+        "sys_pk": 1010,
+        "sys_dtcreated": "2026-02-11 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-370",
+        "nombre": "Registro de prueba 10",
+        "importe": 1358.5
+       },
+       {
+        "sys_pk": 1011,
+        "sys_dtcreated": "2026-03-12 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-407",
+        "nombre": "Registro de prueba 11",
+        "importe": 1494.3
+       },
+       {
+        "sys_pk": 1012,
+        "sys_dtcreated": "2026-04-13 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-444",
+        "nombre": "Registro de prueba 12",
+        "importe": 1630.2
+       },
+       {
+        "sys_pk": 1013,
+        "sys_dtcreated": "2026-05-14 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-481",
+        "nombre": "Registro de prueba 13",
+        "importe": 1766
+       },
+       {
+        "sys_pk": 1014,
+        "sys_dtcreated": "2026-06-15 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-518",
+        "nombre": "Registro de prueba 14",
+        "importe": 1901.9
+       },
+       {
+        "sys_pk": 1015,
+        "sys_dtcreated": "2026-07-16 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-555",
+        "nombre": "Registro de prueba 15",
+        "importe": 2037.7
+       },
+       {
+        "sys_pk": 1016,
+        "sys_dtcreated": "2026-08-17 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-592",
+        "nombre": "Registro de prueba 16",
+        "importe": 2173.6
+       },
+       {
+        "sys_pk": 1017,
+        "sys_dtcreated": "2026-09-18 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-629",
+        "nombre": "Registro de prueba 17",
+        "importe": 2309.4
+       },
+       {
+        "sys_pk": 1018,
+        "sys_dtcreated": "2026-01-19 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-666",
+        "nombre": "Registro de prueba 18",
+        "importe": 2445.2
+       },
+       {
+        "sys_pk": 1019,
+        "sys_dtcreated": "2026-02-20 10:00:00",
+        "sys_info": "",
+        "codigo": "PRB-703",
+        "nombre": "Registro de prueba 19",
+        "importe": 2581.1
+       }
+      ],
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": {
+       "$parche": [
+        [38,1,["_current_row = 4"]],
+        [50,2,["CurrentRowIndex() = 4","CurrentColIndex() = 1"]],
+        [
+         55,
+         2,
+         [
+          "CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(tbl_p)>div>table#tbl_p>tbody>tr[4]>td[1]\",\"texto\":\"Registro de prueba 14\"}}",
+          "focusedTable==_getCurren() = true"
+         ]
+        ]
+       ]
+      }
+     },
+     {
+      "indice": 1,
+      "id": "tbl_a",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": "@=paso-anterior",
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": "@=paso-anterior",
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": "@=paso-anterior"
+     }
+    ],
+    "luz": {
+     "$parche": [
+      [0,1,["<body>"]],
+      [
+       5,
+       1,
+       [
+        "    <edit-table id=\"tbl_p\" hidde-selector=\"true\" cards-responsive=\"true\" style=\"width:100%;\" control-styles=\"                        div:has(table#tbl_p) { overflow:revert !important; }\\n                        #tbl_p tr th { font-weight:500; }\\n                    \\n                        @media print {\\n                            #tbl_p { overflow:hidden; }\\n                        }\\n\\n                        \" {foco}>"
+       ]
+      ],
+      [10,1,["    \"Mostrando registros: 10 a 20 de 30\""]],
+      [
+       14,
+       1,
+       ["    <button type=\"button\" class=\"btn btn-sm btn-outline-secondary\" onclick=\"pagination.goto(1)\">"]
+      ],
+      [
+       18,
+       1,
+       ["    <button type=\"button\" class=\"btn btn-sm btn-outline-secondary\" onclick=\"pagination.goto(1)\">"]
+      ],
+      [22,1,["    <button type=\"button\" class=\"btn btn-sm btn-secondary\" onclick=\"pagination.goto(2)\">"]],
+      [
+       30,
+       1,
+       ["    <button type=\"button\" class=\"btn btn-sm btn-outline-secondary\" onclick=\"pagination.goto(3)\">"]
+      ]
+     ]
+    },
+    "foco": {
+     "documento": {"ruta":"body>div#work_area>div>div#list_table_container>edit-table#tbl_p"},
+     "shadow": {"ruta":"shadow(tbl_p)>div>table#tbl_p>tbody>tr[4]>td[1]>div>div#__table_selector"}
+    },
+    "eventos": [
+     {
+      "evento": "beforecellfocus",
+      "tabla": "tbl_p",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_p)>div>table#tbl_p>tbody>tr[4]>td[1]","texto":"Registro de prueba 14"}},
+       "sender": {"$sender":"tbl_p","esElemento":false},
+       "cancel": false
+      }
+     },
+     {
+      "evento": "entercell",
+      "tabla": "tbl_p",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_p)>div>table#tbl_p>tbody>tr[4]>td[1]","texto":"Registro de prueba 14"}},
+       "sender": {"$sender":"tbl_p","esElemento":false}
+      }
+     },
+     {
+      "evento": "rowchanged",
+      "tabla": "tbl_p",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_p)>div>table#tbl_p>tbody>tr[4]>td[1]","texto":"Registro de prueba 14"}},
+       "sender": {"$sender":"tbl_p","esElemento":false},
+       "cancel": false,
+       "index": 4,
+       "previous_index": -1
+      }
+     }
+    ],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": {"valor":{"paginada":{"item_id":1014,"context":{}},"arbol":{"item_id":"","context":{}}}},
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 6,
+      "nodo:mousedown": 5,
+      "document:mousemove": 5,
+      "document:mouseup": 5,
+      "window:beforeprint": 2,
+      "window:afterprint": 2,
+      "otro:change": 2,
+      "nodo:click:remove": 1,
+      "nodo:click": 1,
+      "nodo:keydown:remove": 1,
+      "nodo:keydown": 1
+     },
+     "intervalos": 2
+    }
+   }
+  },
+  {
+   "nombre": "árbol: clic en Grupo C (fila 6, tras filas ocultas)",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "tbl_p",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [[83,1,["      <div id=\"__table_selector\" class=\"EdiTable-Selector transparent\" tabindex=\"0\">"]]]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": "@=paso-anterior",
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": "@=paso-anterior"
+     },
+     {
+      "indice": 1,
+      "id": "tbl_a",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [163,1,["   <tr id=\"7\" parent=\"\" indent=\"0\" class=\"EdiTable-Row-Selected\">"]],
+        [
+         173,
+         1,
+         [
+          "      <div id=\"__table_selector\" class=\"EdiTable-Selector transparent\" tabindex=\"0\" {foco}>",
+          "       \"Grupo C\"",
+          "      </div>"
+         ]
+        ]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": "@=paso-anterior",
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": {
+       "$parche": [
+        [38,1,["_current_row = 6"]],
+        [50,2,["CurrentRowIndex() = 6","CurrentColIndex() = 1"]],
+        [
+         55,
+         2,
+         [
+          "CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(tbl_a)>div>table#tbl_a>tbody>tr#7[6]>td[1]\",\"texto\":\"Grupo C\"}}",
+          "focusedTable==_getCurren() = true"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": {
+     "$parche": [
+      [
+       5,
+       1,
+       [
+        "    <edit-table id=\"tbl_p\" hidde-selector=\"true\" cards-responsive=\"true\" style=\"width:100%;\" control-styles=\"                        div:has(table#tbl_p) { overflow:revert !important; }\\n                        #tbl_p tr th { font-weight:500; }\\n                    \\n                        @media print {\\n                            #tbl_p { overflow:hidden; }\\n                        }\\n\\n                        \">"
+       ]
+      ],
+      [
+       48,
+       1,
+       [
+        "    <edit-table id=\"tbl_a\" show-tree=\"true\" key=\"sys_pk\" parentkey=\"parent\" childs-field=\"__items\" can-move-row=\"false\" hidde-selector=\"true\" cards-responsive=\"true\" style=\"width:100%;\" control-styles=\"                        div:has(table#tbl_a) { overflow:revert !important; }\\n                        #tbl_a tr th { font-weight:500; }\\n                    \\n                        @media print {\\n                            #tbl_a { overflow:hidden; }\\n                        }\\n\\n                        \" {foco}>"
+       ]
+      ]
+     ]
+    },
+    "foco": {
+     "documento": {"ruta":"body>div#work_area2>div>div#list_table_container2>edit-table#tbl_a"},
+     "shadow": {"ruta":"shadow(tbl_a)>div>table#tbl_a>tbody>tr#7[6]>td[1]>div>div#__table_selector"}
+    },
+    "eventos": [
+     {
+      "evento": "beforecellfocus",
+      "tabla": "tbl_a",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_a)>div>table#tbl_a>tbody>tr#7[6]>td[1]","texto":"Grupo C"}},
+       "sender": {"$sender":"tbl_a","esElemento":false},
+       "cancel": false
+      }
+     },
+     {
+      "evento": "entercell",
+      "tabla": "tbl_a",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_a)>div>table#tbl_a>tbody>tr#7[6]>td[1]","texto":"Grupo C"}},
+       "sender": {"$sender":"tbl_a","esElemento":false}
+      }
+     },
+     {
+      "evento": "rowchanged",
+      "tabla": "tbl_a",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_a)>div>table#tbl_a>tbody>tr#7[6]>td[1]","texto":"Grupo C"}},
+       "sender": {"$sender":"tbl_a","esElemento":false},
+       "cancel": false,
+       "index": 6,
+       "previous_index": -1
+      }
+     }
+    ],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": {"valor":{"paginada":{"item_id":1014,"context":{}},"arbol":{"item_id":7,"context":{}}}},
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 6,
+      "nodo:mousedown": 5,
+      "document:mousemove": 5,
+      "document:mouseup": 5,
+      "window:beforeprint": 2,
+      "window:afterprint": 2,
+      "otro:change": 2,
+      "nodo:click:remove": 2,
+      "nodo:click": 2,
+      "nodo:keydown:remove": 2,
+      "nodo:keydown": 2
+     },
+     "intervalos": 2
+    }
+   }
+  },
+  {
+   "nombre": "árbol: expandir Grupo B y clic en Subgrupo B1",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "tbl_p",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": "@=paso-anterior",
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": "@=paso-anterior",
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": "@=paso-anterior"
+     },
+     {
+      "indice": 1,
+      "id": "tbl_a",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [
+         123,
+         3,
+         [
+          "      <span class=\"collapse-btn\" expanded=\"true\">",
+          "       <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\" fill=\"currentColor\" class=\"bi bi-caret-down-fill\" viewBox=\"0 0 16 16\">",
+          "        <path d=\"M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z\"></path>"
+         ]
+        ],
+        [144,1,["   <tr id=\"6\" parent=\"5\" indent=\"1\" class=\"EdiTable-Row-Selected\">"]],
+        [
+         154,
+         1,
+         [
+          "      <div id=\"__table_selector\" class=\"EdiTable-Selector transparent\" tabindex=\"0\" {foco}>",
+          "       \"Subgrupo B1\"",
+          "      </div>"
+         ]
+        ],
+        [163,1,["   <tr id=\"7\" parent=\"\" indent=\"0\" class=\"\">"]],
+        [173,3,["      \"Grupo C\""]]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": "@=paso-anterior",
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": {
+       "$parche": [
+        [38,1,["_current_row = 5"]],
+        [50,1,["CurrentRowIndex() = 5"]],
+        [
+         55,
+         1,
+         [
+          "CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(tbl_a)>div>table#tbl_a>tbody>tr#6[5]>td[1]\",\"texto\":\"Subgrupo B1\"}}"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": "@=paso-anterior",
+    "foco": {
+     "documento": {"ruta":"body>div#work_area2>div>div#list_table_container2>edit-table#tbl_a"},
+     "shadow": {"ruta":"shadow(tbl_a)>div>table#tbl_a>tbody>tr#6[5]>td[1]>div>div#__table_selector"}
+    },
+    "eventos": [
+     {
+      "evento": "beforecellfocus",
+      "tabla": "tbl_a",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_a)>div>table#tbl_a>tbody>tr#6[5]>td[1]","texto":"Subgrupo B1"}},
+       "sender": {"$sender":"tbl_a","esElemento":false},
+       "cancel": false
+      }
+     },
+     {
+      "evento": "leavecell",
+      "tabla": "tbl_a",
+      "consumidor": false,
+      "args": {"td":null,"sender":{"$sender":"tbl_a","esElemento":false}}
+     },
+     {
+      "evento": "entercell",
+      "tabla": "tbl_a",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_a)>div>table#tbl_a>tbody>tr#6[5]>td[1]","texto":"Subgrupo B1"}},
+       "sender": {"$sender":"tbl_a","esElemento":false}
+      }
+     },
+     {
+      "evento": "rowchanged",
+      "tabla": "tbl_a",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tbl_a)>div>table#tbl_a>tbody>tr#6[5]>td[1]","texto":"Subgrupo B1"}},
+       "sender": {"$sender":"tbl_a","esElemento":false},
+       "cancel": false,
+       "index": 5,
+       "previous_index": 6
+      }
+     }
+    ],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": {"valor":{"paginada":{"item_id":1014,"context":{}},"arbol":{"item_id":6,"context":{}}}},
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 6,
+      "nodo:mousedown": 5,
+      "document:mousemove": 5,
+      "document:mouseup": 5,
+      "window:beforeprint": 2,
+      "window:afterprint": 2,
+      "otro:change": 2,
+      "nodo:click:remove": 3,
+      "nodo:click": 3,
+      "nodo:keydown:remove": 3,
+      "nodo:keydown": 3
+     },
+     "intervalos": 2
+    }
+   }
+  }
+ ]
+}

@@ -1,0 +1,2257 @@
+{
+ "id": "basicos/demo-treetest",
+ "titulo": "examples/_treeTest.html: árbol, RowIndent, ShowAsTree en caliente, control-styles",
+ "etiquetas": [],
+ "archivo": "escenarios/basicos/demos.mjs",
+ "pasos": [
+  {
+   "nombre": "inicio",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "tabla-demo",
+      "inicializada": true,
+      "modoShadowPedido": "closed",
+      "dom": [
+       "\"\\n                \"",
+       "<style>",
+       " @@ESTILO sha256:908dfd6949e01083",
+       "</style>",
+       "\"\\n            \"",
+       "<div style=\"min-height: 2rem; max-height: 100%; overflow: auto; padding-bottom: 5px\">",
+       " <table id=\"tabla-demo\">",
+       "  <thead>",
+       "   \"\\n                    \"",
+       "   <tr>",
+       "    \"\\n                        \"",
+       "    <th type=\"Number\" field=\"value\">",
+       "     <span>",
+       "      \"Valor\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:1061px;\"></div>",
+       "    </th>",
+       "    \"\\n                        \"",
+       "    <th type=\"Text\" field=\"name\" button=\"true\" buttondata=\"<svg xmlns=\\\"http://www.w3.org/2000/svg\\\" width=\\\"16\\\" height=\\\"16\\\" fill=\\\"currentColor\\\" class=\\\"bi bi-search\\\" viewBox=\\\"0 0 16 16\\\"><path d=\\\"M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z\\\"/></svg>\">",
+       "     <span>",
+       "      \"\\n                            Nombre\\n                        \"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:1061px;\"></div>",
+       "    </th>",
+       "    \"\\n                        \"",
+       "    <th type=\"Select\" field=\"even\" options=\"{\\\"No\\\":\\\"No\\\",\\\"Si\\\":\\\"Si\\\"}\">",
+       "     <span>",
+       "      \"¿Es par?\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:1061px;\"></div>",
+       "    </th>",
+       "    \"\\n                        \"",
+       "    <th type=\"Memo\" field=\"notes\" button=\"true\">",
+       "     <span>",
+       "      \"\\n                            Notas\\n                        \"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:1061px;\"></div>",
+       "    </th>",
+       "    \"\\n                    \"",
+       "   </tr>",
+       "   \"\\n                \"",
+       "  </thead>",
+       "  <tbody>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"60\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Sesenta\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Si\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"14.3\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Catorce punto tres\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"No\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"14.8\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Catorce punto ocho\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Si\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"54.1\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Cincuenta y cuatro punto uno\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"No\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"10\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Diez\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Si\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"95\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Noventa y cinco\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"No\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"14.5\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Catorce punto cinco\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"No\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"20\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Veinte\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Si\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"50\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Cincuenta\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Si\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"97\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Noventa y siete\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"No\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"100\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Numeros\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"No\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"89\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Ochenta y nueve\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"No\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"14.2\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Catorce punto dos\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Si\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"70\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Setenta\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Si\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"40\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Cuarenta\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Si\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"39\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Treinta y nueve\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"No\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"2\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Dos\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Si\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"30\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Treinta\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Si\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"54\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Cincuenta y cuatro\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Si\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"90\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Noventa\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Si\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"6\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Seis\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Si\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"42\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Cuarenta y dos\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Si\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"5\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Cinco\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"No\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"0\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Cero\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"No\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"14.1\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Catorce punto uno\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"No\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"80\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Ochenta\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Si\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"9\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Nueve\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"No\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"14\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Catorce\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Si\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"*-*\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Simbolos\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"No\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"88\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Ochenta y ocho\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Si\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"-\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Guión\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"No\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"14.9\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Catorce punto nueve\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"No\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"12\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Nombre\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Doce\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"¿Es par?\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Si\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"\\n                            Notas\\n                        \">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "  </tbody>",
+       " </table>",
+       "</div>"
+      ],
+      "shadowEsElGuardado": true,
+      "datos": [
+       {"name":"Sesenta","value":60,"even":"Si","notes":"","parent":"Numeros"},
+       {"name":"Catorce punto tres","value":14.3,"even":"No","notes":"","parent":"Catorce"},
+       {"name":"Catorce punto ocho","value":14.8,"even":"Si","notes":"","parent":"Catorce"},
+       {"name":"Cincuenta y cuatro punto uno","value":54.1,"even":"No","notes":"","parent":"Cincuenta y cuatro"},
+       {"name":"Diez","value":10,"even":"Si","notes":"","parent":"Numeros"},
+       {"name":"Noventa y cinco","value":95,"even":"No","notes":"","parent":"Noventa"},
+       {"name":"Catorce punto cinco","value":14.5,"even":"No","notes":"","parent":"Catorce"},
+       {"name":"Veinte","value":20,"even":"Si","notes":"","parent":"Numeros"},
+       {"name":"Cincuenta","value":50,"even":"Si","notes":"","parent":"Numeros"},
+       {"name":"Noventa y siete","value":97,"even":"No","notes":"","parent":"Noventa"},
+       {"name":"Numeros","value":100,"even":"No","notes":""},
+       {"name":"Ochenta y nueve","value":89,"even":"No","notes":"","parent":"Ochenta"},
+       {"name":"Catorce punto dos","value":14.2,"even":"Si","notes":"","parent":"Catorce"},
+       {"name":"Setenta","value":70,"even":"Si","notes":"","parent":"Numeros"},
+       {"name":"Cuarenta","value":40,"even":"Si","notes":"","parent":"Numeros"},
+       {"name":"Treinta y nueve","value":39,"even":"No","notes":"","parent":"Treinta"},
+       {"name":"Dos","value":2,"even":"Si","notes":"","parent":"Cero"},
+       {"name":"Treinta","value":30,"even":"Si","notes":"","parent":"Numeros"},
+       {"name":"Cincuenta y cuatro","value":54,"even":"Si","notes":"","parent":"Cincuenta"},
+       {"name":"Noventa","value":90,"even":"Si","notes":"","parent":"Numeros"},
+       {"name":"Seis","value":6,"even":"Si","notes":"","parent":"Cero"},
+       {"name":"Cuarenta y dos","value":42,"even":"Si","notes":"","parent":"Cuarenta"},
+       {"name":"Cinco","value":5,"even":"No","notes":"","parent":"Cero"},
+       {"name":"Cero","value":0,"even":"No","notes":"","parent":"Numeros"},
+       {"name":"Catorce punto uno","value":14.1,"even":"No","notes":"","parent":"Catorce"},
+       {"name":"Ochenta","value":80,"even":"Si","notes":"","parent":"Numeros"},
+       {"name":"Nueve","value":9,"even":"No","notes":"","parent":"Cero"},
+       {"name":"Catorce","value":14,"even":"Si","notes":"","parent":"Diez"},
+       {"name":"Simbolos","value":"*-*","even":"No","notes":""},
+       {"name":"Ochenta y ocho","value":88,"even":"Si","notes":"","parent":"Ochenta"},
+       {"name":"Guión","value":"-","even":"No","notes":"","parent":"Simbolos"},
+       {"name":"Catorce punto nueve","value":14.9,"even":"No","notes":"","parent":"Catorce"},
+       {"name":"Doce","value":12,"even":"Si","notes":"","parent":"Diez"}
+      ],
+      "columnas": [
+       {"type":"Number","field":"value","title":"Valor"},
+       {
+        "type": "Text",
+        "field": "name",
+        "button": "true",
+        "buttondata": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi bi-search\" viewBox=\"0 0 16 16\"><path d=\"M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z\"/></svg>",
+        "title": "\n                            Nombre\n                        "
+       },
+       {"type":"Select","field":"even","options":{"No":"No","Si":"Si"},"title":"¿Es par?"},
+       {
+        "type": "Memo",
+        "field": "notes",
+        "button": "true",
+        "title": "\n                            Notas\n                        "
+       }
+      ],
+      "respaldo": null,
+      "props": [
+       "IsDirty = false",
+       "Editing = false",
+       "ReadOnly = false",
+       "AutoAddRow = true",
+       "AutoDelRow = true",
+       "EverMove = true",
+       "PagOffSet = 10",
+       "TheadRowIndex = 0",
+       "ColumnsDefaultType = \"Text\"",
+       "ShowAsTree = false",
+       "CanMoveRow = false",
+       "Key = \"name\"",
+       "ParentKey = \"parent\"",
+       "Childs = \"__items\"",
+       "TreeOptions = {}",
+       "sorTable = true",
+       "_sorTable = true",
+       "htmlEncode = false",
+       "autoConfirm = false",
+       "hiddeSelector = false",
+       "hiddeRowSelector = false",
+       "minRowHeight = \"none\"",
+       "maxRowHeight = \"none\"",
+       "rowHeight = \"100%\"",
+       "cardsResponsive = false",
+       "editableResponsive = false",
+       "tableId = \"tabla-demo\"",
+       "NumFormat = {\"default_decimals\":\".\",\"thousands\":\",\",\"decimals\":\".\"}",
+       "CSS = {\"Cell\":\"EdiTable-Cell\",\"RowSelected\":\"EdiTable-Row-Selected\"}",
+       "hideColumns = []",
+       "_expandOnStart = false",
+       "KeepSelectionVisible = true",
+       "CardsMode = null",
+       "CardsLayout = \"grid\"",
+       "CardsBreakpoint = \"768px\"",
+       "CardsBreakpointTarget = \"viewport\"",
+       "IsCardView = false",
+       "_count_isdirty = 0",
+       "_current_row = -1",
+       "attributes = [\"id\",\"show-tree\",\"parentkey\",\"key\",\"style\",\"control-styles\",\"data\"]",
+       "BadgesField = \"__badges\"",
+       "BadgeTooltip = \"native\"",
+       "BadgeSelectsRow = false",
+       "NativeEvents = false",
+       "TemplateEncode = false",
+       "Locale = null",
+       "RowClassField = null",
+       "_TreeValueIndent = 1",
+       "_TreeUnitIndent = \"rem\"",
+       "temp_html = \"[undefined]\"",
+       "CurrentRowIndex() = -1",
+       "CurrentColIndex() = -1",
+       "TRCount() = 33",
+       "THCount() = 4",
+       "ColumnsCount() = 4",
+       "CurrentTd() = null",
+       "focusedTable==_getCurren() = false",
+       "Events reemplazado = 0",
+       "Events claves = []",
+       "scroll = {\"contenedor\":[0,0]}"
+      ],
+      "estilos": [
+       "host = display:block;position:static;width:1042px;height:630px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "contenedor = display:block;position:static;width:1042px;height:630px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:auto;overflow-y:auto",
+       "table = display:table;position:static;width:1042px;height:1061px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "thead = display:table-header-group;position:sticky;width:1040px;height:23px;color:rgb(0, 0, 0);background-color:rgb(237, 237, 237);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[0] = display:table-cell;position:relative;width:122px;height:15px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[1] = display:table-cell;position:relative;width:534px;height:15px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[2] = display:table-cell;position:relative;width:181px;height:15px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[3] = display:table-cell;position:relative;width:136px;height:15px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0] = display:table-row;position:relative;width:1040px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[0] = display:table-cell;position:relative;width:130px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[1] = display:table-cell;position:relative;width:542px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[2] = display:table-cell;position:relative;width:189px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[3] = display:table-cell;position:relative;width:144px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1] = display:table-row;position:relative;width:1040px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[0] = display:table-cell;position:relative;width:130px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[1] = display:table-cell;position:relative;width:542px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[2] = display:table-cell;position:relative;width:189px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[3] = display:table-cell;position:relative;width:144px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2] = display:table-row;position:relative;width:1040px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[0] = display:table-cell;position:relative;width:130px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[1] = display:table-cell;position:relative;width:542px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[2] = display:table-cell;position:relative;width:189px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[3] = display:table-cell;position:relative;width:144px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[32] = display:table-row;position:relative;width:1040px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[32].td[0] = display:table-cell;position:relative;width:130px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[32].td[1] = display:table-cell;position:relative;width:542px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[32].td[2] = display:table-cell;position:relative;width:189px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[32].td[3] = display:table-cell;position:relative;width:144px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+      ]
+     }
+    ],
+    "luz": [
+     "<body style=\"font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;\" {foco}>",
+     " \"\\n    \"",
+     " <div style=\"max-width: 100vw; padding: 8px 16px; border: 1px solid #DDD;border-radius: 5px; padding-bottom: 32px; margin:4px;background-color: #F5F5F5;\">",
+     "  \"\\n        \\n        \"",
+     "  <div style=\"display: flex; gap: 8px; padding: 1rem 0; align-items: center;\">",
+     "   \"\\n            \"",
+     "   <h3 style=\"margin: 0;\">",
+     "    \"Edit Table\"",
+     "   </h3>",
+     "   \"\\n            \"",
+     "   <button onclick=\"document.querySelector('#tabla-demo').AddRow();\" style=\"color: #888;\">",
+     "    \"+\"",
+     "   </button>",
+     "   \"\\n            \"",
+     "   <button onclick=\"copyData()\" style=\"color: #000;\">",
+     "    \"Copiar datos\"",
+     "   </button>",
+     "   \"\\n            \"",
+     "   <button onclick=\"viewTree(false)\" style=\"color: #000;\">",
+     "    \"Vista normal\"",
+     "   </button>",
+     "   \"\\n            \"",
+     "   <button onclick=\"viewTree(true)\" style=\"color: #000;\">",
+     "    \"Vista en árbol\"",
+     "   </button>",
+     "   \"\\n            \"",
+     "   <button onclick=\"addIdent(false)\" title=\"Disminuir identación\" style=\"color: #000; display: flex; align-items: center; justify-content: center;\">",
+     "    \"\\n                \"",
+     "    <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi bi-unindent\" viewBox=\"0 0 16 16\">",
+     "     \"\\n                    \"",
+     "     <path fill-rule=\"evenodd\" d=\"M13 8a.5.5 0 0 0-.5-.5H5.707l2.147-2.146a.5.5 0 1 0-.708-.708l-3 3a.5.5 0 0 0 0 .708l3 3a.5.5 0 0 0 .708-.708L5.707 8.5H12.5A.5.5 0 0 0 13 8Z\"></path>",
+     "     \"\\n                    \"",
+     "     <path fill-rule=\"evenodd\" d=\"M3.5 4a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 1 0v-7a.5.5 0 0 0-.5-.5Z\"></path>",
+     "     \"\\n                  \"",
+     "    </svg>",
+     "    \"\\n            \"",
+     "   </button>",
+     "   \"\\n            \"",
+     "   <button onclick=\"addIdent(true)\" title=\"Aumentar identación\" style=\"color: #000; display: flex; align-items: center; justify-content: center;\">",
+     "    \"\\n                \"",
+     "    <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi bi-indent\" viewBox=\"0 0 16 16\">",
+     "     \"\\n                    \"",
+     "     <path fill-rule=\"evenodd\" d=\"M3 8a.5.5 0 0 1 .5-.5h6.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H3.5A.5.5 0 0 1 3 8Z\"></path>",
+     "     \"\\n                    \"",
+     "     <path fill-rule=\"evenodd\" d=\"M12.5 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5Z\"></path>",
+     "     \"\\n                  \"",
+     "    </svg>",
+     "    \"\\n            \"",
+     "   </button>",
+     "   \"\\n        \"",
+     "  </div>",
+     "  \"\\n\\n        \"",
+     "  <div style=\"max-height: 70vh; display: flex;\">",
+     "   \"\\n            \"",
+     "   <edit-table id=\"tabla-demo\" show-tree=\"false\" parentkey=\"parent\" key=\"name\" style=\"width: 100%;\" control-styles=\"tr td{font-size:.8rem;} th{font-size:.8rem;} thead{ background-color: #ededed; } .EdiTable-Cell{ outline: 1px solid #EDEDED !important; } tbody{ background-color: #FFF !important; } #__table_input{ font-size: unset !important; }\" data=\"[{\\\"name\\\": \\\"Sesenta\\\",\\\"value\\\": 60,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Numeros\\\"},{\\\"name\\\": \\\"Catorce punto tres\\\",\\\"value\\\": 14.3,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Catorce\\\"},{\\\"name\\\": \\\"Catorce punto ocho\\\",\\\"value\\\": 14.8,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Catorce\\\"},{\\\"name\\\": \\\"Cincuenta y cuatro punto uno\\\",\\\"value\\\": 54.1,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Cincuenta y cuatro\\\"},{\\\"name\\\": \\\"Diez\\\",\\\"value\\\": 10,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Numeros\\\"},{\\\"name\\\": \\\"Noventa y cinco\\\",\\\"value\\\": 95,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Noventa\\\"},{\\\"name\\\": \\\"Catorce punto cinco\\\",\\\"value\\\": 14.5,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Catorce\\\"},{\\\"name\\\": \\\"Veinte\\\",\\\"value\\\": 20,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Numeros\\\"},{\\\"name\\\": \\\"Cincuenta\\\",\\\"value\\\": 50,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Numeros\\\"},{\\\"name\\\": \\\"Noventa y siete\\\",\\\"value\\\": 97,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Noventa\\\"},{\\\"name\\\": \\\"Numeros\\\",\\\"value\\\": 100,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\"},{\\\"name\\\": \\\"Ochenta y nueve\\\",\\\"value\\\": 89,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Ochenta\\\"},{\\\"name\\\": \\\"Catorce punto dos\\\",\\\"value\\\": 14.2,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Catorce\\\"},{\\\"name\\\": \\\"Setenta\\\",\\\"value\\\": 70,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Numeros\\\"},{\\\"name\\\": \\\"Cuarenta\\\",\\\"value\\\": 40,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Numeros\\\"},{\\\"name\\\": \\\"Treinta y nueve\\\",\\\"value\\\": 39,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Treinta\\\"},{\\\"name\\\": \\\"Dos\\\",\\\"value\\\": 2,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Cero\\\"},{\\\"name\\\": \\\"Treinta\\\",\\\"value\\\": 30,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Numeros\\\"},{\\\"name\\\": \\\"Cincuenta y cuatro\\\",\\\"value\\\": 54,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Cincuenta\\\"},{\\\"name\\\": \\\"Noventa\\\",\\\"value\\\": 90,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Numeros\\\"},{\\\"name\\\": \\\"Seis\\\",\\\"value\\\": 6,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Cero\\\"},{\\\"name\\\": \\\"Cuarenta y dos\\\",\\\"value\\\": 42,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Cuarenta\\\"},{\\\"name\\\": \\\"Cinco\\\",\\\"value\\\": 5,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Cero\\\"},{\\\"name\\\": \\\"Cero\\\",\\\"value\\\": 0,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Numeros\\\"},{\\\"name\\\": \\\"Catorce punto uno\\\",\\\"value\\\": 14.1,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Catorce\\\"},{\\\"name\\\": \\\"Ochenta\\\",\\\"value\\\": 80,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Numeros\\\"},{\\\"name\\\": \\\"Nueve\\\",\\\"value\\\": 9,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Cero\\\"},{\\\"name\\\": \\\"Catorce\\\",\\\"value\\\": 14,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Diez\\\"},{\\\"name\\\": \\\"Simbolos\\\",\\\"value\\\": \\\"*-*\\\",\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\"},{\\\"name\\\": \\\"Ochenta y ocho\\\",\\\"value\\\": 88,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Ochenta\\\"},{\\\"name\\\": \\\"Guión\\\",\\\"value\\\": \\\"-\\\",\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Simbolos\\\"},{\\\"name\\\": \\\"Catorce punto nueve\\\",\\\"value\\\": 14.9,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Catorce\\\"},{\\\"name\\\": \\\"Doce\\\",\\\"value\\\": 12,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Diez\\\"}]\">",
+     "    #shadow-root -> tablas[0]",
+     "   </edit-table>",
+     "   \"\\n        \"",
+     "  </div>",
+     "  \"\\n    \"",
+     " </div>",
+     " \"\\n\\n    \"",
+     " <script>",
+     "  \"\\n        var table = document.querySelector('#tabla-demo');\\n        \\n        document.addEventListener('DOMContentLoaded', () => \\n        {\\n            table = document.querySelector('#tabla-demo');\\n        });\\n\\n        function copyData()\\n        {\\n            navigator.clipboard.writeText(JSON.stringify(document.querySelector('#tabla-demo').DataArray)).then(()=>{\\n                console.log('¡Datos copiados al portapapeles!');\\n            }, ()=> {\\n                console.log('¡Ocurrió un error al copiar los datos!');\\n            });\\n        }\\n        function viewTree(tree=true)\\n        {\\n            table.ShowAsTree = tree;\\n            table._printTreeData();\\n        }\\n        function expand()\\n        {\\n            table.ExpandRow();\\n        }\\n        function collapse()\\n        {\\n            table.CollapseRow();\\n        }\\n        function addIdent(add=true)\\n        {\\n            const row = table.GetTrByIndex(table.CurrentRowIndex());\\n            table.RowIndent(row, add);\\n        }\\n    \"",
+     " </script>",
+     " \"\\n\\n\"",
+     "</body>"
+    ],
+    "foco": {"documento":{"ruta":"html>body"},"shadow":null},
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 3,
+      "nodo:mousedown": 4,
+      "document:mousemove": 4,
+      "document:mouseup": 4,
+      "window:beforeprint": 1,
+      "window:afterprint": 1
+     },
+     "intervalos": 1
+    }
+   }
+  },
+  {
+   "nombre": "Vista en árbol",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "tabla-demo",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [
+         43,
+         4,
+         [
+          "   <tr id=\"Numeros\" parent=\"\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 0rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <span class=\"collapse-btn\" expanded=\"false\">",
+          "       <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\" fill=\"currentColor\" class=\"bi bi-caret-right-fill\" viewBox=\"0 0 16 16\">",
+          "        <path d=\"m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z\"></path>",
+          "       </svg>",
+          "      </span>",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"100\"",
+          "      </div>"
+         ]
+        ],
+        [51,1,["      \"Numeros\""]],
+        [56,1,["      \"No\""]],
+        [
+         63,
+         4,
+         [
+          "   <tr id=\"Sesenta\" parent=\"Numeros\" indent=\"1\" class=\"hidde-row\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 1.7rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"60\"",
+          "      </div>"
+         ]
+        ],
+        [71,1,["      \"Sesenta\""]],
+        [76,1,["      \"Si\""]],
+        [
+         83,
+         4,
+         [
+          "   <tr id=\"Diez\" parent=\"Numeros\" indent=\"1\" class=\"hidde-row\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 1rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <span class=\"collapse-btn\" expanded=\"false\">",
+          "       <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\" fill=\"currentColor\" class=\"bi bi-caret-right-fill\" viewBox=\"0 0 16 16\">",
+          "        <path d=\"m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z\"></path>",
+          "       </svg>",
+          "      </span>",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"10\"",
+          "      </div>"
+         ]
+        ],
+        [91,1,["      \"Diez\""]],
+        [
+         103,
+         4,
+         [
+          "   <tr id=\"Catorce\" parent=\"Diez\" indent=\"2\" class=\"hidde-row\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 2rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <span class=\"collapse-btn\" expanded=\"false\">",
+          "       <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\" fill=\"currentColor\" class=\"bi bi-caret-right-fill\" viewBox=\"0 0 16 16\">",
+          "        <path d=\"m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z\"></path>",
+          "       </svg>",
+          "      </span>",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"14\"",
+          "      </div>"
+         ]
+        ],
+        [111,1,["      \"Catorce\""]],
+        [116,1,["      \"Si\""]],
+        [
+         123,
+         4,
+         [
+          "   <tr id=\"Catorce punto tres\" parent=\"Catorce\" indent=\"3\" class=\"hidde-row\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 3.7rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"14.3\"",
+          "      </div>"
+         ]
+        ],
+        [131,1,["      \"Catorce punto tres\""]],
+        [136,1,["      \"No\""]],
+        [
+         143,
+         4,
+         [
+          "   <tr id=\"Catorce punto ocho\" parent=\"Catorce\" indent=\"3\" class=\"hidde-row\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 3.7rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"14.8\"",
+          "      </div>"
+         ]
+        ],
+        [151,1,["      \"Catorce punto ocho\""]],
+        [156,1,["      \"Si\""]],
+        [
+         163,
+         4,
+         [
+          "   <tr id=\"Catorce punto cinco\" parent=\"Catorce\" indent=\"3\" class=\"hidde-row\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 3.7rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"14.5\"",
+          "      </div>"
+         ]
+        ],
+        [
+         183,
+         4,
+         [
+          "   <tr id=\"Catorce punto dos\" parent=\"Catorce\" indent=\"3\" class=\"hidde-row\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 3.7rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"14.2\"",
+          "      </div>"
+         ]
+        ],
+        [191,1,["      \"Catorce punto dos\""]],
+        [
+         203,
+         4,
+         [
+          "   <tr id=\"Catorce punto uno\" parent=\"Catorce\" indent=\"3\" class=\"hidde-row\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 3.7rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"14.1\"",
+          "      </div>"
+         ]
+        ],
+        [211,1,["      \"Catorce punto uno\""]],
+        [216,1,["      \"No\""]],
+        [
+         223,
+         4,
+         [
+          "   <tr id=\"Catorce punto nueve\" parent=\"Catorce\" indent=\"3\" class=\"hidde-row\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 3.7rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"14.9\"",
+          "      </div>"
+         ]
+        ],
+        [231,1,["      \"Catorce punto nueve\""]],
+        [
+         243,
+         4,
+         [
+          "   <tr id=\"Doce\" parent=\"Diez\" indent=\"2\" class=\"hidde-row\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 2.7rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"12\"",
+          "      </div>"
+         ]
+        ],
+        [251,1,["      \"Doce\""]],
+        [256,1,["      \"Si\""]],
+        [
+         263,
+         4,
+         [
+          "   <tr id=\"Veinte\" parent=\"Numeros\" indent=\"1\" class=\"hidde-row\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 1.7rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"20\"",
+          "      </div>"
+         ]
+        ],
+        [271,1,["      \"Veinte\""]],
+        [276,1,["      \"Si\""]],
+        [
+         283,
+         4,
+         [
+          "   <tr id=\"Cincuenta\" parent=\"Numeros\" indent=\"1\" class=\"hidde-row\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 1rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <span class=\"collapse-btn\" expanded=\"false\">",
+          "       <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\" fill=\"currentColor\" class=\"bi bi-caret-right-fill\" viewBox=\"0 0 16 16\">",
+          "        <path d=\"m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z\"></path>",
+          "       </svg>",
+          "      </span>",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"50\"",
+          "      </div>"
+         ]
+        ],
+        [291,1,["      \"Cincuenta\""]],
+        [
+         303,
+         4,
+         [
+          "   <tr id=\"Cincuenta y cuatro\" parent=\"Cincuenta\" indent=\"2\" class=\"hidde-row\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 2rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <span class=\"collapse-btn\" expanded=\"false\">",
+          "       <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\" fill=\"currentColor\" class=\"bi bi-caret-right-fill\" viewBox=\"0 0 16 16\">",
+          "        <path d=\"m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z\"></path>",
+          "       </svg>",
+          "      </span>",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"54\"",
+          "      </div>"
+         ]
+        ],
+        [311,1,["      \"Cincuenta y cuatro\""]],
+        [
+         323,
+         4,
+         [
+          "   <tr id=\"Cincuenta y cuatro punto uno\" parent=\"Cincuenta y cuatro\" indent=\"3\" class=\"hidde-row\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 3.7rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"54.1\"",
+          "      </div>"
+         ]
+        ],
+        [331,1,["      \"Cincuenta y cuatro punto uno\""]],
+        [336,1,["      \"No\""]],
+        [
+         343,
+         4,
+         [
+          "   <tr id=\"Setenta\" parent=\"Numeros\" indent=\"1\" class=\"hidde-row\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 1.7rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"70\"",
+          "      </div>"
+         ]
+        ],
+        [351,1,["      \"Setenta\""]],
+        [356,1,["      \"Si\""]],
+        [
+         363,
+         4,
+         [
+          "   <tr id=\"Cuarenta\" parent=\"Numeros\" indent=\"1\" class=\"hidde-row\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 1rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <span class=\"collapse-btn\" expanded=\"false\">",
+          "       <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\" fill=\"currentColor\" class=\"bi bi-caret-right-fill\" viewBox=\"0 0 16 16\">",
+          "        <path d=\"m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z\"></path>",
+          "       </svg>",
+          "      </span>",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"40\"",
+          "      </div>"
+         ]
+        ],
+        [371,1,["      \"Cuarenta\""]],
+        [
+         383,
+         4,
+         [
+          "   <tr id=\"Cuarenta y dos\" parent=\"Cuarenta\" indent=\"2\" class=\"hidde-row\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 2.7rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"42\"",
+          "      </div>"
+         ]
+        ],
+        [391,1,["      \"Cuarenta y dos\""]],
+        [
+         403,
+         4,
+         [
+          "   <tr id=\"Treinta\" parent=\"Numeros\" indent=\"1\" class=\"hidde-row\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 1rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <span class=\"collapse-btn\" expanded=\"false\">",
+          "       <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\" fill=\"currentColor\" class=\"bi bi-caret-right-fill\" viewBox=\"0 0 16 16\">",
+          "        <path d=\"m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z\"></path>",
+          "       </svg>",
+          "      </span>",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"30\"",
+          "      </div>"
+         ]
+        ],
+        [411,1,["      \"Treinta\""]],
+        [
+         423,
+         4,
+         [
+          "   <tr id=\"Treinta y nueve\" parent=\"Treinta\" indent=\"2\" class=\"hidde-row\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 2.7rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"39\"",
+          "      </div>"
+         ]
+        ],
+        [431,1,["      \"Treinta y nueve\""]],
+        [436,1,["      \"No\""]],
+        [
+         443,
+         4,
+         [
+          "   <tr id=\"Noventa\" parent=\"Numeros\" indent=\"1\" class=\"hidde-row\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 1rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <span class=\"collapse-btn\" expanded=\"false\">",
+          "       <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\" fill=\"currentColor\" class=\"bi bi-caret-right-fill\" viewBox=\"0 0 16 16\">",
+          "        <path d=\"m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z\"></path>",
+          "       </svg>",
+          "      </span>",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"90\"",
+          "      </div>"
+         ]
+        ],
+        [451,1,["      \"Noventa\""]],
+        [
+         463,
+         4,
+         [
+          "   <tr id=\"Noventa y cinco\" parent=\"Noventa\" indent=\"2\" class=\"hidde-row\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 2.7rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"95\"",
+          "      </div>"
+         ]
+        ],
+        [471,1,["      \"Noventa y cinco\""]],
+        [476,1,["      \"No\""]],
+        [
+         483,
+         4,
+         [
+          "   <tr id=\"Noventa y siete\" parent=\"Noventa\" indent=\"2\" class=\"hidde-row\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 2.7rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"97\"",
+          "      </div>"
+         ]
+        ],
+        [491,1,["      \"Noventa y siete\""]],
+        [
+         503,
+         4,
+         [
+          "   <tr id=\"Cero\" parent=\"Numeros\" indent=\"1\" class=\"hidde-row\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 1rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <span class=\"collapse-btn\" expanded=\"false\">",
+          "       <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\" fill=\"currentColor\" class=\"bi bi-caret-right-fill\" viewBox=\"0 0 16 16\">",
+          "        <path d=\"m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z\"></path>",
+          "       </svg>",
+          "      </span>",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"0\"",
+          "      </div>"
+         ]
+        ],
+        [
+         523,
+         4,
+         [
+          "   <tr id=\"Dos\" parent=\"Cero\" indent=\"2\" class=\"hidde-row\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 2.7rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"2\"",
+          "      </div>"
+         ]
+        ],
+        [531,1,["      \"Dos\""]],
+        [536,1,["      \"Si\""]],
+        [
+         543,
+         4,
+         [
+          "   <tr id=\"Seis\" parent=\"Cero\" indent=\"2\" class=\"hidde-row\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 2.7rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"6\"",
+          "      </div>"
+         ]
+        ],
+        [551,1,["      \"Seis\""]],
+        [
+         563,
+         4,
+         [
+          "   <tr id=\"Cinco\" parent=\"Cero\" indent=\"2\" class=\"hidde-row\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 2.7rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"5\"",
+          "      </div>"
+         ]
+        ],
+        [571,1,["      \"Cinco\""]],
+        [
+         583,
+         4,
+         [
+          "   <tr id=\"Nueve\" parent=\"Cero\" indent=\"2\" class=\"hidde-row\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 2.7rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"9\"",
+          "      </div>"
+         ]
+        ],
+        [591,1,["      \"Nueve\""]],
+        [596,1,["      \"No\""]],
+        [
+         603,
+         4,
+         [
+          "   <tr id=\"Ochenta\" parent=\"Numeros\" indent=\"1\" class=\"hidde-row\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 1rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <span class=\"collapse-btn\" expanded=\"false\">",
+          "       <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\" fill=\"currentColor\" class=\"bi bi-caret-right-fill\" viewBox=\"0 0 16 16\">",
+          "        <path d=\"m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z\"></path>",
+          "       </svg>",
+          "      </span>",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"80\"",
+          "      </div>"
+         ]
+        ],
+        [611,1,["      \"Ochenta\""]],
+        [616,1,["      \"Si\""]],
+        [
+         623,
+         4,
+         [
+          "   <tr id=\"Ochenta y nueve\" parent=\"Ochenta\" indent=\"2\" class=\"hidde-row\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 2.7rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"89\"",
+          "      </div>"
+         ]
+        ],
+        [631,1,["      \"Ochenta y nueve\""]],
+        [636,1,["      \"No\""]],
+        [
+         643,
+         4,
+         [
+          "   <tr id=\"Ochenta y ocho\" parent=\"Ochenta\" indent=\"2\" class=\"hidde-row\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 2.7rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"88\"",
+          "      </div>"
+         ]
+        ],
+        [651,1,["      \"Ochenta y ocho\""]],
+        [656,1,["      \"Si\""]],
+        [
+         663,
+         4,
+         [
+          "   <tr id=\"Simbolos\" parent=\"\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 0rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <span class=\"collapse-btn\" expanded=\"false\">",
+          "       <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\" fill=\"currentColor\" class=\"bi bi-caret-right-fill\" viewBox=\"0 0 16 16\">",
+          "        <path d=\"m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z\"></path>",
+          "       </svg>",
+          "      </span>",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"*-*\"",
+          "      </div>"
+         ]
+        ],
+        [671,1,["      \"Simbolos\""]],
+        [
+         683,
+         4,
+         [
+          "   <tr id=\"Guión\" parent=\"Simbolos\" indent=\"1\" class=\"hidde-row\">",
+          "    <td class=\"EdiTable-Cell cell-collapsable\" data-cell=\"Valor\" style=\"padding-left: 1.7rem;\">",
+          "     <div class=\"container-cell-content\">",
+          "      <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "       \"-\"",
+          "      </div>"
+         ]
+        ],
+        [691,1,["      \"Guión\""]],
+        [696,1,["      \"No\""]]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": [
+       {"name":"Numeros","value":100,"even":"No","notes":""},
+       {"name":"Sesenta","value":60,"even":"Si","notes":"","parent":"Numeros"},
+       {"name":"Diez","value":10,"even":"Si","notes":"","parent":"Numeros"},
+       {"name":"Catorce","value":14,"even":"Si","notes":"","parent":"Diez"},
+       {"name":"Catorce punto tres","value":14.3,"even":"No","notes":"","parent":"Catorce"},
+       {"name":"Catorce punto ocho","value":14.8,"even":"Si","notes":"","parent":"Catorce"},
+       {"name":"Catorce punto cinco","value":14.5,"even":"No","notes":"","parent":"Catorce"},
+       {"name":"Catorce punto dos","value":14.2,"even":"Si","notes":"","parent":"Catorce"},
+       {"name":"Catorce punto uno","value":14.1,"even":"No","notes":"","parent":"Catorce"},
+       {"name":"Catorce punto nueve","value":14.9,"even":"No","notes":"","parent":"Catorce"},
+       {"name":"Doce","value":12,"even":"Si","notes":"","parent":"Diez"},
+       {"name":"Veinte","value":20,"even":"Si","notes":"","parent":"Numeros"},
+       {"name":"Cincuenta","value":50,"even":"Si","notes":"","parent":"Numeros"},
+       {"name":"Cincuenta y cuatro","value":54,"even":"Si","notes":"","parent":"Cincuenta"},
+       {"name":"Cincuenta y cuatro punto uno","value":54.1,"even":"No","notes":"","parent":"Cincuenta y cuatro"},
+       {"name":"Setenta","value":70,"even":"Si","notes":"","parent":"Numeros"},
+       {"name":"Cuarenta","value":40,"even":"Si","notes":"","parent":"Numeros"},
+       {"name":"Cuarenta y dos","value":42,"even":"Si","notes":"","parent":"Cuarenta"},
+       {"name":"Treinta","value":30,"even":"Si","notes":"","parent":"Numeros"},
+       {"name":"Treinta y nueve","value":39,"even":"No","notes":"","parent":"Treinta"},
+       {"name":"Noventa","value":90,"even":"Si","notes":"","parent":"Numeros"},
+       {"name":"Noventa y cinco","value":95,"even":"No","notes":"","parent":"Noventa"},
+       {"name":"Noventa y siete","value":97,"even":"No","notes":"","parent":"Noventa"},
+       {"name":"Cero","value":0,"even":"No","notes":"","parent":"Numeros"},
+       {"name":"Dos","value":2,"even":"Si","notes":"","parent":"Cero"},
+       {"name":"Seis","value":6,"even":"Si","notes":"","parent":"Cero"},
+       {"name":"Cinco","value":5,"even":"No","notes":"","parent":"Cero"},
+       {"name":"Nueve","value":9,"even":"No","notes":"","parent":"Cero"},
+       {"name":"Ochenta","value":80,"even":"Si","notes":"","parent":"Numeros"},
+       {"name":"Ochenta y nueve","value":89,"even":"No","notes":"","parent":"Ochenta"},
+       {"name":"Ochenta y ocho","value":88,"even":"Si","notes":"","parent":"Ochenta"},
+       {"name":"Simbolos","value":"*-*","even":"No","notes":""},
+       {"name":"Guión","value":"-","even":"No","notes":"","parent":"Simbolos"}
+      ],
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": {
+       "$parche": [
+        [9,1,["ShowAsTree = true"]],
+        [14,1,["TreeOptions = {\"key\":\"name\",\"parentkey\":\"parent\",\"childs\":\"__items\"}"]]
+       ]
+      },
+      "estilos": {
+       "$parche": [
+        [
+         0,
+         3,
+         [
+          "host = display:block;position:static;width:1042px;height:93px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "contenedor = display:block;position:static;width:1042px;height:88px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:auto;overflow-y:auto",
+          "table = display:table;position:static;width:1042px;height:88px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         4,
+         4,
+         [
+          "th[0] = display:table-cell;position:relative;width:196px;height:15px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[1] = display:table-cell;position:relative;width:274px;height:15px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[2] = display:table-cell;position:relative;width:287px;height:15px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[3] = display:table-cell;position:relative;width:216px;height:15px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         9,
+         19,
+         [
+          "tr[0].td[0] = display:table-cell;position:relative;width:208px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[1] = display:table-cell;position:relative;width:282px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[2] = display:table-cell;position:relative;width:295px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[3] = display:table-cell;position:relative;width:224px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1] = display:none;position:relative;width:auto;height:auto;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[0] = display:table-cell;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[1] = display:table-cell;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[2] = display:table-cell;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[3] = display:table-cell;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2] = display:none;position:relative;width:auto;height:auto;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[0] = display:table-cell;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[1] = display:table-cell;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[2] = display:table-cell;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[3] = display:table-cell;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[32] = display:none;position:relative;width:auto;height:auto;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[32].td[0] = display:table-cell;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[32].td[1] = display:table-cell;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[32].td[2] = display:table-cell;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[32].td[3] = display:table-cell;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": "@=paso-anterior",
+    "foco": "@=paso-anterior",
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "internos": "@=paso-anterior"
+   }
+  },
+  {
+   "nombre": "expandir el primer nodo",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "tabla-demo",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [
+         46,
+         3,
+         [
+          "      <span class=\"collapse-btn\" expanded=\"true\">",
+          "       <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\" fill=\"currentColor\" class=\"bi bi-caret-down-fill\" viewBox=\"0 0 16 16\">",
+          "        <path d=\"M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z\"></path>"
+         ]
+        ],
+        [70,1,["   <tr id=\"Sesenta\" parent=\"Numeros\" indent=\"1\" class=\"\">"]],
+        [92,1,["   <tr id=\"Diez\" parent=\"Numeros\" indent=\"1\" class=\"\">"]],
+        [300,1,["   <tr id=\"Veinte\" parent=\"Numeros\" indent=\"1\" class=\"\">"]],
+        [322,1,["   <tr id=\"Cincuenta\" parent=\"Numeros\" indent=\"1\" class=\"\">"]],
+        [398,1,["   <tr id=\"Setenta\" parent=\"Numeros\" indent=\"1\" class=\"\">"]],
+        [420,1,["   <tr id=\"Cuarenta\" parent=\"Numeros\" indent=\"1\" class=\"\">"]],
+        [469,1,["   <tr id=\"Treinta\" parent=\"Numeros\" indent=\"1\" class=\"\">"]],
+        [518,1,["   <tr id=\"Noventa\" parent=\"Numeros\" indent=\"1\" class=\"\">"]],
+        [589,1,["   <tr id=\"Cero\" parent=\"Numeros\" indent=\"1\" class=\"\">"]],
+        [704,1,["   <tr id=\"Ochenta\" parent=\"Numeros\" indent=\"1\" class=\"\">"]]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": "@=paso-anterior",
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": "@=paso-anterior",
+      "estilos": {
+       "$parche": [
+        [
+         0,
+         3,
+         [
+          "host = display:block;position:static;width:1042px;height:407px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "contenedor = display:block;position:static;width:1042px;height:402px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:auto;overflow-y:auto",
+          "table = display:table;position:static;width:1042px;height:402px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         5,
+         4,
+         [
+          "th[1] = display:table-cell;position:relative;width:288px;height:15px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[2] = display:table-cell;position:relative;width:278px;height:15px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[3] = display:table-cell;position:relative;width:210px;height:15px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0] = display:table-row;position:relative;width:1040px;height:30px;color:rgb(0, 0, 0);background-color:rgb(245, 245, 245);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         10,
+         13,
+         [
+          "tr[0].td[1] = display:table-cell;position:relative;width:296px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[2] = display:table-cell;position:relative;width:286px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[3] = display:table-cell;position:relative;width:218px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1] = display:table-row;position:relative;width:1040px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[0] = display:table-cell;position:relative;width:181px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[1] = display:table-cell;position:relative;width:296px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[2] = display:table-cell;position:relative;width:286px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[3] = display:table-cell;position:relative;width:218px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2] = display:table-row;position:relative;width:1040px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[0] = display:table-cell;position:relative;width:192px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[1] = display:table-cell;position:relative;width:296px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[2] = display:table-cell;position:relative;width:286px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[3] = display:table-cell;position:relative;width:218px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": "@=paso-anterior",
+    "foco": "@=paso-anterior",
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "internos": "@=paso-anterior"
+   }
+  },
+  {
+   "nombre": "seleccionar fila 1 y aumentar sangría",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "tabla-demo",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [70,1,["   <tr id=\"Sesenta\" parent=\"Numeros\" indent=\"1\" class=\"EdiTable-Row-Selected\">"]],
+        [
+         80,
+         1,
+         [
+          "      <div id=\"__table_selector\" class=\"EdiTable-Selector\" tabindex=\"0\" {foco}>",
+          "       \"Sesenta\"",
+          "      </div>",
+          "      <button id=\"__table_button\" class=\"EdiTable-Button\">",
+          "       <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi bi-search\" viewBox=\"0 0 16 16\">",
+          "        <path d=\"M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z\"></path>",
+          "       </svg>",
+          "      </button>"
+         ]
+        ]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": "@=paso-anterior",
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": {
+       "$parche": [
+        [38,1,["_current_row = 1"]],
+        [50,2,["CurrentRowIndex() = 1","CurrentColIndex() = 1"]],
+        [
+         55,
+         2,
+         [
+          "CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(tabla-demo)>div>table#tabla-demo>tbody>tr#Sesenta[1]>td[1]\",\"texto\":\"Sesenta\"}}",
+          "focusedTable==_getCurren() = true"
+         ]
+        ]
+       ]
+      },
+      "estilos": {
+       "$parche": [
+        [
+         8,
+         1,
+         [
+          "tr[0] = display:table-row;position:relative;width:1040px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         13,
+         5,
+         [
+          "tr[1] = display:table-row;position:relative;width:1040px;height:30px;color:rgb(255, 255, 255);background-color:rgb(61, 117, 221);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[0] = display:table-cell;position:relative;width:181px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[1] = display:table-cell;position:relative;width:296px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[2] = display:table-cell;position:relative;width:286px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[3] = display:table-cell;position:relative;width:218px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         28,
+         0,
+         [
+          "selector = display:flex;position:static;width:294px;height:22px;color:rgb(0, 0, 0);background-color:rgba(255, 255, 255, 0.7);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": {
+     "$parche": [
+      [
+       0,
+       1,
+       [
+        "<body style=\"font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;\">"
+       ]
+      ],
+      [
+       54,
+       1,
+       [
+        "   <edit-table id=\"tabla-demo\" show-tree=\"false\" parentkey=\"parent\" key=\"name\" style=\"width: 100%;\" control-styles=\"tr td{font-size:.8rem;} th{font-size:.8rem;} thead{ background-color: #ededed; } .EdiTable-Cell{ outline: 1px solid #EDEDED !important; } tbody{ background-color: #FFF !important; } #__table_input{ font-size: unset !important; }\" data=\"[{\\\"name\\\": \\\"Sesenta\\\",\\\"value\\\": 60,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Numeros\\\"},{\\\"name\\\": \\\"Catorce punto tres\\\",\\\"value\\\": 14.3,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Catorce\\\"},{\\\"name\\\": \\\"Catorce punto ocho\\\",\\\"value\\\": 14.8,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Catorce\\\"},{\\\"name\\\": \\\"Cincuenta y cuatro punto uno\\\",\\\"value\\\": 54.1,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Cincuenta y cuatro\\\"},{\\\"name\\\": \\\"Diez\\\",\\\"value\\\": 10,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Numeros\\\"},{\\\"name\\\": \\\"Noventa y cinco\\\",\\\"value\\\": 95,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Noventa\\\"},{\\\"name\\\": \\\"Catorce punto cinco\\\",\\\"value\\\": 14.5,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Catorce\\\"},{\\\"name\\\": \\\"Veinte\\\",\\\"value\\\": 20,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Numeros\\\"},{\\\"name\\\": \\\"Cincuenta\\\",\\\"value\\\": 50,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Numeros\\\"},{\\\"name\\\": \\\"Noventa y siete\\\",\\\"value\\\": 97,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Noventa\\\"},{\\\"name\\\": \\\"Numeros\\\",\\\"value\\\": 100,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\"},{\\\"name\\\": \\\"Ochenta y nueve\\\",\\\"value\\\": 89,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Ochenta\\\"},{\\\"name\\\": \\\"Catorce punto dos\\\",\\\"value\\\": 14.2,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Catorce\\\"},{\\\"name\\\": \\\"Setenta\\\",\\\"value\\\": 70,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Numeros\\\"},{\\\"name\\\": \\\"Cuarenta\\\",\\\"value\\\": 40,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Numeros\\\"},{\\\"name\\\": \\\"Treinta y nueve\\\",\\\"value\\\": 39,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Treinta\\\"},{\\\"name\\\": \\\"Dos\\\",\\\"value\\\": 2,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Cero\\\"},{\\\"name\\\": \\\"Treinta\\\",\\\"value\\\": 30,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Numeros\\\"},{\\\"name\\\": \\\"Cincuenta y cuatro\\\",\\\"value\\\": 54,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Cincuenta\\\"},{\\\"name\\\": \\\"Noventa\\\",\\\"value\\\": 90,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Numeros\\\"},{\\\"name\\\": \\\"Seis\\\",\\\"value\\\": 6,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Cero\\\"},{\\\"name\\\": \\\"Cuarenta y dos\\\",\\\"value\\\": 42,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Cuarenta\\\"},{\\\"name\\\": \\\"Cinco\\\",\\\"value\\\": 5,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Cero\\\"},{\\\"name\\\": \\\"Cero\\\",\\\"value\\\": 0,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Numeros\\\"},{\\\"name\\\": \\\"Catorce punto uno\\\",\\\"value\\\": 14.1,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Catorce\\\"},{\\\"name\\\": \\\"Ochenta\\\",\\\"value\\\": 80,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Numeros\\\"},{\\\"name\\\": \\\"Nueve\\\",\\\"value\\\": 9,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Cero\\\"},{\\\"name\\\": \\\"Catorce\\\",\\\"value\\\": 14,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Diez\\\"},{\\\"name\\\": \\\"Simbolos\\\",\\\"value\\\": \\\"*-*\\\",\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\"},{\\\"name\\\": \\\"Ochenta y ocho\\\",\\\"value\\\": 88,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Ochenta\\\"},{\\\"name\\\": \\\"Guión\\\",\\\"value\\\": \\\"-\\\",\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Simbolos\\\"},{\\\"name\\\": \\\"Catorce punto nueve\\\",\\\"value\\\": 14.9,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Catorce\\\"},{\\\"name\\\": \\\"Doce\\\",\\\"value\\\": 12,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Diez\\\"}]\" {foco}>"
+       ]
+      ]
+     ]
+    },
+    "foco": {
+     "documento": {"ruta":"body>div>div>edit-table#tabla-demo"},
+     "shadow": {"ruta":"shadow(tabla-demo)>div>table#tabla-demo>tbody>tr#Sesenta[1]>td[1]>div>div#__table_selector"}
+    },
+    "eventos": [
+     {
+      "evento": "beforecellfocus",
+      "tabla": "tabla-demo",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tabla-demo)>div>table#tabla-demo>tbody>tr#Sesenta[1]>td[1]","texto":"Sesenta"}},
+       "sender": {"$sender":"tabla-demo","esElemento":false},
+       "cancel": false
+      }
+     },
+     {
+      "evento": "entercell",
+      "tabla": "tabla-demo",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tabla-demo)>div>table#tabla-demo>tbody>tr#Sesenta[1]>td[1]","texto":"Sesenta"}},
+       "sender": {"$sender":"tabla-demo","esElemento":false}
+      }
+     },
+     {
+      "evento": "rowchanged",
+      "tabla": "tabla-demo",
+      "consumidor": false,
+      "args": {
+       "td": {"$nodo":{"ruta":"shadow(tabla-demo)>div>table#tabla-demo>tbody>tr#Sesenta[1]>td[1]","texto":"Sesenta"}},
+       "sender": {"$sender":"tabla-demo","esElemento":false},
+       "cancel": false,
+       "index": 1,
+       "previous_index": -1
+      }
+     }
+    ],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 3,
+      "nodo:mousedown": 4,
+      "document:mousemove": 4,
+      "document:mouseup": 4,
+      "window:beforeprint": 1,
+      "window:afterprint": 1,
+      "nodo:click:remove": 1,
+      "nodo:click": 1,
+      "nodo:keydown:remove": 1,
+      "nodo:keydown": 1
+     },
+     "intervalos": 1
+    }
+   }
+  },
+  {
+   "nombre": "Vista normal",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "tabla-demo",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [
+         44,
+         10,
+         [
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"100\""
+         ]
+        ],
+        [
+         70,
+         6,
+         [
+          "   <tr id=\"Sesenta\" parent=\"Numeros\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"60\""
+         ]
+        ],
+        [80,8,["      \"Sesenta\""]],
+        [
+         99,
+         11,
+         [
+          "   <tr id=\"Diez\" parent=\"Numeros\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"10\""
+         ]
+        ],
+        [
+         126,
+         11,
+         [
+          "   <tr id=\"Catorce\" parent=\"Diez\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"14\""
+         ]
+        ],
+        [
+         153,
+         6,
+         [
+          "   <tr id=\"Catorce punto tres\" parent=\"Catorce\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"14.3\""
+         ]
+        ],
+        [
+         175,
+         6,
+         [
+          "   <tr id=\"Catorce punto ocho\" parent=\"Catorce\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"14.8\""
+         ]
+        ],
+        [
+         197,
+         6,
+         [
+          "   <tr id=\"Catorce punto cinco\" parent=\"Catorce\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"14.5\""
+         ]
+        ],
+        [
+         219,
+         6,
+         [
+          "   <tr id=\"Catorce punto dos\" parent=\"Catorce\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"14.2\""
+         ]
+        ],
+        [
+         241,
+         6,
+         [
+          "   <tr id=\"Catorce punto uno\" parent=\"Catorce\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"14.1\""
+         ]
+        ],
+        [
+         263,
+         6,
+         [
+          "   <tr id=\"Catorce punto nueve\" parent=\"Catorce\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"14.9\""
+         ]
+        ],
+        [
+         285,
+         6,
+         [
+          "   <tr id=\"Doce\" parent=\"Diez\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"12\""
+         ]
+        ],
+        [
+         307,
+         6,
+         [
+          "   <tr id=\"Veinte\" parent=\"Numeros\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"20\""
+         ]
+        ],
+        [
+         329,
+         11,
+         [
+          "   <tr id=\"Cincuenta\" parent=\"Numeros\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"50\""
+         ]
+        ],
+        [
+         356,
+         11,
+         [
+          "   <tr id=\"Cincuenta y cuatro\" parent=\"Cincuenta\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"54\""
+         ]
+        ],
+        [
+         383,
+         6,
+         [
+          "   <tr id=\"Cincuenta y cuatro punto uno\" parent=\"Cincuenta y cuatro\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"54.1\""
+         ]
+        ],
+        [
+         405,
+         6,
+         [
+          "   <tr id=\"Setenta\" parent=\"Numeros\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"70\""
+         ]
+        ],
+        [
+         427,
+         11,
+         [
+          "   <tr id=\"Cuarenta\" parent=\"Numeros\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"40\""
+         ]
+        ],
+        [
+         454,
+         6,
+         [
+          "   <tr id=\"Cuarenta y dos\" parent=\"Cuarenta\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"42\""
+         ]
+        ],
+        [
+         476,
+         11,
+         [
+          "   <tr id=\"Treinta\" parent=\"Numeros\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"30\""
+         ]
+        ],
+        [
+         503,
+         6,
+         [
+          "   <tr id=\"Treinta y nueve\" parent=\"Treinta\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"39\""
+         ]
+        ],
+        [
+         525,
+         11,
+         [
+          "   <tr id=\"Noventa\" parent=\"Numeros\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"90\""
+         ]
+        ],
+        [
+         552,
+         6,
+         [
+          "   <tr id=\"Noventa y cinco\" parent=\"Noventa\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"95\""
+         ]
+        ],
+        [
+         574,
+         6,
+         [
+          "   <tr id=\"Noventa y siete\" parent=\"Noventa\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"97\""
+         ]
+        ],
+        [
+         596,
+         11,
+         [
+          "   <tr id=\"Cero\" parent=\"Numeros\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"0\""
+         ]
+        ],
+        [
+         623,
+         6,
+         [
+          "   <tr id=\"Dos\" parent=\"Cero\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"2\""
+         ]
+        ],
+        [
+         645,
+         6,
+         [
+          "   <tr id=\"Seis\" parent=\"Cero\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"6\""
+         ]
+        ],
+        [
+         667,
+         6,
+         [
+          "   <tr id=\"Cinco\" parent=\"Cero\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"5\""
+         ]
+        ],
+        [
+         689,
+         6,
+         [
+          "   <tr id=\"Nueve\" parent=\"Cero\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"9\""
+         ]
+        ],
+        [
+         711,
+         11,
+         [
+          "   <tr id=\"Ochenta\" parent=\"Numeros\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"80\""
+         ]
+        ],
+        [
+         738,
+         6,
+         [
+          "   <tr id=\"Ochenta y nueve\" parent=\"Ochenta\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"89\""
+         ]
+        ],
+        [
+         760,
+         6,
+         [
+          "   <tr id=\"Ochenta y ocho\" parent=\"Ochenta\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"88\""
+         ]
+        ],
+        [
+         783,
+         10,
+         [
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"*-*\""
+         ]
+        ],
+        [
+         809,
+         6,
+         [
+          "   <tr id=\"Guión\" parent=\"Simbolos\" indent=\"0\">",
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Valor\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      \"-\""
+         ]
+        ]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": "@=paso-anterior",
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": {
+       "$parche": [
+        [9,1,["ShowAsTree = false"]],
+        [50,2,["CurrentRowIndex() = -1","CurrentColIndex() = -1"]],
+        [55,1,["CurrentTd() = null"]]
+       ]
+      },
+      "estilos": {
+       "$parche": [
+        [
+         0,
+         3,
+         [
+          "host = display:block;position:static;width:1042px;height:630px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "contenedor = display:block;position:static;width:1042px;height:630px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:auto;overflow-y:auto",
+          "table = display:table;position:static;width:1042px;height:1061px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         4,
+         4,
+         [
+          "th[0] = display:table-cell;position:relative;width:122px;height:15px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[1] = display:table-cell;position:relative;width:534px;height:15px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[2] = display:table-cell;position:relative;width:181px;height:15px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[3] = display:table-cell;position:relative;width:136px;height:15px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         9,
+         9,
+         [
+          "tr[0].td[0] = display:table-cell;position:relative;width:130px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[1] = display:table-cell;position:relative;width:542px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[2] = display:table-cell;position:relative;width:189px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[3] = display:table-cell;position:relative;width:144px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1] = display:table-row;position:relative;width:1040px;height:30px;color:rgb(0, 0, 0);background-color:rgb(245, 245, 245);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[0] = display:table-cell;position:relative;width:130px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[1] = display:table-cell;position:relative;width:542px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[2] = display:table-cell;position:relative;width:189px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[3] = display:table-cell;position:relative;width:144px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         19,
+         10,
+         [
+          "tr[2].td[0] = display:table-cell;position:relative;width:130px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[1] = display:table-cell;position:relative;width:542px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[2] = display:table-cell;position:relative;width:189px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[3] = display:table-cell;position:relative;width:144px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[32] = display:table-row;position:relative;width:1040px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[32].td[0] = display:table-cell;position:relative;width:130px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[32].td[1] = display:table-cell;position:relative;width:542px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[32].td[2] = display:table-cell;position:relative;width:189px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[32].td[3] = display:table-cell;position:relative;width:144px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": {
+     "$parche": [
+      [
+       0,
+       1,
+       [
+        "<body style=\"font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;\" {foco}>"
+       ]
+      ],
+      [
+       54,
+       1,
+       [
+        "   <edit-table id=\"tabla-demo\" show-tree=\"false\" parentkey=\"parent\" key=\"name\" style=\"width: 100%;\" control-styles=\"tr td{font-size:.8rem;} th{font-size:.8rem;} thead{ background-color: #ededed; } .EdiTable-Cell{ outline: 1px solid #EDEDED !important; } tbody{ background-color: #FFF !important; } #__table_input{ font-size: unset !important; }\" data=\"[{\\\"name\\\": \\\"Sesenta\\\",\\\"value\\\": 60,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Numeros\\\"},{\\\"name\\\": \\\"Catorce punto tres\\\",\\\"value\\\": 14.3,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Catorce\\\"},{\\\"name\\\": \\\"Catorce punto ocho\\\",\\\"value\\\": 14.8,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Catorce\\\"},{\\\"name\\\": \\\"Cincuenta y cuatro punto uno\\\",\\\"value\\\": 54.1,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Cincuenta y cuatro\\\"},{\\\"name\\\": \\\"Diez\\\",\\\"value\\\": 10,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Numeros\\\"},{\\\"name\\\": \\\"Noventa y cinco\\\",\\\"value\\\": 95,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Noventa\\\"},{\\\"name\\\": \\\"Catorce punto cinco\\\",\\\"value\\\": 14.5,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Catorce\\\"},{\\\"name\\\": \\\"Veinte\\\",\\\"value\\\": 20,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Numeros\\\"},{\\\"name\\\": \\\"Cincuenta\\\",\\\"value\\\": 50,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Numeros\\\"},{\\\"name\\\": \\\"Noventa y siete\\\",\\\"value\\\": 97,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Noventa\\\"},{\\\"name\\\": \\\"Numeros\\\",\\\"value\\\": 100,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\"},{\\\"name\\\": \\\"Ochenta y nueve\\\",\\\"value\\\": 89,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Ochenta\\\"},{\\\"name\\\": \\\"Catorce punto dos\\\",\\\"value\\\": 14.2,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Catorce\\\"},{\\\"name\\\": \\\"Setenta\\\",\\\"value\\\": 70,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Numeros\\\"},{\\\"name\\\": \\\"Cuarenta\\\",\\\"value\\\": 40,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Numeros\\\"},{\\\"name\\\": \\\"Treinta y nueve\\\",\\\"value\\\": 39,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Treinta\\\"},{\\\"name\\\": \\\"Dos\\\",\\\"value\\\": 2,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Cero\\\"},{\\\"name\\\": \\\"Treinta\\\",\\\"value\\\": 30,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Numeros\\\"},{\\\"name\\\": \\\"Cincuenta y cuatro\\\",\\\"value\\\": 54,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Cincuenta\\\"},{\\\"name\\\": \\\"Noventa\\\",\\\"value\\\": 90,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Numeros\\\"},{\\\"name\\\": \\\"Seis\\\",\\\"value\\\": 6,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Cero\\\"},{\\\"name\\\": \\\"Cuarenta y dos\\\",\\\"value\\\": 42,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Cuarenta\\\"},{\\\"name\\\": \\\"Cinco\\\",\\\"value\\\": 5,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Cero\\\"},{\\\"name\\\": \\\"Cero\\\",\\\"value\\\": 0,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Numeros\\\"},{\\\"name\\\": \\\"Catorce punto uno\\\",\\\"value\\\": 14.1,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Catorce\\\"},{\\\"name\\\": \\\"Ochenta\\\",\\\"value\\\": 80,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Numeros\\\"},{\\\"name\\\": \\\"Nueve\\\",\\\"value\\\": 9,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Cero\\\"},{\\\"name\\\": \\\"Catorce\\\",\\\"value\\\": 14,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Diez\\\"},{\\\"name\\\": \\\"Simbolos\\\",\\\"value\\\": \\\"*-*\\\",\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\"},{\\\"name\\\": \\\"Ochenta y ocho\\\",\\\"value\\\": 88,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Ochenta\\\"},{\\\"name\\\": \\\"Guión\\\",\\\"value\\\": \\\"-\\\",\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Simbolos\\\"},{\\\"name\\\": \\\"Catorce punto nueve\\\",\\\"value\\\": 14.9,\\\"even\\\": \\\"No\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Catorce\\\"},{\\\"name\\\": \\\"Doce\\\",\\\"value\\\": 12,\\\"even\\\": \\\"Si\\\",\\\"notes\\\": \\\"\\\",\\\"parent\\\": \\\"Diez\\\"}]\">"
+       ]
+      ]
+     ]
+    },
+    "foco": {"documento":{"ruta":"html>body"},"shadow":null},
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "internos": "@=paso-anterior"
+   }
+  }
+ ]
+}
