@@ -1,0 +1,656 @@
+{
+ "id": "v2/diseno-recarga-ancho",
+ "titulo": "tabla sin atributos nuevos con id estable: redimensionar, esperar 500 ms y recargar restaura el ancho (solo anchos; el orden por clic no)",
+ "etiquetas": ["v2","f3","layout"],
+ "archivo": "escenarios/v2/diseno.mjs",
+ "pasos": [
+  {
+   "nombre": "inicio",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": true,
+      "modoShadowPedido": "closed",
+      "dom": [
+       "\"\\n                \"",
+       "<style>",
+       " @@ESTILO sha256:e02dcdadace9a84f",
+       "</style>",
+       "\"\\n            \"",
+       "<div style=\"min-height: 2rem; max-height: 100%; overflow: auto; padding-bottom: 5px\">",
+       " <table id=\"t1\">",
+       "  <thead>",
+       "   <tr>",
+       "    <th field=\"codigo\" type=\"Text\" width=\"90px\" style=\"width: 90px;\">",
+       "     <span>",
+       "      \"Código\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:155px;\"></div>",
+       "    </th>",
+       "    <th field=\"nombre\" type=\"Text\" width=\"220px\" style=\"width: 220px;\">",
+       "     <span>",
+       "      \"Nombre\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:155px;\"></div>",
+       "    </th>",
+       "    <th field=\"linea\" type=\"Text\" width=\"140px\" style=\"width: 140px;\">",
+       "     <span>",
+       "      \"Línea\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:155px;\"></div>",
+       "    </th>",
+       "    <th field=\"cantidad\" type=\"Number\" width=\"100px\" style=\"width: 100px;\">",
+       "     <span>",
+       "      \"Cantidad\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:155px;\"></div>",
+       "    </th>",
+       "    <th field=\"precio\" type=\"Number\" width=\"110px\" style=\"width: 110px;\">",
+       "     <span>",
+       "      \"Precio\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:155px;\"></div>",
+       "    </th>",
+       "   </tr>",
+       "  </thead>",
+       "  <tbody>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Código\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; width: 90px;\">",
+       "      \"P-003\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; width: 220px;\">",
+       "      \"Martillo de prueba\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Línea\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; width: 140px;\">",
+       "      \"Ferretería\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Cantidad\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; width: 100px;\">",
+       "      \"4\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Precio\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; width: 110px;\">",
+       "      \"120.5\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Código\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; width: 90px;\">",
+       "      \"P-001\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; width: 220px;\">",
+       "      \"Pintura ficticia\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Línea\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; width: 140px;\">",
+       "      \"Pintura\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Cantidad\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; width: 100px;\">",
+       "      \"10\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Precio\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; width: 110px;\">",
+       "      \"89.9\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Código\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; width: 90px;\">",
+       "      \"P-004\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; width: 220px;\">",
+       "      \"Cable de demostración\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Línea\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; width: 140px;\">",
+       "      \"Eléctrico\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Cantidad\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; width: 100px;\">",
+       "      \"25\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Precio\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; width: 110px;\">",
+       "      \"15\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Código\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; width: 90px;\">",
+       "      \"P-002\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; width: 220px;\">",
+       "      \"Brocha inventada\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Línea\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; width: 140px;\">",
+       "      \"Pintura\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Cantidad\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; width: 100px;\">",
+       "      \"7\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Precio\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; width: 110px;\">",
+       "      \"33.25\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "  </tbody>",
+       " </table>",
+       "</div>"
+      ],
+      "shadowEsElGuardado": true,
+      "datos": [
+       {"codigo":"P-003","nombre":"Martillo de prueba","linea":"Ferretería","cantidad":4,"precio":120.5},
+       {"codigo":"P-001","nombre":"Pintura ficticia","linea":"Pintura","cantidad":10,"precio":89.9},
+       {"codigo":"P-004","nombre":"Cable de demostración","linea":"Eléctrico","cantidad":25,"precio":15},
+       {"codigo":"P-002","nombre":"Brocha inventada","linea":"Pintura","cantidad":7,"precio":33.25}
+      ],
+      "columnas": [
+       {"field":"codigo","type":"Text","width":"90px","style":"width: 90px;","title":"Código"},
+       {"field":"nombre","type":"Text","width":"220px","style":"width: 220px;","title":"Nombre"},
+       {"field":"linea","type":"Text","width":"140px","style":"width: 140px;","title":"Línea"},
+       {"field":"cantidad","type":"Number","width":"100px","style":"width: 100px;","title":"Cantidad"},
+       {"field":"precio","type":"Number","width":"110px","style":"width: 110px;","title":"Precio"}
+      ],
+      "respaldo": null,
+      "props": [
+       "IsDirty = false",
+       "Editing = false",
+       "ReadOnly = false",
+       "AutoAddRow = true",
+       "AutoDelRow = true",
+       "EverMove = true",
+       "PagOffSet = 10",
+       "TheadRowIndex = 0",
+       "ColumnsDefaultType = \"Text\"",
+       "ShowAsTree = false",
+       "CanMoveRow = false",
+       "Key = \"id\"",
+       "ParentKey = \"idp\"",
+       "Childs = \"__items\"",
+       "TreeOptions = {}",
+       "sorTable = true",
+       "_sorTable = true",
+       "htmlEncode = false",
+       "autoConfirm = false",
+       "hiddeSelector = false",
+       "hiddeRowSelector = false",
+       "minRowHeight = \"none\"",
+       "maxRowHeight = \"none\"",
+       "rowHeight = \"100%\"",
+       "cardsResponsive = false",
+       "editableResponsive = false",
+       "tableId = \"t1\"",
+       "NumFormat = {\"default_decimals\":\".\",\"thousands\":\",\",\"decimals\":\".\"}",
+       "CSS = {\"Cell\":\"EdiTable-Cell\",\"RowSelected\":\"EdiTable-Row-Selected\"}",
+       "hideColumns = []",
+       "_expandOnStart = false",
+       "KeepSelectionVisible = true",
+       "CardsMode = null",
+       "CardsLayout = \"grid\"",
+       "CardsBreakpoint = \"768px\"",
+       "CardsBreakpointTarget = \"viewport\"",
+       "IsCardView = false",
+       "_count_isdirty = 0",
+       "_current_row = -1",
+       "attributes = [\"id\",\"style\",\"data\"]",
+       "BadgesField = \"__badges\"",
+       "BadgeTooltip = \"native\"",
+       "BadgeSelectsRow = false",
+       "NativeEvents = false",
+       "TemplateEncode = false",
+       "Locale = null",
+       "RowClassField = null",
+       "_TreeValueIndent = 1",
+       "_TreeUnitIndent = \"rem\"",
+       "temp_html = \"[undefined]\"",
+       "CurrentRowIndex() = -1",
+       "CurrentColIndex() = -1",
+       "TRCount() = 4",
+       "THCount() = 5",
+       "ColumnsCount() = 5",
+       "CurrentTd() = null",
+       "focusedTable==_getCurren() = false",
+       "Events reemplazado = 0",
+       "Events claves = []",
+       "scroll = {\"contenedor\":[0,0]}"
+      ],
+      "estilos": [
+       "host = display:inline;position:static;width:700px;height:auto;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "contenedor = display:block;position:static;width:968px;height:155px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:auto;overflow-y:auto",
+       "table = display:table;position:static;width:968px;height:155px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "thead = display:table-header-group;position:sticky;width:966px;height:27px;color:rgb(0, 0, 0);background-color:rgb(245, 245, 245);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[0] = display:table-cell;position:relative;width:122px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[1] = display:table-cell;position:relative;width:291px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[2] = display:table-cell;position:relative;width:187px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[3] = display:table-cell;position:relative;width:135px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[4] = display:table-cell;position:relative;width:148px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0] = display:table-row;position:relative;width:966px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[0] = display:table-cell;position:relative;width:130px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[1] = display:table-cell;position:relative;width:299px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[2] = display:table-cell;position:relative;width:195px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[3] = display:table-cell;position:relative;width:143px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[4] = display:table-cell;position:relative;width:156px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1] = display:table-row;position:relative;width:966px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[0] = display:table-cell;position:relative;width:130px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[1] = display:table-cell;position:relative;width:299px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[2] = display:table-cell;position:relative;width:195px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[3] = display:table-cell;position:relative;width:143px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[4] = display:table-cell;position:relative;width:156px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2] = display:table-row;position:relative;width:966px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[0] = display:table-cell;position:relative;width:130px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[1] = display:table-cell;position:relative;width:299px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[2] = display:table-cell;position:relative;width:195px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[3] = display:table-cell;position:relative;width:143px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[4] = display:table-cell;position:relative;width:156px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[3] = display:table-row;position:relative;width:966px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[3].td[0] = display:table-cell;position:relative;width:130px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[3].td[1] = display:table-cell;position:relative;width:299px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[3].td[2] = display:table-cell;position:relative;width:195px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[3].td[3] = display:table-cell;position:relative;width:143px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[3].td[4] = display:table-cell;position:relative;width:156px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+      ]
+     }
+    ],
+    "luz": [
+     "<body {foco}>",
+     " \"\\n\"",
+     " <edit-table id=\"t1\" style=\"width:700px\" data=\"[{\\\"codigo\\\":\\\"P-003\\\",\\\"nombre\\\":\\\"Martillo de prueba\\\",\\\"linea\\\":\\\"Ferretería\\\",\\\"cantidad\\\":4,\\\"precio\\\":120.5},{\\\"codigo\\\":\\\"P-001\\\",\\\"nombre\\\":\\\"Pintura ficticia\\\",\\\"linea\\\":\\\"Pintura\\\",\\\"cantidad\\\":10,\\\"precio\\\":89.9},{\\\"codigo\\\":\\\"P-004\\\",\\\"nombre\\\":\\\"Cable de demostración\\\",\\\"linea\\\":\\\"Eléctrico\\\",\\\"cantidad\\\":25,\\\"precio\\\":15},{\\\"codigo\\\":\\\"P-002\\\",\\\"nombre\\\":\\\"Brocha inventada\\\",\\\"linea\\\":\\\"Pintura\\\",\\\"cantidad\\\":7,\\\"precio\\\":33.25}]\">",
+     "  #shadow-root -> tablas[0]",
+     " </edit-table>",
+     " \"\\n\"",
+     " <script>",
+     "  \"\\nwindow.__leerBd = () => new Promise(res => { const r = indexedDB.open('induxsoft-edittable'); r.onupgradeneeded = () => { try { r.transaction.abort(); } catch (e) {} }; r.onerror = () => res(null); r.onsuccess = () => { const db = r.result; if (!db.objectStoreNames.contains('layouts')) { db.close(); res([]); return; } const out = []; const c = db.transaction('layouts').objectStore('layouts').openCursor(); c.onsuccess = () => { const x = c.result; if (x) { out.push({ key: x.key, layout: x.value.layout, huella: x.value.huella }); x.continue(); } else { db.close(); res(out); } }; }; });window.__etExtra = () => { const t = ET('t1'); return { anchos: Array.from(ETs('t1').querySelectorAll('thead th')).map(th => th.style.width), layout: t.getLayout(), primera: t.DataArray[0].codigo, bd: window.__bd ?? null }; };\\n\"",
+     " </script>",
+     " \"\\n\\n\"",
+     "</body>"
+    ],
+    "foco": {"documento":{"ruta":"html>body"},"shadow":null},
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": {
+     "valor": {
+      "anchos": ["90px","220px","140px","100px","110px"],
+      "layout": {
+       "v": 1,
+       "columns": [
+        {"field":"codigo","order":0,"width":90,"hidden":false,"fixed":false},
+        {"field":"nombre","order":1,"width":220,"hidden":false,"fixed":false},
+        {"field":"linea","order":2,"width":140,"hidden":false,"fixed":false},
+        {"field":"cantidad","order":3,"width":100,"hidden":false,"fixed":false},
+        {"field":"precio","order":4,"width":110,"hidden":false,"fixed":false}
+       ],
+       "sort": null,
+       "groups": [],
+       "density": "normal"
+      },
+      "primera": "P-003",
+      "bd": null
+     }
+    },
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 2,
+      "nodo:mousedown": 5,
+      "document:mousemove": 5,
+      "document:mouseup": 5,
+      "window:beforeprint": 1,
+      "window:afterprint": 1
+     },
+     "intervalos": 1
+    }
+   }
+  },
+  {
+   "nombre": "redimensionar Nombre +80",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [
+         15,
+         1,
+         ["    <th field=\"nombre\" type=\"Text\" width=\"220px\" style=\"width: 387px;\" class=\"descendent\">"]
+        ],
+        [21,1,["    <th field=\"linea\" type=\"Text\" width=\"140px\" style=\"width: 123px;\">"]],
+        [42,1,["   <tr id=\"\" parent=\"\" indent=\"0\">"]],
+        [45,1,["      \"P-002\""]],
+        [50,1,["      \"Brocha inventada\""]],
+        [55,1,["      \"Pintura\""]],
+        [60,1,["      \"7\""]],
+        [65,1,["      \"33.25\""]],
+        [69,1,["   <tr id=\"\" parent=\"\" indent=\"0\">"]],
+        [72,1,["      \"P-004\""]],
+        [77,1,["      \"Cable de demostración\""]],
+        [82,1,["      \"Eléctrico\""]],
+        [87,1,["      \"25\""]],
+        [92,1,["      \"15\""]],
+        [96,1,["   <tr id=\"\" parent=\"\" indent=\"0\">"]],
+        [99,1,["      \"P-003\""]],
+        [104,1,["      \"Martillo de prueba\""]],
+        [109,1,["      \"Ferretería\""]],
+        [114,1,["      \"4\""]],
+        [119,1,["      \"120.5\""]],
+        [123,1,["   <tr id=\"\" parent=\"\" indent=\"0\">"]],
+        [126,1,["      \"P-001\""]],
+        [131,1,["      \"Pintura ficticia\""]],
+        [141,1,["      \"10\""]],
+        [146,1,["      \"89.9\""]]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": [
+       {"codigo":"P-002","nombre":"Brocha inventada","linea":"Pintura","cantidad":7,"precio":33.25},
+       {"codigo":"P-004","nombre":"Cable de demostración","linea":"Eléctrico","cantidad":25,"precio":15},
+       {"codigo":"P-003","nombre":"Martillo de prueba","linea":"Ferretería","cantidad":4,"precio":120.5},
+       {"codigo":"P-001","nombre":"Pintura ficticia","linea":"Pintura","cantidad":10,"precio":89.9}
+      ],
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": {"$parche":[[14,1,["TreeOptions = {\"key\":\"id\",\"parentkey\":\"idp\",\"childs\":\"__items\"}"]]]},
+      "estilos": {
+       "$parche": [
+        [
+         4,
+         5,
+         [
+          "th[0] = display:table-cell;position:relative;width:97px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[1] = display:table-cell;position:relative;width:415px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[2] = display:table-cell;position:relative;width:142px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[3] = display:table-cell;position:relative;width:108px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[4] = display:table-cell;position:relative;width:119px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         10,
+         5,
+         [
+          "tr[0].td[0] = display:table-cell;position:relative;width:105px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[1] = display:table-cell;position:relative;width:423px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[2] = display:table-cell;position:relative;width:150px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[3] = display:table-cell;position:relative;width:116px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[4] = display:table-cell;position:relative;width:127px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         16,
+         5,
+         [
+          "tr[1].td[0] = display:table-cell;position:relative;width:105px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[1] = display:table-cell;position:relative;width:423px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[2] = display:table-cell;position:relative;width:150px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[3] = display:table-cell;position:relative;width:116px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[4] = display:table-cell;position:relative;width:127px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         22,
+         5,
+         [
+          "tr[2].td[0] = display:table-cell;position:relative;width:105px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[1] = display:table-cell;position:relative;width:423px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[2] = display:table-cell;position:relative;width:150px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[3] = display:table-cell;position:relative;width:116px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[4] = display:table-cell;position:relative;width:127px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         28,
+         5,
+         [
+          "tr[3].td[0] = display:table-cell;position:relative;width:105px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[3].td[1] = display:table-cell;position:relative;width:423px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[3].td[2] = display:table-cell;position:relative;width:150px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[3].td[3] = display:table-cell;position:relative;width:116px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[3].td[4] = display:table-cell;position:relative;width:127px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": "@=paso-anterior",
+    "foco": "@=paso-anterior",
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": {
+     "valor": {
+      "anchos": ["90px","387px","123px","100px","110px"],
+      "layout": {
+       "v": 1,
+       "columns": [
+        {"field":"codigo","order":0,"width":90,"hidden":false,"fixed":false},
+        {"field":"nombre","order":1,"width":387,"hidden":false,"fixed":false},
+        {"field":"linea","order":2,"width":123,"hidden":false,"fixed":false},
+        {"field":"cantidad","order":3,"width":100,"hidden":false,"fixed":false},
+        {"field":"precio","order":4,"width":110,"hidden":false,"fixed":false}
+       ],
+       "sort": {"field":"nombre","dir":"ASC"},
+       "groups": [],
+       "density": "normal"
+      },
+      "primera": "P-002",
+      "bd": null
+     }
+    },
+    "internos": "@=paso-anterior"
+   }
+  },
+  {
+   "nombre": "esperar 600 ms (se guarda)",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": "@=paso-anterior",
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": "@=paso-anterior",
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": "@=paso-anterior",
+      "estilos": "@=paso-anterior"
+     }
+    ],
+    "luz": "@=paso-anterior",
+    "foco": "@=paso-anterior",
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": "@=paso-anterior",
+    "internos": "@=paso-anterior"
+   }
+  },
+  {
+   "nombre": "leer IndexedDB",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": "@=paso-anterior",
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": "@=paso-anterior",
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": "@=paso-anterior",
+      "estilos": "@=paso-anterior"
+     }
+    ],
+    "luz": "@=paso-anterior",
+    "foco": "@=paso-anterior",
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": {
+     "valor": {
+      "anchos": ["90px","387px","123px","100px","110px"],
+      "layout": {
+       "v": 1,
+       "columns": [
+        {"field":"codigo","order":0,"width":90,"hidden":false,"fixed":false},
+        {"field":"nombre","order":1,"width":387,"hidden":false,"fixed":false},
+        {"field":"linea","order":2,"width":123,"hidden":false,"fixed":false},
+        {"field":"cantidad","order":3,"width":100,"hidden":false,"fixed":false},
+        {"field":"precio","order":4,"width":110,"hidden":false,"fixed":false}
+       ],
+       "sort": {"field":"nombre","dir":"ASC"},
+       "groups": [],
+       "density": "normal"
+      },
+      "primera": "P-002",
+      "bd": [
+       {
+        "key": "a73c74b4f83ab41879ebb667003e2f280bbcf2aed358f83f919b00f8e4f8f805",
+        "layout": {
+         "v": 1,
+         "columns": [
+          {"field":"codigo","order":0,"width":90,"hidden":false,"fixed":false},
+          {"field":"nombre","order":1,"width":387,"hidden":false,"fixed":false},
+          {"field":"linea","order":2,"width":123,"hidden":false,"fixed":false},
+          {"field":"cantidad","order":3,"width":100,"hidden":false,"fixed":false},
+          {"field":"precio","order":4,"width":110,"hidden":false,"fixed":false}
+         ],
+         "sort": null,
+         "groups": [],
+         "density": "normal"
+        },
+        "huella": "97cabab397693a4a79a1f8a58878ce9a79c592227c93e2de3744f366a5b48e9a"
+       }
+      ]
+     }
+    },
+    "internos": "@=paso-anterior"
+   }
+  },
+  {
+   "nombre": "recargar la página",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [15,1,["    <th field=\"nombre\" type=\"Text\" width=\"220px\" style=\"width: 387px;\">"]],
+        [42,1,["   <tr>"]],
+        [45,1,["      \"P-003\""]],
+        [50,1,["      \"Martillo de prueba\""]],
+        [55,1,["      \"Ferretería\""]],
+        [60,1,["      \"4\""]],
+        [65,1,["      \"120.5\""]],
+        [69,1,["   <tr>"]],
+        [72,1,["      \"P-001\""]],
+        [77,1,["      \"Pintura ficticia\""]],
+        [82,1,["      \"Pintura\""]],
+        [87,1,["      \"10\""]],
+        [92,1,["      \"89.9\""]],
+        [96,1,["   <tr>"]],
+        [99,1,["      \"P-004\""]],
+        [104,1,["      \"Cable de demostración\""]],
+        [109,1,["      \"Eléctrico\""]],
+        [114,1,["      \"25\""]],
+        [119,1,["      \"15\""]],
+        [123,1,["   <tr>"]],
+        [126,1,["      \"P-002\""]],
+        [131,1,["      \"Brocha inventada\""]],
+        [141,1,["      \"7\""]],
+        [146,1,["      \"33.25\""]]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": [
+       {"codigo":"P-003","nombre":"Martillo de prueba","linea":"Ferretería","cantidad":4,"precio":120.5},
+       {"codigo":"P-001","nombre":"Pintura ficticia","linea":"Pintura","cantidad":10,"precio":89.9},
+       {"codigo":"P-004","nombre":"Cable de demostración","linea":"Eléctrico","cantidad":25,"precio":15},
+       {"codigo":"P-002","nombre":"Brocha inventada","linea":"Pintura","cantidad":7,"precio":33.25}
+      ],
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": {"$parche":[[14,1,["TreeOptions = {}"]]]},
+      "estilos": "@=paso-anterior"
+     }
+    ],
+    "luz": "@=paso-anterior",
+    "foco": "@=paso-anterior",
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": {
+     "valor": {
+      "anchos": ["90px","387px","123px","100px","110px"],
+      "layout": {
+       "v": 1,
+       "columns": [
+        {"field":"codigo","order":0,"width":90,"hidden":false,"fixed":false},
+        {"field":"nombre","order":1,"width":387,"hidden":false,"fixed":false},
+        {"field":"linea","order":2,"width":123,"hidden":false,"fixed":false},
+        {"field":"cantidad","order":3,"width":100,"hidden":false,"fixed":false},
+        {"field":"precio","order":4,"width":110,"hidden":false,"fixed":false}
+       ],
+       "sort": null,
+       "groups": [],
+       "density": "normal"
+      },
+      "primera": "P-003",
+      "bd": null
+     }
+    },
+    "internos": "@=paso-anterior"
+   }
+  }
+ ]
+}

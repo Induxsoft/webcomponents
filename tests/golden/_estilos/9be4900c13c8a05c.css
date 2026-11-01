@@ -1,0 +1,29 @@
+
+                    /* ===== EditTable F3: columnas fijas, selector de columnas y reordenar ===== */
+                    table.et-has-fixed th.et-fixed, table.et-has-fixed td.et-fixed { position: sticky; z-index: 2; background-color: var(--et-fixed-bg, #FFF); background-clip: padding-box; }
+                    table.et-has-fixed thead > tr > th.et-fixed { z-index: 3; background-color: var(--et-fixed-head-bg, #F5F5F5); }
+                    table.et-has-fixed tfoot td.et-fixed, table.et-has-fixed tfoot th.et-fixed { z-index: 3; }
+                    table.et-has-fixed tbody tr:hover > td.et-fixed { background-color: var(--et-fixed-hover-bg, #F5F5F5); }
+                    table.et-has-fixed tbody tr.EdiTable-Row-Selected > td { background-color: inherit !important; }
+                    table.et-has-fixed .et-fixed-last { box-shadow: 4px 0 4px -2px rgba(0,0,0,.18); }
+                    table.et-has-fixed tbody tr.et-accent > td.et-fixed-last:first-child { box-shadow: inset 3px 0 0 var(--et-row-accent), 4px 0 4px -2px rgba(0,0,0,.18); }
+                    .et-fixed-cont { overflow: visible !important; }
+                    table.et-cards .et-fixed { position: static !important; box-shadow: none !important; }
+                    .et-chooser-host { position: relative; }
+                    .et-chooser-btn { position: absolute; top: 3px; right: 8px; z-index: 101; width: 20px; height: 20px; padding: 0; display: flex; align-items: center; justify-content: center; border: 1px solid #CCC; border-radius: 3px; background: #FFF; color: #555; cursor: pointer; }
+                    .et-chooser-btn:hover { background: #F0F4FB; }
+                    .et-chooser { display: none; position: fixed; z-index: 100000; min-width: 190px; max-height: 60vh; overflow: auto; padding: 4px 0; background: #FFF; color: #212529; border: 1px solid #CCC; border-radius: 4px; box-shadow: 0 4px 14px rgba(0,0,0,.18); font-size: .9rem; text-align: left; outline: none; }
+                    .et-chooser.et-open { display: block; }
+                    .et-chooser > button { display: block; width: 100%; padding: 4px 12px; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+                    .et-chooser > button:disabled { color: #999; cursor: default; }
+                    .et-chooser > button:not(:disabled):hover, .et-chooser > label:hover { background: #F0F4FB; }
+                    .et-chooser > hr { border: 0; border-top: 1px solid #EEE; margin: 4px 0; }
+                    .et-chooser > label { display: flex; gap: 6px; align-items: center; padding: 3px 12px; white-space: nowrap; cursor: pointer; }
+                    .et-drop-indicator { position: fixed; width: 3px; background: #3D75DD; z-index: 100001; pointer-events: none; }
+                    thead th.et-dragging { opacity: .5; }
+                    @media screen and (max-width: 768px) { .table-cards .et-fixed { position: static !important; box-shadow: none !important; } }
+                    @media print {
+                        .et-chooser-btn, .et-chooser, .et-drop-indicator { display: none !important; }
+                        table.et-has-fixed .et-fixed { position: static !important; box-shadow: none !important; }
+                    }
+        
