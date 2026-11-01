@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Formato numérico y moneda · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- format="true" con decs, prefix, sufix y thousandssep. La celda muestra el valor con formato; DataArray conserva el número (o el texto que se tecleó). -->
+<div id="contenido">
+<div class="demo-caja"><edit-table id="t1" style="width:100%" >
+<edit-thead><edit-tr>
+<edit-th type="Text" field="concepto">Concepto</edit-th>
+<edit-th type="Number" field="importe" textalign="end" format="true" decs="2" prefix="$ " thousandssep="true">Importe</edit-th>
+<edit-th type="Number" field="usd" textalign="end" format="true" decs="2" prefix="US$ " sufix=" USD" thousandssep="true">En dólares</edit-th>
+<edit-th type="NoEditable" field="piezas" textalign="end" format="true" decs="0" thousandssep="true">Piezas</edit-th>
+<edit-th type="Number" field="tasa" textalign="end" format="true" decs="4">Tasa</edit-th>
+<edit-th type="Number" field="crudo" textalign="end">Sin formato</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div><p class="demo-nota">Pruebe a editar Importe: el editor recibe el número sin formato.</p>
+</div>
+<script>
+Demo.pagina({"titulo": "Formato numérico y moneda", "tipo": "actual", "bajada": "format=\"true\" con decs, prefix, sufix y thousandssep. La celda muestra el valor con formato; DataArray conserva el número (o el texto que se tecleó)."});
+
+Demo.observar('t1');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1');
+  t.DataArray = [
+    { concepto: 'Venta de mostrador', importe: 123456.789, usd: 6543.21, piezas: 1250000, tasa: 0.16, crudo: 1234.5 },
+    { concepto: 'Devolución', importe: -850, usd: -45, piezas: 12, tasa: 0.08, crudo: -850 },
+  ];
+  t._printRows();
+});
+</script>
+</body>
+</html>

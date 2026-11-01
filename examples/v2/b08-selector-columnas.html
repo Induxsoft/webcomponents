@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mostrar y ocultar columnas · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- column-chooser="true" agrega un botón en la esquina del encabezado y un menú con clic derecho sobre el th: casillas por columna, Fijar o soltar, Ajustar ancho y Restablecer diseño. chooser="false" deja una columna fuera del menú. También HideColumn, ShowColumn, IsColumnVisible y getVisibleColumns. -->
+<div id="contenido">
+<div class="demo-barra" id="barra"></div><div class="demo-caja"><edit-table id="t1" style="width:100%" column-chooser="true">
+<edit-thead><edit-tr>
+<edit-th type="Text" field="codigo" width="100px" chooser="false">Código</edit-th>
+<edit-th type="Text" field="descripcion" width="240px">Descripción</edit-th>
+<edit-th type="Text" field="linea" width="140px">Línea</edit-th>
+<edit-th type="Text" field="marca" width="160px">Marca</edit-th>
+<edit-th type="Text" field="unidad" width="90px">Unidad</edit-th>
+<edit-th type="Number" field="existencia" textalign="end" width="110px">Existencia</edit-th>
+<edit-th type="Number" field="costo" textalign="end" format="true" decs="2" prefix="$" width="120px">Costo</edit-th>
+<edit-th type="Number" field="precio" textalign="end" format="true" decs="2" prefix="$" width="120px">Precio</edit-th>
+<edit-th type="Check" field="activo" width="80px">Activo</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div>
+</div>
+<script>
+Demo.pagina({"titulo": "Mostrar y ocultar columnas", "tipo": "v2", "bajada": "column-chooser=\"true\" agrega un botón en la esquina del encabezado y un menú con clic derecho sobre el th: casillas por columna, Fijar o soltar, Ajustar ancho y Restablecer diseño. chooser=\"false\" deja una columna fuera del menú. También HideColumn, ShowColumn, IsColumnVisible y getVisibleColumns."});
+Demo.requiere(["chooser"]);
+Demo.observar('t1');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1');
+  t.DataArray = DatosDemo.productos(12); t._printRows();
+  t.addEventListener('ColumnVisibilityChanged', (e) => Demo.log(e.field + ' visible=' + e.visible, 'ColumnVisibilityChanged'));
+  Demo.boton('barra', 'HideColumn("marca")', () => Demo.llamar(t, 'HideColumn', 'marca'));
+  Demo.boton('barra', 'ShowColumn("marca")', () => Demo.llamar(t, 'ShowColumn', 'marca'));
+  Demo.boton('barra', 'getVisibleColumns()', () => Demo.log(JSON.stringify(Demo.llamar(t, 'getVisibleColumns')), 'consulta'));
+});
+</script>
+</body>
+</html>

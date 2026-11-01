@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ocultar columnas y cambiar títulos · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- hideColumn(field, true|false) oculta y muestra una columna (hideColumns guarda los índices de celda); changeColumnTitle(field, título) cambia el encabezado. -->
+<div id="contenido">
+<div class="demo-barra" id="cols"></div><div class="demo-barra"><select id="campo"></select><input id="titulo" placeholder="Título nuevo"><button id="cambiar">changeColumnTitle</button></div><div class="demo-caja"><edit-table id="t1" style="width:100%" >
+<edit-thead><edit-tr>
+<edit-th type="Text" field="codigo" width="100px">Código</edit-th>
+<edit-th type="Text" field="descripcion" minwidth="220px">Descripción</edit-th>
+<edit-th type="Text" field="linea">Línea</edit-th>
+<edit-th type="Number" field="existencia" textalign="end">Existencia</edit-th>
+<edit-th type="Number" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true">Precio</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div>
+</div>
+<script>
+Demo.pagina({"titulo": "Ocultar columnas y cambiar títulos", "tipo": "actual", "bajada": "hideColumn(field, true|false) oculta y muestra una columna (hideColumns guarda los índices de celda); changeColumnTitle(field, título) cambia el encabezado."});
+
+Demo.observar('t1');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1');
+  t.DataArray = DatosDemo.productos(6); t._printRows();
+  const cols = document.getElementById('cols'), sel = document.getElementById('campo');
+  t.Columns.forEach(c => {
+    const l = document.createElement('label'); const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = true;
+    cb.onchange = () => { t.hideColumn(c.field, !cb.checked); Demo.log('hideColumns = ' + JSON.stringify(t.hideColumns), 'hideColumn'); };
+    l.append(cb, ' ' + c.title); cols.appendChild(l);
+    const o = document.createElement('option'); o.value = c.field; o.textContent = c.field; sel.appendChild(o);
+  });
+  document.getElementById('cambiar').onclick = () => t.changeColumnTitle(sel.value, document.getElementById('titulo').value || sel.value);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Color condicional con onTdPaint · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- onTdPaint(td, idx, icol, field) se llama por celda al dibujar la tabla completa (_printRows); aquí pinta en rojo los saldos negativos. CellClass hace lo mismo con clases y también se aplica en UpdateRow. -->
+<div id="contenido">
+<div class="demo-caja"><edit-table id="t1" style="width:100%" control-styles=".excedido{background:#fdecea;color:#b3261e}">
+<edit-thead><edit-tr>
+<edit-th type="NoEditable" field="codigo">Cliente</edit-th>
+<edit-th type="NoEditable" field="nombre">Nombre</edit-th>
+<edit-th type="Number" field="saldo" textalign="end" format="true" decs="2" prefix="$" thousandssep="true">Saldo (onTdPaint)</edit-th>
+<edit-th type="Number" field="limite" textalign="end" format="true" decs="2" prefix="$" thousandssep="true">Límite (CellClass)</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div><p class="demo-nota">Edite un saldo: onTdPaint no se vuelve a llamar en UpdateRow; por eso el ejemplo redibuja con _printRows en FieldUpdated.</p>
+</div>
+<script>
+Demo.pagina({"titulo": "Color condicional con onTdPaint", "tipo": "actual", "bajada": "onTdPaint(td, idx, icol, field) se llama por celda al dibujar la tabla completa (_printRows); aquí pinta en rojo los saldos negativos. CellClass hace lo mismo con clases y también se aplica en UpdateRow."});
+
+Demo.observar('t1');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1');
+  t.onTdPaint = (td, idx, icol, field) => { if (field === 'saldo') td.style.color = Number(t.DataArray[idx].saldo) < 0 ? '#b3261e' : ''; };
+  t.CellClass = (r, field) => field === 'limite' && Number(r.saldo) > Number(r.limite) ? 'excedido' : '';
+  t.DataArray = DatosDemo.clientes(10); t._printRows();
+  t.addEventListener('fieldupdated', () => { const i = t.CurrentRowIndex(), c = t.CurrentColIndex(); t._printRows(); t.NavTo(i, c); });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Selección de varias filas · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- multi-select="checkbox" agrega una columna del sistema con casillas (y "todas" en el encabezado, con estado intermedio); multi-select="row" usa Ctrl+clic, Mayús+clic y Espacio. Las filas marcadas llevan et-row-checked; la fila actual sigue siendo EdiTable-Row-Selected. Abajo, el total de lo seleccionado. -->
+<div id="contenido">
+<div class="demo-barra" id="barra"><label>Modo <select id="modo"><option>checkbox</option><option>row</option></select></label></div><div class="demo-caja" style="max-height:420px"><edit-table id="t1" style="width:100%" multi-select="checkbox" summary-scope="selected">
+<edit-thead><edit-tr>
+<edit-th type="NoEditable" field="codigo">Cliente</edit-th>
+<edit-th type="NoEditable" field="nombre" minwidth="220px">Nombre</edit-th>
+<edit-th type="NoEditable" field="ciudad">Ciudad</edit-th>
+<edit-th type="NoEditable" field="saldo" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" summary="sum">Saldo</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div><p id="sel" class="demo-nota"></p>
+</div>
+<script>
+Demo.pagina({"titulo": "Selección de varias filas", "tipo": "v2", "bajada": "multi-select=\"checkbox\" agrega una columna del sistema con casillas (y \"todas\" en el encabezado, con estado intermedio); multi-select=\"row\" usa Ctrl+clic, Mayús+clic y Espacio. Las filas marcadas llevan et-row-checked; la fila actual sigue siendo EdiTable-Row-Selected. Abajo, el total de lo seleccionado."});
+Demo.requiere(["multiselect"]);
+Demo.observar('t1');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1');
+  t.DataArray = DatosDemo.clientes(30); t._printRows();
+  const p = document.getElementById('sel');
+  t.addEventListener('SelectionChanged', (e) => { p.textContent = e.selected.length + ' seleccionadas · total ' + (Demo.llamar(t, 'getSummary', 'saldo') ?? '—'); });
+  document.getElementById('modo').onchange = (e) => { t.setAttribute('multi-select', e.target.value); };
+  Demo.boton('barra', 'SelectAll()', () => Demo.llamar(t, 'SelectAll'));
+  Demo.boton('barra', 'ClearSelection()', () => Demo.llamar(t, 'ClearSelection'));
+  Demo.boton('barra', 'Seleccionar saldos negativos', () => Demo.llamar(t, 'SelectRows', t.DataArray.map((r, i) => r.saldo < 0 ? i : -1).filter(i => i >= 0)));
+  Demo.boton('barra', 'getSelectedData()', () => Demo.log(JSON.stringify((Demo.llamar(t, 'getSelectedData') || []).map(r => r.codigo)), 'getSelectedData'));
+});
+</script>
+</body>
+</html>

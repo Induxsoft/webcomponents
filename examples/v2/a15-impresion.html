@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Impresión · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- Las columnas con class="no-print" o "hide-on-print" se ocultan en beforeprint y vuelven en afterprint. V12 imprime de otra forma: clona la tabla interna con _shadow.getElementById(id).cloneNode(true); aquí se muestra ese clon. -->
+<div id="contenido">
+<div class="demo-barra" id="barra"></div><div class="demo-caja"><edit-table id="t1" style="width:100%" >
+<edit-thead><edit-tr>
+<edit-th type="NoEditable" field="codigo">Código</edit-th>
+<edit-th type="NoEditable" field="nombre">Nombre</edit-th>
+<edit-th type="NoEditable" field="rfc" class="no-print">RFC (no-print)</edit-th>
+<edit-th type="NoEditable" field="vendedor" class="hide-on-print">Vendedor (hide-on-print)</edit-th>
+<edit-th type="NoEditable" field="saldo" textalign="end" format="true" decs="2" prefix="$" thousandssep="true">Saldo</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div><h3>Clon como lo hace V12 (v12PrintHTML)</h3><div id="clon" class="demo-caja" style="padding:6px"></div>
+</div>
+<script>
+Demo.pagina({"titulo": "Impresión", "tipo": "actual", "bajada": "Las columnas con class=\"no-print\" o \"hide-on-print\" se ocultan en beforeprint y vuelven en afterprint. V12 imprime de otra forma: clona la tabla interna con _shadow.getElementById(id).cloneNode(true); aquí se muestra ese clon."});
+
+Demo.observar('t1');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1');
+  t.DataArray = DatosDemo.clientes(6); t._printRows();
+  Demo.boton('barra', 'Imprimir (window.print)', () => window.print());
+  Demo.boton('barra', 'Simular beforeprint', () => window.dispatchEvent(new Event('beforeprint')));
+  Demo.boton('barra', 'Simular afterprint', () => window.dispatchEvent(new Event('afterprint')));
+  Demo.boton('barra', 'Clonar como V12', () => { const k = t._shadow.getElementById(t.id).cloneNode(true); k.style.width = '100%'; const c = document.getElementById('clon'); c.innerHTML = ''; c.appendChild(k); Demo.log('clon con ' + k.tBodies[0].rows.length + ' filas', 'V12'); });
+});
+</script>
+</body>
+</html>

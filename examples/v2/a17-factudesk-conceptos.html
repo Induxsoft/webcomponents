@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Réplica de conceptos de FactuDesk · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- La tabla de conceptos de FactuDesk v12 al emitir: tema por control-styles, DataArray.push + _printRows, CellFocus y StartEdit en Cantidad, recálculo en FieldUpdated con UpdateRow, Supr y ↓ atendidos con un keydown nativo en captura sobre el host, y hideColumn("predial"). -->
+<div id="contenido">
+<div style="--fd-text:#1d2329;--fd-text-muted:#5b6670;--fd-border:#d9dee3;--fd-surface:#fff;--fd-surface-alt:#f4f6f8;--fd-brand:#0b6e63;--fd-brand-soft:#dff1ec;--fd-brand-strong:#064;--fd-radius-xs:3px;--fd-font:inherit;--fd-fs-sm:14px;--fd-fs-xs:12px">
+<div class="demo-caja">
+<edit-table id="em-conceptos" hide-row-selector="true" data="[]"><edit-thead><edit-tr>
+<edit-th type="NoEditable" field="codigo" width="110px">Código</edit-th>
+<edit-th type="Memo" field="descripcion" minwidth="220px">Descripción</edit-th>
+<edit-th type="NoEditable" field="unidad" width="90px">Unidad</edit-th>
+<edit-th type="Number" field="cantidad" textalign="end" width="90px" default="1">Cantidad</edit-th>
+<edit-th type="Number" field="precio" textalign="end" format="true" thousandssep="true" decs="2" prefix="$" width="120px">Precio</edit-th>
+<edit-th type="Number" field="descuentos" textalign="end" format="true" thousandssep="true" decs="2" prefix="$" width="110px" default="0">Descuento</edit-th>
+<edit-th type="Text" field="predial" width="150px">Cuenta predial</edit-th>
+<edit-th type="NoEditable" field="iva" textalign="end" format="true" thousandssep="true" decs="2" prefix="$" width="100px">IVA</edit-th>
+<edit-th type="NoEditable" field="importe" textalign="end" format="true" thousandssep="true" decs="2" prefix="$" width="120px">Importe</edit-th>
+</edit-tr></edit-thead></edit-table></div>
+<div class="demo-barra"><input id="em-concepto-buscar" placeholder="Buscar concepto (Enter agrega el primero)" style="min-width:320px"><span id="em-partidas">0 partidas</span></div>
+<div class="demo-totales"><span>Subtotal<b id="sub">$0.00</b></span><span>IVA<b id="iva">$0.00</b></span><span>Total MXN<b id="tot">$0.00</b></span></div>
+</div>
+<script>
+(function(){var S="table{font-family:var(--fd-font);font-size:var(--fd-fs-sm);color:var(--fd-text);border-spacing:0;}thead{background-color:var(--fd-surface-alt);}thead tr th{outline:none;border-bottom:1px solid var(--fd-border);padding:10px;color:var(--fd-text-muted);font-size:var(--fd-fs-xs);font-weight:800;text-align:left;white-space:nowrap;}.EdiTable-Cell{outline:none;border-bottom:1px solid var(--fd-border);padding:4px 6px;height:2.25rem;}tbody tr:hover{background-color:var(--fd-surface-alt);}.EdiTable-Selector{box-sizing:border-box;background-color:transparent;color:var(--fd-text);border:1px solid transparent;border-radius:var(--fd-radius-xs);padding:0 4px;}.EdiTable-Selector:focus{border-color:var(--fd-brand);}.EdiTable-Row-Selected{background-color:var(--fd-brand-soft) !important;color:var(--fd-text) !important;}.EdiTable-Button{color:var(--fd-brand-strong);}";
+document.querySelectorAll("edit-table").forEach(function(el){if(!el.hasAttribute("control-styles"))el.setAttribute("control-styles",S);});})();
+</script>
+</div>
+<script>
+Demo.pagina({"titulo": "Réplica de conceptos de FactuDesk", "tipo": "actual", "bajada": "La tabla de conceptos de FactuDesk v12 al emitir: tema por control-styles, DataArray.push + _printRows, CellFocus y StartEdit en Cantidad, recálculo en FieldUpdated con UpdateRow, Supr y ↓ atendidos con un keydown nativo en captura sobre el host, y hideColumn(\"predial\")."});
+
+Demo.observar('em-conceptos');
+const catalogo = DatosDemo.productos(40).map(p => ({ codigo: p.codigo, descripcion: p.descripcion, precio: p.precio }));
+const money = (n) => '$' + Number(n).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+document.addEventListener('DOMContentLoaded', () => {
+  const tabla = document.getElementById('em-conceptos'), buscar = document.getElementById('em-concepto-buscar');
+  const calc = (r) => { const imp = Number(r.cantidad) * Number(r.precio) - Number(r.descuentos || 0); r.importe = Math.round(imp * 100) / 100; r.iva = Math.round(imp * 16) / 100; return r; };
+  const recalcular = () => { const s = tabla.DataArray.reduce((a, r) => a + r.importe, 0), i = tabla.DataArray.reduce((a, r) => a + r.iva, 0); document.getElementById('sub').textContent = money(s); document.getElementById('iva').textContent = money(i); document.getElementById('tot').textContent = money(s + i); document.getElementById('em-partidas').textContent = tabla.DataArray.length + ' partidas'; };
+  const celdaCantidad = (i) => { const tr = tabla.GetTrByIndex(i); return tr && Array.prototype.find.call(tr.querySelectorAll('td'), x => tabla.GetColumnDefOfTd(x)?.field === 'cantidad'); };
+  const agregar = (c) => { const i = tabla.DataArray.push(calc({ codigo: c.codigo, descripcion: c.descripcion, unidad: 'H87', cantidad: '1', precio: String(c.precio), descuentos: '0', predial: '' })) - 1; tabla._printRows(); recalcular(); const td = celdaCantidad(i); tabla.CellFocus(td); tabla.StartEdit(td, ''); const inp = tabla.EdiTable.GetInput(); if (inp) inp.select(); };
+  tabla.AutoAddRow = false;
+  tabla.hideColumn('predial', true);
+  tabla.addEventListener('fieldupdated', (e) => { const r = tabla.DataArray[e.row]; if (!r) return; calc(r); tabla.UpdateRow(e.row); recalcular(); });
+  HTMLElement.prototype.addEventListener.call(tabla, 'keydown', (ev) => {
+    if (tabla.Editing || ev.ctrlKey || ev.altKey || ev.shiftKey || ev.metaKey) return;
+    const i = tabla.CurrentRowIndex(); if (i < 0 || !tabla.DataArray[i]) return;
+    if (ev.key === 'ArrowDown' && i === tabla.DataArray.length - 1) { ev.preventDefault(); ev.stopPropagation(); buscar.focus(); }
+    else if (ev.key === 'Delete') { ev.preventDefault(); ev.stopPropagation(); tabla.DataArray.splice(i, 1); tabla._printRows(); recalcular(); buscar.focus(); }
+  }, true);
+  buscar.addEventListener('keydown', (e) => { if (e.key !== 'Enter') return; const q = buscar.value.toLowerCase(); const c = catalogo.find(x => (x.codigo + ' ' + x.descripcion).toLowerCase().includes(q)); if (c) { buscar.value = ''; agregar(c); } });
+  agregar(catalogo[0]); agregar(catalogo[1]);
+});
+</script>
+</body>
+</html>

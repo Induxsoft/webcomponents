@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Virtualización con 20,000 filas · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- virtual-rows="true" con row-height: solo se dibujan las filas visibles más 10 de margen, con filas de relleno tr.et-spacer en el mismo tbody. El teclado y CellFocus desplazan a la fila; al imprimir se dibujan todas (RenderAll). -->
+<div id="contenido">
+<div class="demo-barra" id="barra"><span id="medida"></span></div><div class="demo-caja" id="sc" style="height:480px;overflow-y:auto"><edit-table id="t1" style="width:100%" virtual-rows="true" row-height="30px">
+<edit-thead><edit-tr>
+<edit-th type="NoEditable" field="codigo" width="110px">Código</edit-th>
+<edit-th type="Text" field="descripcion" minwidth="220px">Descripción</edit-th>
+<edit-th type="Text" field="linea">Línea</edit-th>
+<edit-th type="Number" field="existencia" textalign="end">Existencia</edit-th>
+<edit-th type="Number" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true">Precio</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div>
+</div>
+<script>
+Demo.pagina({"titulo": "Virtualización con 20,000 filas", "tipo": "v2", "bajada": "virtual-rows=\"true\" con row-height: solo se dibujan las filas visibles más 10 de margen, con filas de relleno tr.et-spacer en el mismo tbody. El teclado y CellFocus desplazan a la fila; al imprimir se dibujan todas (RenderAll)."});
+Demo.requiere(["virtual"]);
+Demo.observar('t1');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1');
+  // Sin virtualización (versión 1) se cargan 2,000 filas para que la página no se congele.
+  const datos = DatosDemo.productos(Demo.features().includes('virtual') ? 20000 : 2000);
+  const t0 = performance.now(); t.DataArray = datos; t._printRows(); const ms = performance.now() - t0;
+  const dib = () => t.GetTBody().querySelectorAll('tr:not(.et-spacer)').length;
+  document.getElementById('medida').textContent = `Primer dibujo: ${ms.toFixed(0)} ms · filas en el DOM: ${dib()} de ${datos.length}`;
+  Demo.boton('barra', 'Ir a la fila 15,000', () => t.NavTo(14999, 1));
+  Demo.boton('barra', 'RenderAll()', () => { Demo.llamar(t, 'RenderAll'); Demo.log('filas en el DOM: ' + dib(), 'RenderAll'); });
+  Demo.boton('barra', 'RenderVisible()', () => { Demo.llamar(t, 'RenderVisible'); Demo.log('filas en el DOM: ' + dib(), 'RenderVisible'); });
+});
+</script>
+</body>
+</html>

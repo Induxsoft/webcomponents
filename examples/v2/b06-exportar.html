@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exportar a CSV y XLSX · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="../../src/js/induxsoft.controls.excel.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- El componente da getExportData, exportCSV y downloadCSV; el XLSX lo arma InduxsoftExcel (archivo aparte: induxsoft.controls.excel.js) con fromEditTable, sin dependencias. Respeta el orden y la visibilidad de las columnas, excluye no-print y puede incluir totales y solo la selección. -->
+<div id="contenido">
+<div class="demo-barra" id="barra"></div><div class="demo-caja"><edit-table id="t1" style="width:100%" multi-select="checkbox">
+<edit-thead><edit-tr>
+<edit-th type="Text" field="codigo" width="100px">Código</edit-th>
+<edit-th type="Text" field="descripcion" minwidth="200px">Descripción</edit-th>
+<edit-th type="Text" field="linea">Línea</edit-th>
+<edit-th type="Text" field="marca" class="no-print">Marca (no-print)</edit-th>
+<edit-th type="Number" field="existencia" textalign="end" summary="sum">Existencia</edit-th>
+<edit-th type="Number" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" summary="avg" summary-label="Prom. {value}">Precio</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div><pre class="demo-salida" id="salida"></pre>
+</div>
+<script>
+Demo.pagina({"titulo": "Exportar a CSV y XLSX", "tipo": "v2", "bajada": "El componente da getExportData, exportCSV y downloadCSV; el XLSX lo arma InduxsoftExcel (archivo aparte: induxsoft.controls.excel.js) con fromEditTable, sin dependencias. Respeta el orden y la visibilidad de las columnas, excluye no-print y puede incluir totales y solo la selección."});
+Demo.requiere(["export"]);
+Demo.observar('t1');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1');
+  t.DataArray = DatosDemo.productos(15); t._printRows();
+  const salida = document.getElementById('salida');
+  const X = () => (typeof InduxsoftExcel !== 'undefined' ? InduxsoftExcel : (Demo.log('InduxsoftExcel no está cargado', 'aviso'), null));
+  Demo.boton('barra', 'exportCSV()', () => { salida.textContent = Demo.llamar(t, 'exportCSV') ?? ''; });
+  Demo.boton('barra', 'downloadCSV("productos.csv")', () => Demo.llamar(t, 'downloadCSV', 'productos.csv'));
+  Demo.boton('barra', 'getExportData()', () => { salida.textContent = JSON.stringify(Demo.llamar(t, 'getExportData'), null, 1); });
+  Demo.boton('barra', 'XLSX (todo, con totales)', () => { const x = X(); if (x) x.download(x.fromEditTable(t, { sheetName: 'Productos', includeSummary: true }), 'productos.xlsx'); });
+  Demo.boton('barra', 'XLSX (solo seleccionadas)', () => { const x = X(); if (x) x.download(x.fromEditTable(t, { selectedOnly: true }), 'seleccion.xlsx'); });
+  Demo.boton('barra', 'Libro de dos hojas', () => { const x = X(); if (x) x.workbook([{ name: 'Productos', source: t }, { name: 'Resumen', source: [{ concepto: 'Productos', total: t.DataArray.length }] }]).download('libro.xlsx'); });
+});
+</script>
+</body>
+</html>

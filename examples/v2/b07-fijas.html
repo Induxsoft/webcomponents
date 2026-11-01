@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Columnas fijas · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- fixed="left" deja Código y Descripción fijas al desplazar horizontalmente (position: sticky, sin una segunda tabla). FixColumn(field, true|false) fija o suelta; la última fija lleva sombra (et-fixed-last). -->
+<div id="contenido">
+<div class="demo-barra" id="barra"></div><div class="demo-caja" style="max-width:640px"><edit-table id="t1" style="width:1300px" >
+<edit-thead><edit-tr>
+<edit-th type="Text" field="codigo" width="100px" fixed="left">Código</edit-th>
+<edit-th type="Text" field="descripcion" width="240px" fixed="left">Descripción</edit-th>
+<edit-th type="Text" field="linea" width="140px">Línea</edit-th>
+<edit-th type="Text" field="marca" width="160px">Marca</edit-th>
+<edit-th type="Text" field="unidad" width="90px">Unidad</edit-th>
+<edit-th type="Number" field="existencia" textalign="end" width="110px">Existencia</edit-th>
+<edit-th type="Number" field="costo" textalign="end" format="true" decs="2" prefix="$" width="120px">Costo</edit-th>
+<edit-th type="Number" field="precio" textalign="end" format="true" decs="2" prefix="$" width="120px">Precio</edit-th>
+<edit-th type="Check" field="activo" width="80px">Activo</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div>
+</div>
+<script>
+Demo.pagina({"titulo": "Columnas fijas", "tipo": "v2", "bajada": "fixed=\"left\" deja Código y Descripción fijas al desplazar horizontalmente (position: sticky, sin una segunda tabla). FixColumn(field, true|false) fija o suelta; la última fija lleva sombra (et-fixed-last)."});
+Demo.requiere(["fixed"]);
+Demo.observar('t1');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1');
+  t.DataArray = DatosDemo.productos(20); t._printRows();
+  Demo.boton('barra', 'Fijar Precio', () => Demo.llamar(t, 'FixColumn', 'precio', true));
+  Demo.boton('barra', 'Soltar Descripción', () => Demo.llamar(t, 'FixColumn', 'descripcion', false));
+  t.addEventListener('ColumnFixedChanged', (e) => Demo.log(e.field + ' fija=' + e.fixed, 'ColumnFixedChanged'));
+});
+</script>
+</body>
+</html>

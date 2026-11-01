@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Todo junto, "como DevExpress" · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="../../src/js/induxsoft.controls.excel.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- Una lista con todas las funciones de la versión 2 encendidas: totales, columnas fijas, selector de columnas, reordenar, agrupar, selección con casillas, copiar, exportar, diseño guardado y virtualización. -->
+<div id="contenido">
+<div class="demo-barra" id="barra"></div><div class="demo-caja" id="sc" style="height:520px;overflow:auto"><edit-table id="t1" style="width:1300px" multi-select="checkbox" column-chooser="true" column-reorder="true" group-panel="true" virtual-rows="true" row-height="30px" summary-scope="all">
+<edit-thead><edit-tr>
+<edit-th type="NoEditable" field="codigo" width="110px" fixed="left">Código</edit-th>
+<edit-th type="Text" field="descripcion" width="240px" fixed="left">Descripción</edit-th>
+<edit-th type="Text" field="linea" width="130px">Línea</edit-th>
+<edit-th type="Text" field="marca" width="150px">Marca</edit-th>
+<edit-th type="Text" field="unidad" width="80px">Unidad</edit-th>
+<edit-th type="Number" field="existencia" textalign="end" width="110px" summary="sum">Existencia</edit-th>
+<edit-th type="Number" field="costo" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="120px" summary="avg" summary-label="Prom. {value}">Costo</edit-th>
+<edit-th type="Number" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="120px" calc="true" summary="max">Precio</edit-th>
+<edit-th type="Check" field="activo" width="80px">Activo</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div>
+</div>
+<script>
+Demo.pagina({"titulo": "Todo junto, \"como DevExpress\"", "tipo": "v2", "bajada": "Una lista con todas las funciones de la versión 2 encendidas: totales, columnas fijas, selector de columnas, reordenar, agrupar, selección con casillas, copiar, exportar, diseño guardado y virtualización."});
+Demo.requiere(["summary", "multiselect", "clipboard", "export", "fixed", "chooser", "reorder", "layout", "virtual", "group"]);
+Demo.observar('t1');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1');
+  t.DataArray = DatosDemo.productos(5000); t._printRows();
+  const hay = typeof InduxsoftExcel !== 'undefined';
+  Demo.boton('barra', 'Agrupar por línea', () => Demo.llamar(t, 'GroupBy', ['linea']));
+  Demo.boton('barra', 'Desagrupar', () => Demo.llamar(t, 'Ungroup'));
+  Demo.boton('barra', 'Copiar selección', () => Demo.llamar(t, 'copySelection'));
+  Demo.boton('barra', 'Excel (selección)', () => hay ? InduxsoftExcel.download(InduxsoftExcel.fromEditTable(t, { selectedOnly: true, includeSummary: true }), 'productos.xlsx') : Demo.log('InduxsoftExcel no está cargado', 'aviso'));
+  Demo.boton('barra', 'Restablecer diseño', () => Demo.llamar(t, 'ResetLayout'));
+});
+</script>
+</body>
+</html>

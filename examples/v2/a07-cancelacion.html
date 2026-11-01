@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Edición con cancelación por eventos Before* · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- BeforeCellFocus, BeforeUpdateCell, ConfirmEdition y BeforeRowDelete se cancelan con e.cancel = true. Aquí: no se puede entrar a la columna bloqueada, la cantidad debe ser mayor que cero y para borrar se pide confirmación. -->
+<div id="contenido">
+<div class="demo-barra"><label><input type="checkbox" id="bloquear" checked> Bloquear foco en «Bloqueada»</label><label><input type="checkbox" id="validar" checked> Validar cantidad &gt; 0</label><label><input type="checkbox" id="confirmar" checked> Confirmar antes de borrar (Ctrl+Supr)</label></div>
+<div class="demo-caja"><edit-table id="t1" style="width:100%" >
+<edit-thead><edit-tr>
+<edit-th type="Text" field="codigo">Código</edit-th>
+<edit-th type="Number" field="cantidad" textalign="end">Cantidad</edit-th>
+<edit-th type="Text" field="bloqueada">Bloqueada</edit-th>
+<edit-th type="Text" field="nota">Nota</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div><p class="demo-nota" id="msg"></p>
+</div>
+<script>
+Demo.pagina({"titulo": "Edición con cancelación por eventos Before*", "tipo": "actual", "bajada": "BeforeCellFocus, BeforeUpdateCell, ConfirmEdition y BeforeRowDelete se cancelan con e.cancel = true. Aquí: no se puede entrar a la columna bloqueada, la cantidad debe ser mayor que cero y para borrar se pide confirmación."});
+
+Demo.observar('t1');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1'), msg = document.getElementById('msg');
+  t.DataArray = [{ codigo: 'A', cantidad: 1, bloqueada: 'no entra', nota: '' }, { codigo: 'B', cantidad: 2, bloqueada: 'no entra', nota: '' }, { codigo: 'C', cantidad: 3, bloqueada: 'no entra', nota: '' }];
+  t._printRows();
+  const E = t.EdiTable.Const.Events;
+  t.Events[E.BeforeCellFocus] = (e) => { const c = e.td && e.td.closest && e.td.closest('td'); if (document.getElementById('bloquear').checked && c && t.GetColumnDefOfTd(c)?.field === 'bloqueada') { e.cancel = true; msg.textContent = 'BeforeCellFocus cancelado: la columna está bloqueada.'; } };
+  t.Events[E.BeforeUpdateCell] = (e) => { if (document.getElementById('validar').checked && e.coldef.field === 'cantidad' && !(Number(e.text) > 0)) { e.cancel = true; msg.textContent = 'BeforeUpdateCell cancelado: la cantidad debe ser mayor que cero (la celda sigue en edición).'; } };
+  t.Events[E.BeforeRowDelete] = (e) => { if (document.getElementById('confirmar').checked && !confirm('¿Borrar la fila ' + (e.rowIndex + 1) + '?')) e.cancel = true; };
+  t.NavTo(0, 1);
+});
+</script>
+</body>
+</html>

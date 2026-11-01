@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Piloto propuesto: comprobantes de FactuDesk · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="../../src/js/induxsoft.controls.excel.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- Lista de comprobantes (CFDI) de FactuDesk v12: totales del periodo, selección para descargar o reenviar varios, exportar a Excel y columnas fijas. UUID y RFC ficticios. -->
+<div id="contenido">
+<div class="demo-barra" id="barra"></div><div class="demo-caja" style="max-height:480px;overflow:auto"><edit-table id="fd-comprobantes" style="width:1400px" hidde-selector="true" multi-select="checkbox">
+<edit-thead><edit-tr>
+<edit-th type="NoEditable" field="serie" width="70px" fixed="left">Serie</edit-th>
+<edit-th type="NoEditable" field="folio" width="80px" fixed="left">Folio</edit-th>
+<edit-th type="NoEditable" field="fecha" width="150px">Fecha</edit-th>
+<edit-th type="NoEditable" field="receptor" width="240px">Receptor</edit-th>
+<edit-th type="NoEditable" field="rfc" width="140px">RFC</edit-th>
+<edit-th type="NoEditable" field="uuid" width="300px">Folio fiscal</edit-th>
+<edit-th type="NoEditable" field="subtotal" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="120px" summary="sum">Subtotal</edit-th>
+<edit-th type="NoEditable" field="total" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="120px" summary="sum">Total</edit-th>
+<edit-th type="NoEditable" field="estado" width="100px">Estado</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div>
+</div>
+<script>
+Demo.pagina({"titulo": "Piloto propuesto: comprobantes de FactuDesk", "tipo": "v2", "bajada": "Lista de comprobantes (CFDI) de FactuDesk v12: totales del periodo, selección para descargar o reenviar varios, exportar a Excel y columnas fijas. UUID y RFC ficticios."});
+Demo.requiere(["summary", "multiselect", "export", "fixed"]);
+Demo.observar('fd-comprobantes');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('fd-comprobantes');
+  const cli = DatosDemo.clientes(25);
+  t.DataArray = cli.map((c, i) => { const sub = Math.abs(c.saldo) + 100; return { serie: 'A', folio: 1000 + i, fecha: c.alta + ' 10:' + String(10 + i).padStart(2, '0') + ':00', receptor: c.nombre, rfc: c.rfc, uuid: '00000000-0000-4000-8000-' + String(i + 1).padStart(12, '0'), subtotal: Math.round(sub * 100) / 100, total: Math.round(sub * 116) / 100, estado: i % 9 === 0 ? 'Cancelado' : 'Vigente' }; });
+  t._printRows();
+  Demo.boton('barra', 'Exportar seleccionados', () => typeof InduxsoftExcel !== 'undefined' ? InduxsoftExcel.download(InduxsoftExcel.fromEditTable(t, { selectedOnly: true, includeSummary: true }), 'comprobantes.xlsx') : Demo.log('InduxsoftExcel no está cargado', 'aviso'));
+});
+</script>
+</body>
+</html>

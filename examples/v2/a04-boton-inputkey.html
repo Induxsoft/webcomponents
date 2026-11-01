@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Columnas con botón e InputKey · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- button="true" agrega un botón a la celda actual. Con ButtonOnClick se atiende el clic; con setInputKey(field, buscador) el botón, F4 o la confirmación de la celda llaman a buscador.searchText(texto, autoselect), el mismo contrato que el componente input-key. -->
+<div id="contenido">
+<div class="demo-caja"><edit-table id="t1" style="width:100%" >
+<edit-thead><edit-tr>
+<edit-th type="Text" field="codigo" button="true" width="140px">Código (F4)</edit-th>
+<edit-th type="NoEditable" field="descripcion">Descripción</edit-th>
+<edit-th type="Number" field="cantidad" textalign="end" default="1">Cantidad</edit-th>
+<edit-th type="Custom" field="nota" button="true" buttondata="✎">Nota</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div>
+<dialog id="buscador"><h3 style="margin-top:0">Buscar producto</h3><input id="q" placeholder="Código o descripción" style="width:100%"><ul id="res" style="max-height:220px;overflow:auto;padding-left:18px"></ul><button id="cerrar">Cerrar</button></dialog>
+</div>
+<script>
+Demo.pagina({"titulo": "Columnas con botón e InputKey", "tipo": "actual", "bajada": "button=\"true\" agrega un botón a la celda actual. Con ButtonOnClick se atiende el clic; con setInputKey(field, buscador) el botón, F4 o la confirmación de la celda llaman a buscador.searchText(texto, autoselect), el mismo contrato que el componente input-key."});
+
+Demo.observar('t1');
+const catalogo = DatosDemo.productos(30);
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1');
+  t.DataArray = [{ codigo: 'P-00001', descripcion: catalogo[0].descripcion, cantidad: 1, nota: '' }];
+  t._printRows();
+  const dlg = document.getElementById('buscador'), q = document.getElementById('q'), res = document.getElementById('res');
+  let fila = -1;
+  function pintar(txt) {
+    const l = catalogo.filter(p => (p.codigo + ' ' + p.descripcion).toLowerCase().includes(String(txt).toLowerCase())).slice(0, 12);
+    res.innerHTML = '';
+    l.forEach(p => { const li = document.createElement('li'); const b = document.createElement('a'); b.href = '#'; b.textContent = p.codigo + ' · ' + p.descripcion; b.onclick = (e) => { e.preventDefault(); elegir(p); }; li.appendChild(b); res.appendChild(li); });
+    return l;
+  }
+  function elegir(p) { t.UpdateDataMember(fila, 'codigo', p.codigo); t.UpdateDataMember(fila, 'descripcion', p.descripcion); t.UpdateRow(fila); dlg.close(); t.NavTo(fila, 2); }
+  // Objeto con el mismo contrato que <input-key>: searchText(texto, autoselect)
+  const buscador = { searchText(texto, autoselect) {
+    fila = t.CurrentRowIndex();
+    const l = pintar(texto || '');
+    if (autoselect && l.length === 1) { elegir(l[0]); return; }
+    q.value = texto || ''; dlg.showModal(); q.focus();
+  } };
+  q.oninput = () => pintar(q.value);
+  document.getElementById('cerrar').onclick = () => dlg.close();
+  t.setInputKey('codigo', buscador);
+  t.Events[t.EdiTable.Const.Events.StartEdition] = (e) => {
+    if (e.coldef.field !== 'nota') return;
+    const r = t.RowIndexOfTd(e.td); const v = prompt('Nota', t.DataArray[r].nota || '');
+    if (v !== null) { t.UpdateDataMember(r, 'nota', v); t.UpdateRow(r); }
+  };
+});
+</script>
+</body>
+</html>

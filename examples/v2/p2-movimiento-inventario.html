@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Piloto: movimiento de inventario · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- Paquete V12 "movinv": entrada o salida de almacén con máscara en el lote, totales de cantidad y costo, columnas fijas y diseño. Datos ficticios. -->
+<div id="contenido">
+<div class="demo-barra"><strong>Movimiento:</strong> Entrada por compra · Almacén General · Folio EC-000123</div><div class="demo-caja" style="max-width:900px;overflow:auto"><edit-table id="movinv-partidas" style="width:1050px" >
+<edit-thead><edit-tr>
+<edit-th type="Text" field="codigo" width="110px" fixed="left">Código</edit-th>
+<edit-th type="NoEditable" field="descripcion" width="240px" fixed="left">Descripción</edit-th>
+<edit-th type="Text" field="lote" width="130px" mask="AA-9999-99">Lote</edit-th>
+<edit-th type="Date" field="caducidad" width="130px">Caducidad</edit-th>
+<edit-th type="Number" field="cantidad" textalign="end" width="100px" summary="sum">Cantidad</edit-th>
+<edit-th type="Number" field="costo" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="120px" calc="true">Costo unit.</edit-th>
+<edit-th type="NoEditable" field="total" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="130px" summary="sum">Total</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div>
+</div>
+<script>
+Demo.pagina({"titulo": "Piloto: movimiento de inventario", "tipo": "v2", "bajada": "Paquete V12 \"movinv\": entrada o salida de almacén con máscara en el lote, totales de cantidad y costo, columnas fijas y diseño. Datos ficticios."});
+Demo.requiere(["summary", "mask", "calc", "fixed", "layout"]);
+Demo.observar('movinv-partidas');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('movinv-partidas');
+  const calc = (r) => { r.total = Math.round(Number(r.cantidad || 0) * Number(r.costo || 0) * 100) / 100; return r; };
+  t.DataArray = DatosDemo.productos(5).map((p, i) => calc({ codigo: p.codigo, descripcion: p.descripcion, lote: 'LT' + String(1000 + i) + '26', caducidad: '2027-0' + (i + 1) + '-15', cantidad: String(10 * (i + 1)), costo: String(p.costo) }));
+  t._printRows();
+  t.addEventListener('fieldupdated', (e) => { calc(t.DataArray[e.row]); t.UpdateRow(e.row); });
+});
+</script>
+</body>
+</html>

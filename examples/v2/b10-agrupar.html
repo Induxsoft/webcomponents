@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agrupar arrastrando, con subtotales · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- group-panel="true" muestra un panel arriba de la tabla: se arrastra un encabezado para agrupar, con varios niveles; cada grupo muestra la llave, el número de filas y los subtotales de las columnas con summary. Enter o Espacio expanden y colapsan. DataArray no se reordena. -->
+<div id="contenido">
+<div class="demo-barra" id="barra"></div><div class="demo-caja" style="max-height:480px"><edit-table id="t1" style="width:100%" group-panel="true">
+<edit-thead><edit-tr>
+<edit-th type="Text" field="codigo" width="100px">Código</edit-th>
+<edit-th type="Text" field="descripcion" minwidth="200px" groupable="false">Descripción</edit-th>
+<edit-th type="Text" field="linea">Línea</edit-th>
+<edit-th type="Text" field="marca">Marca</edit-th>
+<edit-th type="Number" field="existencia" textalign="end" summary="sum">Existencia</edit-th>
+<edit-th type="Number" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" summary="avg" summary-label="Prom. {value}">Precio</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div>
+</div>
+<script>
+Demo.pagina({"titulo": "Agrupar arrastrando, con subtotales", "tipo": "v2", "bajada": "group-panel=\"true\" muestra un panel arriba de la tabla: se arrastra un encabezado para agrupar, con varios niveles; cada grupo muestra la llave, el número de filas y los subtotales de las columnas con summary. Enter o Espacio expanden y colapsan. DataArray no se reordena."});
+Demo.requiere(["group"]);
+Demo.observar('t1');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1');
+  t.DataArray = DatosDemo.productos(40); t._printRows();
+  Demo.boton('barra', 'GroupBy(["linea","marca"])', () => Demo.llamar(t, 'GroupBy', ['linea', 'marca']));
+  Demo.boton('barra', 'Ungroup()', () => Demo.llamar(t, 'Ungroup'));
+  Demo.boton('barra', 'Colapsar todo', () => Demo.llamar(t, 'CollapseAllGroups'));
+  Demo.boton('barra', 'Expandir todo', () => Demo.llamar(t, 'ExpandAllGroups'));
+});
+</script>
+</body>
+</html>

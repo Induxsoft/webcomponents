@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Expresiones numéricas (calc) · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- calc="true" en columnas Number: si el texto empieza con "=", se evalúa sin eval: =120*1.16, =1500+16% (como calculadora), =(3+2)*4. El resultado llega a DataArray como cadena canónica (R9). Con error se dispara MaskInvalid con reason "calc". -->
+<div id="contenido">
+<div class="demo-caja"><edit-table id="t1" style="width:100%" >
+<edit-thead><edit-tr>
+<edit-th type="Text" field="concepto">Concepto</edit-th>
+<edit-th type="Number" field="cantidad" textalign="end" calc="true">Cantidad (calc)</edit-th>
+<edit-th type="Number" field="precio" textalign="end" calc="true" format="true" decs="2" prefix="$" thousandssep="true">Precio (calc)</edit-th>
+<edit-th type="NoEditable" field="importe" textalign="end" format="true" decs="2" prefix="$" thousandssep="true">Importe</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div><p class="demo-nota">Pruebe en Precio: =100+16% · =1000/3 · =(2+3)*4 · =5/0 (error).</p>
+</div>
+<script>
+Demo.pagina({"titulo": "Expresiones numéricas (calc)", "tipo": "v2", "bajada": "calc=\"true\" en columnas Number: si el texto empieza con \"=\", se evalúa sin eval: =120*1.16, =1500+16% (como calculadora), =(3+2)*4. El resultado llega a DataArray como cadena canónica (R9). Con error se dispara MaskInvalid con reason \"calc\"."});
+Demo.requiere(["calc"]);
+Demo.observar('t1');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1');
+  t.DataArray = [{ concepto: 'Servicio de instalación', cantidad: '1', precio: '1000', importe: 1000 }, { concepto: 'Material', cantidad: '12', precio: '35.5', importe: 426 }]; t._printRows();
+  t.addEventListener('fieldupdated', (e) => { const r = t.DataArray[e.row]; r.importe = Number(r.cantidad) * Number(r.precio); t.UpdateRow(e.row); });
+  t.addEventListener('MaskInvalid', (e) => Demo.log(e.reason + ' en ' + e.field + ': ' + e.value, 'MaskInvalid'));
+});
+</script>
+</body>
+</html>
