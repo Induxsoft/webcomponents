@@ -6721,8 +6721,13 @@ class EditTable extends HTMLElement
             const r = this._f2Convertir(input);
             if (!r.ok)
             {
+                // Integración (A1 de la revisión de F1, que F2 no tenía): el aviso y el foco solo en un confirmar
+                // del usuario. Desde el intervalo de auto-confirm, o con el foco fuera de la tabla, no se confirma,
+                // no se avisa y no se toma el foco; el editor se queda como está.
+                const delUsuario = (!this._f1AutoConfirmando && (this._f1ConfirmDesdeCelda || !!this._shadow?.activeElement));
                 // Un mismo valor se avisa una vez: si se vuelve a confirmar sin cambiarlo, se repite la decisión.
                 let cancel = input._f2Aviso?.value === input.value ? input._f2Aviso.cancel : undefined;
+                if (cancel === undefined && !delUsuario) return false;
                 if (cancel === undefined)
                 {
                     const args = { sender: this._getCurren(), td, input, row: this.RowIndexOfTd(td), field: coldef.field,
@@ -6733,7 +6738,7 @@ class EditTable extends HTMLElement
                 }
                 if (cancel)
                 {
-                    if (input.isConnected) input.focus();
+                    if (delUsuario && input.isConnected) input.focus();
                     return false;
                 }
             }
