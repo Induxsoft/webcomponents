@@ -1,0 +1,977 @@
+{
+ "id": "v2/mascaras-patron-presets",
+ "titulo": "mask de patrón (raw y formatted), tel, rfc con checksum incorrecto (MaskInvalid sin cancel) y upper",
+ "etiquetas": ["v2","f2"],
+ "archivo": "escenarios/v2/totales-mascaras.mjs",
+ "pasos": [
+  {
+   "nombre": "inicio",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": true,
+      "modoShadowPedido": "closed",
+      "dom": [
+       "\"\\n                \"",
+       "<style>",
+       " @@ESTILO sha256:e02dcdadace9a84f",
+       "</style>",
+       "\"\\n            \"",
+       "<div style=\"min-height: 2rem; max-height: 100%; overflow: auto; padding-bottom: 5px\">",
+       " <table id=\"t1\">",
+       "  <thead>",
+       "   <tr>",
+       "    <th field=\"cuenta\" mask=\"9999-999-999\">",
+       "     <span>",
+       "      \"Cuenta\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:61px;\"></div>",
+       "    </th>",
+       "    <th field=\"cta2\" mask=\"9999-999-999\" mask-keep=\"formatted\">",
+       "     <span>",
+       "      \"Cuenta 2\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:61px;\"></div>",
+       "    </th>",
+       "    <th field=\"tel\" mask=\"tel\">",
+       "     <span>",
+       "      \"Tel\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:61px;\"></div>",
+       "    </th>",
+       "    <th field=\"rfc\" mask=\"rfc\">",
+       "     <span>",
+       "      \"RFC\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:61px;\"></div>",
+       "    </th>",
+       "    <th field=\"nom\" mask=\"upper\">",
+       "     <span>",
+       "      \"Nombre\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:61px;\"></div>",
+       "    </th>",
+       "   </tr>",
+       "  </thead>",
+       "  <tbody>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Cuenta\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"5512-345-678\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Cuenta 2\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Tel\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"RFC\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "  </tbody>",
+       " </table>",
+       "</div>"
+      ],
+      "shadowEsElGuardado": true,
+      "datos": [{"cuenta":"5512345678","cta2":"","tel":"","rfc":"","nom":""}],
+      "columnas": [
+       {"field":"cuenta","mask":"9999-999-999","title":"Cuenta"},
+       {"field":"cta2","mask":"9999-999-999","mask-keep":"formatted","title":"Cuenta 2"},
+       {"field":"tel","mask":"tel","title":"Tel"},
+       {"field":"rfc","mask":"rfc","title":"RFC"},
+       {"field":"nom","mask":"upper","title":"Nombre"}
+      ],
+      "respaldo": null,
+      "props": [
+       "IsDirty = false",
+       "Editing = false",
+       "ReadOnly = false",
+       "AutoAddRow = true",
+       "AutoDelRow = true",
+       "EverMove = true",
+       "PagOffSet = 10",
+       "TheadRowIndex = 0",
+       "ColumnsDefaultType = \"Text\"",
+       "ShowAsTree = false",
+       "CanMoveRow = false",
+       "Key = \"id\"",
+       "ParentKey = \"idp\"",
+       "Childs = \"__items\"",
+       "TreeOptions = {}",
+       "sorTable = true",
+       "_sorTable = true",
+       "htmlEncode = false",
+       "autoConfirm = false",
+       "hiddeSelector = false",
+       "hiddeRowSelector = false",
+       "minRowHeight = \"none\"",
+       "maxRowHeight = \"none\"",
+       "rowHeight = \"100%\"",
+       "cardsResponsive = false",
+       "editableResponsive = false",
+       "tableId = \"t1\"",
+       "NumFormat = {\"default_decimals\":\".\",\"thousands\":\",\",\"decimals\":\".\"}",
+       "CSS = {\"Cell\":\"EdiTable-Cell\",\"RowSelected\":\"EdiTable-Row-Selected\"}",
+       "hideColumns = []",
+       "_expandOnStart = false",
+       "KeepSelectionVisible = true",
+       "CardsMode = null",
+       "CardsLayout = \"grid\"",
+       "CardsBreakpoint = \"768px\"",
+       "CardsBreakpointTarget = \"viewport\"",
+       "IsCardView = false",
+       "_count_isdirty = 0",
+       "_current_row = -1",
+       "attributes = [\"id\",\"style\",\"data\"]",
+       "BadgesField = \"__badges\"",
+       "BadgeTooltip = \"native\"",
+       "BadgeSelectsRow = false",
+       "NativeEvents = false",
+       "TemplateEncode = false",
+       "Locale = null",
+       "RowClassField = null",
+       "_TreeValueIndent = 1",
+       "_TreeUnitIndent = \"rem\"",
+       "temp_html = \"[undefined]\"",
+       "CurrentRowIndex() = -1",
+       "CurrentColIndex() = -1",
+       "TRCount() = 1",
+       "THCount() = 5",
+       "ColumnsCount() = 5",
+       "CurrentTd() = null",
+       "focusedTable==_getCurren() = false",
+       "Events reemplazado = 0",
+       "Events claves = [\"fieldupdated\",\"maskinvalid\",\"summarycalculated\",\"valuetypefallback\"]",
+       "scroll = {\"contenedor\":[0,0]}"
+      ],
+      "estilos": [
+       "host = display:inline;position:static;width:100%;height:auto;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "contenedor = display:block;position:static;width:968px;height:61px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:auto;overflow-y:auto",
+       "table = display:table;position:static;width:968px;height:61px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "thead = display:table-header-group;position:sticky;width:966px;height:27px;color:rgb(0, 0, 0);background-color:rgb(245, 245, 245);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[0] = display:table-cell;position:relative;width:296px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[1] = display:table-cell;position:relative;width:212px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[2] = display:table-cell;position:relative;width:80px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[3] = display:table-cell;position:relative;width:106px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[4] = display:table-cell;position:relative;width:189px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0] = display:table-row;position:relative;width:966px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[0] = display:table-cell;position:relative;width:304px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[1] = display:table-cell;position:relative;width:220px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[2] = display:table-cell;position:relative;width:88px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[3] = display:table-cell;position:relative;width:114px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[4] = display:table-cell;position:relative;width:197px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+      ]
+     }
+    ],
+    "luz": [
+     "<body {foco}>",
+     " \"\\n\"",
+     " <edit-table id=\"t1\" style=\"width:100%\" data=\"[{\\\"cuenta\\\":\\\"5512345678\\\",\\\"cta2\\\":\\\"\\\",\\\"tel\\\":\\\"\\\",\\\"rfc\\\":\\\"\\\",\\\"nom\\\":\\\"\\\"}]\">",
+     "  #shadow-root -> tablas[0]",
+     " </edit-table>",
+     " \"\\n\"",
+     " <script>",
+     "  \"\\nwindow.__ev = [];\\ndocument.addEventListener('DOMContentLoaded', () => {\\n  const t = ET('t1');\\n  t.Events.fieldupdated = (e) => window.__ev.push(['fieldupdated', e.row, e.field, e.value]);\\n  t.addEventListener('MaskInvalid', (e) => window.__ev.push(['maskinvalid', e.row, e.field, e.value, e.reason, e.cancel]));\\n  t.addEventListener('ValueTypeFallback', (e) => window.__ev.push(['valuetypefallback', e.row, e.field, e.text]));\\n  t.addEventListener('SummaryCalculated', (e) => window.__ev.push(['summarycalculated', e.field, e.value, e.scope]));\\n});\\nwindow.__etExtra = () => { const t = ET('t1'); const i = ETs('t1').querySelector('#__table_input');\\n  return { eventos: window.__ev.splice(0), totales: (t.getSummaries ? t.getSummaries() : null),\\n    editor: i ? { type: i.getAttribute('type'), inputmode: i.getAttribute('inputmode'), step: i.getAttribute('step'), value: i.value } : null,\\n    datos: t.DataArray.map(r => Object.assign({}, r, { __tipos: Object.keys(r).map(k => k + ':' + typeof r[k]).join(',') })) }; };\\n\"",
+     " </script>",
+     " \"\\n\\n\"",
+     "</body>"
+    ],
+    "foco": {"documento":{"ruta":"html>body"},"shadow":null},
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": {
+     "valor": {
+      "eventos": [],
+      "totales": {},
+      "editor": null,
+      "datos": [
+       {
+        "cuenta": "5512345678",
+        "cta2": "",
+        "tel": "",
+        "rfc": "",
+        "nom": "",
+        "__tipos": "cuenta:string,cta2:string,tel:string,rfc:string,nom:string"
+       }
+      ]
+     }
+    },
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 3,
+      "nodo:mousedown": 5,
+      "document:mousemove": 5,
+      "document:mouseup": 5,
+      "window:beforeprint": 1,
+      "window:afterprint": 1
+     },
+     "intervalos": 1
+    }
+   }
+  },
+  {
+   "nombre": "teclear 55a1 en cuenta (literales y rechazo)",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [42,1,["   <tr class=\"EdiTable-Row-Selected\">"]],
+        [
+         45,
+         1,
+         [
+          "      <input type=\"text\" id=\"__table_input\" class=\"Editable-Input-Text\" inputmode=\"numeric\" autocomplete=\"off\" {value=\"551_-___-___\" foco}></input>"
+         ]
+        ]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": "@=paso-anterior",
+      "columnas": [
+       {"field":"cuenta","mask":"9999-999-999","title":"Cuenta","type":"Text"},
+       {"field":"cta2","mask":"9999-999-999","mask-keep":"formatted","title":"Cuenta 2"},
+       {"field":"tel","mask":"tel","title":"Tel"},
+       {"field":"rfc","mask":"rfc","title":"RFC"},
+       {"field":"nom","mask":"upper","title":"Nombre"}
+      ],
+      "respaldo": "@=paso-anterior",
+      "props": {
+       "$parche": [
+        [1,1,["Editing = true"]],
+        [38,1,["_current_row = 0"]],
+        [49,3,["temp_html = \"5512-345-678\"","CurrentRowIndex() = 0","CurrentColIndex() = 0"]],
+        [
+         55,
+         2,
+         [
+          "CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(t1)>div>table#t1>tbody>tr[0]>td[0]\",\"texto\":\"\"}}",
+          "focusedTable==_getCurren() = true"
+         ]
+        ]
+       ]
+      },
+      "estilos": {
+       "$parche": [
+        [
+         4,
+         11,
+         [
+          "th[0] = display:table-cell;position:relative;width:200px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[1] = display:table-cell;position:relative;width:245px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[2] = display:table-cell;position:relative;width:94px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[3] = display:table-cell;position:relative;width:124px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[4] = display:table-cell;position:relative;width:219px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0] = display:table-row;position:relative;width:966px;height:30px;color:rgb(255, 255, 255);background-color:rgb(61, 117, 221);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[0] = display:table-cell;position:relative;width:208px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[1] = display:table-cell;position:relative;width:253px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[2] = display:table-cell;position:relative;width:102px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[3] = display:table-cell;position:relative;width:132px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[4] = display:table-cell;position:relative;width:227px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "input = display:block;position:absolute;width:216px;height:30px;color:rgb(33, 37, 41);background-color:rgb(255, 255, 255);font-weight:400;text-align:start;visibility:visible;overflow-x:clip;overflow-y:clip"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": {
+     "$parche": [
+      [0,1,["<body>"]],
+      [
+       2,
+       1,
+       [
+        " <edit-table id=\"t1\" style=\"width:100%\" data=\"[{\\\"cuenta\\\":\\\"5512345678\\\",\\\"cta2\\\":\\\"\\\",\\\"tel\\\":\\\"\\\",\\\"rfc\\\":\\\"\\\",\\\"nom\\\":\\\"\\\"}]\" {foco}>"
+       ]
+      ]
+     ]
+    },
+    "foco": {
+     "documento": {"ruta":"body>edit-table#t1"},
+     "shadow": {"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[0]>div>input#__table_input","valor":"551_-___-___"}
+    },
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": {
+     "valor": {
+      "eventos": [],
+      "totales": {},
+      "editor": {"type":"text","inputmode":"numeric","step":null,"value":"551_-___-___"},
+      "datos": [
+       {
+        "cuenta": "5512345678",
+        "cta2": "",
+        "tel": "",
+        "rfc": "",
+        "nom": "",
+        "__tipos": "cuenta:string,cta2:string,tel:string,rfc:string,nom:string"
+       }
+      ]
+     }
+    },
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 3,
+      "nodo:mousedown": 5,
+      "document:mousemove": 5,
+      "document:mouseup": 5,
+      "window:beforeprint": 1,
+      "window:afterprint": 1,
+      "nodo:click:remove": 1,
+      "nodo:click": 2,
+      "nodo:keydown:remove": 1,
+      "nodo:keydown": 2,
+      "nodo:beforeinput": 1
+     },
+     "intervalos": 1
+    }
+   }
+  },
+  {
+   "nombre": "Enter (incompleto: MaskInvalid, se acepta)",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [45,1,["      \"551\""]],
+        [
+         49,
+         1,
+         [
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      <div id=\"__table_selector\" class=\"EdiTable-Selector\" tabindex=\"0\" {foco}></div>",
+          "     </div>"
+         ]
+        ]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": [{"cuenta":"551","cta2":"","tel":"","rfc":"","nom":""}],
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": {
+       "$parche": [
+        [1,1,["Editing = false"]],
+        [51,1,["CurrentColIndex() = 1"]],
+        [55,1,["CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]\",\"texto\":\"\"}}"]]
+       ]
+      },
+      "estilos": {
+       "$parche": [
+        [
+         15,
+         1,
+         [
+          "selector = display:flex;position:static;width:251px;height:22px;color:rgb(0, 0, 0);background-color:rgba(255, 255, 255, 0.7);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": "@=paso-anterior",
+    "foco": {
+     "documento": {"ruta":"body>edit-table#t1"},
+     "shadow": {"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[1]>div>div#__table_selector"}
+    },
+    "eventos": [
+     {
+      "evento": "maskinvalid",
+      "tabla": "t1",
+      "consumidor": true,
+      "args": {
+       "sender": {"$sender":"t1","esElemento":false},
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[0]","texto":""}},
+       "input": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[0]>div>input#__table_input","valor":"551_-___-___"}},
+       "row": 0,
+       "field": "cuenta",
+       "value": "551_-___-___",
+       "reason": "incomplete",
+       "cancel": false
+      }
+     },
+     {
+      "evento": "fieldupdated",
+      "tabla": "t1",
+      "consumidor": true,
+      "args": {"sender":{"$sender":"t1","esElemento":false},"row":0,"field":"cuenta","value":"551"}
+     }
+    ],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": {
+     "valor": {
+      "eventos": [["maskinvalid",0,"cuenta","551_-___-___","incomplete",false],["fieldupdated",0,"cuenta","551"]],
+      "totales": {},
+      "editor": null,
+      "datos": [
+       {
+        "cuenta": "551",
+        "cta2": "",
+        "tel": "",
+        "rfc": "",
+        "nom": "",
+        "__tipos": "cuenta:string,cta2:string,tel:string,rfc:string,nom:string"
+       }
+      ]
+     }
+    },
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 3,
+      "nodo:mousedown": 5,
+      "document:mousemove": 5,
+      "document:mouseup": 5,
+      "window:beforeprint": 1,
+      "window:afterprint": 1,
+      "nodo:click:remove": 2,
+      "nodo:click": 3,
+      "nodo:keydown:remove": 2,
+      "nodo:keydown": 3,
+      "nodo:beforeinput": 1
+     },
+     "intervalos": 1
+    }
+   }
+  },
+  {
+   "nombre": "cuenta 2 con literales",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [50,1,["      \"5512-345-678\""]],
+        [
+         54,
+         1,
+         [
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      <div id=\"__table_selector\" class=\"EdiTable-Selector\" tabindex=\"0\" {foco}></div>",
+          "     </div>"
+         ]
+        ]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": [{"cuenta":"551","cta2":"5512-345-678","tel":"","rfc":"","nom":""}],
+      "columnas": [
+       {"field":"cuenta","mask":"9999-999-999","title":"Cuenta","type":"Text"},
+       {"field":"cta2","mask":"9999-999-999","mask-keep":"formatted","title":"Cuenta 2","type":"Text"},
+       {"field":"tel","mask":"tel","title":"Tel"},
+       {"field":"rfc","mask":"rfc","title":"RFC"},
+       {"field":"nom","mask":"upper","title":"Nombre"}
+      ],
+      "respaldo": "@=paso-anterior",
+      "props": {
+       "$parche": [
+        [49,1,["temp_html = \"\""]],
+        [51,1,["CurrentColIndex() = 2"]],
+        [55,1,["CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(t1)>div>table#t1>tbody>tr[0]>td[2]\",\"texto\":\"\"}}"]]
+       ]
+      },
+      "estilos": {
+       "$parche": [
+        [
+         4,
+         5,
+         [
+          "th[0] = display:table-cell;position:relative;width:181px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[1] = display:table-cell;position:relative;width:309px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[2] = display:table-cell;position:relative;width:84px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[3] = display:table-cell;position:relative;width:111px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[4] = display:table-cell;position:relative;width:197px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         10,
+         6,
+         [
+          "tr[0].td[0] = display:table-cell;position:relative;width:189px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[1] = display:table-cell;position:relative;width:317px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[2] = display:table-cell;position:relative;width:92px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[3] = display:table-cell;position:relative;width:119px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[4] = display:table-cell;position:relative;width:205px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "selector = display:flex;position:static;width:90px;height:22px;color:rgb(0, 0, 0);background-color:rgba(255, 255, 255, 0.7);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": "@=paso-anterior",
+    "foco": {
+     "documento": {"ruta":"body>edit-table#t1"},
+     "shadow": {"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[2]>div>div#__table_selector"}
+    },
+    "eventos": [
+     {
+      "evento": "fieldupdated",
+      "tabla": "t1",
+      "consumidor": true,
+      "args": {"sender":{"$sender":"t1","esElemento":false},"row":0,"field":"cta2","value":"5512-345-678"}
+     }
+    ],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": {
+     "valor": {
+      "eventos": [["fieldupdated",0,"cta2","5512-345-678"]],
+      "totales": {},
+      "editor": null,
+      "datos": [
+       {
+        "cuenta": "551",
+        "cta2": "5512-345-678",
+        "tel": "",
+        "rfc": "",
+        "nom": "",
+        "__tipos": "cuenta:string,cta2:string,tel:string,rfc:string,nom:string"
+       }
+      ]
+     }
+    },
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 3,
+      "nodo:mousedown": 5,
+      "document:mousemove": 5,
+      "document:mouseup": 5,
+      "window:beforeprint": 1,
+      "window:afterprint": 1,
+      "nodo:click:remove": 3,
+      "nodo:click": 5,
+      "nodo:keydown:remove": 3,
+      "nodo:keydown": 5,
+      "nodo:beforeinput": 2
+     },
+     "intervalos": 1
+    }
+   }
+  },
+  {
+   "nombre": "tel",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [55,1,["      \"(961) 123-4567\""]],
+        [
+         59,
+         1,
+         [
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      <div id=\"__table_selector\" class=\"EdiTable-Selector\" tabindex=\"0\" {foco}></div>",
+          "     </div>"
+         ]
+        ]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": [{"cuenta":"551","cta2":"5512-345-678","tel":"9611234567","rfc":"","nom":""}],
+      "columnas": [
+       {"field":"cuenta","mask":"9999-999-999","title":"Cuenta","type":"Text"},
+       {"field":"cta2","mask":"9999-999-999","mask-keep":"formatted","title":"Cuenta 2","type":"Text"},
+       {"field":"tel","mask":"tel","title":"Tel","type":"Text"},
+       {"field":"rfc","mask":"rfc","title":"RFC"},
+       {"field":"nom","mask":"upper","title":"Nombre"}
+      ],
+      "respaldo": "@=paso-anterior",
+      "props": {
+       "$parche": [
+        [51,1,["CurrentColIndex() = 3"]],
+        [55,1,["CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(t1)>div>table#t1>tbody>tr[0]>td[3]\",\"texto\":\"\"}}"]]
+       ]
+      },
+      "estilos": {
+       "$parche": [
+        [
+         4,
+         5,
+         [
+          "th[0] = display:table-cell;position:relative;width:139px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[1] = display:table-cell;position:relative;width:241px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[2] = display:table-cell;position:relative;width:266px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[3] = display:table-cell;position:relative;width:84px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[4] = display:table-cell;position:relative;width:152px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         10,
+         5,
+         [
+          "tr[0].td[0] = display:table-cell;position:relative;width:147px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[1] = display:table-cell;position:relative;width:249px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[2] = display:table-cell;position:relative;width:274px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[3] = display:table-cell;position:relative;width:92px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[4] = display:table-cell;position:relative;width:160px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": "@=paso-anterior",
+    "foco": {
+     "documento": {"ruta":"body>edit-table#t1"},
+     "shadow": {"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[3]>div>div#__table_selector"}
+    },
+    "eventos": [
+     {
+      "evento": "fieldupdated",
+      "tabla": "t1",
+      "consumidor": true,
+      "args": {"sender":{"$sender":"t1","esElemento":false},"row":0,"field":"tel","value":"9611234567"}
+     }
+    ],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": {
+     "valor": {
+      "eventos": [["fieldupdated",0,"tel","9611234567"]],
+      "totales": {},
+      "editor": null,
+      "datos": [
+       {
+        "cuenta": "551",
+        "cta2": "5512-345-678",
+        "tel": "9611234567",
+        "rfc": "",
+        "nom": "",
+        "__tipos": "cuenta:string,cta2:string,tel:string,rfc:string,nom:string"
+       }
+      ]
+     }
+    },
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 3,
+      "nodo:mousedown": 5,
+      "document:mousemove": 5,
+      "document:mouseup": 5,
+      "window:beforeprint": 1,
+      "window:afterprint": 1,
+      "nodo:click:remove": 4,
+      "nodo:click": 7,
+      "nodo:keydown:remove": 4,
+      "nodo:keydown": 7,
+      "nodo:beforeinput": 3
+     },
+     "intervalos": 1
+    }
+   }
+  },
+  {
+   "nombre": "rfc en minúsculas con dígito incorrecto",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [60,1,["      \"EKU9003173C8\""]],
+        [
+         64,
+         1,
+         [
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+          "      <div id=\"__table_selector\" class=\"EdiTable-Selector\" tabindex=\"0\" {foco}></div>",
+          "     </div>"
+         ]
+        ]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": [{"cuenta":"551","cta2":"5512-345-678","tel":"9611234567","rfc":"EKU9003173C8","nom":""}],
+      "columnas": [
+       {"field":"cuenta","mask":"9999-999-999","title":"Cuenta","type":"Text"},
+       {"field":"cta2","mask":"9999-999-999","mask-keep":"formatted","title":"Cuenta 2","type":"Text"},
+       {"field":"tel","mask":"tel","title":"Tel","type":"Text"},
+       {"field":"rfc","mask":"rfc","title":"RFC","type":"Text"},
+       {"field":"nom","mask":"upper","title":"Nombre"}
+      ],
+      "respaldo": "@=paso-anterior",
+      "props": {
+       "$parche": [
+        [51,1,["CurrentColIndex() = 4"]],
+        [55,1,["CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(t1)>div>table#t1>tbody>tr[0]>td[4]\",\"texto\":\"\"}}"]]
+       ]
+      },
+      "estilos": {
+       "$parche": [
+        [
+         4,
+         5,
+         [
+          "th[0] = display:table-cell;position:relative;width:115px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[1] = display:table-cell;position:relative;width:200px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[2] = display:table-cell;position:relative;width:221px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[3] = display:table-cell;position:relative;width:220px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[4] = display:table-cell;position:relative;width:126px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         10,
+         6,
+         [
+          "tr[0].td[0] = display:table-cell;position:relative;width:123px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[1] = display:table-cell;position:relative;width:208px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[2] = display:table-cell;position:relative;width:229px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[3] = display:table-cell;position:relative;width:228px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[4] = display:table-cell;position:relative;width:134px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "selector = display:flex;position:static;width:132px;height:22px;color:rgb(0, 0, 0);background-color:rgba(255, 255, 255, 0.7);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": "@=paso-anterior",
+    "foco": {
+     "documento": {"ruta":"body>edit-table#t1"},
+     "shadow": {"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[4]>div>div#__table_selector"}
+    },
+    "eventos": [
+     {
+      "evento": "maskinvalid",
+      "tabla": "t1",
+      "consumidor": true,
+      "args": {
+       "sender": {"$sender":"t1","esElemento":false},
+       "td": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[3]","texto":""}},
+       "input": {"$nodo":{"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[3]>div>input#__table_input","valor":"EKU9003173C8"}},
+       "row": 0,
+       "field": "rfc",
+       "value": "EKU9003173C8",
+       "reason": "checksum",
+       "cancel": false
+      }
+     },
+     {
+      "evento": "fieldupdated",
+      "tabla": "t1",
+      "consumidor": true,
+      "args": {"sender":{"$sender":"t1","esElemento":false},"row":0,"field":"rfc","value":"EKU9003173C8"}
+     }
+    ],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": {
+     "valor": {
+      "eventos": [["maskinvalid",0,"rfc","EKU9003173C8","checksum",false],["fieldupdated",0,"rfc","EKU9003173C8"]],
+      "totales": {},
+      "editor": null,
+      "datos": [
+       {
+        "cuenta": "551",
+        "cta2": "5512-345-678",
+        "tel": "9611234567",
+        "rfc": "EKU9003173C8",
+        "nom": "",
+        "__tipos": "cuenta:string,cta2:string,tel:string,rfc:string,nom:string"
+       }
+      ]
+     }
+    },
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 3,
+      "nodo:mousedown": 5,
+      "document:mousemove": 5,
+      "document:mouseup": 5,
+      "window:beforeprint": 1,
+      "window:afterprint": 1,
+      "nodo:click:remove": 5,
+      "nodo:click": 9,
+      "nodo:keydown:remove": 5,
+      "nodo:keydown": 9,
+      "nodo:beforeinput": 4
+     },
+     "intervalos": 1
+    }
+   }
+  },
+  {
+   "nombre": "upper",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [42,1,["   <tr class=\"\">"]],
+        [
+         65,
+         0,
+         [
+          "      \"FICTICIO\"",
+          "     </div>",
+          "    </td>",
+          "   </tr>",
+          "   <tr class=\"EdiTable-Row-Selected\">",
+          "    <td class=\"EdiTable-Cell\">",
+          "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">"
+         ]
+        ],
+        [
+         68,
+         0,
+         [
+          "    <td class=\"EdiTable-Cell\"></td>",
+          "    <td class=\"EdiTable-Cell\"></td>",
+          "    <td class=\"EdiTable-Cell\"></td>",
+          "    <td class=\"EdiTable-Cell\"></td>"
+         ]
+        ]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": [{"cuenta":"551","cta2":"5512-345-678","tel":"9611234567","rfc":"EKU9003173C8","nom":"FICTICIO"}],
+      "columnas": [
+       {"field":"cuenta","mask":"9999-999-999","title":"Cuenta","type":"Text"},
+       {"field":"cta2","mask":"9999-999-999","mask-keep":"formatted","title":"Cuenta 2","type":"Text"},
+       {"field":"tel","mask":"tel","title":"Tel","type":"Text"},
+       {"field":"rfc","mask":"rfc","title":"RFC","type":"Text"},
+       {"field":"nom","mask":"upper","title":"Nombre","type":"Text"}
+      ],
+      "respaldo": "@=paso-anterior",
+      "props": {
+       "$parche": [
+        [38,1,["_current_row = 1"]],
+        [50,3,["CurrentRowIndex() = 1","CurrentColIndex() = 0","TRCount() = 2"]],
+        [55,1,["CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(t1)>div>table#t1>tbody>tr[1]>td[0]\",\"texto\":\"\"}}"]]
+       ]
+      },
+      "estilos": {
+       "$parche": [
+        [
+         1,
+         2,
+         [
+          "contenedor = display:block;position:static;width:968px;height:92px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:auto;overflow-y:auto",
+          "table = display:table;position:static;width:968px;height:92px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         9,
+         7,
+         [
+          "tr[0] = display:table-row;position:relative;width:966px;height:30px;color:rgb(0, 0, 0);background-color:rgb(245, 245, 245);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[0] = display:table-cell;position:relative;width:123px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[1] = display:table-cell;position:relative;width:208px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[2] = display:table-cell;position:relative;width:229px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[3] = display:table-cell;position:relative;width:228px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[4] = display:table-cell;position:relative;width:134px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1] = display:table-row;position:relative;width:966px;height:30px;color:rgb(255, 255, 255);background-color:rgb(61, 117, 221);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[0] = display:table-cell;position:relative;width:123px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[1] = display:table-cell;position:relative;width:208px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[2] = display:table-cell;position:relative;width:229px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[3] = display:table-cell;position:relative;width:228px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[4] = display:table-cell;position:relative;width:134px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "selector = display:flex;position:static;width:121px;height:22px;color:rgb(0, 0, 0);background-color:rgba(255, 255, 255, 0.7);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": "@=paso-anterior",
+    "foco": {
+     "documento": {"ruta":"body>edit-table#t1"},
+     "shadow": {"ruta":"shadow(t1)>div>table#t1>tbody>tr[1]>td[0]>div>div#__table_selector"}
+    },
+    "eventos": [
+     {
+      "evento": "fieldupdated",
+      "tabla": "t1",
+      "consumidor": true,
+      "args": {"sender":{"$sender":"t1","esElemento":false},"row":0,"field":"nom","value":"FICTICIO"}
+     }
+    ],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": {
+     "valor": {
+      "eventos": [["fieldupdated",0,"nom","FICTICIO"]],
+      "totales": {},
+      "editor": null,
+      "datos": [
+       {
+        "cuenta": "551",
+        "cta2": "5512-345-678",
+        "tel": "9611234567",
+        "rfc": "EKU9003173C8",
+        "nom": "FICTICIO",
+        "__tipos": "cuenta:string,cta2:string,tel:string,rfc:string,nom:string"
+       }
+      ]
+     }
+    },
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 3,
+      "nodo:mousedown": 5,
+      "document:mousemove": 5,
+      "document:mouseup": 5,
+      "window:beforeprint": 1,
+      "window:afterprint": 1,
+      "nodo:click:remove": 7,
+      "nodo:click": 12,
+      "nodo:keydown:remove": 7,
+      "nodo:keydown": 12,
+      "nodo:beforeinput": 5
+     },
+     "intervalos": 1
+    }
+   }
+  }
+ ]
+}

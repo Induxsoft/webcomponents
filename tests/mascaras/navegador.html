@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<title>EditTable.Mask: prueba en navegador</title>
+<style>body{font:14px system-ui;margin:2rem} label{display:block;margin:.5rem 0} input{font:16px monospace;width:16rem}</style>
+</head>
+<body>
+<h1>EditTable.Mask en un &lt;input&gt;</h1>
+<p>Cada input traduce sus eventos <code>beforeinput</code> a <code>EditTable.Mask.edit()</code>. Los datos son ficticios.</p>
+<label>tel <input id="tel" data-mask="tel" autocomplete="off"></label>
+<label>patrón 9999-999-999 <input id="pat" data-mask="9999-999-999" autocomplete="off"></label>
+<label>rfc <input id="rfc" data-mask="rfc" autocomplete="off"></label>
+<label>percent <input id="percent" data-mask="percent" autocomplete="off"></label>
+<label lang="es-CO">percent es-CO <input id="percentco" data-mask="percent" autocomplete="off"></label>
+<p>Estado: <output id="estado"></output></p>
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script>
+  const ACC = { insertText: 'insert', insertFromPaste: 'paste', insertFromDrop: 'paste',
+    deleteContentBackward: 'backspace', deleteContentForward: 'delete', deleteByCut: 'delete' };
+  for (const inp of document.querySelectorAll('input[data-mask]')) {
+    // Locale (R7): el lang más cercano; en el componente se resolverá igual y se pasa a EditTable.Mask.
+    const p = inp.dataset.mask, opts = { locale: inp.closest('[lang]')?.lang || 'es-MX' };
+    inp.addEventListener('beforeinput', e => {
+      const type = ACC[e.inputType];
+      if (!type) { e.preventDefault(); return; } // lo demás (deshacer, borrar palabra) se ignora en la prueba
+      e.preventDefault();
+      const text = type === 'paste' ? (e.dataTransfer ? e.dataTransfer.getData('text/plain') : e.data) : e.data;
+      const r = EditTable.Mask.edit(p, { display: inp.value, caret: inp.selectionStart, end: inp.selectionEnd }, { type, text }, opts);
+      inp.value = r.display;
+      inp.setSelectionRange(r.caret, r.caret);
+      inp.dataset.raw = r.raw;
+      inp.dataset.canonical = r.canonical;
+      inp.dataset.complete = r.complete;
+      document.getElementById('estado').textContent = JSON.stringify(r);
+    });
+  }
+</script>
+</body>
+</html>
