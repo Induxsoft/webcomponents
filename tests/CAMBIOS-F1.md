@@ -18,7 +18,7 @@ C12 y C16 no van en F1. C14 está descartada.
    - C13: en los 13 escenarios que cambian solo por C13, quitar `step="any"` deja la foto idéntica a la referencia.
 4. **Versión completa:** las 89 diferencias tienen causa asignada. Cada escenario coincide con la copia de su corrección, igualando el `td` de `LeaveCell` cuando además interviene C19. La excepción es `defectos/navtoend`: con C6 la tabla ahora sí se mueve, y por eso aparece también el `LeaveCell` con `td` (C19).
 5. **Actualización de la referencia:** escenario por escenario, con `node tests/run.mjs --update --filtro <id>`. Después se restauró `golden/meta.json`, que sigue describiendo la referencia de `0ed1824`. Los escenarios ambiguos por el filtro (`basicos/demo-edittable-old`, `datos/updatedatamember` y `teclado/ctrl-suprimir-sin-autodelrow`) no cambiaron.
-6. **Dos corridas seguidas** con los escenarios de FactuDesk y de agent: 237 iguales (6 con diferencias solo informativas), sin diferencias estrictas.
+6. **Dos corridas seguidas** con los escenarios de FactuDesk y de agent: 240 iguales (6 con diferencias solo informativas), sin diferencias estrictas (después de las correcciones de la revisión, ver al final).
 
 **Escenarios externos (FactuDesk y agent).** Su referencia vive en los repos privados `factudesk.v12.induxsoft.net_qa` y `agent.induxsoft.net_qa`, y **no se modificó**. Las referencias nuevas de esos 8 escenarios se generaron en copias de `/tmp/f1-extra/`. Al integrar F1, hay que actualizarlos en sus repos, uno por uno, con el mismo comando y `--escenarios-extra`.
 
@@ -38,7 +38,7 @@ C12 y C16 no van en F1. C14 está descartada.
 | C10 | `Sort` reordenaba `DataArray` pero no el respaldo de `IsDirty`. | El respaldo se reordena con la misma permutación. | `defectos/isdirty-tras-ordenar` |
 | C11 | Al sacar la tabla quedaban activos los listeners de `window` y `document`, el `setInterval` y los observadores. | Se liberan al desconectar y se vuelven a crear al reconectar. | Ninguno estricto (solo `internos`, informativa). Se cubre en la conformidad, C11a–d. |
 | C13 | El `<input type="number">` no tenía `step`, así que un decimal lo dejaba `:invalid`. | Lleva `step="any"`. Es el único cambio en el DOM. | 13 escenarios (tabla de abajo) y `defectos/c13-number-step-any` (nuevo) |
-| C15 | Con `badInput` (por ejemplo `1-2`) se guardaba `""`. | No confirma: la celda sigue en edición, con el foco, y se dispara `MaskInvalid` `{row, field, value, reason:'badInput', cancel:true}`. Si el consumidor pone `cancel=false`, se guarda como hoy. | `defectos/c15-number-badinput` (nuevo) |
+| C15 | Con `badInput` (por ejemplo `1-2`) en Number se guardaba `""`. | Solo en `input[type="number"]`: no confirma. Si el confirmar lo inició el usuario (Enter, Tab, clic en otra celda), la celda sigue en edición con el foco y se dispara `MaskInvalid` `{row, field, value, reason:'badInput', cancel:true}` una vez por valor; con `cancel=false` se guarda como hoy. Desde el intervalo de `auto-confirm`, o con el foco fuera de la tabla, no se confirma, no se avisa y no se toma el foco. Date y DateTime quedan como hoy. | `defectos/c15-number-badinput`, `defectos/c15-autoconfirm-no-roba-foco`, `defectos/c15-date-badinput-como-hoy` (nuevos) |
 | C17 | Confirmar sin cambiar reescribía el valor con lo que tuviera el editor. Por ejemplo: Date `2026-02-01 10:30:00`, `01/02/2026` y `…T00:00:00.000Z` se volvían `""`; DateTime perdía los segundos; un `12.5` pasaba a `"12.5"`; con formato, `1234.5678` pasaba a `"1234.57"`; y en Select sin opción se borraba el valor. | Si el editor se abrió con el valor de la celda (Enter, F2 o clic), ni el usuario ni el consumidor lo cambiaron, y el texto sigue igual después de `BeforeUpdateCell` y `ConfirmEdition`, entonces `DataArray` no se toca, no hay `FieldUpdated` ni `IsDirtyChanged`, y la celda vuelve a mostrar lo de antes, como al cancelar. `BeforeUpdateCell` y `ConfirmEdition` se siguen disparando. | `tipos/select-sin-options`, `arbol/navegacion`, `edicion/cancelar-memo-select`, `edicion/confirmar-flechas` y los nuevos `defectos/c17-*` |
 | C18 | Date y DateTime abrían vacíos si el valor no estaba en ISO estricto. | Se normaliza al abrir: espacio en lugar de `T`, sin milisegundos; en Date, la fecha tal cual (sin convertir zona); en DateTime, `Z` u offset a hora local. `01/02/2026` abre vacío y C17 lo protege. | `defectos/c18-editor-fecha` (nuevo) |
 | C19 | `LeaveCell` recibía `td: null`, porque el selector ya se había quitado. | Recibe el `td` que se deja. | 71 escenarios solo por esto (con el registro `all`, cada cambio de celda dispara `LeaveCell`), más los que combinan con C1, C2, C13 y C17 |
@@ -142,7 +142,7 @@ Columnas: escenario, correcciones que lo explican, pasos con diferencia, categor
 | `v12/arbol-expandido` | C19 | 1 | eventos | LeaveCell recibe el td que se deja en lugar de null (único cambio en eventos) |
 | `v12/exportar-csv` | C20 | 1 | columnas, eventos, extra | changeColumnTitle actualiza Columns[i].title (la exportación CSV sale con el título nuevo) |
 
-## Escenarios nuevos (9, en `escenarios/defectos/correcciones-f1.mjs`, etiqueta `correccion-f1`)
+## Escenarios nuevos (11, en `escenarios/defectos/correcciones-f1.mjs`, etiqueta `correccion-f1`)
 
 Su referencia se generó con F1. Con `0ed1824` (el antes), estos escenarios muestran:
 
@@ -150,6 +150,8 @@ Su referencia se generó con F1. Con `0ed1824` (el antes), estos escenarios mues
 |---|---|---|
 | `defectos/c13-number-step-any` | sin `step`; con `12.5` el control queda `valid=false`, `:invalid` | `step="any"`; `valid=true` |
 | `defectos/c15-number-badinput` | Enter guarda `n: ""` (y dispara `FieldUpdated` e `IsDirtyChanged`) | sigue editando; `MaskInvalid` `badInput` una vez; `n: 1` intacto |
+| `defectos/c15-autoconfirm-no-roba-foco` | con `auto-confirm`, el intervalo guarda `n: ""`; el input externo queda `abcdefghi` | el editor queda abierto, sin evento; el input externo queda `abcdefghi` (la versión de F1 anterior a la revisión dejaba `abc`) |
+| `defectos/c15-date-badinput-como-hoy` | Date a medio borrar: Enter guarda `f: ""` | igual que `0ed1824` (la versión de F1 anterior a la revisión no confirmaba) |
 | `defectos/c17-date-sin-cambio` | las tres fechas quedan en `""` | sin cambios y sin eventos |
 | `defectos/c17-datetime-sin-cambio` | `2026-02-01 10:30:00` pasa a `2026-02-01T10:30` y el valor con `Z` pasa a `""` | sin cambios y sin eventos |
 | `defectos/c17-number-text-sin-cambio` | `12.5` pasa a `"12.5"`, `1234.5678` pasa a `"1234.57"`, y Text dispara `FieldUpdated` | valor y tipo intactos, sin eventos; un cambio real sí se guarda |
@@ -157,3 +159,13 @@ Su referencia se generó con F1. Con `0ed1824` (el antes), estos escenarios mues
 | `defectos/c21-sorttree-nietos` | los nietos nunca se ordenan | ascendente (A, Z) y descendente (Z, A) |
 | `defectos/click-propagation-sin-atributo` | el clic no llega ni a `tr.onclick` ni al documento | igual |
 | `defectos/click-propagation-true` | (el atributo no existe: igual que sin él) | el clic llega a la fila y al documento, con `CurrentRowIndex()` ya actualizado |
+
+## Correcciones de la revisión independiente (2026-11-01)
+
+| # | Problema | Corrección |
+|---|---|---|
+| A1 | Con `auto-confirm` y un `badInput` pendiente, el intervalo llamaba a `ConfirmEdit` cada segundo y su `focus()` devolvía el foco a la tabla: no se podía escribir en otro campo. | El intervalo marca su confirmar (`_f1AutoConfirmando`). Solo un confirmar del usuario (foco dentro del shadow, o el clic en otra celda que llega por `CellFocus`) avisa y toma el foco; los demás dejan el editor como está. Escenario `defectos/c15-autoconfirm-no-roba-foco`. |
+| A2 | C15 también se aplicaba a Date y DateTime. | Solo `input[type="number"]`. Escenario `defectos/c15-date-badinput-como-hoy`. |
+| B1 | El listener `input` se registraba en cada aviso. | Uno solo por editor (`WeakSet`). |
+| M1 | El mapa `tr → índice` se reconstruía completo en cada consulta después de una mutación. | Reconstrucción perezosa: un `MutationObserver` (hijos del tbody) lo marca como sucio en su callback y con `takeRecords()` en cada consulta. Con el mapa sucio, las consultas usan el DOM, como `0ed1824`, y el mapa se reconstruye solo si se vuelve a consultar sin cambios de por medio. `_printRows` desconecta el observador mientras redibuja. `data-cell` solo consulta los títulos guardados si `changeColumnTitle` cambió alguno. Mutación nueva `mapa-sin-invalidar`. |
+| M2 | Conformidad: `evt-05` contradecía C17 y las pruebas R1 no admitían las diferencias autorizadas. | `evt-05` sin cambios (sin `FieldUpdated`) y `evt-05b` con cambio (con `FieldUpdated`). En R1 se normalizan exactamente esos campos en las dos fotos: el `td` de `LeaveCell` (C19), `Columns[].title` tomado de la referencia (C20) y, solo en `r1-10`, que lo declara con `autorizadas: ['C4']`, el `IsDirtyChanged` final de `restoreRow`. La referencia sigue siendo `0ed1824` sin tocar. |

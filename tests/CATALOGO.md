@@ -15,9 +15,9 @@
 | `presentacion/` | 15 | Encabezado fijo, ancho de columnas, orden por encabezado, control-styles y atributos visuales. |
 | `impresion/` | 4 | beforeprint/afterprint, @media print y PDF. |
 | `v12/` | 17 | Lo que genera uie.dbeditable y lo que hacen list.dk, la impresión y la exportación CSV de V12. |
-| `defectos/` | 29 | Defectos conocidos congelados como comportamiento actual (etiqueta defecto-conocido). |
+| `defectos/` | 31 | Defectos conocidos congelados como comportamiento actual (etiqueta defecto-conocido). |
 | `rendimiento/` | 6 | Mediciones (no se comparan byte a byte; solo con --rendimiento). |
-| **total** | **231** | |
+| **total** | **233** | |
 
 «Pasos» cuenta las fotos: la inicial más una por paso.
 
@@ -294,7 +294,7 @@ Lo que genera uie.dbeditable y lo que hacen list.dk, la impresión y la exportac
 | `v12/tarjetas-angosta` | Lista de V12 en pantalla angosta (cards-responsive con todas NoEditable: table-cards)<br><sub>600×800</sub> | Induxsoft/v12 src/uielements.v12.dkl:41-323 (línea 82) | 4 |
 | `v12/impresion-media-print` | Lista de V12 con @media print del control-styles y beforeprint (no-print, hide-on-print) | Induxsoft/v12 src/uielements.v12.dkl:41-323 (líneas 85-90) | 3 |
 
-## defectos/ (29)
+## defectos/ (31)
 
 Defectos conocidos congelados como comportamiento actual (etiqueta defecto-conocido).
 
@@ -302,6 +302,8 @@ Defectos conocidos congelados como comportamiento actual (etiqueta defecto-conoc
 |---|---|---|---|
 | `defectos/c13-number-step-any` | C13: el editor nativo de Number lleva step="any" y un decimal no lo deja :invalid **[correccion-f1]**<br><sub>registro: consumer</sub> | spec §1.1 C13; editable.js StartEdit | 4 |
 | `defectos/c15-number-badinput` | C15: con badInput (1-2) no se confirma, sigue en edición y se dispara MaskInvalid reason:badInput **[correccion-f1]**<br><sub>registro: consumer</sub> | spec §1.1 C15; editable.js ConfirmEdit | 5 |
+| `defectos/c15-autoconfirm-no-roba-foco` | C15 con auto-confirm: un badInput pendiente no roba el foco a otro campo de la página ni repite MaskInvalid **[correccion-f1]**<br><sub>registro: consumer</sub> | revisión de F1 (A1); spec §1.1 C15 | 5 |
+| `defectos/c15-date-badinput-como-hoy` | C15 solo aplica a Number: una fecha a medio borrar (badInput) en Date se guarda como hoy (R8) **[correccion-f1]**<br><sub>registro: consumer</sub> | revisión de F1 (A2); spec §1.1 C15 | 3 |
 | `defectos/c17-date-sin-cambio` | C17: Date con 2026-02-01 10:30:00, 01/02/2026 y …T00:00:00.000Z: confirmar sin cambiar no toca DataArray ni dispara eventos **[correccion-f1]**<br><sub>registro: consumer</sub> | spec §1.1 C17 (casos verificados) | 4 |
 | `defectos/c17-datetime-sin-cambio` | C17: DateTime con segundos y con Z: confirmar sin cambiar no reescribe el formato ni pierde los segundos **[correccion-f1]**<br><sub>registro: consumer</sub> | spec §1.1 C17 (casos verificados) | 4 |
 | `defectos/c17-number-text-sin-cambio` | C17: Number (número 12.5 y con formato) y Text: confirmar sin cambiar conserva valor y tipo, sin FieldUpdated ni IsDirtyChanged; un cambio real sí se guarda **[correccion-f1]**<br><sub>registro: consumer</sub> | spec §1.1 C17 | 6 |

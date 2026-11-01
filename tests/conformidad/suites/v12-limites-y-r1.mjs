@@ -86,7 +86,22 @@ const { P: PR, t: r1 } = registro('r1');
 async function foto(c) {
   return c.ev(() => { const ids = Array.from(document.querySelectorAll('edit-table')).map(e => e.id); return { ids, dom: ids.map(id => __ct.serial(id)), datos: ids.map(id => __ct.datos(id)), cols: ids.map(id => JSON.parse(JSON.stringify(document.getElementById(id).Columns.map(x => { const o = { ...x }; delete o.inputkey; delete o.Converts; return o; })))), log: __ct.log.map(x => x.ev + ':' + JSON.stringify(x.a)), light: document.body.innerHTML.replace(/<script[\s\S]*?<\/script>/g, '') }; });
 }
-function compararFotos(c, a, b) {
+// Diferencias autorizadas en F1 (spec §13, decisión de Emmanuel del 2026-11-01) que se normalizan, y solo esas:
+//   C19: LeaveCell recibe el td que se deja (0ed1824 manda null): el td de LeaveCell se iguala a null en las dos fotos.
+//   C20: changeColumnTitle actualiza Columns[i].title: el title de Columns se toma de la referencia.
+//   C4 (solo en los escenarios que lo declaran con autorizadas: ['C4']): restore()/restoreRow() disparan un
+//      IsDirtyChanged que 0ed1824 no dispara; se quita ese único evento final si es la única diferencia.
+// Se eligió normalizar estos dos campos en lugar de una copia de referencia con las correcciones: así la
+// referencia sigue siendo 0ed1824 tal cual y cualquier otra diferencia (DOM, datos, eventos) sigue fallando.
+function normalizarAutorizadas(a, b, autorizadas = []) {
+  if (autorizadas.includes('C4') && a.log.length === b.log.length + 1 && a.log[a.log.length - 1].startsWith('isdirtychanged:')
+    && a.log.slice(0, -1).every((x, i) => x === b.log[i])) a.log = a.log.slice(0, -1);
+  const c19 = (l) => l.map(x => x.startsWith('leavecell:') ? x.replace(/^leavecell:\{"td":(\{[^}]*\}|null)/, 'leavecell:{"td":null') : x);
+  a.log = c19(a.log); b.log = c19(b.log);
+  a.cols = a.cols.map((cols, i) => cols.map((col, k) => (b.cols[i]?.[k] && 'title' in b.cols[i][k]) ? { ...col, title: b.cols[i][k].title } : col));
+}
+function compararFotos(c, a, b, autorizadas) {
+  normalizarAutorizadas(a, b, autorizadas);
   c.igual(a.ids, b.ids, 'tablas');
   for (let i = 0; i < a.ids.length; i++) {
     if (a.dom[i] !== b.dom[i]) {
@@ -111,7 +126,7 @@ function escenario(id, titulo, construir, accion, extra = {}) {
       await cc.esperar(30);
       fotos.push(await foto(cc));
     }
-    compararFotos(c, fotos[0], fotos[1]);
+    compararFotos(c, fotos[0], fotos[1], extra.autorizadas);
   }, extra);
 }
 escenario('01', 'tabla básica: clic, edición de texto, Esc, ordenar, AddRow, borrar', () => paginaProductos(), async (c) => {
@@ -154,7 +169,7 @@ escenario('09', 'tabla vacía y captura con teclado (AutoAddRow, Tab, flechas)',
 });
 escenario('10', 'hideColumn, changeColumnTitle, IsDirty/backup/restore', () => paginaProductos(), async (c) => {
   await c.ev(() => { const t = __ct.t('t1'); t.backup(); t.hideColumn('nombre', true); t.changeColumnTitle('precio', 'P. U.'); t.UpdateDataMember(0, 'codigo', 'X'); t.UpdateRow(0); t.restoreRow(0); });
-});
+}, { autorizadas: ['C4'] });
 r1('11', 'R1: sin atributos nuevos no hay tfoot, et-sel-col, et-chooser, et-group-panel ni et-spacer', ['§0-R1'], async (c) => {
   await c.abrir(paginaProductos());
   await c.clicTh('t1', 1, { boton: 'right' });

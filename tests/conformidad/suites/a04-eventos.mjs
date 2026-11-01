@@ -64,10 +64,20 @@ t('04', 'editar y confirmar con Enter: startedition, inputcreated, beforesetinpu
   c.igual(by.confirmedition.input, '$undefined', 'ConfirmEdition recibe input=undefined');
   c.igual(by.fieldupdated, { sender: '$sender', row: 0, field: 'nombre', value: 'Nuevo' });
 });
-t('05', 'el orden completo al confirmar con Enter (navega a la derecha)', async (c) => {
+// F1 (C17): confirmar sin cambiar no dispara FieldUpdated; con un cambio real, sí.
+t('05', 'el orden completo al confirmar con Enter sin cambiar (navega a la derecha): sin FieldUpdated (C17)', async (c) => {
   await c.abrir(paginaProductos());
   await c.foco('t1', 0, 1);
   await c.tecla('Enter');
+  await grabar(c);
+  await c.tecla('Enter');
+  c.igual(await nombres(c), ['beforecellfocus', 'beforeupdatecell', 'confirmedition', 'entercell']);
+});
+t('05b', 'el orden completo al confirmar con Enter después de cambiar el valor: con FieldUpdated', async (c) => {
+  await c.abrir(paginaProductos());
+  await c.foco('t1', 0, 1);
+  await c.tecla('Enter');
+  await c.escribir('x');
   await grabar(c);
   await c.tecla('Enter');
   c.igual(await nombres(c), ['beforecellfocus', 'beforeupdatecell', 'confirmedition', 'fieldupdated', 'entercell']);

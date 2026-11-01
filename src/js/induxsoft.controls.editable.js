@@ -503,7 +503,8 @@ class EditTable extends HTMLElement
 
         // F1 (C20): data-cell conserva el título declarado aunque changeColumnTitle cambie Columns[i].title
         // (control-styles de los paquetes usa td[data-cell='<título>']).
-        td.setAttribute('data-cell',(this._f1TitulosDeclarados.has(td.cellIndex) ? this._f1TitulosDeclarados.get(td.cellIndex) : (coldf?.title??'')));
+        // Solo se consulta el mapa si changeColumnTitle cambió algún título (M1: sin trabajo extra por celda).
+        td.setAttribute('data-cell',((this._f1TitulosDeclarados.size && this._f1TitulosDeclarados.has(i)) ? this._f1TitulosDeclarados.get(i) : (coldf?.title??'')));
         if (this.onTdPaint) this.onTdPaint(td, idx, this.ColIndexOfTd(td), (coldf?.field??''));
         if (ocultas && this.hideColumns.includes(td.cellIndex)) td.classList.add('hidde-col');
         return container;
@@ -692,15 +693,37 @@ class EditTable extends HTMLElement
     }
     // ========================= F1: mapa interno tr → índice de DataArray (A1)
     // WeakMap, sin atributos en el DOM. En F1 el índice es la posición del tr entre los tr del tbody
-    // (la misma cuenta que hacía _getRowIndex con querySelectorAll('tr')); el mapa se reconstruye solo
-    // cuando ya no coincide con el DOM, así que también sigue los cambios que haga un consumidor.
+    // (la misma cuenta que hacía _getRowIndex con querySelectorAll('tr')).
+    // Reconstrucción perezosa (M1 de la revisión): un MutationObserver sobre los hijos del tbody marca el mapa
+    // como sucio; takeRecords() lo hace síncrono, así que también ve los cambios que haga un consumidor.
+    // Con el mapa sucio, las consultas usan el DOM (como antes) y el mapa solo se reconstruye cuando se
+    // consulta otra vez sin cambios de por medio. Borrar u ordenar no recorre filas si nadie consulta.
+    // Si el tbody tiene tr anidados (tablas dentro de plantillas), se usa siempre el DOM.
     // A partir de F5/F6 (virtualización, agrupación) el mapa deja de ser la posición.
     _f1Indices = new WeakMap();
     _f1Orden = [];
     _f1TBody = null;
+    _f1MO = null;
+    _f1Estado = 0;            // 0 sucio, 1 sucio con una consulta ya respondida por el DOM, 2 válido
+    _f1Anidados = false;
     _f1TBodyPrincipal=()=>
     {
         return this._table?.querySelector('tbody') ?? null;
+    }
+    // Revisa si hubo cambios desde la última consulta. Devuelve true si el mapa es válido.
+    _f1MapaValido=(tbody)=>
+    {
+        if (this._f1TBody !== tbody)
+        {
+            if (this._f1MO) this._f1MO.disconnect();
+            this._f1TBody = tbody;
+            this._f1Estado = 0;
+            this._f1MO = (typeof MutationObserver != 'undefined') ? new MutationObserver(() => { this._f1Estado = 0; }) : null;   // el callback también consume los registros
+            if (this._f1MO) this._f1MO.observe(tbody, { childList: true });
+        }
+        if (!this._f1MO) return false;
+        if (this._f1MO.takeRecords().length) this._f1Estado = 0;
+        return (this._f1Estado === 2 && !this._f1Anidados);
     }
     _f1Reindexar=(tbody)=>
     {
@@ -708,29 +731,24 @@ class EditTable extends HTMLElement
         this._f1Indices = new WeakMap();
         this._f1Orden = new Array(filas.length);
         for (let i = 0; i < filas.length; i++) { this._f1Indices.set(filas[i], i); this._f1Orden[i] = filas[i]; }
-        this._f1TBody = tbody;
+        this._f1Anidados = (filas.length !== tbody.rows.length);
+        this._f1Estado = 2;
     }
     _f1IndiceDeTr=(tr, tbody)=>
     {
-        const filas = tbody.getElementsByTagName('tr');
-        let i = (this._f1TBody === tbody ? this._f1Indices.get(tr) : undefined);
-        if (i === undefined || filas[i] !== tr || this._f1Orden.length !== filas.length)
+        if (this._f1MapaValido(tbody)) return (this._f1Indices.get(tr) ?? -1);
+        if (this._f1Estado === 1 && this._f1MO && !this._f1Anidados)
         {
             this._f1Reindexar(tbody);
-            i = this._f1Indices.get(tr);
+            return (this._f1Indices.get(tr) ?? -1);
         }
-        return (i ?? -1);
+        this._f1Estado = 1;
+        return Array.prototype.indexOf.call(tbody.getElementsByTagName('tr'), tr);
     }
     _f1TrDeIndice=(row, tbody)=>
     {
-        const filas = tbody.getElementsByTagName('tr');
-        let tr = (this._f1TBody === tbody ? this._f1Orden[row] : undefined);
-        if (!tr || filas[row] !== tr || this._f1Orden.length !== filas.length)
-        {
-            this._f1Reindexar(tbody);
-            tr = this._f1Orden[row];
-        }
-        return tr;
+        if (this._f1MapaValido(tbody)) return this._f1Orden[row];
+        return tbody.getElementsByTagName('tr')[row];
     }
     _getVisibleRowIndex=(tr)=>
     {
@@ -1052,7 +1070,12 @@ class EditTable extends HTMLElement
             if (document.activeElement!=this)
             {
                 if (this.Editing && this.autoConfirm)
-                    this.ConfirmEdit(this.CurrentTd());
+                {
+                    // F1 (C15): marca el confirmar automático para que un badInput no robe el foco.
+                    this._f1AutoConfirmando = true;
+                    try { this.ConfirmEdit(this.CurrentTd()); }
+                    finally { this._f1AutoConfirmando = false; }
+                }
 
                 if (!this._fireBlur)
                 {
@@ -2246,13 +2269,29 @@ class EditTable extends HTMLElement
 
         if (input!=undefined)
         {
-            // F1 (C15): si el control nativo no entiende lo tecleado (badInput), no se confirma.
-            if (input.validity && input.validity.badInput && !this._f1BadInputAvisado.has(input))
+            // F1 (C15): si el control nativo de Number no entiende lo tecleado (badInput), no se confirma.
+            // Solo input[type=number]: Date y DateTime se quedan como hoy (R8).
+            const f1BadInput = (input.tagName == 'INPUT' && (input.getAttribute('type') ?? '').toLowerCase() == 'number'
+                && input.validity && input.validity.badInput);
+            // El aviso y el foco solo en un confirmar del usuario (Enter, Tab, clic en otra celda). Desde el
+            // intervalo de auto-confirm, o con el foco fuera de la tabla, no se confirma y el editor se deja igual.
+            const f1DelUsuario = (!this._f1AutoConfirmando && (this._f1ConfirmDesdeCelda || !!this._shadow?.activeElement));   // foco dentro de la tabla (también si está anidada en otro shadow)
+            if (f1BadInput && !f1DelUsuario)
+            {
+                this.Editing = true;
+                return false;
+            }
+            if (f1BadInput && !this._f1BadInputAvisado.has(input))
             {
                 const f1Args = { sender: this._getCurren(), td: td, input: input, row: this.RowIndexOfTd(td),
                     field: columnDef.field, value: input.value, reason: 'badInput', cancel: true };
                 this._f1BadInputAvisado.add(input);
-                input.addEventListener('input', () => this._f1BadInputAvisado.delete(input));
+                // F1: un solo listener por editor (B1 de la revisión).
+                if (!this._f1BadInputEscuchado.has(input))
+                {
+                    this._f1BadInputEscuchado.add(input);
+                    input.addEventListener('input', () => this._f1BadInputAvisado.delete(input));
+                }
                 this._fireEvent(this.EdiTable.Const.Events.MaskInvalid, f1Args);
                 if (f1Args.cancel)
                 {
@@ -2263,7 +2302,7 @@ class EditTable extends HTMLElement
                 }
                 this._f1BadInputPendiente = null;
             }
-            else if (input.validity && input.validity.badInput && this._f1BadInputPendiente === input)
+            else if (f1BadInput && this._f1BadInputPendiente === input)
             {
                 // Ya se avisó y el consumidor pidió no confirmar: sigue en edición sin volver a avisar.
                 this.Editing = true;
@@ -2328,6 +2367,9 @@ class EditTable extends HTMLElement
     }
     // ========================= F1: edición (C15, C18)
     _f1BadInputAvisado = new WeakSet();
+    _f1BadInputEscuchado = new WeakSet();
+    _f1AutoConfirmando = false;
+    _f1ConfirmDesdeCelda = false;
     _f1BadInputPendiente = null;
     _f1Edicion = null;
     _f1Dos=(n)=> String(n).padStart(2, '0');
@@ -2420,7 +2462,12 @@ class EditTable extends HTMLElement
         {
             if (this.EdiTable.focusedTable!=null)
             {
-                if (!this.EdiTable.focusedTable.ConfirmEdit(input.closest('td'))) return;
+                // F1 (C15): el clic en otra celda es un confirmar del usuario aunque el foco ya haya salido del editor.
+                this._f1ConfirmDesdeCelda = true;
+                let f1Ok;
+                try { f1Ok = this.EdiTable.focusedTable.ConfirmEdit(input.closest('td')); }
+                finally { this._f1ConfirmDesdeCelda = false; }
+                if (!f1Ok) return;
             }
             else
                 input.remove();
@@ -2751,6 +2798,8 @@ class EditTable extends HTMLElement
                 rowsExpanded.push(r.getAttribute('id'));
         });
 
+        // F1 (M1): el redibujo completo no deja registros en el observador del mapa; el mapa queda sucio.
+        if (this._f1MO) { this._f1MO.disconnect(); this._f1MO = null; this._f1TBody = null; }
         tbody.innerHTML = '';
         let dataArray = this.DataArray;
 

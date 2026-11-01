@@ -44,8 +44,11 @@ const MUTACIONES = [
     "        table.appendChild(thead);\n        table.appendChild(tbody);\n        table.appendChild(this._createFullElement('tfoot'));"],
   // F1: mutaciones de lo que cambió en F1 (mapa de filas, C1, C17).
   ['mapa-desalineado', 'El mapa tr → índice (F1, A1) devuelve el índice menos 1 a partir de la fila 3',
-    "        return (i ?? -1);\n    }\n    _f1TrDeIndice",
-    "        return ((i ?? -1) > 2 ? i - 1 : (i ?? -1));\n    }\n    _f1TrDeIndice"],
+    "if (tbody === this._f1TBodyPrincipal()) return this._f1IndiceDeTr(tr, tbody);",
+    "if (tbody === this._f1TBodyPrincipal()) { const __i = this._f1IndiceDeTr(tr, tbody); return (__i > 2 ? __i - 1 : __i); }"],
+  ['mapa-sin-invalidar', 'El observador del mapa no lo marca como sucio en su callback (el mapa queda viejo tras un cambio)',
+    "new MutationObserver(() => { this._f1Estado = 0; })",
+    "new MutationObserver(() => {})"],
   ['revertir-c1', 'Volver a agregar un listener de clic a todas las celdas en cada InsertRow (deshace C1)',
     "            // F1 (A2): solo los td del tbody.\n            this._shadow.querySelectorAll(this.EdiTable.Const.HTML.TABLE+\"#\"+this.tableId+\" > \"+this.EdiTable.Const.HTML.TBODY+\" \"+this.EdiTable.Const.HTML.TD).forEach(td => {",
     "            this._shadow.querySelectorAll(this.EdiTable.Const.HTML.TABLE+\"#\"+this.tableId+\" > \"+this.EdiTable.Const.HTML.TBODY+\" \"+this.EdiTable.Const.HTML.TD).forEach(td => {\n                td.addEventListener('click', (e) => { e.stopPropagation(); this.CellFocus(e.target); });"],
