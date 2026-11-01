@@ -1,0 +1,5 @@
+
+                table.et-virtual > tbody > tr.et-spacer, table.et-virtual > tbody > tr.et-spacer:hover { background: transparent !important; }
+                table.et-vfija > tbody > tr:not(.et-spacer) > td { height: var(--et-vtd) !important; max-height: var(--et-vtd); padding-top: 0 !important; padding-bottom: 0 !important; box-sizing: border-box; overflow: hidden; }
+                table.et-vfija > tbody > tr:not(.et-spacer) > td .cell-content { height: var(--et-vtd) !important; min-height: 0 !important; max-height: var(--et-vtd) !important; display: flex !important; }
+                @media print { table.et-virtual > tbody > tr.et-spacer { display: none; } }

@@ -87,6 +87,7 @@ class EditTable extends HTMLElement
             }
         }
         this._f2AtributoCambiado(name, newValue);   // F2: summary-scope
+        this._f5AtributoCambiado?.(name, newValue);   // F5: virtual-rows
     }
 
     // F1 (C9, C11): se inicializa una sola vez. Mientras la página carga, en DOMContentLoaded y en el
@@ -349,6 +350,7 @@ class EditTable extends HTMLElement
             // F1 (C3): antes de ocultar se guarda el estado de cada columna de impresión.
             // F1 (C11): los listeners de window quedan registrados para liberarlos al desconectar.
             this._f1Global(window, 'beforeprint', () => {
+                this._f5AntesDeImprimir?.();   // F5: con virtual-rows se dibujan todas antes de imprimir
                 this._f1EstadoImpresion = new Map();
                 this.Columns.forEach(col => {
                     if ((col?.class??"").includes("hide-on-print") || (col?.class??"").includes("no-print"))
@@ -368,10 +370,12 @@ class EditTable extends HTMLElement
                     if ((col?.class??"").includes("hide-on-print") || (col?.class??"").includes("no-print"))
                         this.hideColumn(col.field, (antes.get(col.field) ?? false));
                 });
+                this._f5DespuesDeImprimir?.();   // F5: regresa al modo virtual
             });
 
             this.setAutoConfirm();
             this.checkAndSetRowCards();
+            this._f5Iniciar?.();   // F5: virtual-rows (después de UpdateData y de la vista de tarjetas)
         }
         this._f1Inicializada = true;
         // F1 (C11): si lo sacaron del documento antes de inicializarse, no deja nada activo.
@@ -404,6 +408,7 @@ class EditTable extends HTMLElement
         if (this._widthRO) { this._widthRO.disconnect(); this._widthRO = null; this._lastWidth = -1; }
         if (this._ensureRaf) { cancelAnimationFrame(this._ensureRaf); this._ensureRaf = 0; }
         this._f3Liberar?.();   // F3: ResizeObserver de las columnas fijas y menú abierto
+        this._f5Liberar?.();   // F5: scroll del contenedor
     }
 
     _f1Reconectar()
@@ -420,6 +425,7 @@ class EditTable extends HTMLElement
             if (this._selTr && this._selTr.isConnected) this._trackSelection(this._selTr);
         } catch (e) { console.error('EditTable: error al reconectar', e); }
         this._f3Reconectar?.();   // F3
+        this._f5Reconectar?.();   // F5
     }
 
     // F1 (C5): lectura de atributos booleanos: "false", "0" y "no" significan falso.
@@ -697,6 +703,7 @@ class EditTable extends HTMLElement
         // F1 (A1): índice de DataArray a partir del mapa interno tr → índice.
         let tbody = tr?.parentElement;
         if (!tbody) return -1;
+        if (this._f5Activo && tbody === this._f1TBodyPrincipal()) return (this._f5Idx.get(tr) ?? -1);   // F5: índice de DataArray (relleno y grupos: -1)
         if (tbody === this._f1TBodyPrincipal()) return this._f1IndiceDeTr(tr, tbody);
         // Un tr fuera del tbody principal (por ejemplo, de una tabla dentro de una plantilla): como antes.
         let index = -1;
@@ -1008,7 +1015,7 @@ class EditTable extends HTMLElement
             return false;
         }
 
-        const trs = this._table.querySelectorAll('tbody tr');
+        const trs = this._table.querySelectorAll('tbody tr:not(.et-spacer)');   // F5: sin las filas de relleno
 
         trs.forEach(tr => 
         {
@@ -1642,7 +1649,8 @@ class EditTable extends HTMLElement
         if (rows<1 || cols<1 || row>rows-1 || col>cols-1 || col<0 || row<0) return;
         
         let tbody=this.GetTBody();
-        let td = tbody.querySelectorAll(this.EdiTable.Const.HTML.TR)[row].querySelectorAll(this.EdiTable.Const.HTML.TD+':not(.hidde-col):not(.et-sel-col)')[col];   // F4
+        // F5: getElementsByTagName da los mismos tr que querySelectorAll sin armar la lista completa; en virtual, GetTrByIndex.
+        let td = (this._f5Activo ? this.GetTrByIndex(row) : tbody.getElementsByTagName(this.EdiTable.Const.HTML.TR)[row]).querySelectorAll(this.EdiTable.Const.HTML.TD+':not(.hidde-col):not(.et-sel-col)')[col];   // F4
         this.CellFocus( td );
     }
     /**
@@ -1651,6 +1659,7 @@ class EditTable extends HTMLElement
      */
     GetTrByIndex=(row)=>
     {
+        if (this._f5Activo) return this._f5Asegurar(row);   // F5 (P22): desplaza y dibuja la fila
         let rows=this.TRCount();
         let cols=this.ColumnsCount();
 
@@ -1697,9 +1706,11 @@ class EditTable extends HTMLElement
         if (rows<1 || cols<1 || row>rows-1 || row<0) return false;
 
         const f4Fila = this.DataArray[row];   // F4
+        if (this._f5Activo) this._f5QuitarFila(row); else   // F5: en virtual la fila puede no estar dibujada
         this.GetTrByIndex(row).remove();
         this.DataArray.splice(row, 1);
         if(this._dataArrayBackup) this._dataArrayBackup.splice(row, 1);
+        if (this._f5Activo) this._f5TrasBorrar(row);   // F5: reindexa las filas dibujadas
         this._f4FilaBorrada(f4Fila, row);   // F4: la fila borrada sale de la selección
         this._f2Programar();   // F2: recálculo de totales (RowDeleted)
 
@@ -1715,7 +1726,8 @@ class EditTable extends HTMLElement
      */
     UpdateRow=(row)=>
     {
-        let tr=this.GetTrByIndex(row);
+        let tr=(this._f5Activo ? this._f5TrDibujado(row) : this.GetTrByIndex(row));   // F5: sin desplazar
+        if (tr==undefined && this._f5Activo) { this._f2Programar(); return (row >= 0 && row < this.DataArray.length); }   // F5: se dibujará desde el modelo
 
         if (tr==undefined) return false;
         var tds=tr.querySelectorAll(this.EdiTable.Const.HTML.TD+':not(.et-sel-col)');   // F4: celdas de datos
@@ -1752,6 +1764,7 @@ class EditTable extends HTMLElement
      */
     UpdateData=()=>
     {
+        if (this._f5Activo) return this._f5UpdateData();   // F5: con virtualización solo las filas dibujadas
         for(let i=0;i<this.TRCount();i++)
             this.UpdateDataRow(i);
     }
@@ -1762,14 +1775,16 @@ class EditTable extends HTMLElement
      */
     UpdateDataRow=(row)=>
     {
-        let tr=this.GetTrByIndex(row);
+        let tr=(this._f5Activo ? this._f5TrDibujado(row) : this.GetTrByIndex(row));   // F5: sin desplazar
+        if (tr==undefined && this._f5Activo) return (row >= 0 && row < this.DataArray.length);   // F5: el modelo ya tiene el dato
 
         if (tr==undefined) return false;
         var tds=tr.querySelectorAll(this.EdiTable.Const.HTML.TD+':not(.et-sel-col)');   // F4: celdas de datos
 
         if (tds==undefined) return false;
 
-        for(let i=0;i<this.TDCount(tr);i++)
+        const f5NumTd = this.TDCount(tr);   // F5: se cuenta una vez por fila (antes, en cada vuelta)
+        for(let i=0;i<f5NumTd;i++)
         {
             if (this.Columns[i]!=undefined && !this._isBadgesCol(this.Columns[i]))
             {
@@ -1847,6 +1862,7 @@ class EditTable extends HTMLElement
      */
     InsertRow=(rw, nofocus = false)=>
     {
+        if (this._f5Activo) return this._f5Insertar(rw, nofocus);   // F5: en virtual se inserta en el modelo y se dibuja
         var tbody=this.GetTBody();
         var cols=this.ColumnsCount();
         
@@ -1889,8 +1905,8 @@ class EditTable extends HTMLElement
                 }
             });
             this._f4FilaInsertada(nr);   // F4: celda del sistema de la fila nueva
-            // F1 (A2): solo los td del tbody.
-            this._shadow.querySelectorAll(this.EdiTable.Const.HTML.TABLE+"#"+this.tableId+" > "+this.EdiTable.Const.HTML.TBODY+" "+this.EdiTable.Const.HTML.TD).forEach(td => {
+            // F1 (A2): solo los td del tbody. F5: sin columnas ocultas no hay nada que aplicar (no recorre la tabla).
+            if (this.hideColumns.length) this._shadow.querySelectorAll(this.EdiTable.Const.HTML.TABLE+"#"+this.tableId+" > "+this.EdiTable.Const.HTML.TBODY+" "+this.EdiTable.Const.HTML.TD).forEach(td => {
                 if (this.hideColumns.includes(this.ColIndexOfTd(td))) td.classList.add('hidde-col');   // F4: índice de datos
             });
 
@@ -1917,12 +1933,12 @@ class EditTable extends HTMLElement
      */
     TRCount=()=>
     {
+        if (this._f5Activo) return this.DataArray.length;   // F5 (P22): en modo virtual, todas las filas del modelo
         var tbody=this.GetTBody();
         if (tbody)
         {
-            let trs=tbody.querySelectorAll(this.EdiTable.Const.HTML.TR);
-            if (trs)
-                if (trs) return trs.length;
+            // F5: la misma cuenta que querySelectorAll('tr') (todos los tr del tbody), sin recorrerlo en cada llamada.
+            return tbody.getElementsByTagName(this.EdiTable.Const.HTML.TR).length;
         }
 
         return 0;
@@ -2571,7 +2587,8 @@ class EditTable extends HTMLElement
         this.EdiTable.SetSelectorKeyEventHandler(selector, this._getCurren());
         if (this.CSS.RowSelected)
         {
-            let trs = td.closest('tr').parentElement.querySelectorAll('tr');
+            // F5: solo los tr que tienen la clase (antes se recorrían todos); el resultado es el mismo.
+            let trs = Array.from(td.closest('tr').parentElement.getElementsByClassName(this.CSS.RowSelected)).filter(tr => tr.tagName == 'TR');
             if (trs && trs.length > 0) trs.forEach(tr => tr.classList.remove(this.CSS.RowSelected));
             if(!this.hiddeRowSelector) td.closest('tr').classList.add(this.CSS.RowSelected);
         }
@@ -2593,10 +2610,11 @@ class EditTable extends HTMLElement
      */
     NavUp=(active_cell)=>
     {
+        if (this._f5Activo) return this._f5Nav(active_cell, -1);   // F5: en virtual, por el modelo
         let active_cell_index=active_cell.cellIndex;
         let parent_tr = active_cell.parentElement;
         let parent_tbody = active_cell.parentElement.parentElement;
-        let target_tr = parent_tbody?.querySelectorAll(this.EdiTable.Const.HTML.TR+":not(.hidde-row)")[(this._getVisibleRowIndex(parent_tr) - 1)];
+        let target_tr = this._f5Vecina(parent_tr, -1) ?? parent_tbody?.querySelectorAll(this.EdiTable.Const.HTML.TR+":not(.hidde-row)")[(this._getVisibleRowIndex(parent_tr) - 1)];   // F5: sin recorrer el tbody
         let target_cell = target_tr?.querySelectorAll(this.EdiTable.Const.HTML.TD)[active_cell_index];
         if( this._getRowIndex(parent_tr) != 0 ) 
             this.CellFocus(target_cell);
@@ -2656,10 +2674,11 @@ class EditTable extends HTMLElement
      */
     NavDown=(active_cell)=> 
     {
+        if (this._f5Activo) return this._f5Nav(active_cell, 1);   // F5: en virtual, por el modelo
         let active_cell_index=active_cell.cellIndex;
         let parent_tr = active_cell.parentElement;
         let parent_tbody = active_cell.parentElement.parentElement;
-        let target_tr = parent_tbody?.querySelectorAll(this.EdiTable.Const.HTML.TR+":not(.hidde-row)")[(this._getVisibleRowIndex(parent_tr) + 1)];
+        let target_tr = this._f5Vecina(parent_tr, 1) ?? parent_tbody?.querySelectorAll(this.EdiTable.Const.HTML.TR+":not(.hidde-row)")[(this._getVisibleRowIndex(parent_tr) + 1)];   // F5: sin recorrer el tbody
         let target_cell = target_tr?.querySelectorAll(this.EdiTable.Const.HTML.TD)[active_cell_index];
         if( target_tr!=undefined) 
             this.CellFocus(target_cell);
@@ -2682,11 +2701,11 @@ class EditTable extends HTMLElement
     GetTdValue=(td, valideEncode=false)=>
     {
         if (td && td.tagName.toLowerCase() != 'td') td = td.closest('td');
-        let value = td.innerHTML;
-        const cellContent = td.querySelector('div[iscellcontent=true]');
-        
-        if (cellContent)
-            value = cellContent.innerHTML
+        if (td == undefined) return td.innerHTML;   // F5: sin celda, la misma excepción que antes
+        // F5: si el primer hijo es el contenido de la celda, es lo primero que encontraría querySelector.
+        const f5Primero = td.firstElementChild;
+        const cellContent = ((f5Primero && f5Primero.tagName == 'DIV' && f5Primero.getAttribute('iscellcontent') === 'true') ? f5Primero : td.querySelector('div[iscellcontent=true]'));
+        let value = (cellContent ? cellContent.innerHTML : td.innerHTML);   // F5: sin serializar la celda completa si no hace falta
 
         let coldef = this.GetColumnDefOfTd(td);
         const f2Leido = this._f2LeerCelda(coldef, value, valideEncode);   // F2: quita máscara, locale o date-display
@@ -2721,16 +2740,18 @@ class EditTable extends HTMLElement
         
         if (cellContent)
         {
-            cellContent.innerHTML = value;
+            this._f5Html(cellContent, value);   // F5
             this._setRowSizes(cellContent,coldef);
             return;
         }
         else
         {
             cellContent = this._createFullElement('div', { iscellcontent:'true', class:'cell-content' });
-            cellContent.innerHTML = value;
+            this._f5Html(cellContent, value);   // F5
             this._setRowSizes(cellContent,coldef);
-            td.innerHTML = cellContent.outerHTML;
+            // F5: el mismo nodo en lugar de serializarlo y volver a interpretarlo (antes: td.innerHTML = outerHTML).
+            td.innerHTML = '';
+            td.appendChild(cellContent);
         }
         //td.innerHTML = value;
     }
@@ -2824,6 +2845,7 @@ class EditTable extends HTMLElement
     }
     _printRows=()=>
     {
+        if (this._f5DebeVirtualizar?.()) return this._f5PrintRows();   // F5: con virtual-rows solo se dibuja lo visible
         const thead = this._table.querySelector('thead');
         const tbody = this._table.querySelector('tbody');
 
@@ -2840,11 +2862,19 @@ class EditTable extends HTMLElement
         tbody.innerHTML = '';
         let dataArray = this.DataArray;
 
-        if (this.ShowAsTree)
+        // F5 (§10): en árbol, sin copia JSON profunda: se dibujan los objetos de DataArray con el nivel aparte.
+        // Si los datos no permiten hacerlo con el mismo resultado (llaves repetidas, ciclos…), el camino de antes.
+        const f5Arbol = (this.ShowAsTree ? this._f5OrdenArbol(this.DataArray) : null);
+        const f5Nivel = (data, idx) => (f5Arbol ? f5Arbol.nivel[idx] : data['__level__']);
+        if (f5Arbol) dataArray = f5Arbol.filas;
+        else if (this.ShowAsTree)
         {
             let treeArray = this.TreeArray(JSON.parse(JSON.stringify(this.DataArray)));
             dataArray = this.TableArray(treeArray, null, false);
         }
+        const f5Frag = document.createDocumentFragment();   // F5: las filas se agregan juntas al final
+        const f5PorId = new Map();   // F5: id → primer tr con ese id (para volver a expandir)
+        const f5Hijos = new Map();   // F5: valor de parent → sus tr, en orden (lo que daría _getChildRows)
 
         if (dataArray && dataArray.length > 0 && thead.hasChildNodes())
         {
@@ -2852,7 +2882,7 @@ class EditTable extends HTMLElement
             
             dataArray.forEach((data, idx) => 
             {
-                const tr = this._createFullElement('tr', { id: (data[treeOptions.key]??''), parent: (data[treeOptions.parentkey]??''), indent: (data['__level__']??0) });
+                const tr = this._createFullElement('tr', { id: (data[treeOptions.key]??''), parent: (data[treeOptions.parentkey]??''), indent: (f5Nivel(data, idx)??0) });   // F5
                 let container = null;
                 
                 // F1 (A4): misma celda que _getFullTable, más el contenedor del árbol y hideColumns.
@@ -2869,10 +2899,10 @@ class EditTable extends HTMLElement
                     
                     const td = tr.firstChild;                    
                     td.classList.add('cell-collapsable');
-                    let ident = Number(data['__level__']??0);
+                    let ident = Number(f5Nivel(data, idx)??0);   // F5
                     tr.setAttribute('indent', ident);
                     this._setIndent(td, ident);
-                    if(data['__havechilds__'] && container) container.prepend(expand);
+                    if((f5Arbol ? f5Arbol.hijos[idx] : data['__havechilds__']) && container) container.prepend(expand);   // F5
                     else this._setIndent(td, ident+.7);
 
                     expand.onclick = e => {
@@ -2892,13 +2922,21 @@ class EditTable extends HTMLElement
                 }
 
                 this._decorateRow(tr, idx, data);
-                tbody.appendChild(tr);
+                f5Frag.appendChild(tr);   // F5
+                const f5Id = tr.getAttribute('id'); if (!f5PorId.has(f5Id)) f5PorId.set(f5Id, tr);   // F5
+                const f5P = tr.getAttribute('parent'); (f5Hijos.get(f5P) ?? f5Hijos.set(f5P, []).get(f5P)).push(tr);   // F5
             });  
         }
+        tbody.appendChild(f5Frag);   // F5
+        // F5: sin tr anidados, el primer tr con ese id sale del mapa (mismo resultado que querySelector).
+        const f5SinAnidados = (tbody.getElementsByTagName('tr').length === tbody.rows.length);
+        if (f5SinAnidados) this._f5HijosCache = f5Hijos;   // F5: ExpandRow no cambia la estructura mientras vuelve a expandir
+        try {
         rowsExpanded.forEach(trId => {
-            const tr = tbody.querySelector(`tr[id='${trId}']`);
+            const tr = ((f5SinAnidados && !/['\\]/.test(trId)) ? f5PorId.get(trId) : tbody.querySelector(`tr[id='${trId}']`));   // F5
             if (tr) this.ExpandRow(tr);
         });
+        } finally { this._f5HijosCache = null; }   // F5
         this.Initialize(this._table.getAttribute('id'));
         this._setMoveEvent();
         this._f4TrasDibujar();   // F4: celdas del sistema y selección después de redibujar
@@ -2918,6 +2956,7 @@ class EditTable extends HTMLElement
     _getChildRows=(row)=>
     {
         let parent_id = (row.getAttribute('id')??'___');
+        if (this._f5HijosCache && !/['\\]/.test(parent_id)) return (this._f5HijosCache.get(parent_id) ?? []);   // F5: dentro de _printRows, sin consultar
         // F1 (A2): solo las filas del tbody.
         const child_rows = this._table.querySelectorAll(`tbody tr[parent='${parent_id}']`);
         return child_rows;
@@ -2950,6 +2989,8 @@ class EditTable extends HTMLElement
             parentObj[treeOptions.childs] = parentChilds;
         }
 
+        // F5 (§10): sin copia JSON cuando las llaves lo permiten (únicas, sin ciclos): mismo árbol en O(n).
+        if (dataArray && dataArray.length > 0 && this._f5TreeArrayRapido(dataArray, treeOptions)) return dataArray;
         if (dataArray && dataArray.length > 0)
         {
             let copyArray = JSON.parse(JSON.stringify(dataArray));
@@ -3673,6 +3714,7 @@ class EditTable extends HTMLElement
 
         if (this._table && this._usesCustomCards()) this._table.classList.toggle('et-cards', value);
         if (!changed) return;
+        this._f5Reevaluar?.();   // F5: en tarjetas no se virtualiza
 
         this.RefreshBadges();
         this._scheduleEnsureSelection();
@@ -3850,6 +3892,7 @@ class EditTable extends HTMLElement
     {
         const tbody = this._table?.querySelector('tbody');
         if (!tbody) return;
+        if (this._f5Activo) { Array.from(tbody.rows).forEach(tr => { const i = this._f5Idx.get(tr); if (i !== undefined) fn(tr, i, (tr._etData ?? this.DataArray[i] ?? {})); }); return; }   // F5: solo filas de datos dibujadas
         Array.from(tbody.rows).forEach((tr, i) => fn(tr, i, (tr._etData ?? this.DataArray[i] ?? {})));
     }
 
@@ -4387,7 +4430,7 @@ class EditTable extends HTMLElement
         let th = this._table.querySelector(`thead th[field="${fieldColumn}"]`);
         if (!th) return false;
 
-        this._table.querySelectorAll('tbody tr').forEach(tr => tr.cells[th.cellIndex].classList.toggle('hidde-col',hide));
+        this._table.querySelectorAll('tbody tr:not(.et-spacer)').forEach(tr => tr.cells[th.cellIndex].classList.toggle('hidde-col',hide));   // F5: sin las filas de relleno
         th.classList.toggle('hidde-col', hide);
         this._f2OcultarCeldaPie(th.cellIndex, hide);   // F2: la celda del pie sigue a la columna
 
@@ -4522,7 +4565,7 @@ class EditTable extends HTMLElement
     }
     _f4FilaNueva(tr)
     {
-        if (!this._f4ThSel || !tr || this._f4SysDe(tr)) return;
+        if (!this._f4ThSel || !tr || this._f4SysDe(tr) || tr.classList.contains('et-spacer')) return;   // F5: el relleno no lleva casilla
         const td = document.createElement('td');
         td.className = 'et-sel-col';
         td.innerHTML = '<input type="checkbox" tabindex="-1" aria-label="Seleccionar fila">';
@@ -5050,6 +5093,651 @@ class EditTable extends HTMLElement
                 break;
         }
     }
+    // ===== F5: rendimiento con miles de filas (spec §10)
+    //
+    // 1. Siempre activo, sin cambios visibles (enganches marcados «F5:» en el código existente): TRCount sin
+    //    recorrer el tbody (UpdateData deja de ser O(n²)), NavUp/NavDown por hermanos, NavTo y CellFocus sin
+    //    listas completas, InsertRow sin recorrer la tabla si no hay columnas ocultas, _printRows con un
+    //    fragmento y, en árbol, sin copias JSON profundas (TreeArray en O(n) cuando las llaves son únicas y no
+    //    hay ciclos; si no, el camino de antes). _printRows() y _printTreeData() siguen dibujando todo.
+    // 2. Virtualización opcional (virtual-rows="true" / VirtualRows): solo se dibujan las filas visibles más
+    //    VirtualOverscan (10) de margen; arriba y abajo van filas de relleno tr.et-spacer (sin celdas) en el
+    //    mismo tbody, sin nada que envuelva la tabla. El modelo (DataArray) es la fuente de verdad: lo editado
+    //    ya está ahí, y UpdateData/UpdateDataRow solo leen las filas dibujadas. TRCount() = DataArray.length;
+    //    GetTrByIndex(i) desplaza y dibuja la fila (P22). La fila con el selector o el editor se conserva
+    //    dibujada aunque salga de la vista. No se virtualiza en árbol ni en la vista de tarjetas.
+    //    Con row-height en px, ese es el alto de cada fila (P21); si no, se mide.
+    //
+    // Punto de extensión para F6 (agrupación): _f5Filas() devuelve la lista de «filas lógicas» que se dibujan,
+    // en orden. Una fila de datos es {tipo:'datos', indice} (índice de DataArray). F6 puede sobrescribirla para
+    // intercalar entradas de otro tipo (por ejemplo {tipo:'grupo', ...}) y definir _f5DibujarEntrada(entrada,
+    // pos), que devuelve el tr de esa entrada (sin índice de datos: _getRowIndex da -1). Una fila de datos que
+    // no está en la lista (grupo colapsado) no se dibuja. Todo lo demás (relleno, desplazamiento, teclado,
+    // mapa tr → índice) trabaja sobre las posiciones de esa lista; al cambiarla, llamar _f5Rearmar().
+    static { this.features.push('virtual'); }
+
+    VirtualOverscan = 10;        // virtual-overscan
+    ScrollContainer = null;      // scroll-container: selector o elemento
+    _f5Pedido = false;           // virtual-rows
+    _f5Listo = false;
+    _f5Activo = false;           // está virtualizando
+    _f5Todo = false;             // RenderAll(): todas dibujadas hasta RenderVisible()
+    _f5PorImprimir = false;
+    _f5Lista = [];               // filas lógicas (_f5Filas)
+    _f5Pos = [];                 // índice de DataArray → posición en _f5Lista (-1 si no se dibuja)
+    _f5Trs = new Map();          // posición → tr dibujado
+    _f5PosTr = new WeakMap();    // tr → posición
+    _f5Idx = new WeakMap();      // tr → índice de DataArray (solo filas de datos)
+    _f5Datos = null;             // DataArray con el que se armó la lista
+    _f5Largo = 0;
+    _f5Paso = 0;                 // alto de una fila, medido (incluye border-spacing)
+    _f5Cont = null;              // contenedor de scroll: elemento o window
+    _f5FnScroll = null;
+    _f5Globales = false;
+    _f5RO = null;
+    _f5Estilo = null;
+    _f5Pintando = false;
+    _f5FnDoc = null;
+    _f5Clave = '';                // última ventana dibujada (para no rehacer nada si no cambió)
+    _f5Sucio = true;
+
+    get VirtualRows() { return this._f5Pedido; }
+    set VirtualRows(v) { v = this._f5Bool(v); if (v === this._f5Pedido) return; this._f5Pedido = v; this._f5Reevaluar(); }
+
+    _f5Bool(v) { return (v === true) || (v !== false && v != null && !this._f1EsFalso(v)); }
+
+    /** Dibuja todas las filas (por ejemplo, antes de clonar la tabla para imprimir) hasta RenderVisible(). */
+    RenderAll()
+    {
+        if (!this._f5Activo) return false;
+        this._f5Todo = true;
+        this._f5Sucio = true;
+        this._f5Sincronizar();
+        this._f5Pintar();
+        return true;
+    }
+    /** Vuelve al modo virtual: solo las filas visibles más el margen. */
+    RenderVisible()
+    {
+        if (!this._f5Activo) return false;
+        this._f5Todo = false;
+        this._f5Sucio = true;
+        if (this._f5Sincronizar()) return true;
+        if (!this._f5Cont || (this._f5Cont !== window && !this._f5Cont.isConnected) || this._f5Cont === window) this._f5ElegirContenedor();
+        this._f5Pintar();
+        return true;
+    }
+
+    // ---------- enganches ----------
+    _f5Iniciar()
+    {
+        if (this.hasAttribute('virtual-rows')) this._f5Pedido = this._f5Bool(this.getAttribute('virtual-rows'));
+        if (this.hasAttribute('virtual-overscan')) this.VirtualOverscan = Number(this.getAttribute('virtual-overscan'));
+        if (this.hasAttribute('scroll-container')) this.ScrollContainer = this.getAttribute('scroll-container');
+        this._f5Listo = true;
+        if (this._f5Pedido) this._f5Reevaluar();
+    }
+    _f5AtributoCambiado(name, v)
+    {
+        if (name == 'virtual-rows') this.VirtualRows = (v !== null && this._f5Bool(v));
+    }
+    _f5Debe() { return this._f5Listo && this._f5Pedido && !!this._table && !this.ShowAsTree && !this._isCardView; }
+    // Desde _printRows: true si hay que dibujar en modo virtual. Si dejó de aplicar (árbol, tarjetas), sale del modo.
+    _f5DebeVirtualizar()
+    {
+        if (this._f5Debe()) return true;
+        if (this._f5Activo) this._f5Salir();
+        return false;
+    }
+    _f5Reevaluar()
+    {
+        if (!this._f5Listo || !this._table) return;
+        if (this._f5Debe()) { if (this._f5Activo) this.RenderVisible(); else this._f5PrintRows(); }
+        else if (this._f5Activo) { this._f5Salir(); this._printRows(); }
+    }
+    _f5AntesDeImprimir() { if (this._f5Activo && !this._f5Todo) { this._f5PorImprimir = true; this.RenderAll(); } }
+    _f5DespuesDeImprimir() { if (this._f5PorImprimir) { this._f5PorImprimir = false; this.RenderVisible(); } }
+    _f5Liberar()
+    {
+        this._f5Escuchar(null);
+        if (this._f5FnDoc) document.removeEventListener('scroll', this._f5FnDoc, { capture: true });
+    }
+    _f5Reconectar()
+    {
+        if (this._f5FnDoc) document.addEventListener('scroll', this._f5FnDoc, { capture: true, passive: true });
+        if (this._f5Activo) { this._f5ElegirContenedor(); this._f5Pintar(); }
+    }
+
+    // ---------- modelo ----------
+    /** Filas lógicas que se dibujan (punto de extensión de F6, ver arriba). */
+    _f5Filas()
+    {
+        const n = (this.DataArray ?? []).length, out = new Array(n);
+        for (let i = 0; i < n; i++) out[i] = { tipo: 'datos', indice: i };
+        return out;
+    }
+    _f5Armar()
+    {
+        const datos = (this.DataArray ?? []);
+        this._f5Sucio = true;
+        this._f5Datos = datos;
+        this._f5Largo = datos.length;
+        const thead = this._table.querySelector('thead');
+        this._f5Lista = ((thead && thead.hasChildNodes()) ? this._f5Filas() : []);
+        this._f5Pos = new Int32Array(datos.length).fill(-1);
+        this._f5Lista.forEach((e, p) => { if (e && e.tipo === 'datos' && e.indice >= 0 && e.indice < datos.length) this._f5Pos[e.indice] = p; });
+    }
+    // Vuelve a armar la lista conservando las filas dibujadas. mapa: índice viejo → índice nuevo (o -1).
+    _f5Rearmar(mapa = (i) => i)
+    {
+        const viejos = Array.from(this._f5Trs.values());
+        this._f5Armar();
+        this._f5Trs = new Map();
+        viejos.forEach(tr => {
+            const i0 = this._f5Idx.get(tr);
+            const i = (i0 === undefined ? -1 : mapa(i0));
+            const p = ((i >= 0 && i < this._f5Pos.length) ? this._f5Pos[i] : -1);
+            if (p < 0) { tr.remove(); return; }
+            this._f5Idx.set(tr, i);
+            this._f5PosTr.set(tr, p);
+            this._f5Trs.set(p, tr);
+        });
+    }
+    // Si alguien reasignó o cambió el largo de DataArray sin _printRows. true si volvió a dibujar todo.
+    _f5Sincronizar()
+    {
+        if (!this._f5Activo) return false;
+        if ((this.DataArray ?? []) !== this._f5Datos) { this._f5PrintRows(); return true; }
+        if (this.DataArray.length !== this._f5Largo) { this._f5Rearmar(); this._f5Pintar(); }
+        return false;
+    }
+    _f5TrDibujado(i)
+    {
+        if (!this._f5Activo) return undefined;
+        this._f5Sincronizar();
+        const p = (Number.isInteger(i) && i >= 0 && i < this._f5Pos.length) ? this._f5Pos[i] : -1;
+        return (p >= 0 ? this._f5Trs.get(p) : undefined);
+    }
+    _f5DatosVisibles()   // F2 (summary-scope="visible"): filas de datos de la lista, dibujadas o no
+    {
+        const d = (this.DataArray ?? []);
+        return this._f5Lista.filter(e => e && e.tipo === 'datos').map(e => d[e.indice]).filter(r => r != undefined);
+    }
+
+    // ---------- dibujo ----------
+    _f5PrintRows()
+    {
+        const tbody = this._table.querySelector('tbody');
+        if (!this._f5Activo) { this._f5Activo = true; this._f5Entrar(); }
+        if (this._f1MO) { this._f1MO.disconnect(); this._f1MO = null; this._f1TBody = null; }   // como _printRows
+        tbody.innerHTML = '';
+        this._f5Trs = new Map();
+        this._f5PosTr = new WeakMap();
+        this._f5Idx = new WeakMap();
+        this._f5Armar();
+        // Primero un solo relleno con el alto total, para saber qué contenedor desplaza; después, las filas visibles.
+        if (this._f5Lista.length) tbody.appendChild(this._f5Relleno(this._f5Lista.length));
+        this._f5ElegirContenedor();
+        this._f5Pintar();
+        this._f4TrasDibujar();
+        this._f3TrasDibujar?.();   // puede cambiar qué contenedor desplaza (et-fixed-cont)
+        this._f5ElegirContenedor();
+        this._f5Pintar();
+        this._f2Programar();
+    }
+    _f5Entrar()
+    {
+        if (!this._f5Estilo)
+        {
+            const st = document.createElement('style');
+            st.setAttribute('data-et', 'f5');
+            st.textContent = `
+                table.et-virtual > tbody > tr.et-spacer, table.et-virtual > tbody > tr.et-spacer:hover { background: transparent !important; }
+                table.et-vfija > tbody > tr:not(.et-spacer) > td { height: var(--et-vtd) !important; max-height: var(--et-vtd); padding-top: 0 !important; padding-bottom: 0 !important; box-sizing: border-box; overflow: hidden; }
+                table.et-vfija > tbody > tr:not(.et-spacer) > td .cell-content { height: var(--et-vtd) !important; min-height: 0 !important; max-height: var(--et-vtd) !important; display: flex !important; }
+                @media print { table.et-virtual > tbody > tr.et-spacer { display: none; } }`;
+            this._shadow.appendChild(st);
+            this._f5Estilo = st;
+        }
+        this._table.classList.add('et-virtual');
+        const h = /^\s*([\d.]+)px\s*$/i.exec(String(this.rowHeight ?? ''));
+        if (h) { this._table.classList.add('et-vfija'); this._table.style.setProperty('--et-vtd', Math.max(1, Number(h[1]) - this._f5Espacio()) + 'px'); this._f5Paso = Number(h[1]); }
+        if (!this._f5Globales)
+        {
+            this._f5Globales = true;
+            const fn = () => { if (this._f5Activo && !this._f5Todo) this._f5Pintar(); };
+            this._f1Global(window, 'scroll', fn);
+            this._f1Global(window, 'resize', fn);
+            // El scroll de un elemento no burbujea: en captura se ve el de cualquier contenedor de la página y el
+            // del div interno (dentro del shadow), aunque cambie cuál desplaza (por ejemplo, con columnas fijas).
+            this._f5FnDoc = fn;
+            if (this._f1Conectada) document.addEventListener('scroll', fn, { capture: true, passive: true });
+            this._shadow.addEventListener('scroll', fn, { capture: true, passive: true });
+        }
+    }
+    _f5Salir()
+    {
+        this._f5Activo = false;
+        this._f5Todo = false;
+        this._f5Escuchar(null);
+        this._table?.classList.remove('et-virtual', 'et-vfija');
+        this._table?.style.removeProperty('--et-vtd');
+        this._f5Trs = new Map();
+        this._f5Lista = [];
+    }
+    _f5Espacio()
+    {
+        const cs = getComputedStyle(this._table);
+        if (cs.borderCollapse == 'collapse') return 0;
+        const v = String(cs.borderSpacing ?? '').trim().split(/\s+/);
+        return (parseFloat(v[1] ?? v[0]) || 0);
+    }
+    _f5Margen() { const v = Number(this.VirtualOverscan); return (Number.isFinite(v) ? Math.max(0, Math.floor(v)) : 10); }
+    _f5PasoActual() { return (this._f5Paso > 0 ? this._f5Paso : 30); }
+    // Área visible (coordenadas de la ventana): la ventana recortada por cada ancestro con overflow (cruzando el
+    // shadow DOM). No depende de cuál de ellos es el que desplaza: el div interno, el de la página (V12) o la ventana.
+    // Si la tabla queda fuera de la ventana, se usa el área del contenedor más cercano.
+    _f5Vista()
+    {
+        let top = 0, bottom = window.innerHeight, propio = null;
+        let el = this._table;
+        while ((el = this._composedParent(el)))
+        {
+            if (el === document.body || el === document.documentElement) break;
+            if (getComputedStyle(el).overflowY == 'visible') continue;
+            const r = el.getBoundingClientRect(), ct = r.top + el.clientTop, cb = ct + el.clientHeight;
+            if (!propio) propio = { top: ct, bottom: cb };
+            top = Math.max(top, ct);
+            bottom = Math.min(bottom, cb);
+        }
+        if (bottom <= top && propio) { top = propio.top; bottom = propio.bottom; }
+        return { top, bottom: Math.max(bottom, top + 1) };
+    }
+    _f5Calcular()
+    {
+        const n = this._f5Lista.length;
+        if (!n) return [0, 0];
+        const paso = this._f5PasoActual(), m = this._f5Margen(), v = this._f5Vista();
+        const tb = this._table.tBodies[0].getBoundingClientRect().top;
+        let a = Math.floor((v.top - tb) / paso) - m, b = Math.ceil((v.bottom - tb) / paso) + m;
+        a = Math.min(Math.max(a, 0), n - 1);
+        b = Math.min(Math.max(b, 0), n);
+        if (b <= a) b = Math.min(n, a + 1 + 2 * m);
+        return [a, b];
+    }
+    _f5FilaActual()
+    {
+        const el = this._shadow?.getElementById(this.EdiTable.Const.InputId) ?? this._shadow?.getElementById(this.EdiTable.Const.SelectorId);
+        const tr = el?.closest('tr');
+        return (tr ? (this._f5PosTr.get(tr) ?? -1) : -1);
+    }
+    _f5Relleno(filas)
+    {
+        const tr = document.createElement('tr');
+        tr.className = 'et-spacer';
+        tr.setAttribute('aria-hidden', 'true');
+        tr._f5Filas = filas;
+        tr.style.height = Math.max(0, filas * this._f5PasoActual() - this._f5Espacio()) + 'px';
+        return tr;
+    }
+    // Dibuja la ventana [a, b) (por omisión, la que se ve), más la fila actual y `extra`, con rellenos en los huecos.
+    _f5Pintar(rango = null, extra = -1)
+    {
+        if (!this._f5Activo || this._f5Pintando) return;
+        this._f5Pintando = true;
+        try
+        {
+            const tbody = this._table.tBodies[0];
+            const n = this._f5Lista.length;
+            let [a, b] = (this._f5Todo ? [0, n] : (rango ?? this._f5Calcular()));
+            const fija = this._f5FilaActual();
+            const clave = a + ',' + b + ',' + fija + ',' + extra + ',' + n;
+            if (!this._f5Sucio && clave === this._f5Clave) return;
+            this._f5Sucio = false;
+            this._f5Clave = clave;
+            const dentro = (k) => (k >= a && k < b) || k === fija || k === extra;
+            const orden = [];
+            if (fija >= 0 && fija < a) orden.push(fija);
+            if (extra >= 0 && extra < a && extra !== fija) orden.push(extra);
+            orden.sort((x, y) => x - y);
+            for (let k = a; k < b; k++) orden.push(k);
+            [fija, extra].filter((k, j, l) => k >= b && k < n && l.indexOf(k) === j).sort((x, y) => x - y).forEach(k => orden.push(k));
+
+            for (const [k, tr] of Array.from(this._f5Trs)) if (!dentro(k) || k >= n) { tr.remove(); this._f5Trs.delete(k); }
+            Array.from(tbody.querySelectorAll(':scope > tr.et-spacer')).forEach(s => s.remove());
+
+            // Filas nuevas: se insertan después de la anterior de la secuencia, sin mover las que ya están
+            // (moverlas le quitaría el foco al selector o al editor). Las consecutivas van en un fragmento.
+            const nuevas = [];
+            let prev = null, frag = null;
+            const vaciar = (antesDe) => { if (frag) { tbody.insertBefore(frag, antesDe); frag = null; } };
+            for (const k of orden)
+            {
+                let tr = this._f5Trs.get(k);
+                if (tr) { vaciar(tr); prev = tr; continue; }
+                tr = this._f5Crear(k);
+                this._f5Trs.set(k, tr);
+                nuevas.push(tr);
+                if (!frag) { frag = document.createDocumentFragment(); }
+                frag.appendChild(tr);
+                if (frag.childNodes.length === 1) frag._f5Ref = (prev ? prev.nextSibling : tbody.firstChild);
+            }
+            if (frag) vaciar(frag._f5Ref ?? null);
+            // Rellenos en los huecos.
+            let ultimo = -1;
+            for (const k of orden)
+            {
+                if (k > ultimo + 1) tbody.insertBefore(this._f5Relleno(k - ultimo - 1), this._f5Trs.get(k));
+                ultimo = k;
+            }
+            if (n - 1 > ultimo) tbody.appendChild(this._f5Relleno(n - 1 - ultimo));
+
+            nuevas.forEach(tr => this._f5TrasCrear(tr));
+            if (nuevas.length)
+            {
+                this._f3TrasDibujar?.();   // F3: clases y left de las columnas fijas
+                if (this.CanMoveRow) this._setMoveEvent();
+            }
+            this._f5Medir(a, b);
+        }
+        finally { this._f5Pintando = false; }
+    }
+    // Paso real de las filas (offsetTop entre la primera y la última de la ventana). Si cambió, ajusta los rellenos.
+    _f5Medir(a, b)
+    {
+        if (b - a < 2) return;
+        const t1 = this._f5Trs.get(a), t2 = this._f5Trs.get(b - 1);
+        if (!t1 || !t2 || !t1.isConnected || !t2.isConnected) return;
+        const paso = (t2.offsetTop - t1.offsetTop) / (b - 1 - a);
+        if (!(paso > 0) || Math.abs(paso - this._f5Paso) < 0.25) return;
+        this._f5Paso = paso;
+        Array.from(this._table.tBodies[0].querySelectorAll(':scope > tr.et-spacer')).forEach(s =>
+            s.style.height = Math.max(0, s._f5Filas * paso - this._f5Espacio()) + 'px');
+    }
+    _f5Crear(p)
+    {
+        const e = this._f5Lista[p];
+        if (!e || e.tipo !== 'datos')
+        {
+            const tr = (typeof this._f5DibujarEntrada == 'function' ? this._f5DibujarEntrada(e, p) : null) ?? document.createElement('tr');
+            this._f5PosTr.set(tr, p);
+            return tr;
+        }
+        const k = e.indice, data = (this.DataArray[k] ?? {}), o = this._getTreeOptions();
+        const tr = this._createFullElement('tr', { id: (data[o.key]??''), parent: (data[o.parentkey]??''), indent: (data['__level__']??0) });
+        this._f5Idx.set(tr, k);   // antes de pintar: onTdPaint y onRowPaint reciben el índice de DataArray
+        this._f5PosTr.set(tr, p);
+        this.Columns.forEach((column, i) => this._f1PintarCelda(tr, column, i, data, k, false, true));
+        this._decorateRow(tr, k, data);
+        return tr;
+    }
+    // Lo que _printRows hace después de dibujar, solo para la fila nueva (ya en el DOM).
+    _f5TrasCrear(tr)
+    {
+        if (!this._f5Idx.has(tr)) return;
+        Array.from(tr.cells).forEach(td => {
+            td.onclick = e => {
+                if (!this.ClickPropagation) e.stopPropagation();   // como Initialize (F1, P37)
+                else if (e._f1EdiTableProcesado) return;
+                this.CellFocus(td);
+            };
+        });
+        if (this._f4ThSel) this._f4FilaNueva(tr);   // F4: celda del sistema y su casilla
+    }
+
+    // ---------- desplazamiento ----------
+    _f5ElegirContenedor()
+    {
+        let c = null;
+        const sc = this.ScrollContainer;
+        if (sc && typeof sc == 'object' && sc.nodeType === 1) c = sc;
+        else if (typeof sc == 'string' && sc.trim())
+        {
+            try { c = (this.getRootNode()?.querySelector?.(sc) ?? document.querySelector(sc)); } catch (e) { c = null; }
+        }
+        if (!c)
+        {
+            // El ancestro más cercano con overflow-y auto o scroll que de verdad desplaza (cruza el shadow DOM).
+            let el = this._table;
+            while ((el = this._composedParent(el)))
+            {
+                if (el === document.body || el === document.documentElement) break;
+                const oy = getComputedStyle(el).overflowY;
+                if ((oy == 'auto' || oy == 'scroll' || oy == 'overlay') && el.scrollHeight > el.clientHeight + 1) { c = el; break; }
+            }
+        }
+        this._f5Escuchar(c ?? window);
+    }
+    _f5Escuchar(c)
+    {
+        if (c === this._f5Cont && (!c || this._f5FnScroll)) return;
+        if (this._f5Cont && this._f5Cont !== window && this._f5FnScroll) this._f5Cont.removeEventListener('scroll', this._f5FnScroll);
+        if (this._f5RO) { this._f5RO.disconnect(); this._f5RO = null; }
+        this._f5Cont = c;
+        if (!c) { this._f5FnScroll = null; return; }
+        this._f5FnScroll = () => { if (this._f5Activo && !this._f5Todo) this._f5Pintar(); };
+        if (c !== window)
+        {
+            c.addEventListener('scroll', this._f5FnScroll, { passive: true });
+            if (typeof ResizeObserver != 'undefined') { this._f5RO = new ResizeObserver(this._f5FnScroll); this._f5RO.observe(c); }
+        }
+    }
+    // Asegura que la fila en la posición p esté dibujada y a la vista; devuelve su tr.
+    _f5IrA(p)
+    {
+        if (!(p >= 0 && p < this._f5Lista.length)) return undefined;
+        this._f5ElegirContenedor();
+        if (!this._f5Trs.has(p))
+        {
+            const vis = Math.ceil((this._f5Vista().bottom - this._f5Vista().top) / this._f5PasoActual()), m = this._f5Margen();
+            this._f5Pintar([Math.max(0, p - m), Math.min(this._f5Lista.length, p + vis + m)], p);
+        }
+        const tr = this._f5Trs.get(p);
+        if (tr && !this._f5Todo) { this._f5Mostrar(tr); this._f5Pintar(null, p); }
+        return this._f5Trs.get(p);
+    }
+    // Desplaza solo en vertical el contenedor (o la ventana) lo mínimo para que tr quede a la vista, bajo el thead fijo.
+    _f5Mostrar(tr)
+    {
+        const c = this._f5Cont ?? window;
+        let { top, bottom } = (c === window ? { top: 0, bottom: window.innerHeight } : (() => { const r = c.getBoundingClientRect(); return { top: r.top + c.clientTop, bottom: r.top + c.clientTop + c.clientHeight }; })());
+        const thead = this._table.tHead;
+        if (thead && getComputedStyle(thead).position == 'sticky')
+        {
+            const h = thead.getBoundingClientRect();
+            if (h.bottom > top && h.top < top + 2) top = h.bottom;
+        }
+        const r = tr.getBoundingClientRect();
+        let d = 0;
+        if (r.top < top) d = r.top - top;
+        else if (r.bottom > bottom) d = Math.min(r.bottom - bottom, r.top - top);
+        if (Math.abs(d) < 1) return;
+        if (c === window) window.scrollBy(0, d); else c.scrollTop += d;
+    }
+
+    // ---------- operaciones en modo virtual ----------
+    _f5Asegurar(row)   // GetTrByIndex
+    {
+        if (this._f5Sincronizar()) { }
+        const rows = this.DataArray.length, cols = this.ColumnsCount();
+        if (rows < 1 || cols < 1 || !(row <= rows - 1) || row < 0) return undefined;
+        const p = this._f5Pos[row];
+        return (p >= 0 ? this._f5IrA(p) : undefined);
+    }
+    _f5Nav(active_cell, d)
+    {
+        const p = this._f5PosTr.get(active_cell?.parentElement);
+        if (p === undefined) return;
+        const q = p + d;
+        if (q < 0) return;
+        if (q >= this._f5Lista.length) { if (d > 0 && this.AutoAddRow) this.AddRow(); return; }
+        const tr = this._f5IrA(q);
+        const td = tr?.querySelectorAll(this.EdiTable.Const.HTML.TD)[active_cell.cellIndex];
+        if (td) this.CellFocus(td);
+    }
+    _f5UpdateData()
+    {
+        this._f5Sincronizar();
+        Array.from(this._f5Trs.values()).map(tr => this._f5Idx.get(tr)).filter(i => i !== undefined)
+            .sort((x, y) => x - y).forEach(i => this.UpdateDataRow(i));
+    }
+    _f5QuitarFila(row)
+    {
+        const tr = this._f5TrDibujado(row);
+        if (!tr) return;
+        this._f5Trs.delete(this._f5PosTr.get(tr));
+        tr.remove();
+        this._f5Sucio = true;
+    }
+    _f5TrasBorrar(row)
+    {
+        this._f5Rearmar(i => (i === row ? -1 : (i > row ? i - 1 : i)));
+        this._f5Pintar();
+    }
+    // InsertRow en modo virtual: la fila se crea en el modelo (sin índice, al final), se dibuja y se desplaza a ella.
+    _f5Insertar(rw, nofocus = false)
+    {
+        this._f5Sincronizar();
+        const nuevo = {};
+        if (rw != undefined) this.DataArray.splice(rw, 0, nuevo); else this.DataArray.push(nuevo);
+        const i = this.DataArray.indexOf(nuevo);
+        this._f5Rearmar(j => (j >= i ? j + 1 : j));
+        if (this.ColumnsCount() < 1) { this._f5Pintar(); return; }
+        this.Columns.forEach(c => { if (c != undefined && c.default != undefined) this.UpdateDataMember(i, c.field, c.default, true); });
+        const tr = this._f5IrA(this._f5Pos[i]);
+        if (!tr) return;
+        this._f3TrasDibujar?.();
+        if (!nofocus) this.CellFocus(tr.querySelector('td:not(.hidde-col):not(.et-sel-col)'));
+        this._f2Programar();
+        const eventArgs = { sender: this._getCurren(), tr: tr, rowIndex: i };
+        if (this._getCurren().Events[this.EdiTable.Const.Events.RowAdded] != undefined)
+            this._getCurren().Events[this.EdiTable.Const.Events.RowAdded](eventArgs);
+    }
+
+    // ---------- siempre activo ----------
+    // el.innerHTML = value, sin pasar por el intérprete de HTML cuando el texto no tiene marcas ni entidades
+    // (sin <, &, \r ni \0 el resultado es el mismo nodo de texto).
+    _f5Html(el, value)
+    {
+        const v = (value === null ? '' : String(value));
+        if (/[<&\r\0]/.test(v)) el.innerHTML = v; else el.textContent = v;
+    }
+    // NavUp/NavDown: la fila visible vecina por hermanos. null si no se puede decidir así (tr anidados en
+    // plantillas, la fila actual oculta o no hay vecina): entonces se usa el camino de antes.
+    _f5Vecina(tr, d)
+    {
+        if (!tr || tr.classList.contains('hidde-row')) return null;
+        const tb = tr.parentElement;
+        if (!tb || tb.getElementsByTagName('tr').length !== tb.rows.length) return null;
+        let x = tr;
+        do { x = (d > 0 ? x.nextElementSibling : x.previousElementSibling); } while (x && (x.tagName !== 'TR' || x.classList.contains('hidde-row')));
+        return x ?? null;
+    }
+    // Jerarquía por llave y llave del padre, con el mismo resultado que TreeArray sobre una copia, en O(n).
+    // null si no se puede garantizar (llaves repetidas, de tipos mezclados o vacías, ciclos, hijos ya anidados,
+    // objetos que no son simples); en ese caso se usa el camino de antes.
+    _f5Jerarquia(arr, o, simples)
+    {
+        if (!Array.isArray(arr) || !arr.length) return null;
+        const porLlave = new Map();
+        let tipo = null;
+        for (let n = 0; n < arr.length; n++)
+        {
+            const x = arr[n];
+            if (!x || typeof x != 'object' || Array.isArray(x)) return null;
+            const pr = Object.getPrototypeOf(x);
+            if (pr !== Object.prototype && pr !== null) return null;
+            const ch = x[o.childs];
+            if (ch !== undefined && !(Array.isArray(ch) && ch.length === 0)) return null;
+            const k = x[o.key], tk = typeof k;
+            if (!(tk == 'string' || (tk == 'number' && isFinite(k)))) return null;
+            if (tipo === null) tipo = tk; else if (tipo !== tk) return null;
+            if (porLlave.has(k)) return null;
+            porLlave.set(k, x);
+            if (simples && !this._f5Simple(x)) return null;
+        }
+        const padre = new Map();
+        for (const x of arr)
+        {
+            const p = x[o.parentkey];
+            if (p == undefined) continue;
+            if (typeof p !== tipo || (tipo == 'number' && !isFinite(p))) return null;
+            const P = porLlave.get(p);
+            if (P === x) return null;
+            if (P) padre.set(x, P);
+        }
+        const estado = new Map();
+        for (const x of arr)
+        {
+            let y = x;
+            const camino = [];
+            while (y && !estado.has(y)) { estado.set(y, 1); camino.push(y); y = padre.get(y); }
+            if (y && estado.get(y) === 1) return null;   // ciclo
+            camino.forEach(z => estado.set(z, 2));
+        }
+        const hijos = new Map(), raices = [];
+        for (const x of arr)
+        {
+            const P = padre.get(x);
+            if (P) { let l = hijos.get(P); if (!l) hijos.set(P, (l = [])); l.push(x); }
+            else raices.push(x);
+        }
+        return { raices, hijos };
+    }
+    // Valores que la copia JSON dejaría iguales (para dibujar el objeto de DataArray en lugar de la copia).
+    _f5Simple(x)
+    {
+        for (const k of Object.keys(x))
+        {
+            const v = x[k], t = typeof v;
+            if (v == null || t == 'string' || t == 'boolean') continue;
+            if (t == 'number') { if (isFinite(v)) continue; return false; }
+            if (t == 'object')
+            {
+                const pr = Object.getPrototypeOf(v);
+                if ((Array.isArray(v) || pr === Object.prototype || pr === null) && typeof v.toJSON != 'function') continue;
+            }
+            return false;
+        }
+        return true;
+    }
+    // TreeArray sin copia JSON: mismo árbol (mismos objetos, hijos en el orden de DataArray). false si no aplica.
+    _f5TreeArrayRapido(arr, o)
+    {
+        const j = this._f5Jerarquia(arr, o, false);
+        if (!j) return false;
+        j.hijos.forEach((l, P) => { const a = (P[o.childs] ?? []); for (const x of l) a.push(x); P[o.childs] = a; });
+        arr.length = 0;
+        for (const x of j.raices) arr.push(x);
+        return true;
+    }
+    // _printRows en árbol: filas en orden de árbol con su nivel, sin modificar DataArray. Cada fila es una copia
+    // superficial con los mismos valores que daba la copia JSON (sin las llaves undefined) más __level__ y
+    // __havechilds__: onRowPaint, las plantillas y tr._etData siguen recibiendo una copia (R1, banco
+    // arbol/ontdpaint-en-arbol), pero sin copia profunda.
+    _f5OrdenArbol(arr)
+    {
+        const o = this._getTreeOptions();
+        const j = this._f5Jerarquia(arr, o, true);
+        if (!j) return null;
+        const filas = [], nivel = [], hijos = [];
+        const pila = [];
+        for (let i = j.raices.length - 1; i >= 0; i--) pila.push([j.raices[i], 0]);
+        while (pila.length)
+        {
+            const [x, nv] = pila.pop();
+            const h = j.hijos.get(x);
+            const c = {};
+            for (const k of Object.keys(x)) if (x[k] !== undefined) Object.defineProperty(c, k, { value: x[k], writable: true, enumerable: true, configurable: true });
+            c['__level__'] = nv;
+            c['__havechilds__'] = !!(h && h.length);
+            filas.push(c); nivel.push(nv); hijos.push(!!(h && h.length));
+            if (h) for (let i = h.length - 1; i >= 0; i--) pila.push([h[i], nv + 1]);
+        }
+        return { filas, nivel, hijos };
+    }
+    // ===== F5: fin
+
     // ===== F3: columnas fijas (§6), mostrar y ocultar (§7), reordenar (§8) y diseño (§9) =====
     //
     // Sin fixed, column-chooser ni column-reorder no se agrega nada al DOM ni al CSS (R1). Lo único
@@ -6836,6 +7524,7 @@ class EditTable extends HTMLElement
         const datos = (this.DataArray ?? []);
         if (alcance == 'selected')
             return (typeof this.getSelectedRows == 'function' ? this.getSelectedRows().map(i => datos[i]).filter(r => r != undefined) : []);
+        if (alcance == 'visible' && this._f5Activo) return this._f5DatosVisibles();   // F5: «visible» por grupo, no «dibujada»
         if (alcance == 'visible')
         {
             const tbody = this._f1TBodyPrincipal(), filas = [];
