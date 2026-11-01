@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Máscaras de captura · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- mask con patrones (9 dígito, A letra, X letra o dígito, * cualquiera, \\ escape) y presets rfc, curp, cp, tel, email, percent, upper y lower. mask-keep decide si DataArray guarda con o sin literales; MaskInvalid avisa y se puede cancelar. -->
+<div id="contenido">
+<div class="demo-barra"><label><input type="checkbox" id="cancelar" checked> Cancelar al confirmar un valor inválido (MaskInvalid.cancel)</label></div><div class="demo-caja"><edit-table id="t1" style="width:100%" >
+<edit-thead><edit-tr>
+<edit-th type="Text" field="rfc" mask="rfc" width="150px">RFC</edit-th>
+<edit-th type="Text" field="curp" mask="curp" width="200px">CURP</edit-th>
+<edit-th type="Text" field="cp" mask="cp" width="80px">C.P.</edit-th>
+<edit-th type="Text" field="tel" mask="tel" width="140px">Teléfono</edit-th>
+<edit-th type="Text" field="cuenta" mask="9999-999-999" mask-keep="formatted" width="140px">Cuenta (formatted)</edit-th>
+<edit-th type="Text" field="clave" mask="AAA-999" mask-placeholder="·" width="100px">Clave AAA-999</edit-th>
+<edit-th type="Text" field="email" mask="email" minwidth="180px">Correo</edit-th>
+<edit-th type="Text" field="pct" mask="percent" textalign="end" sufix=" %" width="90px">Descuento %</edit-th>
+<edit-th type="Text" field="nombre" mask="upper">Nombre (mayúsculas)</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div><p class="demo-nota">Valores de prueba: XAXX010101000, EKU9003173C9, 29000, 5512345678.</p>
+</div>
+<script>
+Demo.pagina({"titulo": "Máscaras de captura", "tipo": "v2", "bajada": "mask con patrones (9 dígito, A letra, X letra o dígito, * cualquiera, \\\\ escape) y presets rfc, curp, cp, tel, email, percent, upper y lower. mask-keep decide si DataArray guarda con o sin literales; MaskInvalid avisa y se puede cancelar."});
+Demo.requiere(["mask"]);
+Demo.observar('t1');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1');
+  t.DataArray = [{ rfc: 'XAXX010101000', curp: '', cp: '29000', tel: '9611234567', cuenta: '', clave: '', email: 'ventas@ejemplo.invalid', pct: '10.5', nombre: 'CLIENTE FICTICIO' }, { rfc: '', curp: '', cp: '', tel: '', cuenta: '', clave: '', email: '', pct: '', nombre: '' }]; t._printRows();
+  t.addEventListener('MaskInvalid', (e) => { if (document.getElementById('cancelar').checked) e.cancel = true; Demo.log(e.field + ': ' + e.reason, 'MaskInvalid'); });
+});
+</script>
+</body>
+</html>

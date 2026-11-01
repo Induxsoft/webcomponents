@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>InduxsoftExcel sin EdiTable · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.excel.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- La biblioteca InduxsoftExcel no depende de EdiTable: esta página no lo carga. Exporta un arreglo de objetos (fromArray, con columnas inferidas, rutas con punto y valores calculados) y una tabla HTML normal (fromTable: thead, tbody, tfoot como totales, colspan/rowspan, no-print, data-value, números con formato mexicano), en archivos sueltos, en un libro de varias hojas o como CSV. -->
+<div id="contenido">
+<div class="demo-barra" id="barra"></div>
+<h3>Arreglo de objetos</h3><pre class="demo-salida" id="arr"></pre>
+<h3>Tabla HTML normal</h3>
+<table id="ventas" border="1" style="border-collapse:collapse;min-width:520px">
+<thead><tr><th rowspan="2">Sucursal</th><th colspan="2">Ventas</th><th rowspan="2" class="no-print">Notas internas</th></tr><tr><th>Enero</th><th>Febrero</th></tr></thead>
+<tbody><tr><td>Centro</td><td>$12,500.50</td><td>$13,100.00</td><td class="no-print">ficticio</td></tr>
+<tr><td>Norte</td><td data-value="9800.25">9.8 mil</td><td>$10,050.75</td><td class="no-print">-</td></tr>
+<tr style="display:none"><td>Oculta</td><td>1</td><td>1</td><td class="no-print">no sale</td></tr></tbody>
+<tfoot><tr><td>Total</td><td>$22,300.75</td><td>$23,150.75</td><td class="no-print"></td></tr></tfoot></table>
+<pre class="demo-salida" id="csv"></pre>
+</div>
+<script>
+Demo.pagina({"titulo": "InduxsoftExcel sin EdiTable", "tipo": "v2", "bajada": "La biblioteca InduxsoftExcel no depende de EdiTable: esta página no lo carga. Exporta un arreglo de objetos (fromArray, con columnas inferidas, rutas con punto y valores calculados) y una tabla HTML normal (fromTable: thead, tbody, tfoot como totales, colspan/rowspan, no-print, data-value, números con formato mexicano), en archivos sueltos, en un libro de varias hojas o como CSV."});
+
+const pedidos = [
+  { folio: 'A-1001', fecha: '2026-01-15', cliente: { nombre: 'Abarrotes La Ficticia', rfc: 'XAXX010101000' }, cantidad: 3, precio: 1250.5 },
+  { folio: 'A-1002', fecha: '2026-02-28T10:30:00', cliente: { nombre: 'Papelería Prueba', rfc: 'XAXX010101000' }, cantidad: 10, precio: 89.9 },
+];
+document.getElementById('arr').textContent = JSON.stringify(pedidos, null, 1);
+const hay = typeof InduxsoftExcel !== 'undefined';
+if (!hay) { const d = document.createElement('div'); d.className = 'demo-aviso'; d.innerHTML = '<strong>Función no disponible en esta versión</strong>No se encontró src/js/induxsoft.controls.excel.js (InduxsoftExcel).'; document.getElementById('avisos').appendChild(d); }
+Demo.log('typeof EditTable = ' + typeof EditTable + ' (esta página no lo carga)', 'info');
+const cols = [{ field: 'folio', title: 'Folio' }, { field: 'fecha', title: 'Fecha', type: 'Date' }, { field: 'cliente.nombre', title: 'Cliente' }, { field: 'cantidad', title: 'Cantidad' }, { field: 'precio', title: 'Precio', format: 'true', decs: '2', prefix: '$', thousandssep: 'true' }, { title: 'Importe', value: (r) => r.cantidad * r.precio, format: 'true', decs: '2', thousandssep: 'true' }];
+if (hay) {
+  Demo.boton('barra', 'fromArray → pedidos.xlsx', () => InduxsoftExcel.download(InduxsoftExcel.fromArray(pedidos, { columns: cols, sheetName: 'Pedidos' }), 'pedidos.xlsx'));
+  Demo.boton('barra', 'fromTable → ventas.xlsx', () => InduxsoftExcel.download(InduxsoftExcel.fromTable('#ventas', { sheetName: 'Ventas' }), 'ventas.xlsx'));
+  Demo.boton('barra', 'Libro con las dos', () => InduxsoftExcel.workbook([{ name: 'Pedidos', source: pedidos, opts: { columns: cols } }, { name: 'Ventas', source: '#ventas' }]).download('libro.xlsx'));
+  Demo.boton('barra', 'toCSV(tabla)', () => { document.getElementById('csv').textContent = InduxsoftExcel.toCSV('#ventas'); });
+}
+</script>
+</body>
+</html>

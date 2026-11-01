@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Copiar al portapapeles · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- Ctrl+C sin editar copia las filas seleccionadas (con títulos) o la celda actual, separadas por tabulaciones y \\r\\n, con los valores formateados y solo las columnas visibles: se pega directo en Excel. BeforeCopy permite cambiar o cancelar el texto. -->
+<div id="contenido">
+<div class="demo-barra" id="barra"></div><div class="demo-caja"><edit-table id="t1" style="width:100%" multi-select="row">
+<edit-thead><edit-tr>
+<edit-th type="Text" field="codigo" width="100px">Código</edit-th>
+<edit-th type="Text" field="descripcion" minwidth="200px">Descripción</edit-th>
+<edit-th type="Text" field="linea">Línea</edit-th>
+<edit-th type="Text" field="marca">Marca</edit-th>
+<edit-th type="Number" field="existencia" textalign="end" summary="sum">Existencia</edit-th>
+<edit-th type="Number" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" summary="avg" summary-label="Prom. {value}">Precio</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div><textarea id="pegar" rows="6" style="width:100%;margin-top:8px" placeholder="Pegue aquí (Ctrl+V) para ver lo copiado"></textarea>
+</div>
+<script>
+Demo.pagina({"titulo": "Copiar al portapapeles", "tipo": "v2", "bajada": "Ctrl+C sin editar copia las filas seleccionadas (con títulos) o la celda actual, separadas por tabulaciones y \\\\r\\\\n, con los valores formateados y solo las columnas visibles: se pega directo en Excel. BeforeCopy permite cambiar o cancelar el texto."});
+Demo.requiere(["clipboard", "multiselect"]);
+Demo.observar('t1');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1');
+  t.DataArray = DatosDemo.productos(8); t._printRows();
+  t.addEventListener('BeforeCopy', (e) => Demo.log(e.text.length + ' caracteres', 'BeforeCopy'));
+  Demo.boton('barra', 'copySelection()', () => Demo.llamar(t, 'copySelection', { headers: true }));
+  Demo.boton('barra', 'getClipboardText({raw:true})', () => { document.getElementById('pegar').value = Demo.llamar(t, 'getClipboardText', { raw: true, headers: true }) ?? ''; });
+});
+</script>
+</body>
+</html>

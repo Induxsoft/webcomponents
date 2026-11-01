@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diseño: guardar y restaurar · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- getLayout/setLayout con el objeto {v, columns:[{field, order, width, hidden, fixed}], sort, groups}; LayoutChanged con reason; guardado automático en IndexedDB (DesignAutoSave, por omisión activo, con id estable) y DesignKey para una llave propia; ResetLayout y ForgetLayout. Cambie anchos, orden o columnas y recargue la página. -->
+<div id="contenido">
+<div class="demo-barra" id="barra"></div><div class="demo-caja"><edit-table id="t1" style="width:100%" column-chooser="true" column-reorder="true" design-key="ejemplos/b11-diseno">
+<edit-thead><edit-tr>
+<edit-th type="Text" field="codigo" width="100px">Código</edit-th>
+<edit-th type="Text" field="descripcion" width="240px">Descripción</edit-th>
+<edit-th type="Text" field="linea" width="140px">Línea</edit-th>
+<edit-th type="Text" field="marca" width="160px">Marca</edit-th>
+<edit-th type="Text" field="unidad" width="90px">Unidad</edit-th>
+<edit-th type="Number" field="existencia" textalign="end" width="110px">Existencia</edit-th>
+<edit-th type="Number" field="costo" textalign="end" format="true" decs="2" prefix="$" width="120px">Costo</edit-th>
+<edit-th type="Number" field="precio" textalign="end" format="true" decs="2" prefix="$" width="120px">Precio</edit-th>
+<edit-th type="Check" field="activo" width="80px">Activo</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div><pre class="demo-salida" id="salida"></pre>
+</div>
+<script>
+Demo.pagina({"titulo": "Diseño: guardar y restaurar", "tipo": "v2", "bajada": "getLayout/setLayout con el objeto {v, columns:[{field, order, width, hidden, fixed}], sort, groups}; LayoutChanged con reason; guardado automático en IndexedDB (DesignAutoSave, por omisión activo, con id estable) y DesignKey para una llave propia; ResetLayout y ForgetLayout. Cambie anchos, orden o columnas y recargue la página."});
+Demo.requiere(["layout"]);
+Demo.observar('t1');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1');
+  t.DataArray = DatosDemo.productos(10); t._printRows();
+  const salida = document.getElementById('salida');
+  let guardado = null;
+  t.addEventListener('LayoutChanged', (e) => { salida.textContent = 'reason: ' + e.reason + '\n' + JSON.stringify(e.layout, null, 1); });
+  Demo.boton('barra', 'getLayout()', () => { guardado = Demo.llamar(t, 'getLayout'); salida.textContent = JSON.stringify(guardado, null, 1); });
+  Demo.boton('barra', 'setLayout(lo copiado)', () => guardado && Demo.llamar(t, 'setLayout', guardado));
+  Demo.boton('barra', 'setLayout({v:99}) → LayoutRejected', () => Demo.llamar(t, 'setLayout', { v: 99, columns: [] }));
+  Demo.boton('barra', 'ResetLayout()', () => Demo.llamar(t, 'ResetLayout'));
+  Demo.boton('barra', 'ForgetLayout()', () => Demo.llamar(t, 'ForgetLayout'));
+  t.addEventListener('LayoutRejected', () => Demo.log('versión de diseño desconocida', 'LayoutRejected'));
+});
+</script>
+</body>
+</html>

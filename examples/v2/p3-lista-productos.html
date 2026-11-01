@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Piloto: lista de productos de inventario · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="../../src/js/induxsoft.controls.excel.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- Lista de V12 (catprod) con 8,000 productos: virtualización, mostrar y ocultar, reordenar, agrupar, selección, exportar y diseño. La acción por registro sigue usando DataArray[CurrentRowIndex()].sys_pk. -->
+<div id="contenido">
+<div class="demo-barra" id="barra"></div><div id="list_table_container" style="overflow-y:auto;max-height:520px"><edit-table id="tbl_productos" style="width:100%" hidde-selector="true" multi-select="checkbox" column-chooser="true" column-reorder="true" group-panel="true" virtual-rows="true" row-height="30px" control-styles="div:has(table#tbl_productos){overflow:revert !important} #tbl_productos tr th{font-weight:500}">
+<edit-thead><edit-tr>
+<edit-th type="NoEditable" field="codigo" width="110px" fixed="left">Código</edit-th>
+<edit-th type="NoEditable" field="descripcion" width="240px">Descripción</edit-th>
+<edit-th type="NoEditable" field="linea" width="130px">Línea</edit-th>
+<edit-th type="NoEditable" field="marca" width="150px">Marca</edit-th>
+<edit-th type="NoEditable" field="unidad" width="80px">Unidad</edit-th>
+<edit-th type="NoEditable" field="existencia" textalign="end" width="100px" summary="sum">Existencia</edit-th>
+<edit-th type="NoEditable" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="120px">Precio</edit-th>
+<edit-th type="NoEditable" field="activo" width="80px">Activo</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div><p class="demo-nota" id="ctx"></p>
+</div>
+<script>
+Demo.pagina({"titulo": "Piloto: lista de productos de inventario", "tipo": "v2", "bajada": "Lista de V12 (catprod) con 8,000 productos: virtualización, mostrar y ocultar, reordenar, agrupar, selección, exportar y diseño. La acción por registro sigue usando DataArray[CurrentRowIndex()].sys_pk."});
+Demo.requiere(["virtual", "chooser", "reorder", "group", "multiselect", "export", "layout"]);
+Demo.observar('tbl_productos');
+function getCurrentContext() { const t = document.getElementById('tbl_productos'); return { item_id: (t?.DataArray[t.CurrentRowIndex()]?.sys_pk ?? ''), context: {} }; }
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('tbl_productos');
+  t.AutoAddRow = false; t.AutoDelRow = false; t.EverMove = false;
+  t.DataArray = DatosDemo.productos(8000); t._printRows();
+  Demo.boton('barra', 'Acción sobre el registro actual', () => { document.getElementById('ctx').textContent = 'item_id = ' + getCurrentContext().item_id; });
+  Demo.boton('barra', 'Exportar seleccionados', () => typeof InduxsoftExcel !== 'undefined' ? InduxsoftExcel.download(InduxsoftExcel.fromEditTable(t, { selectedOnly: true }), 'productos.xlsx') : Demo.log('InduxsoftExcel no está cargado', 'aviso'));
+  Demo.boton('barra', 'Agrupar por línea', () => Demo.llamar(t, 'GroupBy', ['linea']));
+});
+</script>
+</body>
+</html>

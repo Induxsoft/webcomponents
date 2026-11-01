@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Select con llave y texto · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- Una columna Select con keyfield muestra el texto de la opción y guarda la clave en otro campo de DataArray (aquí: unidad muestra «PIEZA» y unidad_id guarda «H87»). -->
+<div id="contenido">
+<div class="demo-caja"><edit-table id="t1" style="width:100%" >
+<edit-thead><edit-tr>
+<edit-th type="NoEditable" field="codigo">Código</edit-th>
+<edit-th type="Select" field="unidad" keyfield="unidad_id" options='{"H87":"PIEZA","XBX":"CAJA","KGM":"KILOGRAMO","MTR":"METRO"}'>Unidad (texto)</edit-th>
+<edit-th type="Select" field="impuesto" options='{"01":"01 No objeto","02":"02 Sí objeto","03":"03 Sí objeto, no obligado"}'>Objeto de impuesto (clave)</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div><p class="demo-nota">Edite la unidad y observe unidad_id en el panel de DataArray.</p>
+</div>
+<script>
+Demo.pagina({"titulo": "Select con llave y texto", "tipo": "actual", "bajada": "Una columna Select con keyfield muestra el texto de la opción y guarda la clave en otro campo de DataArray (aquí: unidad muestra «PIEZA» y unidad_id guarda «H87»)."});
+
+Demo.observar('t1');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1');
+  t.DataArray = [{ codigo: 'P-00001', unidad: 'PIEZA', unidad_id: 'H87', impuesto: '02' }, { codigo: 'P-00002', unidad: 'CAJA', unidad_id: 'XBX', impuesto: '01' }];
+  t._printRows();
+});
+</script>
+</body>
+</html>

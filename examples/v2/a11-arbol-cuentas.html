@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Árbol: catálogo de cuentas contables · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- show-tree con key y parentkey: catálogo de cuentas como en la contabilidad de V10. Expandir y colapsar, sangrar o subir de nivel (RowIndent) y arrastrar filas para moverlas (can-move-row). -->
+<div id="contenido">
+<div class="demo-barra" id="barra"></div><div class="demo-caja"><edit-table id="t1" style="width:100%" show-tree="true" key="sys_pk" parentkey="parent" can-move-row="true">
+<edit-thead><edit-tr>
+<edit-th type="NoEditable" field="cuenta" width="160px">Cuenta</edit-th>
+<edit-th type="Text" field="nombre" minwidth="240px">Nombre</edit-th>
+<edit-th type="NoEditable" field="naturaleza" textalign="center">Nat.</edit-th>
+<edit-th type="NoEditable" field="saldo" textalign="end" format="true" decs="2" prefix="$" thousandssep="true">Saldo</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div><p class="demo-nota">Arrastre una fila sobre otra: en la mitad izquierda queda como hermana, en la derecha como hija.</p>
+</div>
+<script>
+Demo.pagina({"titulo": "Árbol: catálogo de cuentas contables", "tipo": "actual", "bajada": "show-tree con key y parentkey: catálogo de cuentas como en la contabilidad de V10. Expandir y colapsar, sangrar o subir de nivel (RowIndent) y arrastrar filas para moverlas (can-move-row)."});
+
+Demo.observar('t1');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1');
+  t.DataArray = JSON.parse(JSON.stringify(DatosDemo.CUENTAS));
+  t._expandOnStart = true; t._printTreeData();
+  const filas = () => t.GetTBody().querySelectorAll('tr');
+  Demo.boton('barra', 'Expandir todo', () => filas().forEach(tr => t.ExpandRow(tr)));
+  Demo.boton('barra', 'Colapsar todo', () => filas().forEach(tr => { if (tr.getAttribute('indent') === '0') t.CollapseRow(tr); }));
+  Demo.boton('barra', 'Sangrar fila actual (RowIndent)', () => { const tr = t.GetTrByIndex(t.CurrentRowIndex()); if (tr) t.RowIndent(tr, true); });
+  Demo.boton('barra', 'Subir de nivel', () => { const tr = t.GetTrByIndex(t.CurrentRowIndex()); if (tr) t.RowIndent(tr, false); });
+});
+</script>
+</body>
+</html>

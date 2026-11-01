@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fechas del servidor (C17 y C18) · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- Valores como los entrega MySQL (2026-02-01 10:30:00) y JavaScript (2026-02-01T00:00:00.000Z) en columnas Date y DateTime. El botón entra a cada celda, abre el editor y confirma sin cambiar nada: en la versión actual se borran o se reescriben valores (C17); en la versión 2 el editor recibe el valor en ISO (C18) y DataArray no cambia. -->
+<div id="contenido">
+<div class="demo-barra" id="barra"></div><div class="demo-caja"><edit-table id="t1" style="width:100%" >
+<edit-thead><edit-tr>
+<edit-th type="NoEditable" field="origen" minwidth="220px">Origen</edit-th>
+<edit-th type="Date" field="fecha">Date</edit-th>
+<edit-th type="DateTime" field="momento">DateTime</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div><pre class="demo-salida" id="salida"></pre>
+</div>
+<script>
+Demo.pagina({"titulo": "Fechas del servidor (C17 y C18)", "tipo": "v2", "bajada": "Valores como los entrega MySQL (2026-02-01 10:30:00) y JavaScript (2026-02-01T00:00:00.000Z) en columnas Date y DateTime. El botón entra a cada celda, abre el editor y confirma sin cambiar nada: en la versión actual se borran o se reescriben valores (C17); en la versión 2 el editor recibe el valor en ISO (C18) y DataArray no cambia."});
+
+Demo.observar('t1');
+const ORIG = [
+  { origen: 'MySQL DATETIME', fecha: '2026-02-01 10:30:00', momento: '2026-02-01 10:30:00' },
+  { origen: 'JavaScript toISOString()', fecha: '2026-02-01T00:00:00.000Z', momento: '2026-02-01T16:30:00.000Z' },
+  { origen: 'Texto dd/mm/aaaa', fecha: '01/02/2026', momento: '2026-02-01T10:30:15' },
+  { origen: 'ISO estricto', fecha: '2026-02-01', momento: '2026-02-01T10:30' },
+];
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1'), salida = document.getElementById('salida');
+  const cargar = () => { t.DataArray = JSON.parse(JSON.stringify(ORIG)); t._printRows(); salida.textContent = ''; };
+  cargar();
+  Demo.boton('barra', 'Entrar y confirmar sin cambios', async () => {
+    const espera = (ms) => new Promise(r => setTimeout(r, ms));
+    for (let r = 0; r < ORIG.length; r++) for (const c of [1, 2]) {
+      t.NavTo(r, c); t.StartEdit(t.CurrentTd(), ''); await espera(30);
+      const inp = t.EdiTable.GetInput(); const enEditor = inp ? inp.value : '(sin editor)';
+      t.ConfirmEdit(t.CurrentTd()); await espera(10);
+      Demo.log(`fila ${r} col ${c}: editor recibió «${enEditor}»`, 'prueba');
+    }
+    const lineas = ORIG.map((o, r) => ['fecha', 'momento'].map(f => { const a = o[f], b = t.DataArray[r][f]; return (a === b ? '✓ ' : '✗ ') + f + ': «' + a + '» → «' + b + '»'; }).join('   '));
+    salida.textContent = lineas.join('\n');
+  });
+  Demo.boton('barra', 'Volver a cargar', cargar);
+});
+</script>
+</body>
+</html>

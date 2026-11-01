@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Todos los tipos de columna · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- Los 10 tipos de columna: NoEditable, Text, Number, Select, Date, DateTime, Check, Custom, Memo y Badges. Custom solo dispara StartEdition: aquí el ejemplo hace su propia edición con prompt. -->
+<div id="contenido">
+<div class="demo-caja"><edit-table id="t1" style="width:100%" min-row-height="1.8rem" max-row-height="5rem">
+<edit-thead><edit-tr>
+<edit-th type="NoEditable" field="ne">NoEditable</edit-th>
+<edit-th type="Text" field="tx" maxlength="20">Text (máx. 20)</edit-th>
+<edit-th type="Number" field="nu" textalign="end">Number</edit-th>
+<edit-th type="Select" field="se" options='{"PZA":"PIEZA","PAQ":"PAQUETE","CAJA":"CAJA"}'>Select</edit-th>
+<edit-th type="Date" field="da" textalign="center">Date</edit-th>
+<edit-th type="DateTime" field="dt" textalign="center">DateTime</edit-th>
+<edit-th type="Check" field="ch" textalign="center" default="No">Check</edit-th>
+<edit-th type="Custom" field="cu" button="true">Custom (botón)</edit-th>
+<edit-th type="Memo" field="me" minwidth="160px" maxwidth="260px">Memo</edit-th>
+<edit-th type="Badges" field="_b">Badges</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div>
+</div>
+<script>
+Demo.pagina({"titulo": "Todos los tipos de columna", "tipo": "actual", "bajada": "Los 10 tipos de columna: NoEditable, Text, Number, Select, Date, DateTime, Check, Custom, Memo y Badges. Custom solo dispara StartEdition: aquí el ejemplo hace su propia edición con prompt."});
+
+Demo.observar('t1');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1');
+  t.DataArray = [
+    { ne: 'Fijo 1', tx: 'Texto libre', nu: 12.5, se: 'PAQ', da: '2026-01-15', dt: '2026-01-15T09:30', ch: 'Sí', cu: 'Clic en …', me: 'Una nota\ncon dos líneas', __badges: [{ text: 'Nuevo', bg: '#0b6e63', color: '#fff' }] },
+    { ne: 'Fijo 2', tx: 'Otro', nu: 3, se: 'CAJA', da: '2026-02-01', dt: '2026-02-01T18:00', ch: 'No', cu: '', me: '', __badges: [] },
+  ];
+  t._printRows();
+  t.Events[t.EdiTable.Const.Events.StartEdition] = (e) => {
+    if (e.coldef.type !== 'Custom') return;
+    const r = t.RowIndexOfTd(e.td);
+    const v = prompt('Valor para la columna Custom', t.DataArray[r].cu ?? '');
+    if (v !== null) { t.UpdateDataMember(r, 'cu', v); t.UpdateRow(r); }
+  };
+  t.ButtonOnClick = (irow) => Demo.log('ButtonOnClick en la fila ' + irow, 'callback');
+});
+</script>
+</body>
+</html>

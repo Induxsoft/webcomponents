@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Réplica de una lista de V12 · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- Lo que genera uie.dbeditable: hidde-selector, cards-responsive, el control-styles de V12, paginación propia que asigna DataArray y llama _printRows(), la leyenda con OnSort, la acción por registro con DataArray[CurrentRowIndex()].sys_pk, la exportación CSV de V12 y el clon para imprimir. -->
+<div id="contenido">
+<div class="demo-barra" id="barra"></div>
+<div style="height:100%;"><div style="overflow-y:auto; max-height:360px;" id="list_table_container">
+<edit-table id="tbl_clientes" hidde-selector="true" cards-responsive="true" style="width:100%;" control-styles="div:has(table#tbl_clientes) { overflow:revert !important; } #tbl_clientes tr th { font-weight:500; } @media print { #tbl_clientes { overflow:hidden; } }">
+<edit-thead><edit-tr>
+<edit-th type="NoEditable" field="codigo" textalign="" format="false" thousandssep="false" decs="1" prefix="" sufix="" class="">Código</edit-th>
+<edit-th type="NoEditable" field="nombre" textalign="" format="false" thousandssep="false" decs="1" prefix="" sufix="" class="">Nombre</edit-th>
+<edit-th type="NoEditable" field="rfc" textalign="" format="false" thousandssep="false" decs="1" prefix="" sufix="" class="no-print">RFC</edit-th>
+<edit-th type="NoEditable" field="ciudad" textalign="" format="false" thousandssep="false" decs="1" prefix="" sufix="" class="">Ciudad</edit-th>
+<edit-th type="NoEditable" field="saldo" textalign="end" format="true" thousandssep="true" decs="2" prefix="$" sufix="" class="">Saldo</edit-th>
+</edit-tr></edit-thead></edit-table></div>
+<small class="text-secondary hide-on-print" id="tbl_clientes_leyend"></small>
+<div id="tbl_clientes_pagination" class="demo-barra"></div></div>
+<pre class="demo-salida" id="salida"></pre>
+</div>
+<script>
+Demo.pagina({"titulo": "Réplica de una lista de V12", "tipo": "actual", "bajada": "Lo que genera uie.dbeditable: hidde-selector, cards-responsive, el control-styles de V12, paginación propia que asigna DataArray y llama _printRows(), la leyenda con OnSort, la acción por registro con DataArray[CurrentRowIndex()].sys_pk, la exportación CSV de V12 y el clon para imprimir."});
+
+Demo.observar('tbl_clientes');
+function getCurrentContext() { const table = document.getElementById('tbl_clientes'); const id = (table?.DataArray[table.CurrentRowIndex()]?.sys_pk ?? ''); return { item_id: id, context: {} }; }
+document.addEventListener('DOMContentLoaded', () => {
+  const table = document.getElementById('tbl_clientes');
+  const data = DatosDemo.clientes(57);
+  const pages = {}; const perPage = 20; const numItems = data.length; const numPages = Math.ceil(numItems / perPage);
+  table.AutoAddRow = false; table.AutoDelRow = false; table.EverMove = false;
+  for (let i = 0; i < numItems; i += perPage) pages[Object.keys(pages).length + 1] = data.slice(i, i + perPage);
+  window.pagination = { goto: (n) => {
+    if (n < 1 || n > numPages) return;
+    table.DataArray = pages[n] ?? [];
+    const start = (n - 1) * perPage; document.getElementById('tbl_clientes_leyend').textContent = 'Mostrando registros: ' + start + ' a ' + (start + table.DataArray.length) + ' de ' + numItems;
+    table._printRows();
+    const c = document.getElementById('tbl_clientes_pagination'); c.innerHTML = '';
+    for (let p = 1; p <= numPages; p++) Demo.boton(c, String(p), () => pagination.goto(p)).style.fontWeight = (p === n ? '700' : '400');
+  } };
+  pagination.goto(1);
+  table.Events[table.EdiTable.Const.Events.OnSort] = (e) => { document.getElementById('tbl_clientes_leyend').textContent = 'Mostrando los primeros ' + table.DataArray.length + ' registros ordenados por ' + e.caption + ' ' + e.coldef.sort; };
+  const salida = document.getElementById('salida');
+  Demo.boton('barra', 'Acción sobre el registro actual', () => { const c = getCurrentContext(); const r = table.DataArray.find(x => x.sys_pk === c.item_id); salida.textContent = 'getCurrentContext() → item_id ' + c.item_id + (r ? ' (' + r.nombre + ')' : ' (ninguno)'); });
+  Demo.boton('barra', 'Exportar CSV (como V12)', () => {
+    const titles = [], fields = [], csv = [];
+    table.Columns.forEach(c => { if (!['hide-on-print', 'no-print'].includes(c.class)) { titles.push(c.title); fields.push(c.field); } });
+    csv.push(titles.join(','));
+    table.DataArray.forEach(item => csv.push(fields.map(f => { let v = item[f]?.toString() ?? ''; if (v.includes(',')) v = '"' + v + '"'; return v; }).join(',')));
+    salida.textContent = csv.slice(0, 6).join('\n') + '\n…';
+  });
+  Demo.boton('barra', 'Clon para imprimir', () => { const k = table._shadow.getElementById(table.id).cloneNode(true); salida.textContent = 'Clon: <table id="' + k.id + '"> con ' + k.tBodies[0].rows.length + ' filas'; });
+});
+</script>
+</body>
+</html>

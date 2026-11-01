@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Totales en el pie · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- summary="sum|count|avg|min|max|custom" por columna, summary-format y summary-label; summary-scope en la tabla; getSummary, getSummaries, RefreshSummaries y el evento SummaryCalculated. El pie es un tfoot fijo abajo. -->
+<div id="contenido">
+<div class="demo-barra" id="barra"><label>summary-scope <select id="scope"><option>all</option><option>visible</option><option>selected</option></select></label></div><div class="demo-caja" style="max-height:420px"><edit-table id="t1" style="width:100%" multi-select="checkbox">
+<edit-thead><edit-tr>
+<edit-th type="Text" field="codigo" summary="count" summary-label="{value} productos">Código</edit-th>
+<edit-th type="Text" field="descripcion">Descripción</edit-th>
+<edit-th type="Number" field="existencia" textalign="end" summary="sum">Existencia</edit-th>
+<edit-th type="Number" field="costo" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" summary="min" summary-label="Mín. {value}">Costo</edit-th>
+<edit-th type="Number" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" summary="max" summary-label="Máx. {value}">Precio</edit-th>
+<edit-th type="NoEditable" field="valor" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" summary="custom">Valor inventario</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div><pre class="demo-salida" id="salida"></pre>
+</div>
+<script>
+Demo.pagina({"titulo": "Totales en el pie", "tipo": "v2", "bajada": "summary=\"sum|count|avg|min|max|custom\" por columna, summary-format y summary-label; summary-scope en la tabla; getSummary, getSummaries, RefreshSummaries y el evento SummaryCalculated. El pie es un tfoot fijo abajo."});
+Demo.requiere(["summary"]);
+Demo.observar('t1');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1');
+  t.DataArray = DatosDemo.productos(25).map(p => ({ ...p, valor: Math.round(p.existencia * p.costo * 100) / 100 })); t._printRows();
+  t.SummaryFunction = (field, rows) => rows.reduce((a, r) => a + Number(r.existencia || 0) * Number(r.costo || 0), 0);
+  Demo.llamar(t, 'RefreshSummaries');
+  document.getElementById('scope').onchange = (e) => { t.setAttribute('summary-scope', e.target.value); t.SummaryScope = e.target.value; Demo.llamar(t, 'RefreshSummaries'); };
+  Demo.boton('barra', 'getSummaries()', () => { document.getElementById('salida').textContent = JSON.stringify(Demo.llamar(t, 'getSummaries'), null, 1); });
+  t.addEventListener('fieldupdated', () => { const r = t.DataArray[t.CurrentRowIndex()]; if (r) { r.valor = Math.round(r.existencia * r.costo * 100) / 100; t.UpdateRow(t.CurrentRowIndex()); } });
+});
+</script>
+</body>
+</html>

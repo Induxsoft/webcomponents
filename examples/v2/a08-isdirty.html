@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IsDirty, backup y restore · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- backup() toma una copia de DataArray; cada edición compara con ella y IsDirtyChanged avisa cuando la tabla pasa de limpia a modificada y de regreso. restore() y restoreRow(i) devuelven los valores. -->
+<div id="contenido">
+<div class="demo-barra" id="barra"><strong id="estado">Sin cambios</strong><span class="sep"></span></div><div class="demo-caja"><edit-table id="t1" style="width:100%" >
+<edit-thead><edit-tr>
+<edit-th type="Text" field="codigo" width="100px">Código</edit-th>
+<edit-th type="Text" field="descripcion" minwidth="220px">Descripción</edit-th>
+<edit-th type="Text" field="linea">Línea</edit-th>
+<edit-th type="Number" field="existencia" textalign="end">Existencia</edit-th>
+<edit-th type="Number" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true">Precio</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div><p class="demo-nota">En la versión actual, después de restore() IsDirty sigue en true (C4; se corrige en la versión 2).</p>
+</div>
+<script>
+Demo.pagina({"titulo": "IsDirty, backup y restore", "tipo": "actual", "bajada": "backup() toma una copia de DataArray; cada edición compara con ella y IsDirtyChanged avisa cuando la tabla pasa de limpia a modificada y de regreso. restore() y restoreRow(i) devuelven los valores."});
+
+Demo.observar('t1');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1'), est = document.getElementById('estado');
+  t.DataArray = DatosDemo.productos(5); t._printRows(); t.backup();
+  const pintar = () => { est.textContent = t.IsDirty ? 'Modificada (IsDirty = true)' : 'Sin cambios (IsDirty = false)'; est.style.color = t.IsDirty ? '#b3261e' : '#0b6e63'; };
+  t.addEventListener('isdirtychanged', pintar); pintar();
+  Demo.boton('barra', 'backup()', () => { t.backup(); pintar(); });
+  Demo.boton('barra', 'restore()', () => { t.restore(); pintar(); });
+  Demo.boton('barra', 'restoreRow(fila actual)', () => { const i = t.CurrentRowIndex(); if (i >= 0) t.restoreRow(i); pintar(); });
+  Demo.boton('barra', '¿Fila actual modificada?', () => { const i = t.CurrentRowIndex(); Demo.log('getIsDirty(' + i + ') = ' + (i >= 0 ? t.getIsDirty(i) : '—'), 'consulta'); });
+});
+</script>
+</body>
+</html>

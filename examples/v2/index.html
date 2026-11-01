@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ejemplos de EdiTable (actual y versión 2)</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="ejemplos.js"></script>
+<style>
+  body { padding: 20px 28px; max-width: 1180px; }
+  h1 { margin: 0 0 4px; font-size: 24px; }
+  .filtros { display: flex; gap: 8px; margin: 14px 0; flex-wrap: wrap; align-items: center; }
+  .filtros button { font: inherit; padding: 4px 12px; border: 1px solid var(--borde); background: #fff; border-radius: 14px; cursor: pointer; }
+  .filtros button[aria-pressed="true"] { background: var(--acento); color: #fff; border-color: var(--acento); }
+  .rejilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 12px; }
+  .tarjeta { border: 1px solid var(--borde); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
+  .tarjeta a.titulo { font-weight: 700; color: var(--texto); text-decoration: none; font-size: 15px; }
+  .tarjeta a.titulo:hover { color: var(--acento); }
+  .tarjeta p { margin: 0; color: var(--tenue); font-size: 13px; }
+  .tarjeta .meta { font-size: 11.5px; color: var(--tenue); }
+  .tarjeta .falta { font-size: 11.5px; color: #8a5a00; background: var(--aviso); border-radius: 6px; padding: 2px 6px; align-self: flex-start; }
+  .tarjeta img { width: 100%; border: 1px solid var(--borde); border-radius: 6px; aspect-ratio: 16/10; object-fit: cover; object-position: top left; }
+</style>
+</head>
+<body>
+<h1>Ejemplos de EdiTable</h1>
+<p class="bajada" id="version"></p>
+<p class="bajada">Cada página carga <code>../../src/js/induxsoft.controls.editable.js</code> y muestra a la derecha, en vivo, los eventos que se disparan y el <code>DataArray</code>.
+  Los ejemplos <b>actual</b> usan lo que el componente hace hoy; los de <b>versión 2</b> usan la especificación nueva y, mientras una función no exista en <code>EditTable.features</code>, muestran el aviso "función no disponible en esta versión".
+  Los de exportar cargan además <code>../../src/js/induxsoft.controls.excel.js</code>. Todos los datos son ficticios.</p>
+<div class="filtros" id="filtros">
+  <button type="button" data-f="" aria-pressed="true">Todos</button>
+  <button type="button" data-f="actual" aria-pressed="false">Actual</button>
+  <button type="button" data-f="v2" aria-pressed="false">Versión 2</button>
+  <label style="margin-left:8px"><input type="checkbox" id="capturas" checked> Ver capturas</label>
+</div>
+<div class="rejilla" id="rejilla"></div>
+<script>
+(function () {
+  const feats = (typeof EditTable !== 'undefined' && Array.isArray(EditTable.features)) ? EditTable.features : [];
+  const ver = (typeof EditTable !== 'undefined' && EditTable.version) ? EditTable.version : null;
+  document.getElementById('version').textContent = 'Componente cargado: ' + (ver ? 'EditTable ' + ver + ' · funciones: ' + (feats.join(', ') || 'ninguna') : 'versión 1 (sin EditTable.version)');
+  const rej = document.getElementById('rejilla');
+  let filtro = '';
+  function pintar() {
+    rej.innerHTML = '';
+    const conCapturas = document.getElementById('capturas').checked;
+    window.EJEMPLOS.filter(e => !filtro || e.tipo === filtro).forEach(e => {
+      const d = document.createElement('article'); d.className = 'tarjeta';
+      const a = document.createElement('a'); a.className = 'titulo'; a.href = e.archivo; a.textContent = e.titulo;
+      const et = document.createElement('span'); et.className = 'demo-etiqueta ' + e.tipo; et.textContent = e.tipo === 'v2' ? 'versión 2' : 'actual'; a.appendChild(et);
+      d.appendChild(a);
+      if (conCapturas) { const img = document.createElement('img'); img.loading = 'lazy'; img.alt = ''; img.src = 'capturas/' + e.archivo.replace(/\.html$/, '.png'); img.onerror = () => img.remove(); d.appendChild(img); }
+      const p = document.createElement('p'); p.textContent = e.descripcion; d.appendChild(p);
+      const faltan = (e.requiere || []).filter(x => !feats.includes(x));
+      if (faltan.length) { const f = document.createElement('span'); f.className = 'falta'; f.textContent = 'No disponible en esta versión: ' + faltan.join(', '); d.appendChild(f); }
+      const m = document.createElement('span'); m.className = 'meta'; m.textContent = e.archivo + ' · spec ' + (e.spec || []).join(', '); d.appendChild(m);
+      rej.appendChild(d);
+    });
+  }
+  document.getElementById('filtros').addEventListener('click', (ev) => {
+    const b = ev.target.closest('button'); if (!b) return;
+    filtro = b.dataset.f;
+    document.querySelectorAll('#filtros button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    pintar();
+  });
+  document.getElementById('capturas').onchange = pintar;
+  pintar();
+})();
+</script>
+</body>
+</html>

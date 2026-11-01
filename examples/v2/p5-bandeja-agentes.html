@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Piloto: bandeja de los agentes · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- agent.induxsoft.net: conversaciones de los agentes con selección para reasignar o cerrar varias a la vez, mostrar y ocultar columnas y diseño recordado; tarjetas en pantallas angostas (sin virtualización en tarjetas). -->
+<div id="contenido">
+<div class="demo-barra" id="barra"></div><div class="demo-caja"><edit-table id="bandeja-agentes" style="width:100%" hidde-selector="true" multi-select="checkbox" column-chooser="true" cards-mode="auto" cards-breakpoint="700px" cards-breakpoint-target="container" cards-layout="slots">
+<edit-thead><edit-tr>
+<edit-th type="Badges" field="_avatar" badgegroup="avatar" card="true" cardslot="avatar" chooser="false"></edit-th>
+<edit-th type="NoEditable" field="username" card="true" cardslot="title">Usuario</edit-th>
+<edit-th type="NoEditable" field="userphone" card="true" cardslot="subtitle">Teléfono</edit-th>
+<edit-th type="NoEditable" field="canal">Canal</edit-th>
+<edit-th type="NoEditable" field="agente">Agente</edit-th>
+<edit-th type="NoEditable" field="humano" card="true" cardslot="subtitle" cardlabel="Atiende">Humano</edit-th>
+<edit-th type="NoEditable" field="ultimo" format="relative" card="true" cardslot="meta">Último</edit-th>
+<edit-th type="Badges" field="_estado" card="true" cardslot="badge">Estado</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div>
+</div>
+<script>
+Demo.pagina({"titulo": "Piloto: bandeja de los agentes", "tipo": "v2", "bajada": "agent.induxsoft.net: conversaciones de los agentes con selección para reasignar o cerrar varias a la vez, mostrar y ocultar columnas y diseño recordado; tarjetas en pantallas angostas (sin virtualización en tarjetas)."});
+Demo.requiere(["multiselect", "chooser", "layout"]);
+Demo.observar('bandeja-agentes');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('bandeja-agentes');
+  const color = { 'nuevo': '#2847a8', 'en curso': '#0b6e63', 'esperando': '#e5b700', 'resuelto': '#7a8691' };
+  t.RowBadges = (r) => [{ id: 'av', group: 'avatar', text: r.agente, bg: '#0b6e63', color: '#fff' }, { id: 'st', text: r.estado, bg: color[r.estado], color: '#fff' }];
+  t.DataArray = DatosDemo.agentes(40); t._printRows(); t.RefreshView();
+  Demo.boton('barra', 'Cerrar seleccionadas', () => { (Demo.llamar(t, 'getSelectedRows') || []).forEach(i => { t.DataArray[i].estado = 'resuelto'; t.UpdateRow(i); }); });
+  Demo.boton('barra', 'Reasignar a NIA', () => { (Demo.llamar(t, 'getSelectedRows') || []).forEach(i => { t.DataArray[i].agente = 'NIA'; t.UpdateRow(i); }); });
+});
+</script>
+</body>
+</html>

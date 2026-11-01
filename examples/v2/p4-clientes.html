@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Piloto: catálogo de clientes · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="../../src/js/induxsoft.controls.excel.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- Catálogo de clientes de V12 con virtualización, mostrar y ocultar, reordenar, agrupar por ciudad o vendedor, selección con totales de saldo y exportar. RFC genéricos del SAT. -->
+<div id="contenido">
+<div class="demo-barra" id="barra"></div><div id="list_table_container" style="overflow-y:auto;max-height:520px"><edit-table id="tbl_clientes" style="width:100%" hidde-selector="true" multi-select="checkbox" summary-scope="selected" column-chooser="true" column-reorder="true" group-panel="true" virtual-rows="true" row-height="30px">
+<edit-thead><edit-tr>
+<edit-th type="NoEditable" field="codigo" width="100px" fixed="left">Código</edit-th>
+<edit-th type="NoEditable" field="nombre" width="260px">Nombre</edit-th>
+<edit-th type="NoEditable" field="rfc" width="140px">RFC</edit-th>
+<edit-th type="NoEditable" field="ciudad" width="150px">Ciudad</edit-th>
+<edit-th type="NoEditable" field="vendedor" width="140px">Vendedor</edit-th>
+<edit-th type="NoEditable" field="alta" width="110px">Alta</edit-th>
+<edit-th type="NoEditable" field="limite" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="120px">Límite</edit-th>
+<edit-th type="NoEditable" field="saldo" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="130px" summary="sum">Saldo</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div>
+</div>
+<script>
+Demo.pagina({"titulo": "Piloto: catálogo de clientes", "tipo": "v2", "bajada": "Catálogo de clientes de V12 con virtualización, mostrar y ocultar, reordenar, agrupar por ciudad o vendedor, selección con totales de saldo y exportar. RFC genéricos del SAT."});
+Demo.requiere(["virtual", "chooser", "reorder", "group", "multiselect", "summary", "export", "layout"]);
+Demo.observar('tbl_clientes');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('tbl_clientes');
+  t.AutoAddRow = false; t.AutoDelRow = false; t.EverMove = false;
+  t.DataArray = DatosDemo.clientes(3000); t._printRows();
+  Demo.boton('barra', 'Agrupar por ciudad', () => Demo.llamar(t, 'GroupBy', ['ciudad']));
+  Demo.boton('barra', 'Agrupar por vendedor', () => Demo.llamar(t, 'GroupBy', ['vendedor']));
+  Demo.boton('barra', 'Exportar', () => typeof InduxsoftExcel !== 'undefined' ? InduxsoftExcel.download(InduxsoftExcel.fromEditTable(t, { includeSummary: true }), 'clientes.xlsx') : Demo.log('InduxsoftExcel no está cargado', 'aviso'));
+});
+</script>
+</body>
+</html>

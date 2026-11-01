@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estilos con control-styles · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- control-styles inyecta CSS dentro del shadow DOM. Las variables CSS cruzan el shadow, así que un tema claro u oscuro se arma con variables, como hace FactuDesk con edittable-tema.js. -->
+<div id="contenido">
+<div class="demo-barra"><label><input type="checkbox" id="oscuro"> Tema oscuro</label></div>
+<div id="tema" style="--t-fondo:#fff;--t-texto:#1d2329;--t-borde:#d9dee3;--t-alterno:#f3f6f8;--t-marca:#0b6e63;--t-suave:#dff1ec;padding:8px;background:var(--t-fondo);border-radius:8px"><edit-table id="t1" style="width:100%" control-styles="table{border-spacing:0;color:var(--t-texto);font-family:inherit} thead{background:var(--t-alterno)} thead tr th{padding:8px 10px;border-bottom:1px solid var(--t-borde);font-weight:700;text-align:left;color:var(--t-texto)} .EdiTable-Cell{border-bottom:1px solid var(--t-borde);padding:4px 8px;height:2.2rem} tbody tr:hover{background:var(--t-alterno)} .EdiTable-Selector{border:1px solid transparent;border-radius:4px;padding:0 4px} .EdiTable-Selector:focus{border-color:var(--t-marca);outline:none} .EdiTable-Row-Selected{background:var(--t-suave) !important;color:var(--t-texto) !important}">
+<edit-thead><edit-tr>
+<edit-th type="Text" field="codigo" width="100px">Código</edit-th>
+<edit-th type="Text" field="descripcion" minwidth="220px">Descripción</edit-th>
+<edit-th type="Text" field="linea">Línea</edit-th>
+<edit-th type="Number" field="existencia" textalign="end">Existencia</edit-th>
+<edit-th type="Number" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true">Precio</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div>
+</div>
+<script>
+Demo.pagina({"titulo": "Estilos con control-styles", "tipo": "actual", "bajada": "control-styles inyecta CSS dentro del shadow DOM. Las variables CSS cruzan el shadow, así que un tema claro u oscuro se arma con variables, como hace FactuDesk con edittable-tema.js."});
+
+Demo.observar('t1');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1');
+  t.DataArray = DatosDemo.productos(6); t._printRows(); t.NavTo(1, 1);
+  document.getElementById('oscuro').onchange = (e) => {
+    const s = document.getElementById('tema').style;
+    const v = e.target.checked ? ['#1b2026', '#e8edf1', '#39424b', '#242b33', '#3fc1aa', '#21423c'] : ['#fff', '#1d2329', '#d9dee3', '#f3f6f8', '#0b6e63', '#dff1ec'];
+    ['--t-fondo', '--t-texto', '--t-borde', '--t-alterno', '--t-marca', '--t-suave'].forEach((k, i) => s.setProperty(k, v[i]));
+  };
+});
+</script>
+</body>
+</html>

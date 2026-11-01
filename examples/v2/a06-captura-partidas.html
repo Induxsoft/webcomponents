@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Captura de partidas con teclado · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- Como en la captura de una venta de R5: Tab y Enter avanzan a la derecha, flecha abajo en la última fila agrega otra (AutoAddRow), Ctrl+Insert inserta y Ctrl+Supr borra. El importe y los totales se recalculan en FieldUpdated. -->
+<div id="contenido">
+<div class="demo-caja"><edit-table id="t1" style="width:100%" >
+<edit-thead><edit-tr>
+<edit-th type="Text" field="codigo" width="110px">Código</edit-th>
+<edit-th type="Text" field="descripcion" minwidth="200px">Descripción</edit-th>
+<edit-th type="Number" field="cantidad" textalign="end" default="1" width="90px">Cantidad</edit-th>
+<edit-th type="Number" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" default="0" width="110px">Precio</edit-th>
+<edit-th type="Number" field="descuento" textalign="end" format="true" decs="2" sufix=" %" default="0" width="90px">Desc. %</edit-th>
+<edit-th type="NoEditable" field="importe" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="120px">Importe</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div>
+<div class="demo-totales"><span>Partidas<b id="n">0</b></span><span>Subtotal<b id="sub">$0.00</b></span><span>IVA 16 %<b id="iva">$0.00</b></span><span>Total<b id="tot">$0.00</b></span></div>
+<p class="demo-nota">Teclas: flechas · Tab/Enter a la derecha · Enter o F2 edita · ↓ en la última fila agrega · Ctrl+Insert inserta · Ctrl+Supr borra · Supr edita en blanco.</p>
+</div>
+<script>
+Demo.pagina({"titulo": "Captura de partidas con teclado", "tipo": "actual", "bajada": "Como en la captura de una venta de R5: Tab y Enter avanzan a la derecha, flecha abajo en la última fila agrega otra (AutoAddRow), Ctrl+Insert inserta y Ctrl+Supr borra. El importe y los totales se recalculan en FieldUpdated."});
+
+Demo.observar('t1');
+const fmt = (n) => '$' + n.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1');
+  const calc = (r) => { const imp = Number(r.cantidad || 0) * Number(r.precio || 0) * (1 - Number(r.descuento || 0) / 100); r.importe = Math.round(imp * 100) / 100; };
+  const totales = () => {
+    const filas = t.DataArray.filter(r => r && r.codigo);
+    const sub = filas.reduce((a, r) => a + Number(r.importe || 0), 0);
+    document.getElementById('n').textContent = filas.length;
+    document.getElementById('sub').textContent = fmt(sub); document.getElementById('iva').textContent = fmt(sub * .16); document.getElementById('tot').textContent = fmt(sub * 1.16);
+  };
+  t.DataArray = [{ codigo: 'P-00001', descripcion: 'Tornillo hexagonal 1/4', cantidad: 100, precio: 1.25, descuento: 0 }, { codigo: 'P-00002', descripcion: 'Taquete de plástico', cantidad: 100, precio: 0.4, descuento: 5 }];
+  t.DataArray.forEach(calc); t._printRows(); totales();
+  t.addEventListener('fieldupdated', (e) => { const r = t.DataArray[e.row]; calc(r); t.UpdateRow(e.row); totales(); });
+  t.addEventListener('rowdeleted', totales);
+  t.NavTo(0, 0);
+});
+</script>
+</body>
+</html>

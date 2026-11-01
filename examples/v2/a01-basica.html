@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tabla básica · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- Lista editable con datos en DataArray: clic o flechas para moverse, Enter o F2 para editar, Esc para cancelar. Agregar y quitar filas con AddRow y DeleteCurrentRow. -->
+<div id="contenido">
+<div class="demo-barra" id="barra"></div>
+<div class="demo-caja"><edit-table id="t1" style="width:100%" >
+<edit-thead><edit-tr>
+<edit-th type="Text" field="codigo" width="100px">Código</edit-th>
+<edit-th type="Text" field="descripcion" minwidth="220px">Descripción</edit-th>
+<edit-th type="Text" field="linea">Línea</edit-th>
+<edit-th type="Number" field="existencia" textalign="end">Existencia</edit-th>
+<edit-th type="Number" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true">Precio</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div>
+</div>
+<script>
+Demo.pagina({"titulo": "Tabla básica", "tipo": "actual", "bajada": "Lista editable con datos en DataArray: clic o flechas para moverse, Enter o F2 para editar, Esc para cancelar. Agregar y quitar filas con AddRow y DeleteCurrentRow."});
+
+Demo.observar('t1');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1');
+  t.DataArray = DatosDemo.productos(8);
+  t._printRows();
+  Demo.boton('barra', 'Agregar fila', () => t.AddRow());
+  Demo.boton('barra', 'Quitar fila actual', () => t.DeleteCurrentRow());
+  Demo.boton('barra', 'Ir a la primera celda', () => t.NavToHome());
+});
+</script>
+</body>
+</html>

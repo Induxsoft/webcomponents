@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vista de tarjetas responsiva con badges · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- cards-mode="auto" con punto de corte del contenedor: la tabla se convierte en tarjetas tipo lista (cards-layout="slots"). Badges calculados con RowBadges, acento de color con RowAccent y clases por fila con RowClass. -->
+<div id="contenido">
+<div class="demo-barra"><label>Ancho del contenedor <input type="range" id="ancho" min="320" max="1000" value="900"></label> <span id="modo"></span></div>
+<div id="caja" class="demo-caja" style="width:900px;max-width:100%"><edit-table id="t1" style="width:100%" hidde-selector="true" cards-mode="auto" cards-breakpoint="600px" cards-breakpoint-target="container" cards-layout="slots" cards-hide-empty="true" badge-tooltip="custom" control-styles="tr.urgente td{font-weight:600}">
+<edit-thead><edit-tr>
+<edit-th type="Badges" field="_avatar" badgegroup="avatar" card="true" cardslot="avatar"></edit-th>
+<edit-th type="NoEditable" field="username" card="true" cardslot="title">Usuario</edit-th>
+<edit-th type="NoEditable" field="userphone" card="true" cardslot="subtitle">Teléfono</edit-th>
+<edit-th type="NoEditable" field="canal">Canal</edit-th>
+<edit-th type="NoEditable" field="ultimo" format="relative" card="true" cardslot="meta">Último</edit-th>
+<edit-th type="NoEditable" field="humano" card="true" cardslot="subtitle" cardlabel="Atiende">Humano</edit-th>
+<edit-th type="Badges" field="_estado" card="true" cardslot="badge">Estado</edit-th>
+</edit-tr></edit-thead>
+</edit-table></div>
+</div>
+<script>
+Demo.pagina({"titulo": "Vista de tarjetas responsiva con badges", "tipo": "actual", "bajada": "cards-mode=\"auto\" con punto de corte del contenedor: la tabla se convierte en tarjetas tipo lista (cards-layout=\"slots\"). Badges calculados con RowBadges, acento de color con RowAccent y clases por fila con RowClass."});
+
+Demo.observar('t1');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1');
+  const ini = (n) => n.split(' ').map(x => x[0]).slice(0, 2).join('');
+  const color = { 'nuevo': '#2847a8', 'en curso': '#0b6e63', 'esperando': '#e5b700', 'resuelto': '#7a8691' };
+  t.RowBadges = (r) => [
+    { id: 'avatar', group: 'avatar', text: ini(r.username), bg: '#0b6e63', color: '#fff', tooltip: r.userphone },
+    { id: 'estado', text: r.estado, bg: color[r.estado], color: '#fff', tooltip: r.mensajes + ' mensajes' },
+    r.humano && { id: 'humano', icon: '👤', bg: '#e3f2ec', tooltip: 'Atendido por ' + r.humano },
+  ];
+  t.RowAccent = (r) => r.estado === 'esperando' ? '#e5b700' : null;
+  t.RowClass = (r) => r.mensajes > 30 ? 'urgente' : '';
+  t.DataArray = DatosDemo.agentes(10); t._printRows(); t.RefreshView();
+  const caja = document.getElementById('caja'), modo = document.getElementById('modo');
+  const pintar = () => { modo.textContent = t.IsCardView ? 'vista: tarjetas' : 'vista: tabla'; };
+  t.addEventListener('viewmodechanged', pintar); pintar();
+  document.getElementById('ancho').oninput = (e) => { caja.style.width = e.target.value + 'px'; };
+});
+</script>
+</body>
+</html>

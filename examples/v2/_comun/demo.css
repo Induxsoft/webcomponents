@@ -1,0 +1,32 @@
+/* Estilo común de los ejemplos de EdiTable (examples/v2). */
+:root { --borde: #d9dee3; --texto: #1d2329; --tenue: #5b6670; --acento: #0b6e63; --fondo: #f6f8f9; --aviso: #fff4d6; --aviso-borde: #e5b700; }
+* { box-sizing: border-box; }
+html, body { margin: 0; font-family: system-ui, "Segoe UI", Arial, sans-serif; font-size: 14px; color: var(--texto); background: #fff; }
+body.demo { display: grid; grid-template-columns: minmax(0, 1fr) 340px; min-height: 100vh; }
+body.demo > script { display: none; }
+.demo-principal { padding: 16px 20px; min-width: 0; }
+.demo-principal h1 { font-size: 20px; margin: 0 0 4px; }
+.demo-principal .bajada { color: var(--tenue); margin: 0 0 12px; max-width: 70ch; }
+.demo-etiqueta { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px; margin-left: 6px; vertical-align: middle; }
+.demo-etiqueta.actual { background: #e3f2ec; color: #0b6e63; }
+.demo-etiqueta.v2 { background: #e8eefc; color: #2847a8; }
+.demo-barra { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; align-items: center; }
+.demo-barra button, .demo-barra select, .demo-barra input { font: inherit; padding: 4px 10px; border: 1px solid var(--borde); border-radius: 6px; background: #fff; cursor: pointer; }
+.demo-barra button:hover { border-color: var(--acento); }
+.demo-barra .sep { width: 1px; height: 20px; background: var(--borde); margin: 0 4px; }
+.demo-caja { border: 1px solid var(--borde); border-radius: 8px; overflow: auto; }
+.demo-nota { color: var(--tenue); font-size: 12px; margin: 8px 0; }
+.demo-aviso { background: var(--aviso); border: 1px solid var(--aviso-borde); border-radius: 8px; padding: 8px 12px; margin: 8px 0 12px; }
+.demo-aviso strong { display: block; }
+.demo-lateral { border-left: 1px solid var(--borde); background: var(--fondo); display: flex; flex-direction: column; height: 100vh; position: sticky; top: 0; }
+.demo-lateral h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--tenue); margin: 0; padding: 10px 12px 6px; display: flex; justify-content: space-between; align-items: center; }
+.demo-lateral h2 button { font: inherit; font-size: 11px; text-transform: none; border: 1px solid var(--borde); background: #fff; border-radius: 4px; cursor: pointer; }
+.demo-eventos, .demo-datos { margin: 0 8px 8px; background: #fff; border: 1px solid var(--borde); border-radius: 6px; overflow: auto; font: 11.5px/1.4 ui-monospace, Consolas, monospace; padding: 6px 8px; }
+.demo-eventos { flex: 1 1 50%; }
+.demo-datos { flex: 1 1 50%; white-space: pre; }
+.demo-eventos div { border-bottom: 1px dashed #eceff1; padding: 2px 0; word-break: break-all; }
+.demo-eventos b { color: var(--acento); }
+.demo-salida { white-space: pre-wrap; font: 12px/1.4 ui-monospace, Consolas, monospace; background: var(--fondo); border: 1px solid var(--borde); border-radius: 6px; padding: 8px; max-height: 180px; overflow: auto; }
+.demo-totales { display: flex; gap: 18px; justify-content: flex-end; margin-top: 8px; font-variant-numeric: tabular-nums; }
+.demo-totales span b { margin-left: 6px; }
+@media (max-width: 900px) { body.demo { grid-template-columns: 1fr; } .demo-lateral { height: 50vh; position: static; } }
