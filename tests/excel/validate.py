@@ -125,7 +125,8 @@ for key, m in (('grande.xlsx', zipfile.ZIP_STORED), ('grande-deflate.xlsx', zipf
 
 # ---------- componente real ----------
 e = R['edittable']
-eq('edittable: versión del componente detectada', e['version'], 1)
+# Con F4 el componente tiene getExportData: se usa el camino v2 (las comprobaciones de abajo valen para los dos).
+eq('edittable: versión del componente detectada', e['version'], 2)
 eq('edittable: columnas exportadas (sin no-print ni ocultas)', e['columns'],
    ['clave', 'nombre', 'precio', 'unidad', 'alta', 'mod', 'activo', 'extra', 'nota'])
 zip_ok('edittable.xlsx')

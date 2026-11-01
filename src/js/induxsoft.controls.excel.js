@@ -226,7 +226,12 @@
       });
       return x;
     });
-    return { columns: cols, rows, summary: null };
+    // Una tabla con totales (F2) pero sin getExportData: getSummaries() si existe.
+    let summary = null;
+    if (typeof t.getSummaries === 'function') {
+      try { const s = t.getSummaries(); if (s && typeof s === 'object' && Object.keys(s).length) summary = s; } catch (e) { summary = null; }
+    }
+    return { columns: cols, rows, summary };
   }
 
   // <table> HTML: thead (encabezado), tbody, tfoot (totales); colspan/rowspan como celdas combinadas.

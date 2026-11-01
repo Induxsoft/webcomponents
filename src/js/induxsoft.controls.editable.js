@@ -86,6 +86,7 @@ class EditTable extends HTMLElement
                 break;
             }
         }
+        this._f2AtributoCambiado(name, newValue);   // F2: summary-scope
     }
 
     // F1 (C9, C11): se inicializa una sola vez. Mientras la página carga, en DOMContentLoaded y en el
@@ -313,6 +314,7 @@ class EditTable extends HTMLElement
             if (this.hasAttribute('html-encode')) this.htmlEncode = (this.getAttribute('html-encode')=='true');
             const container1 = this._createFullElement('div', { style:'min-height: 2rem; max-height: 100%; overflow: auto; padding-bottom: 5px' });
             this._table = this._getFullTable();
+            this._f2Iniciar();   // F2: summary-scope, valueType y tfoot de totales (solo si alguna columna declara summary)
             container1.appendChild(this._table);
             this.innerHTML = '';
             this._shadow.appendChild(container1);
@@ -1699,6 +1701,7 @@ class EditTable extends HTMLElement
         this.DataArray.splice(row, 1);
         if(this._dataArrayBackup) this._dataArrayBackup.splice(row, 1);
         this._f4FilaBorrada(f4Fila, row);   // F4: la fila borrada sale de la selección
+        this._f2Programar();   // F2: recálculo de totales (RowDeleted)
 
         if (this._getCurren().Events[this.EdiTable.Const.Events.RowDeleted]!=undefined)
             this._getCurren().Events[this.EdiTable.Const.Events.RowDeleted](eventArgs);
@@ -1740,6 +1743,7 @@ class EditTable extends HTMLElement
         }
 
         this._decorateRow(tr, row, data);
+        this._f2Programar();   // F2: recálculo de totales (restore, UpdateRow)
 
         return true;
     }
@@ -1806,6 +1810,7 @@ class EditTable extends HTMLElement
      */
     UpdateDataMember=(row, field, value, stopfire = false)=>
     {
+        value = this._f2AlActualizar(row, field, value);   // F2: recálculo de totales y value-type="number" (C12)
         if (this.DataArray[row]==undefined)
             this.DataArray[row]={};
 
@@ -1896,6 +1901,7 @@ class EditTable extends HTMLElement
             if (!nofocus)
                 this.CellFocus(nr.querySelector('td:not(.hidde-col):not(.et-sel-col)'));   // F4
             
+            this._f2Programar();   // F2: recálculo de totales (RowAdded)
             var eventArgs={
                 sender:this._getCurren(),
                 tr:nr,
@@ -2170,6 +2176,7 @@ class EditTable extends HTMLElement
         
         selector.style.display = 'none';
 
+        if (!this._f2CrearEditor(td, columnDef))   // F2: editor propio (input de texto) con mask, calc o locale
         switch(columnDef.type)
         {
             case this.EdiTable.Const.Columns.Types.Memo:
@@ -2252,6 +2259,7 @@ class EditTable extends HTMLElement
         if (f1Tipo == 'date' || f1Tipo == 'datetime-local') f1Texto = this._f1FechaParaEditor(f1Texto, f1Tipo);
 
         this.EdiTable.SetInputVal(input, f1Texto, this._getCurren(), columnDef);
+        this._f2PrepararEditor(input, columnDef, td, f1ConValorActual);   // F2: máscara, valor inicial, inputmode, segundos
 
         // F1 (C17): valor con el que se abrió el editor, para saber al confirmar si el usuario lo cambió.
         // Si el consumidor propuso otro texto en InputCreated/BeforeSetInput, confirmar sí lo guarda, como hoy.
@@ -2270,6 +2278,7 @@ class EditTable extends HTMLElement
      */
     ConfirmEdit=(td,displayText)=>
     {
+        if (this._f2AntesDeConfirmar(td) === false) return false;   // F2: MaskInvalid del editor propio; marca value-type
         if (!this.Editing)
             return true;
         
@@ -2680,6 +2689,8 @@ class EditTable extends HTMLElement
             value = cellContent.innerHTML
 
         let coldef = this.GetColumnDefOfTd(td);
+        const f2Leido = this._f2LeerCelda(coldef, value, valideEncode);   // F2: quita máscara, locale o date-display
+        if (f2Leido !== undefined) value = f2Leido; else   // F2
         if (this._withFormat(coldef, value))
             value = value.replace(/[^0-9.-]+/g, "");
 
@@ -2697,6 +2708,7 @@ class EditTable extends HTMLElement
     SetTdValue=(td, value, valideEncode=false, coldef=null)=>
     {
         if(!coldef) coldef = this.GetColumnDefOfTd(td);
+        value = this._f2Presentar(coldef, value);   // F2: máscara, decimal del locale y date-display (solo visual)
 
         if (this._withFormat(coldef, value))
             value = this._aplyFormat(coldef, value);
@@ -2755,6 +2767,7 @@ class EditTable extends HTMLElement
     }
     _aplyFormat(coldef, value)
     {
+        const f2 = this._f2FormatoLocale(coldef, value); if (f2 != null) return f2;   // F2 (C16): separadores del locale explícito
         let decimals = Number(coldef.decs??0);
         let thousand = ((coldef.thousandssep??'false') == 'true');
         value = this._format(Number(value), decimals, thousand);
@@ -2890,6 +2903,7 @@ class EditTable extends HTMLElement
         this._setMoveEvent();
         this._f4TrasDibujar();   // F4: celdas del sistema y selección después de redibujar
         this._f3TrasDibujar?.();   // F3: clases y left de las columnas fijas en las filas nuevas
+        this._f2Programar();   // F2: recálculo de totales (DataArray asignado, ordenar, árbol)
     }
 
     _setIndent=(td, indent=0)=>
@@ -4351,6 +4365,7 @@ class EditTable extends HTMLElement
     {
         const handler = this.Events[name] ?? this._getCurren().Events?.[name];
         if (typeof handler == 'function') handler(args);
+        if (name == 'selectionchanged' || name == 'groupchanged' || name == 'grouptoggled') this._f2Programar?.();   // F2: totales con summary-scope
     }
 
     _escapeHtml=(value)=>
@@ -4374,6 +4389,7 @@ class EditTable extends HTMLElement
 
         this._table.querySelectorAll('tbody tr').forEach(tr => tr.cells[th.cellIndex].classList.toggle('hidde-col',hide));
         th.classList.toggle('hidde-col', hide);
+        this._f2OcultarCeldaPie(th.cellIndex, hide);   // F2: la celda del pie sigue a la columna
 
         // F1 (A3): el estado se guarda por field; hideColumns (índices de celda) se deriva de él.
         const f1Field = th.getAttribute('field');
@@ -4873,7 +4889,8 @@ class EditTable extends HTMLElement
         let summary = null;
         if (typeof this.getSummaries == 'function')
         {
-            try { summary = this.getSummaries() ?? null; } catch (err) { summary = null; }
+            // Integración F2+F4: sin columnas con total, null (getSummaries da {}).
+            try { const s = this.getSummaries(); summary = (s && Object.keys(s).length) ? s : null; } catch (err) { summary = null; }
         }
         return { columns, rows, summary };
     }
@@ -5019,6 +5036,10 @@ class EditTable extends HTMLElement
                 break;
             case this.EdiTable.Const.Events.BeforeCopy:   // F4 (R4)
                 this._getCurren().Events[this.EdiTable.Const.Events.BeforeCopy] = listener
+                break;
+            case this.EdiTable.Const.Events.SummaryCalculated:   // F2 (R4)
+            case this.EdiTable.Const.Events.ValueTypeFallback:   // F2 (R4)
+                this._getCurren().Events[type.toLowerCase()] = listener
                 break;
         }
     }
@@ -6009,6 +6030,930 @@ class EditTable extends HTMLElement
         return H.map(x => (x >>> 0).toString(16).padStart(8, '0')).join('');
     }
     // ===== F3: fin =====
+
+    // ===== F2: totales en el pie (§2), máscaras y calc (§3), locale y valores numéricos (R7, R9, C12, C16)
+    // Todo se activa por atributo: summary, summary-format, summary-label y summary-scope; mask,
+    // mask-placeholder, mask-keep, calc, locale, value-type, datetime-seconds y date-display. Sin ellos,
+    // los enganches de F2 devuelven lo mismo que recibieron.
+    static { this.features.push('summary', 'mask', 'calc', 'locale'); }
+
+    // ----- EditTable.Mask: inicio (motor puro sin DOM; tests/mascaras/fuente.cjs lo extrae de aquí)
+    static Mask = (() => {
+      const SL = { '9': c => c >= '0' && c <= '9', A: c => /\p{L}/u.test(c), X: c => /[\p{L}0-9]/u.test(c), '*': () => true };
+      const cache = {};
+      // Tokens: {s: prueba} ranura o {l: carácter} literal; t.p = posición de cada ranura, t.L = literales.
+      const parse = p => cache[p] || (cache[p] = (() => {
+        const t = [], a = [...p]; t.p = []; t.L = new Set();
+        for (let i = 0; i < a.length; i++) {
+          const c = a[i];
+          if (c === '\\' && i + 1 < a.length) t.push({ l: a[++i] });
+          else if (SL[c]) { t.p.push(t.length); t.push({ s: SL[c] }); }
+          else t.push({ l: c });
+          if (t[t.length - 1].l !== undefined) t.L.add(t[t.length - 1].l);
+        }
+        return t;
+      })());
+      // Acomoda chars en las ranuras desde el token i. lit: acepta los literales del patrón en el texto.
+      const take = (t, chars, lit, ph, i = 0) => {
+        const raw = []; let bad = 0;
+        for (const c of chars) {
+          if (lit && ph && c === ph) continue;
+          while (i < t.length && !t[i].s && !(lit && c === t[i].l)) i++;
+          if (i >= t.length) { bad++; continue; }
+          if (!t[i].s) { i++; continue; }
+          if (t[i].s(c)) { raw.push(c); i++; } else if (!(lit && t.L.has(c))) bad++;
+        }
+        return { raw, bad };
+      };
+      const render = (t, raw, ph) => {
+        if (!raw.length) return '';
+        let d = '', k = 0;
+        for (const x of t) {
+          if (x.s) { if (k < raw.length) d += raw[k++]; else if (ph) d += ph; else break; }
+          else d += x.l;
+        }
+        return d;
+      };
+      const out = (t, raw, k, ph) => {
+        const display = render(t, raw, ph), cp = [...display];
+        const r = raw.join('');
+        return { display, raw: r, canonical: r, complete: raw.length === t.p.length,
+          caret: raw.length ? cp.slice(0, k < t.p.length ? t.p[k] : t.length).join('').length : 0 };
+      };
+      // Separadores (R7): opts.decimal/opts.thousands mandan; si no, Intl con opts.locale (por omisión es-MX).
+      // Se usa 1234567.5 porque algunos locales (es-ES) no agrupan números de 4 cifras.
+      const SEP = {};
+      const sep = (o = {}) => {
+        if (o.d) return o; // ya resuelto
+        const l = o.locale || 'es-MX';
+        if (!SEP[l]) {
+          let d = '.', g;
+          try { for (const x of new Intl.NumberFormat(l).formatToParts(1234567.5)) x.type === 'decimal' ? d = x.value : x.type === 'group' ? g = x.value : 0; } catch (e) { }
+          SEP[l] = { d, g: g ?? (d === ',' ? '.' : ',') };
+        }
+        const d = o.decimal || SEP[l].d;
+        return { d, g: o.thousands ?? (o.decimal ? (d === ',' ? '.' : ',') : SEP[l].g) };
+      };
+      const esc = c => c.replace(/[.*+?^${}()|[\]\\/-]/g, '\\$&');
+      // Número escrito con los separadores S → Number (sin grupos: percent).
+      const num = (v, S) => +v.replace(S.d, '.');
+      // R9: cadena canónica a partir de signo, parte entera y decimales (cadenas de dígitos), sin pasar por Number.
+      const canon = (sg, i, f) => {
+        i = i.replace(/^0+(?=\d)/, '') || '0';
+        return (sg === '-' && /[1-9]/.test(i + f) ? '-' : '') + i + (f ? '.' + f : '');
+      };
+      const preset = p => typeof p === 'object' ? p : Object.hasOwn(M.presets, p) ? M.presets[p] : null;
+      const fp = P => P && !P.m, tk = (P, p) => parse(P ? P.m : p);
+      // Filtro de un carácter: lo pasa a mayúsculas si up y lo acepta si cumple re.
+      const F = (re, up) => c => (c = up ? U(c) : c, re.test(c) ? c : null);
+      // Presets sin patrón fijo: inserta chars en d entre a y b, filtrando con P.c, P.max y P.ok.
+      const fins = (P, d, a, b, s, S) => {
+        let cur = d.slice(0, a), bad = 0, n = 0; const aft = d.slice(b);
+        for (const ch of s) {
+          const c = P.c(ch, S), v = cur + c + aft;
+          if (c == null || v.length > (P.max || 1e4) || (P.ok && !P.ok(v, S))) bad++; else { cur += c; n++; }
+        }
+        return { d: cur + aft, k: cur.length, bad, n };
+      };
+      const fres = (P, d, k, S) => {
+        const raw = P.r ? P.r(d, S) : d;
+        return { display: d, raw, canonical: P.n ? M.canonicalFromText(d, S) ?? '' : raw, caret: k, complete: !!d && M.validate(P, d, S).reason !== 'incomplete' };
+      };
+      const dt = (s, Y) => {
+        const m = +s.slice(2, 4), d = +s.slice(4, 6), x = new Date(Date.UTC(Y + +s.slice(0, 2), m - 1, d));
+        return x.getUTCMonth() === m - 1 && x.getUTCDate() === d;
+      };
+      const dv = (s, D, n) => { let t = 0; for (let i = 0; i < n; i++) t += D.indexOf(s[i]) * (n + 1 - i); return t; };
+      const ENT = 'AS BC BS CC CL CM CS CH DF DG GT GR HG JC MC MN MS NT NL OC PL QT QR SP SL SR TC TS TL VZ YN ZS NE'.split(' ');
+      const U = c => c.toUpperCase();
+    
+      const M = {
+        presets: {
+          cp: { m: '99999' },
+          tel: { m: '(999) 999-9999' },
+          upper: { c: U },
+          lower: { c: c => c.toLowerCase() },
+          email: { c: F(/\S/), max: 254, v: v => /^[^\s@]+@[^\s@]+\.[^\s@.]{2,}$/.test(v) ? '' : 'invalid' },
+          // percent: display con el decimal del locale; raw con punto ("10,50" → "10.5" en es-CO).
+          percent: { n: 1, c: (c, S) => /[0-9]/.test(c) || c === S.d ? c : null, max: 6, strict: 1,
+            ok: (v, S) => new RegExp(`^\\d{0,3}(${esc(S.d)}\\d{0,2})?$`).test(v) && !(num(v, S) > 100),
+            v: (v, S) => !new RegExp(`^(\\d+[.${esc(S.d)}]?\\d*|[.${esc(S.d)}]\\d+)$`).test(v) ? 'invalid' : num(v.replace('.', S.d), S) > 100 || /[.,]\d{3}/.test(v) ? 'rango' : '',
+            f: (v, S) => v !== '' && isFinite(num(v.replace('.', S.d), S)) ? num(v.replace('.', S.d), S).toFixed(2).replace('.', S.d) : v,
+            r: (v, S) => v.replace(S.d, '.') },
+          rfc: { c: F(/[A-Z0-9Ñ&]/, 1), max: 13, v: v => {
+            v = U(v);
+            if (v.length < 12) return 'incomplete';
+            const m = /^[A-ZÑ&]{3,4}(\d{6})[A-Z0-9]{3}$/.exec(v);
+            if (!m) return 'invalid';
+            if (/^XEXX|^XAXX/.test(v) && v.slice(4) === '010101000') return '';
+            if (!dt(m[1], 2000)) return 'fecha';
+            const s = v.length === 12 ? ' ' + v : v, r = 11 - dv(s, '0123456789ABCDEFGHIJKLMN&OPQRSTUVWXYZ Ñ', 12) % 11;
+            return s[12] === (r === 11 ? '0' : r === 10 ? 'A' : '' + r) ? '' : 'checksum';
+          } },
+          curp: { c: F(/[A-Z0-9]/, 1), max: 18, v: v => {
+            v = U(v);
+            if (v.length < 18) return 'incomplete';
+            const m = /^[A-Z][AEIOUX][A-Z]{2}(\d{6})[HMX]([A-Z]{2})[B-DF-HJ-NP-TV-Z]{3}([A-Z0-9])\d$/.exec(v);
+            if (!m) return 'invalid';
+            if (!ENT.includes(m[2])) return 'entidad';
+            if (!dt(m[1], /\d/.test(m[3]) ? 1900 : 2000)) return 'fecha';
+            return +v[17] === (10 - dv(v, '0123456789ABCDEFGHIJKLMNÑOPQRSTUVWXYZ', 17) % 10) % 10 ? '' : 'checksum';
+          } }
+        },
+        apply(p, text, o = {}) {
+          const P = preset(p), s = String(text ?? ''), c = o.caret ?? s.length, S = sep(o);
+          if (fp(P)) {
+            const r = fins(P, s, 0, s.length, s, S), k = fins(P, s.slice(0, c), 0, c, s.slice(0, c), S).k;
+            return Object.assign(fres(P, r.d, k, S), { rejected: r.bad });
+          }
+          const t = tk(P, p), ph = o.placeholder ?? '_', r = take(t, [...s], 1, ph);
+          return Object.assign(out(t, r.raw, take(t, [...s.slice(0, c)], 1, ph).raw.length, ph), { rejected: r.bad });
+        },
+        validate(p, value, o) {
+          const v = String(value ?? ''), P = preset(p);
+          let reason = '';
+          if (v) {
+            if (fp(P)) reason = P.v ? P.v(v, sep(o)) : '';
+            else { const a = M.apply(p, v, { placeholder: '' }); reason = a.rejected ? 'invalid' : a.complete ? '' : 'incomplete'; }
+          }
+          return { ok: !reason, reason };
+        },
+        format(p, raw, o) {
+          const P = preset(p), s = String(raw ?? ''), S = sep(o);
+          if (fp(P)) return P.f ? P.f(s, S) : fins(P, s, 0, s.length, s, S).d;
+          const t = tk(P, p);
+          return render(t, take(t, [...s], 0, '').raw, '');
+        },
+        // Devuelve {raw, canonical} (R9).
+        unformat(p, display, o = {}) {
+          const P = preset(p), s = String(display ?? ''), ph = typeof o === 'string' ? o : o.placeholder ?? '_';
+          if (fp(P)) { const S = sep(o), raw = P.r ? P.r(s, S) : s; return { raw, canonical: P.n ? M.canonicalFromText(s, S) ?? '' : raw }; }
+          const raw = take(tk(P, p), [...s], 1, ph).raw.join('');
+          return { raw, canonical: raw };
+        },
+        // state {display, caret, end?}; action {type: insert|paste|backspace|delete, text}. Devuelve el estado nuevo.
+        edit(p, st, a, o = {}) {
+          const P = preset(p), d = String(st.display ?? ''), ph = o.placeholder ?? '_', ins = a.type === 'insert' || a.type === 'paste', S = sep(o);
+          const cl = x => Math.max(0, Math.min(d.length, x ?? d.length));
+          let c0 = cl(st.caret), c1 = cl(st.end ?? c0);
+          if (c1 < c0) [c0, c1] = [c1, c0];
+          const k0 = c0, no = () => Object.assign(M.apply(p, d, { ...o, caret: k0, placeholder: ph }), { accepted: false });
+          if (fp(P)) {
+            if (!ins && c0 === c1) a.type === 'backspace' ? c0 = Math.max(0, c0 - 1) : c1 = Math.min(d.length, c1 + 1);
+            const r = fins(P, d, c0, c1, ins ? String(a.text ?? '') : '', S);
+            if (ins ? !r.n || (P.strict && r.bad) : P.ok && !P.ok(r.d, S)) return no();
+            return Object.assign(fres(P, r.d, r.k, S), { accepted: true });
+          }
+          const t = tk(P, p), N = t.p.length, raw = take(t, [...d], 1, ph).raw;
+          let ra = take(t, [...d.slice(0, c0)], 1, ph).raw.length, rb = take(t, [...d.slice(0, c1)], 1, ph).raw.length, add = [];
+          if (ins) {
+            add = take(t, [...String(a.text ?? '')], 1, ph, ra ? t.p[ra - 1] + 1 : 0).raw;
+            if (!add.length || (a.type === 'insert' && raw.length - (rb - ra) + add.length > N)) return no();
+          } else if (ra === rb) { if (a.type === 'backspace') ra = Math.max(0, ra - 1); else rb = Math.min(raw.length, rb + 1); }
+          const nr = take(t, [...raw.slice(0, ra), ...add, ...raw.slice(rb)], 0, '').raw;
+          return Object.assign(out(t, nr, Math.min(nr.length, ra + add.length), ph), { accepted: true });
+        },
+        // =expr o expr: + - * / ( ) %, unario; decimal y miles según el locale (R7; es-MX: 1,234.5).
+        calc(e, o) {
+          let s = String(e ?? '').trim();
+          if (s[0] === '=') s = s.slice(1).trim();
+          const err = error => ({ ok: false, value: null, canonical: '', error });
+          if (!s) return err('empty');
+          if (s.length > 200) return err('length');
+          const S = sep(o), D = esc(S.d), G = /\s/.test(S.g) ? '[ \\u00a0\\u202f]' : esc(S.g), T = [];
+          const re = new RegExp(`\\s*(?:((?:\\d{1,3}(?:${G}\\d{3})+|\\d+)(?:${D}\\d*)?|${D}\\d+)|([-+*/()%]))`, 'y');
+          while (re.lastIndex < s.length) {
+            const m = re.exec(s);
+            if (!m) return err('syntax');
+            T.push(m[1] !== undefined ? +[...m[1]].map(c => c === S.d ? '.' : c >= '0' && c <= '9' ? c : '').join('') : m[2]);
+          }
+          let j = 0;
+          const X = () => { throw 'syntax'; };
+          const Pr = () => {
+            let r;
+            if (typeof T[j] === 'number') r = { v: T[j++] };
+            else if (T[j] === '(') { j++; r = { v: E() }; T[j++] !== ')' && X(); }
+            else X();
+            while (T[j] === '%') { j++; r = { v: r.v / 100, p: 1 }; }
+            return r;
+          };
+          const Un = () => T[j] === '-' || T[j] === '+' ? (T[j++] === '-' ? (r => ({ v: -r.v, p: r.p }))(Un()) : Un()) : Pr();
+          const Tm = () => {
+            let f = Un();
+            while (T[j] === '*' || T[j] === '/') {
+              const o = T[j++], r = Un();
+              if (o === '/' && r.v === 0) throw 'div0';
+              f = { v: o === '*' ? f.v * r.v : f.v / r.v };
+            }
+            return f;
+          };
+          const E = () => {
+            let v = Tm().v;
+            while (T[j] === '+' || T[j] === '-') {
+              const o = T[j++], r = Tm(), b = r.p ? v * r.v : r.v;
+              v = o === '+' ? v + b : v - b;
+            }
+            return v;
+          };
+          try {
+            const v = E();
+            if (j < T.length) X();
+            return isFinite(v) ? { ok: true, value: +v.toFixed(10) || 0, canonical: M.toCanonical(v), error: '' } : err('overflow');
+          } catch (x) { return err(x); }
+        }
+      };
+      // R9: Number → cadena canónica sin exponente, redondeada a maxDecs y sin ceros finales. NaN/Infinity → ''.
+      M.toCanonical = (n, maxDecs = 10) => {
+        n = +n;
+        if (!isFinite(n)) return '';
+        // Redondea y toma la representación más corta de JS (String), expandiendo su exponente.
+        const r = Math.abs(n) < 1e21 ? +n.toFixed(Math.max(0, Math.min(100, maxDecs))) : n;
+        return M.canonicalFromText(String(r), { native: true });
+      };
+      // R9: texto tecleado (locale de opts, por omisión es-MX) o del control nativo (1e3, .5) → cadena canónica,
+      // sin Number. Conserva los decimales tecleados. '' → ''; si no es un número, null.
+      // opts.native: solo la sintaxis del <input type="number"> (punto decimal y exponente).
+      M.canonicalFromText = (text, o = {}) => {
+        const t = String(text ?? '').trim();
+        if (!t) return '';
+        const S = sep(o), G = /\s/.test(S.g) ? '[ \\u00a0\\u202f]' : esc(S.g);
+        let m = !o.native && new RegExp(`^([+-]?)\\s*((?:\\d{1,3}(?:${G}\\d{3})+|\\d+)?)(?:${esc(S.d)}(\\d*))?$`).exec(t);
+        if (m && /\d/.test(m[2] + (m[3] || ''))) return canon(m[1], m[2].replace(/\D/g, ''), m[3] || '');
+        m = /^([+-]?)(\d*)(?:\.(\d*))?(?:[eE]([+-]?\d{1,4}))?$/.exec(t);
+        if (!m || !/\d/.test(m[2] + (m[3] || ''))) return null;
+        let i = m[2], f = m[3] || '';
+        const e = +(m[4] || 0), ds = i + f, pos = i.length + e;
+        if (e) {
+          if (pos <= 0) { i = '0'; f = '0'.repeat(-pos) + ds; }
+          else if (pos >= ds.length) { i = ds + '0'.repeat(pos - ds.length); f = ''; }
+          else { i = ds.slice(0, pos); f = ds.slice(pos); }
+        }
+        return canon(m[1], i, f);
+      };
+      return M;
+    })();
+    // ----- EditTable.Mask: fin
+
+    // Propiedades públicas (R5): summary-scope ↔ SummaryScope.
+    SummaryFunction = null;             // (field, rowsData) => valor, para summary="custom"
+    SummaryScope = 'all';               // 'all' | 'selected' | 'visible'
+
+    // Estado interno.
+    _f2ScopeDeclarado = false;
+    _f2Pie = null;                      // tfoot, solo si alguna columna declara summary
+    _f2Sucio = false;
+    _f2Programado = false;
+    _f2Valores = {};                    // field → {valor, texto}
+    _f2Confirmando = null;              // {row, field} de la celda con value-type="number" que se confirma
+    _f2NumFormatInicial = this.NumFormat;   // para saber si el programador asignó NumFormat (C16)
+    // R4: eventos nuevos en Const.Events (MaskInvalid ya lo agregó F1).
+    _f2Eventos = Object.assign(this.EdiTable.Const.Events, { SummaryCalculated: 'summarycalculated', ValueTypeFallback: 'valuetypefallback' });
+    // El valor de un editor de F2 (máscara, editor propio, segundos) es el que va a DataArray (R9).
+    _f2GetInputValueOriginal = (() => {
+        const original = this.EdiTable.GetInputValue;
+        this.EdiTable.GetInputValue = (input, current, columnDef) => (input && input._f2Conv ? input._f2Conv() : original(input, current, columnDef));
+        return original;
+    })();
+
+    // ---------- inicialización y atributos
+    _f2Iniciar()
+    {
+        if (this.hasAttribute('summary-scope'))
+        {
+            this.SummaryScope = (this.getAttribute('summary-scope') ?? 'all').trim().toLowerCase() || 'all';
+            this._f2ScopeDeclarado = true;
+        }
+        // C12: propiedad de columna valueType ↔ atributo value-type.
+        this.Columns.forEach(col => { if (col && col['value-type'] != undefined) col.valueType = String(col['value-type']).trim().toLowerCase(); });
+        if (this.Columns.some(col => this._f2TieneTotal(col))) this._f2CrearPie();
+    }
+    _f2AtributoCambiado(name, value)
+    {
+        if (name != 'summary-scope') return;
+        this.SummaryScope = (value ?? 'all').trim().toLowerCase() || 'all';
+        this._f2ScopeDeclarado = (value != null);
+        if (this._f2Pie) this.RefreshSummaries();
+    }
+
+    // ---------- locale (R7, C16, P29)
+    _f2TieneRegion(lang)
+    {
+        return /^[a-z]{2,3}(?:-[a-z]{4})?-(?:[a-z]{2}|\d{3})(?:-|$)/i.test(String(lang ?? '').trim());
+    }
+    // Locale explícito: el de la columna o el de la tabla (atributo locale / propiedad Locale). 'auto' = navegador.
+    _f2LocaleExplicito(coldef)
+    {
+        let l = String(coldef?.locale ?? '').trim() || String(this.Locale ?? '').trim();
+        if (!l) return null;
+        if (l.toLowerCase() == 'auto') l = (navigator.language || 'es-MX');
+        return l;
+    }
+    // R7: explícito; si no, el lang con región más cercano (elemento, ancestros, documento); si no, es-MX.
+    _f2LocaleR7(coldef)
+    {
+        const e = this._f2LocaleExplicito(coldef);
+        if (e) return e;
+        for (let n = this; n; n = (n.parentElement ?? n.getRootNode?.()?.host ?? null))
+        {
+            const lang = (n.nodeType == 1 ? n.getAttribute('lang') : null);
+            if (lang && this._f2TieneRegion(lang)) return lang.trim();
+        }
+        return 'es-MX';
+    }
+    static _f2Separadores = {};
+    _f2Sep(locale)
+    {
+        const S = EditTable._f2Separadores;
+        if (!S[locale])
+        {
+            let d = '.', g;
+            try { for (const x of new Intl.NumberFormat(locale).formatToParts(1234567.5)) { if (x.type == 'decimal') d = x.value; else if (x.type == 'group') g = x.value; } }
+            catch (e) { }
+            S[locale] = { d, g: (g ?? (d == ',' ? '.' : ',')) };
+        }
+        return S[locale];
+    }
+    _f2NumFormatDelProgramador()
+    {
+        const nf = this.NumFormat;
+        return (nf !== this._f2NumFormatInicial || nf?.thousands !== ',' || nf?.default_decimals !== '.');
+    }
+    _f2EsCanonico(s)
+    {
+        return /^-?\d+(?:\.\d+)?$/.test(s);
+    }
+    // Número de DataArray (número o cadena) → cadena canónica, o null si no es número.
+    // Cadenas canónicas (R9) se leen como tales; las demás, con el locale R7 de la columna (P3).
+    _f2Canonico(v, coldef)
+    {
+        if (typeof v == 'number') return (isFinite(v) ? EditTable.Mask.canonicalFromText(String(v), { native: true }) : null);
+        if (typeof v == 'bigint') return v.toString();
+        if (typeof v != 'string') return null;
+        const t = v.trim();
+        if (!t) return null;
+        if (/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/.test(t)) return EditTable.Mask.canonicalFromText(t, { native: true });
+        return EditTable.Mask.canonicalFromText(t, { locale: this._f2LocaleR7(coldef) });
+    }
+
+    // ---------- columnas
+    _f2Tipo(coldef) { return String(coldef?.type ?? '').toLowerCase(); }
+    _f2Mask(coldef)
+    {
+        const m = coldef?.mask;
+        return (m != undefined && String(m) !== '' ? String(m) : null);
+    }
+    _f2EsVerdadero(v) { return String(v ?? '').trim().toLowerCase() == 'true'; }
+    _f2Calc(coldef) { return this._f2Tipo(coldef) == 'number' && this._f2EsVerdadero(coldef?.calc); }
+    // Editor propio (input de texto): Number con mask, calc o locale explícito; Date con locale explícito.
+    _f2EditorPropio(coldef)
+    {
+        const t = this._f2Tipo(coldef);
+        if (t == 'number') return !!(this._f2Mask(coldef) || this._f2Calc(coldef) || this._f2LocaleExplicito(coldef));
+        if (t == 'date') return !!this._f2LocaleExplicito(coldef);
+        return false;
+    }
+    _f2OpcMask(coldef)
+    {
+        return { placeholder: (coldef?.['mask-placeholder'] ?? '_'), locale: this._f2LocaleR7(coldef) };
+    }
+    _f2MaskEsPatron(mask)
+    {
+        const P = (Object.hasOwn(EditTable.Mask.presets, mask) ? EditTable.Mask.presets[mask] : null);
+        return (!P || !!P.m);
+    }
+    _f2InputMode(coldef)
+    {
+        const mask = this._f2Mask(coldef);
+        if (mask)
+        {
+            if (mask == 'tel') return 'tel';
+            if (mask == 'email') return 'email';
+            if (mask == 'percent') return 'decimal';
+            if (mask == 'cp') return 'numeric';
+            if (this._f2MaskEsPatron(mask) && !/[AX*]/.test(mask.replace(/\\./g, ''))) return 'numeric';
+            return 'text';
+        }
+        const t = this._f2Tipo(coldef);
+        if (t == 'number') return (this._f2Calc(coldef) ? 'text' : 'decimal');
+        if (t == 'date') return 'numeric';
+        return null;
+    }
+
+    // ---------- fechas (R9): editor propio de Date y date-display="locale"
+    static _f2Ordenes = {};
+    _f2OrdenFecha(locale)
+    {
+        const O = EditTable._f2Ordenes;
+        if (!O[locale])
+        {
+            let orden = 'DMY', sep = '/';
+            try
+            {
+                const partes = new Intl.DateTimeFormat(locale, { day: '2-digit', month: '2-digit', year: 'numeric' }).formatToParts(new Date(2026, 10, 25));
+                orden = partes.filter(p => ['day', 'month', 'year'].includes(p.type)).map(p => p.type[0].toUpperCase()).join('');
+                sep = (partes.find(p => p.type == 'literal')?.value ?? '/');
+            }
+            catch (e) { }
+            if (!/^(DMY|MDY|YMD)$/.test(orden)) orden = 'DMY';
+            O[locale] = { orden, sep };
+        }
+        return O[locale];
+    }
+    // Texto → 'YYYY-MM-DD'; '' si está vacío; null si no es una fecha que exista.
+    _f2LeerFecha(texto, locale)
+    {
+        const t = String(texto ?? '').trim();
+        if (!t) return '';
+        let a, m, d;
+        let x = /^(\d{4})-(\d{2})-(\d{2})(?:[T ].*)?$/.exec(t);
+        if (x) [a, m, d] = [+x[1], +x[2], +x[3]];
+        else
+        {
+            const p = t.split(/[^0-9]+/).filter(s => s !== '');
+            if (p.length != 3) return null;
+            const { orden } = this._f2OrdenFecha(locale);
+            const v = {};
+            [...orden].forEach((k, i) => v[k] = p[i]);
+            a = +v.Y; m = +v.M; d = +v.D;
+            if (v.Y.length <= 2) a += 2000;
+        }
+        const f = new Date(Date.UTC(a, m - 1, d));
+        if (!(a >= 1 && f.getUTCFullYear() == a && f.getUTCMonth() == m - 1 && f.getUTCDate() == d)) return null;
+        return `${String(a).padStart(4, '0')}-${this._f1Dos(m)}-${this._f1Dos(d)}`;
+    }
+    _f2FechaATexto(iso, locale)
+    {
+        const x = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(iso ?? ''));
+        if (!x) return null;
+        const { orden, sep } = this._f2OrdenFecha(locale), v = { Y: x[1], M: x[2], D: x[3] };
+        return [...orden].map(k => v[k]).join(sep);
+    }
+    // date-display="locale": solo visual. Date 'YYYY-MM-DD…' y DateTime 'YYYY-MM-DDTHH:mm[:ss]'.
+    _f2FechaVisible(coldef, value)
+    {
+        const s = String(value ?? '');
+        const x = /^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2}))?)?$/.exec(s.trim());
+        if (!x) return value;
+        const loc = this._f2LocaleR7(coldef);
+        try
+        {
+            if (this._f2Tipo(coldef) == 'datetime' && x[4] != undefined)
+            {
+                const f = new Date(+x[1], +x[2] - 1, +x[3], +x[4], +x[5], +(x[6] ?? 0));
+                return f.toLocaleString(loc, { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', ...(x[6] != undefined ? { second: '2-digit' } : {}) });
+            }
+            return new Date(+x[1], +x[2] - 1, +x[3]).toLocaleDateString(loc, { day: '2-digit', month: '2-digit', year: 'numeric' });
+        }
+        catch (e) { return value; }
+    }
+    _f2DateDisplay(coldef)
+    {
+        const t = this._f2Tipo(coldef);
+        return (t == 'date' || t == 'datetime') && String(coldef?.['date-display'] ?? '').trim().toLowerCase() == 'locale';
+    }
+
+    // ---------- presentación (enganches de SetTdValue, _aplyFormat y GetTdValue)
+    // SetTdValue: la máscara, el decimal del locale (Number sin format) y date-display. Solo visual.
+    _f2Presentar(coldef, value)
+    {
+        if (value == undefined || !coldef || coldef.template) return value;
+        // Camino rápido (R1): sin atributos de F2 en la columna ni Locale en la tabla, no hay nada que hacer.
+        if (coldef.mask === undefined && coldef['date-display'] === undefined && coldef.locale === undefined && !this.Locale) return value;
+        const mask = this._f2Mask(coldef), dd = this._f2DateDisplay(coldef);
+        const loc = (mask || dd ? null : this._f2LocaleExplicito(coldef));
+        if (!mask && !dd && !loc) return value;
+        const s = String(value);
+        if (s.includes('__table_') || s.includes('<')) return value;
+        if (mask) return (s === '' ? s : EditTable.Mask.format(mask, s, { locale: this._f2LocaleR7(coldef) }));
+        if (dd) return this._f2FechaVisible(coldef, s);
+        if (this._f2Tipo(coldef) == 'number' && (coldef.format ?? '') != 'true' && this._f2EsCanonico(s))
+        {
+            const S = this._f2Sep(loc);
+            return (S.d == '.' ? s : s.replace('.', S.d));
+        }
+        return value;
+    }
+    // _aplyFormat (C16): con locale explícito y sin NumFormat del programador, los separadores del locale.
+    _f2FormatoLocale(coldef, value)
+    {
+        if (coldef?.locale === undefined && !this.Locale) return null;   // R1
+        const loc = this._f2LocaleExplicito(coldef);
+        if (!loc || this._f2NumFormatDelProgramador()) return null;
+        const n = Number(value);
+        if (!isFinite(n)) return null;
+        const S = this._f2Sep(loc), decimales = Number(coldef.decs ?? 0), miles = ((coldef.thousandssep ?? 'false') == 'true');
+        let [entero, fraccion] = n.toFixed(decimales).split('.');
+        if (miles) entero = entero.replace(/(\d)(?=(\d{3})+(?!\d))/g, `$1${S.g}`);
+        return `${(coldef.prefix ?? '')}${entero}${fraccion ? S.d + fraccion : ''}${(coldef.sufix ?? '')}`;
+    }
+    // GetTdValue: devuelve el valor sin presentación, o undefined si F2 no interviene.
+    // Las máscaras solo se quitan al leer datos (valideEncode, UpdateData); el selector conserva los literales.
+    _f2LeerCelda(coldef, value, leerDatos)
+    {
+        if (!coldef || coldef.template || value == undefined) return undefined;
+        if (coldef.mask === undefined && coldef['date-display'] === undefined && coldef.locale === undefined && !this.Locale) return undefined;   // R1
+        const s = String(value);
+        if (s.includes('__table_')) return undefined;
+        const mask = this._f2Mask(coldef);
+        if (mask)
+        {
+            if (!leerDatos) return undefined;
+            const u = EditTable.Mask.unformat(mask, s, this._f2OpcMask(coldef));
+            if (String(coldef['mask-keep'] ?? '').trim().toLowerCase() == 'formatted' && this._f2MaskEsPatron(mask)) return EditTable.Mask.format(mask, u.raw);
+            return u.canonical;
+        }
+        if (this._f2DateDisplay(coldef))
+        {
+            if (!leerDatos) return undefined;
+            const t = this._f2Tipo(coldef), loc = this._f2LocaleR7(coldef);
+            if (t == 'date') { const f = this._f2LeerFecha(s, loc); return (f == null ? undefined : f); }
+            return undefined;
+        }
+        const loc = this._f2LocaleExplicito(coldef);
+        if (!loc || this._f2Tipo(coldef) == 'date') return undefined;
+        const t = this._f2Tipo(coldef);
+        if (t != 'number' && t != 'noeditable') return undefined;
+        if ((coldef.format ?? '') == 'true')
+        {
+            if (this._f2NumFormatDelProgramador()) return undefined;
+            let x = s;
+            if (coldef.prefix && x.startsWith(coldef.prefix)) x = x.slice(coldef.prefix.length);
+            if (coldef.sufix && x.endsWith(coldef.sufix)) x = x.slice(0, -coldef.sufix.length);
+            const c = EditTable.Mask.canonicalFromText(x.trim(), { locale: loc });
+            return (c == null ? undefined : c);
+        }
+        if (t != 'number' || s.trim() === '') return undefined;
+        const c = EditTable.Mask.canonicalFromText(s, { locale: loc });
+        return (c == null ? undefined : c);
+    }
+
+    // ---------- editores (enganches de StartEdit y de ConfirmEdit)
+    // StartEdit, antes del switch: crea el editor propio de Number o Date. true si lo creó.
+    _f2CrearEditor(td, coldef)
+    {
+        if (!this._f2EditorPropio(coldef)) return false;
+        const t = this._f2Tipo(coldef), I = this.EdiTable.Const.HTML.Inputs;
+        const base = (t == 'number' ? I.Number : I.Date);
+        const html = base.replace(/type\s*=\s*(["']?)(?:number|date)\1/i, 'type="text"');
+        this.SetTdValue(td, (/type="text"/.test(html) ? html : I.Text), false);
+        return true;
+    }
+    // StartEdit, después de SetInputVal: valor inicial, máscara al teclear, inputmode y datetime-seconds.
+    _f2PrepararEditor(input, coldef, td, conValorActual)
+    {
+        if (!input || input.tagName != 'INPUT' || !coldef) return;
+        const t = this._f2Tipo(coldef), tipoInput = (input.getAttribute('type') ?? 'text').toLowerCase();
+        if (t == 'datetime' && tipoInput == 'datetime-local' && this._f2EsVerdadero(coldef['datetime-seconds']))
+        {
+            input.setAttribute('step', '1');
+            input._f2Conv = () => (/T\d{2}:\d{2}$/.test(input.value) ? input.value + ':00' : input.value);
+            return;
+        }
+        const mask = this._f2Mask(coldef), propio = (tipoInput == 'text' && this._f2EditorPropio(coldef));
+        if (!mask && !propio && !this._f2DateDisplay(coldef)) return;   // R1: sin atributos de F2, nada
+        const row = this.RowIndexOfTd(td), dato = this.DataArray[row]?.[coldef.field];
+        if (!mask && !propio)
+        {
+            // date-display: el selector muestra la fecha con formato; el control nativo recibe la de DataArray.
+            if (this._f2DateDisplay(coldef) && conValorActual && dato != undefined && (tipoInput == 'date' || tipoInput == 'datetime-local'))
+                input.value = this._f1FechaParaEditor(String(dato), tipoInput);
+            return;
+        }
+        if (mask && tipoInput != 'text' && tipoInput != 'search' && tipoInput != 'tel' && tipoInput != 'email') return;
+        const loc = this._f2LocaleR7(coldef), modo = this._f2InputMode(coldef);
+        if (modo) input.setAttribute('inputmode', modo);
+        input.setAttribute('autocomplete', 'off');
+        let texto = input.value;
+        if (conValorActual && dato != undefined) texto = this._f2TextoParaEditor(coldef, dato, loc);
+        if (mask)
+        {
+            const opc = this._f2OpcMask(coldef), r = EditTable.Mask.apply(mask, texto, opc);
+            input.value = r.display;
+            try { input.setSelectionRange(r.caret, r.caret); } catch (e) { }
+            input.addEventListener('beforeinput', (e) => this._f2AlTeclear(e, input, mask, opc));
+        }
+        else input.value = texto;
+        input._f2 = { coldef, loc, mask };
+        input._f2Inicial = input.value;
+        input._f2Conv = () => this._f2Convertir(input).valor;
+    }
+    _f2TextoParaEditor(coldef, dato, loc)
+    {
+        if (dato == null) return '';
+        if (this._f2Mask(coldef)) return String(dato);
+        const t = this._f2Tipo(coldef);
+        if (t == 'number')
+        {
+            const c = (typeof dato == 'number' ? this._f2Canonico(dato, coldef) : (this._f2EsCanonico(String(dato).trim()) ? String(dato).trim() : null));
+            if (c == null) return String(dato);
+            const S = this._f2Sep(loc);
+            return (S.d == '.' ? c : c.replace('.', S.d));
+        }
+        if (t == 'date') return (this._f2FechaATexto(dato, loc) ?? String(dato));
+        return String(dato);
+    }
+    static _f2Acciones = { insertText: 'insert', insertFromPaste: 'paste', insertFromDrop: 'paste', insertReplacementText: 'paste',
+        deleteContentBackward: 'backspace', deleteContentForward: 'delete', deleteWordBackward: 'backspace', deleteWordForward: 'delete', deleteByCut: 'delete' };
+    // §3: mientras se teclea se insertan los literales y se rechaza lo que no corresponde.
+    _f2AlTeclear(e, input, mask, opc)
+    {
+        if (e.isComposing) return;
+        const tipo = EditTable._f2Acciones[e.inputType];
+        e.preventDefault();
+        if (!tipo) return;
+        const text = (tipo == 'insert' || tipo == 'paste') ? (e.data ?? e.dataTransfer?.getData('text/plain') ?? '') : '';
+        const r = EditTable.Mask.edit(mask, { display: input.value, caret: input.selectionStart, end: input.selectionEnd }, { type: tipo, text }, opc);
+        if (!r.accepted) return;
+        input.value = r.display;
+        try { input.setSelectionRange(r.caret, r.caret); } catch (e) { }
+    }
+    // Lo tecleado → {ok, valor (lo que va a DataArray), reason, cancelar (valor por omisión de cancel)}.
+    _f2Convertir(input)
+    {
+        const { coldef, loc, mask } = input._f2, texto = input.value;
+        if (mask)
+        {
+            const opc = this._f2OpcMask(coldef), u = EditTable.Mask.unformat(mask, texto, opc);
+            const patron = this._f2MaskEsPatron(mask);
+            const v = EditTable.Mask.validate(mask, (patron ? u.raw : texto), opc);
+            const conLiterales = (patron && String(coldef['mask-keep'] ?? '').trim().toLowerCase() == 'formatted');
+            const valor = (u.raw === '' ? '' : (conLiterales ? EditTable.Mask.format(mask, u.raw, opc) : (this._f2Tipo(coldef) == 'number' ? (EditTable.Mask.canonicalFromText(u.canonical, { native: true }) ?? u.canonical) : u.canonical)));
+            return { ok: v.ok, valor, reason: v.reason, cancelar: false };
+        }
+        const t = this._f2Tipo(coldef);
+        if (t == 'date')
+        {
+            const f = this._f2LeerFecha(texto, loc);
+            return (f == null ? { ok: false, valor: texto, reason: 'fecha', cancelar: true } : { ok: true, valor: f, reason: '' });
+        }
+        if (this._f2Calc(coldef) && texto.trim().startsWith('='))
+        {
+            const r = EditTable.Mask.calc(texto, { locale: loc });
+            return (r.ok ? { ok: true, valor: r.canonical, reason: '' } : { ok: false, valor: texto, reason: 'calc', cancelar: true, error: r.error });
+        }
+        const c = EditTable.Mask.canonicalFromText(texto, { locale: loc });
+        return (c == null ? { ok: false, valor: texto, reason: 'invalid', cancelar: true } : { ok: true, valor: c, reason: '' });
+    }
+    // Al principio de ConfirmEdit: valida el editor de F2 (MaskInvalid) y marca la celda con value-type.
+    // false: no se confirma (la celda sigue en edición).
+    _f2AntesDeConfirmar(td)
+    {
+        this._f2Confirmando = null;
+        if (!this.Editing) return true;
+        const input = this.EdiTable.GetInput(), coldef = this.GetColumnDef();
+        if (!input || !coldef) return true;
+        if (input._f2 && input.value !== input._f2Inicial)
+        {
+            const r = this._f2Convertir(input);
+            if (!r.ok)
+            {
+                // Un mismo valor se avisa una vez: si se vuelve a confirmar sin cambiarlo, se repite la decisión.
+                let cancel = input._f2Aviso?.value === input.value ? input._f2Aviso.cancel : undefined;
+                if (cancel === undefined)
+                {
+                    const args = { sender: this._getCurren(), td, input, row: this.RowIndexOfTd(td), field: coldef.field,
+                        value: input.value, reason: r.reason, cancel: !!r.cancelar };
+                    this._fireEvent(this.EdiTable.Const.Events.MaskInvalid, args);
+                    cancel = !!args.cancel;
+                    input._f2Aviso = { value: input.value, cancel };
+                }
+                if (cancel)
+                {
+                    if (input.isConnected) input.focus();
+                    return false;
+                }
+            }
+        }
+        if (String(coldef.valueType ?? coldef['value-type'] ?? '').trim().toLowerCase() == 'number')
+            this._f2Confirmando = { row: this.RowIndexOfTd(td), field: coldef.field };
+        return true;
+    }
+    // Al principio de UpdateDataMember: programa el recálculo de totales y aplica value-type="number" (C12).
+    _f2AlActualizar(row, field, value)
+    {
+        this._f2Programar();
+        const c = this._f2Confirmando;
+        if (!c || c.row !== row || c.field !== field) return value;
+        this._f2Confirmando = null;
+        if (typeof value != 'string' || value.trim() === '') return value;
+        const can = EditTable.Mask.canonicalFromText(value, { native: true });
+        if (can != null)
+        {
+            const n = Number(can);
+            if (isFinite(n) && EditTable.Mask.canonicalFromText(String(n), { native: true }) === can) return n;
+        }
+        this._fireEvent(this.EdiTable.Const.Events.ValueTypeFallback, { sender: this._getCurren(), row, field, text: value });
+        return value;
+    }
+
+    // ---------- totales (§2)
+    _f2TieneTotal(col)
+    {
+        const s = String(col?.summary ?? '').trim().toLowerCase();
+        return ['sum', 'count', 'avg', 'min', 'max', 'custom'].includes(s);
+    }
+    _f2SysCols() { return (this._etSysCols?.() ?? 0); }   // F4: celdas del sistema al principio de cada fila
+    _f2CrearPie()
+    {
+        if (this._f2Pie || !this._table) return;
+        const estilo = document.createElement('style');
+        estilo.setAttribute('data-f2', 'summary');
+        // Antes del <style> principal, para que control-styles pueda sobrescribirlo.
+        estilo.textContent = `
+            table > tfoot { position: sticky; bottom: 0; z-index: 99; background-color: #F5F5F5; }
+            tfoot td.et-summary { padding: 4px 8px; outline: 1px solid #DDD; font-weight: 600; white-space: nowrap; }
+            table.et-cards > tfoot { display: none !important; }
+            @media print { table > tfoot { position: static; } }
+            @media screen and (max-width: 768px) { .table-cards > tfoot { display: none !important; } }`;
+        this._shadow.prepend(estilo);
+        this._f2Pie = document.createElement('tfoot');
+        this._f2Pie.appendChild(document.createElement('tr')).className = 'et-summary-row';
+        this._table.appendChild(this._f2Pie);
+        this._f2CeldasPie();
+        this._f2Sucio = true;
+        this._f2Programar();
+    }
+    // Una celda por celda de datos (más las del sistema al principio), alineadas con Columns (R3).
+    _f2CeldasPie()
+    {
+        const tr = this._f2Pie?.rows[0];
+        if (!tr) return null;
+        const sys = this._f2SysCols(), n = sys + this.Columns.length;
+        if (tr.cells.length != n)
+        {
+            tr.innerHTML = '';
+            for (let i = 0; i < n; i++)
+            {
+                const td = tr.insertCell();
+                if (i < sys) { td.className = 'et-sel-col'; continue; }
+                td.className = 'et-summary';
+                const col = this.Columns[i - sys];
+                if (col?.field != undefined && this._f1ColumnaOculta(col.field)) td.classList.add('hidde-col');
+            }
+        }
+        return { tr, sys };
+    }
+    _f2OcultarCeldaPie(cellIndex, hide)
+    {
+        const td = this._f2Pie?.rows[0]?.cells[cellIndex];
+        if (td) td.classList.toggle('hidde-col', !!hide);
+    }
+    _f2Programar()
+    {
+        if (!this._f2Pie) return;
+        this._f2Sucio = true;
+        if (this._f2Programado) return;
+        this._f2Programado = true;
+        queueMicrotask(() => { this._f2Programado = false; if (this._f2Sucio) this.RefreshSummaries(); });
+    }
+    _f2Alcance()
+    {
+        const s = String(this.SummaryScope ?? 'all').trim().toLowerCase();
+        if (this._f2ScopeDeclarado || (s && s != 'all')) return s;
+        return ((this.getGroups?.() ?? []).length ? 'visible' : 'all');   // P4: sin filtro; con agrupación (F6), visible
+    }
+    _f2Filas(alcance)
+    {
+        const datos = (this.DataArray ?? []);
+        if (alcance == 'selected')
+            return (typeof this.getSelectedRows == 'function' ? this.getSelectedRows().map(i => datos[i]).filter(r => r != undefined) : []);
+        if (alcance == 'visible')
+        {
+            const tbody = this._f1TBodyPrincipal(), filas = [];
+            if (!tbody) return datos;
+            for (const tr of tbody.rows)
+            {
+                if (tr.classList.contains('hidde-row') || tr.classList.contains('et-group-row') || tr.classList.contains('et-spacer')) continue;
+                const i = this._getRowIndex(tr);
+                if (i >= 0 && datos[i] != undefined) filas.push(datos[i]);
+            }
+            return filas;
+        }
+        return datos;
+    }
+    // Aritmética decimal exacta: cadena canónica ↔ {n: BigInt, s: escala}.
+    _f2Dec(c)
+    {
+        const neg = c.startsWith('-'), [e, f = ''] = (neg ? c.slice(1) : c).split('.');
+        const n = BigInt(e + f);
+        return { n: (neg ? -n : n), s: f.length };
+    }
+    _f2Escalar(x, s) { return x.n * (10n ** BigInt(s - x.s)); }
+    _f2DecATexto(n, s)
+    {
+        const neg = n < 0n, d = (neg ? -n : n).toString().padStart(s + 1, '0');
+        const t = (s ? d.slice(0, -s) + '.' + d.slice(-s) : d);
+        return EditTable.Mask.canonicalFromText((neg ? '-' : '') + t, { native: true });
+    }
+    _f2Quitar0(t) { return (t.includes('.') ? t.replace(/\.?0+$/, '') : t); }
+    // {valor (número o null), texto (cadena canónica exacta, o null)} de una columna.
+    _f2CalcularColumna(col, filas, alcance)
+    {
+        const tipo = String(col.summary).trim().toLowerCase(), field = col.field;
+        if (tipo == 'custom')
+        {
+            const v = (typeof this.SummaryFunction == 'function' ? this.SummaryFunction(field, filas) : null);
+            return { valor: (v === undefined ? null : v), texto: (typeof v == 'number' && isFinite(v) ? EditTable.Mask.toCanonical(v) : (v == null ? null : String(v))) };
+        }
+        if (tipo == 'count')
+        {
+            const n = filas.filter(r => { const v = r?.[field]; return v != null && String(v).trim() !== ''; }).length;
+            return { valor: n, texto: String(n) };
+        }
+        const nums = [];
+        filas.forEach(r => { const c = this._f2Canonico(r?.[field], col); if (c != null) nums.push(this._f2Dec(c)); });
+        if (!nums.length) return (tipo == 'sum' ? { valor: 0, texto: '0' } : { valor: null, texto: null });
+        const S = Math.max(...nums.map(x => x.s));
+        let texto;
+        if (tipo == 'sum' || tipo == 'avg')
+        {
+            let suma = 0n;
+            nums.forEach(x => suma += this._f2Escalar(x, S));
+            if (tipo == 'sum') texto = this._f2DecATexto(suma, S);
+            else
+            {
+                // Promedio con 10 decimales más, redondeado a la mitad hacia afuera.
+                const k = BigInt(nums.length), escala = suma * (10n ** 10n), neg = escala < 0n, a = (neg ? -escala : escala);
+                const q = (a * 2n + k) / (2n * k);
+                texto = this._f2Quitar0(this._f2DecATexto(neg ? -q : q, S + 10));
+            }
+        }
+        else
+        {
+            let mejor = nums[0];
+            nums.forEach(x => { const a = this._f2Escalar(x, S), b = this._f2Escalar(mejor, S); if (tipo == 'min' ? a < b : a > b) mejor = x; });
+            texto = this._f2DecATexto(mejor.n, mejor.s);
+        }
+        return { valor: Number(texto), texto };
+    }
+    _f2TextoPie(col, r)
+    {
+        if (r.valor == null && r.texto == null) return '';
+        const tipo = String(col.summary).trim().toLowerCase(), sf = String(col['summary-format'] ?? 'inherit').trim();
+        let fmt = null;
+        if (sf && sf.toLowerCase() != 'inherit')
+        {
+            try
+            {
+                const j = JSON.parse(sf);
+                fmt = { type: 'Number', format: 'true', field: col.field, locale: col.locale };
+                Object.keys(j ?? {}).forEach(k => fmt[k] = String(j[k]));
+            }
+            catch (e) { fmt = null; }
+        }
+        else if (tipo != 'count' && (col.format ?? '') == 'true') fmt = { ...col, type: 'Number' };   // custom numérico también hereda
+        let texto = r.texto ?? String(r.valor);
+        if (fmt && (fmt.format ?? '') == 'true' && r.texto != null && isFinite(Number(r.texto))) texto = this._aplyFormat(fmt, r.texto);
+        else if (r.texto != null && this._f2EsCanonico(texto)) texto = this._f2Presentar({ type: 'Number', locale: col.locale }, texto);
+        const etiqueta = col['summary-label'];
+        if (etiqueta == undefined || etiqueta === '') return texto;
+        return (etiqueta.includes('{value}') ? etiqueta.split('{value}').join(texto) : etiqueta + ' ' + texto);
+    }
+    /** Recalcula todos los totales, actualiza el pie (sin volver a dibujar las filas) y dispara SummaryCalculated. */
+    RefreshSummaries = () =>
+    {
+        this._f2Sucio = false;
+        const alcance = this._f2Alcance(), filas = this._f2Filas(alcance), valores = {};
+        this.Columns.forEach(col => { if (this._f2TieneTotal(col) && col.field != undefined && !(col.field in valores)) valores[col.field] = this._f2CalcularColumna(col, filas, alcance); });
+        this._f2Valores = valores;
+        const pie = this._f2CeldasPie();
+        if (pie)
+        {
+            this.Columns.forEach((col, i) => {
+                const td = pie.tr.cells[pie.sys + i];
+                if (!td) return;
+                if (this._f2TieneTotal(col) && valores[col.field])
+                {
+                    td.setAttribute('data-summary', String(col.summary).trim().toLowerCase());
+                    td.textContent = this._f2TextoPie(col, valores[col.field]);
+                    if (col.textalign) td.style.textAlign = col.textalign;
+                }
+                else { td.removeAttribute('data-summary'); td.textContent = ''; }
+            });
+        }
+        Object.keys(valores).forEach(field => this._fireEvent(this.EdiTable.Const.Events.SummaryCalculated,
+            { sender: this._getCurren(), field, value: valores[field].valor, scope: alcance }));
+    }
+    _f2Actualizados()
+    {
+        if (this._f2Sucio || !Object.keys(this._f2Valores).length) this.RefreshSummaries();
+        return this._f2Valores;
+    }
+    /** Total de la columna (número), o null si no tiene total. */
+    getSummary = (field) =>
+    {
+        const col = this.Columns.find(c => c?.field == field);
+        if (!col || !this._f2TieneTotal(col)) return null;
+        return (this._f2Actualizados()[field]?.valor ?? null);
+    }
+    /** {field: valor} de las columnas con total. */
+    getSummaries = () =>
+    {
+        const v = this._f2Actualizados(), r = {};
+        Object.keys(v).forEach(k => r[k] = v[k].valor);
+        return r;
+    }
+    // ===== F2: fin
 }
 
 customElements.define('edit-table', EditTable);

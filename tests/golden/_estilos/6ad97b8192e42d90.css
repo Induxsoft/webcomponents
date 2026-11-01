@@ -1,0 +1,6 @@
+
+            table > tfoot { position: sticky; bottom: 0; z-index: 99; background-color: #F5F5F5; }
+            tfoot td.et-summary { padding: 4px 8px; outline: 1px solid #DDD; font-weight: 600; white-space: nowrap; }
+            table.et-cards > tfoot { display: none !important; }
+            @media print { table > tfoot { position: static; } }
+            @media screen and (max-width: 768px) { .table-cards > tfoot { display: none !important; } }
