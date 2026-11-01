@@ -60,7 +60,7 @@ process.env.ET_BANCO_URL = pathToFileURL(AQUI + path.sep).href;
 export const T0 = new Date('2026-06-15T10:00:00-06:00').getTime();
 
 // ---------- escenarios ----------
-const CARPETAS = ['basicos', 'tipos', 'edicion', 'teclado', 'eventos', 'datos', 'arbol', 'tarjetas', 'presentacion', 'impresion', 'v12', 'defectos', 'rendimiento'];
+const CARPETAS = ['basicos', 'tipos', 'edicion', 'teclado', 'eventos', 'datos', 'arbol', 'tarjetas', 'presentacion', 'impresion', 'v12', 'defectos', 'rendimiento', 'v2'];   // v2: funciones activadas (F2-F6)
 
 async function cargarEscenarios() {
   const lista = [];
