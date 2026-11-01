@@ -9,7 +9,7 @@ class EditTable extends HTMLElement
     _dataArrayBackup = null;
     _sorTable=true;
     // F1: versión y funciones disponibles (R6). La lista se llena en las fases siguientes.
-    static version = "2.0.0-f1";
+    static version = "2.0.0-beta.1";   // integración F1+F2+F3+F4
     static features = [];
 
     constructor()
@@ -4427,7 +4427,14 @@ class EditTable extends HTMLElement
         const m = this._f4Normalizar(v);
         if (m === this._f4Modo) return;
         this._f4Modo = m;
-        if (this._f4Listo) this._f4Aplicar();
+        if (this._f4Listo)
+        {
+            this._f4Aplicar();
+            // Integración F2/F3: la celda del sistema cambió después de inicializar. El pie (F2) rehace sus
+            // celdas y sus totales, y F3 recalcula el left de las fijas (también en el pie).
+            if (this._f2CeldasPie?.()) this._f2Programar?.();
+            this._f3Posiciones?.();
+        }
     }
 
     /** Número de celdas del sistema al principio de cada fila (0 sin multi-select="checkbox"). F2 y F3 lo leen. */
