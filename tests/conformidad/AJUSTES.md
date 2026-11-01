@@ -28,3 +28,4 @@ la spec o el comportamiento actual, no defectos del componente. Cada renglón: p
 | Prueba | Motivo | Cambio |
 |---|---|---|
 | `dis-*` que todavía usaban `RUTA` (entre ellas `dis-23` y `dis-26`) | Con `--paralelo` > 1, dos pruebas registraban páginas distintas en la misma ruta. `dis-26` reemplazaba la página de `dis-23` (una tabla sin `id`) justo cuando `dis-23` recargaba, así que el ancho no se restauraba (verificado: pasa 3 de 3 sola y falla en paralelo) | Cada prueba usa su propia ruta: `R('<id>')` |
+| `grp-17` (`v11-agrupacion.mjs`) | Suponía que `AddRow()` agrega una entrada a `DataArray` (mismo caso que `sum-13`). | El índice de la fila nueva se toma como `DataArray.length` antes de `AddRow()`. |
