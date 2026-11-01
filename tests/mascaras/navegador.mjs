@@ -30,7 +30,7 @@ try {
   page.on('pageerror', e => errores.push(e.message));
   await page.goto(`${origen}/tests/mascaras/navegador.html`);
 
-  const estado = id => page.$eval('#' + id, i => ({ v: i.value, c: i.selectionStart, raw: i.dataset.raw, complete: i.dataset.complete }));
+  const estado = id => page.$eval('#' + id, i => ({ v: i.value, c: i.selectionStart, raw: i.dataset.raw, canonical: i.dataset.canonical, complete: i.dataset.complete }));
   const fijar = (id, value, a, b = a) => page.$eval('#' + id, (i, [v, a, b]) => { i.value = v; i.focus(); i.setSelectionRange(a, b); }, [value, a, b]);
   const pegar = async (id, texto) => {
     await page.evaluate(t => navigator.clipboard.writeText(t), texto);
@@ -128,11 +128,15 @@ try {
 
   await caso('percent es-CO: coma decimal al teclear; el punto se rechaza', async () => {
     await fijar('percentco', '', 0); await page.keyboard.type('10.,5'); return estado('percentco');
-  }, { v: '10,5', c: 4, raw: '10.5', complete: 'true' });
+  }, { v: '10,5', c: 4, raw: '10.5', canonical: '10.5', complete: 'true' });
 
   await caso('percent es-CO: pegar 1,5 es válido', async () => {
     await fijar('percentco', '', 0); await pegar('percentco', '1,5'); return estado('percentco');
   }, { v: '1,5', c: 3, raw: '1.5' });
+
+  await caso('percent es-CO: conserva el cero final en canonical', async () => {
+    await fijar('percentco', '', 0); await page.keyboard.type('1,10'); return estado('percentco');
+  }, { v: '1,10', canonical: '1.10' });
 
   await caso('percent es-CO: no deja pasar de 100', async () => {
     await fijar('percentco', '', 0); await page.keyboard.type('100,5'); return estado('percentco');

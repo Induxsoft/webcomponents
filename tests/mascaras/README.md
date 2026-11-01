@@ -19,12 +19,14 @@ node tests/mascaras/navegador.mjs  # <input> real en Chromium con Playwright (te
 
 | Función | Devuelve |
 |---|---|
-| `apply(pattern, text, {caret, placeholder, ...loc})` | `{display, raw, complete, caret, rejected}` |
-| `edit(pattern, {display, caret, end}, action, {placeholder, ...loc})` | `{display, raw, complete, caret, accepted}` |
+| `apply(pattern, text, {caret, placeholder, ...loc})` | `{display, raw, canonical, complete, caret, rejected}` |
+| `edit(pattern, {display, caret, end}, action, {placeholder, ...loc})` | `{display, raw, canonical, complete, caret, accepted}` |
 | `validate(pattern, value, loc)` | `{ok, reason}` |
 | `format(pattern, raw, loc)` | `display` (sin placeholder) |
-| `unformat(pattern, display, {placeholder='_', ...loc})` | `raw` (acepta también el placeholder como cadena) |
-| `calc(expr, loc)` | `{ok, value, error}` |
+| `unformat(pattern, display, {placeholder='_', ...loc})` | `{raw, canonical}` (el tercer argumento acepta también el placeholder como cadena) |
+| `calc(expr, loc)` | `{ok, value, canonical, error}` |
+| `toCanonical(n, maxDecs=10)` | cadena canónica de un `Number` (R9) |
+| `canonicalFromText(text, {...loc, native})` | cadena canónica de un texto, sin pasar por `Number`; `''` si está vacío, `null` si no es número (R9) |
 
 `loc` son las opciones de locale (R7 de la spec): `{locale}` (BCP 47) o `{decimal, thousands}`. Ver "Locales".
 | `presets` | objeto con los presets |
@@ -132,6 +134,43 @@ Reglas:
   punto o el texto con el decimal del locale.
 - Las máscaras de patrón y los presets `rfc`, `curp`, `cp`, `tel`, `email`, `upper` y `lower` no dependen del locale.
 
+## Cadena canónica (R9)
+
+`DataArray` recibe los números como el `<input type="number">`: cadena con punto decimal, sin miles y con `-`
+como signo. El motor la entrega en el campo `canonical`:
+
+| Origen | `canonical` |
+|---|---|
+| Máscaras de patrón y presets de texto (`tel`, `cp`, `rfc`, `curp`, `email`, `upper`, `lower`) | igual a `raw` |
+| `percent` (`apply`, `edit`, `unformat`) | `canonicalFromText(display, locale)`; `''` si vacío o a medio teclear (`.`) |
+| `calc` | `toCanonical(value)`; `''` si hay error |
+
+Cadena canónica estricta: sin exponente, con `0` antes del punto (`0.5`), sin ceros de más a la izquierda
+(`007` → `7`), `-` pegado (`- 5` → `-5`), sin `+`, sin `-0` (`-0.00` → `0.00`), vacío `''`.
+
+- **`canonicalFromText(text, opts)`** trabaja sobre la cadena, nunca con `Number`: conserva los decimales
+  tecleados, incluidos los ceros finales (`1.10` → `1.10`), y cualquier número de cifras
+  (`123456789012.123456`, `999999999999999999.99`). Lee primero con los separadores del locale (miles bien
+  agrupados o sin agrupar) y, si no encaja, con la sintaxis del control nativo: punto decimal y exponente
+  (`1e3` → `1000`, `1.5e-3` → `0.0015`, `.5` → `0.5`; el exponente se aplica moviendo el punto en la
+  cadena). Con `native: true` solo usa la sintaxis nativa.
+  - Ambigüedad: en un locale de coma, `1.234` es 1234 (miles); para leer el valor del control nativo se pasa
+    `native: true` (`1.234` → `1.234`). `1.5` no es agrupación válida y se lee como nativo (`1.5`).
+- **`toCanonical(n, maxDecs=10)`**: redondea a `maxDecs`, toma la representación más corta de JS y expande
+  el exponente (`1e-7` → `0.0000001`, `1e21` → `1000000000000000000000`); no deja ceros finales
+  (`0.1+0.2` → `0.3`). `NaN`/`Infinity` → `''`. `calc` la usa, por eso `=1,10*1` da `1.1`.
+
+| Texto | `es-MX` / `en-US` | `es-CO` / `de-DE` |
+|---|---|---|
+| `1,234.50` | `1234.50` | `null` |
+| `1.234,50` | `null` | `1234.50` |
+| `-0,5` | `null` | `-0.5` |
+| `1e3` | `1000` | `1000` |
+| `.5` | `0.5` | `0.5` (como nativo) |
+| `123,456,789,012,345,678` | `123456789012345678` | `null` |
+| `123.456.789.012.345.678` | `null` | `123456789012345678` |
+| `''` | `''` | `''` |
+
 ## `calc`
 
 - Acepta `=expr` o `expr`, con espacios. Operadores `+ - * / ( )`, unario `-` y `+` (`--5` = 5), `%` posfijo.
@@ -158,7 +197,8 @@ Reglas:
 | `edit.test.cjs` | teclear, borrar, suprimir, selección, pegar con y sin literales, presets en `edit` |
 | `presets.test.cjs` | cada preset con casos válidos e inválidos |
 | `calc.test.cjs` | precedencia, paréntesis, unario, `%`, coma, errores, división entre cero, números grandes, longitud |
+| `canonico.test.cjs` | R9: `toCanonical`, `canonicalFromText` y el campo `canonical` en `es-MX`, `en-US`, `es-CO`, `de-DE` (18 cifras, negativos, ceros finales, vacío, exponentes) |
 | `locale.test.cjs` | R7: `calc`, `percent` y `edit` en `es-MX`, `en-US`, `es-CO`, `de-DE`; `decimal`/`thousands` explícitos; `fr-FR`, `es-ES`, locale inválido |
-| `navegador.html` + `navegador.mjs` | `edit()` en `<input>` reales: cursor, flechas, selección, Backspace, Suprimir, Ctrl+V; `percent` en `es-CO` (locale tomado de `lang`) |
+| `navegador.html` + `navegador.mjs` | `edit()` en `<input>` reales: cursor, flechas, selección, Backspace, Suprimir, Ctrl+V; `percent` en `es-CO` (locale tomado de `lang`) con `canonical` |
 
 Todos los RFC y CURP de las pruebas son ficticios (salvo los de prueba publicados por el SAT y los genéricos).

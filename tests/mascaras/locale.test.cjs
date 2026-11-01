@@ -25,7 +25,7 @@ for (const locale of PUNTO) {
     assert.equal(M.validate('percent', '10.5', o).reason, '');
     assert.equal(M.validate('percent', '10,5', o).reason, 'invalid');
     assert.equal(M.format('percent', '10.5', o), '10.50');
-    assert.equal(M.unformat('percent', '10.50', o), '10.50');
+    assert.equal(M.unformat('percent', '10.50', o).raw, '10.50');
     assert.equal(M.apply('percent', '10.5', o).display, '10.5');
   });
   test(`edit percent ${locale}`, () => {
@@ -60,7 +60,7 @@ for (const locale of COMA) {
     assert.equal(M.format('percent', '10.5', o), '10,50');
     assert.equal(M.format('percent', '10,5', o), '10,50');
     assert.equal(M.format('percent', '7', o), '7,00');
-    assert.equal(M.unformat('percent', '10,50', o), '10.50');
+    assert.equal(M.unformat('percent', '10,50', o).raw, '10.50');
     const r = M.apply('percent', '10,5', o);
     assert.deepEqual([r.display, r.raw, r.complete], ['10,5', '10.5', true]);
     assert.equal(M.apply('percent', '150,5', o).display, '15,5');

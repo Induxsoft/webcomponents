@@ -39,13 +39,15 @@ const EditTableMask = (() => {
   };
   const out = (t, raw, k, ph) => {
     const display = render(t, raw, ph), cp = [...display];
-    return { display, raw: raw.join(''), complete: raw.length === t.p.length,
+    const r = raw.join('');
+    return { display, raw: r, canonical: r, complete: raw.length === t.p.length,
       caret: raw.length ? cp.slice(0, k < t.p.length ? t.p[k] : t.length).join('').length : 0 };
   };
   // Separadores (R7): opts.decimal/opts.thousands mandan; si no, Intl con opts.locale (por omisión es-MX).
   // Se usa 1234567.5 porque algunos locales (es-ES) no agrupan números de 4 cifras.
   const SEP = {};
   const sep = (o = {}) => {
+    if (o.d) return o; // ya resuelto
     const l = o.locale || 'es-MX';
     if (!SEP[l]) {
       let d = '.', g;
@@ -58,6 +60,11 @@ const EditTableMask = (() => {
   const esc = c => c.replace(/[.*+?^${}()|[\]\\/-]/g, '\\$&');
   // Número escrito con los separadores S → Number (sin grupos: percent).
   const num = (v, S) => +v.replace(S.d, '.');
+  // R9: cadena canónica a partir de signo, parte entera y decimales (cadenas de dígitos), sin pasar por Number.
+  const canon = (sg, i, f) => {
+    i = i.replace(/^0+(?=\d)/, '') || '0';
+    return (sg === '-' && /[1-9]/.test(i + f) ? '-' : '') + i + (f ? '.' + f : '');
+  };
   const preset = p => typeof p === 'object' ? p : Object.hasOwn(M.presets, p) ? M.presets[p] : null;
   const fp = P => P && !P.m, tk = (P, p) => parse(P ? P.m : p);
   // Filtro de un carácter: lo pasa a mayúsculas si up y lo acepta si cumple re.
@@ -71,7 +78,10 @@ const EditTableMask = (() => {
     }
     return { d: cur + aft, k: cur.length, bad, n };
   };
-  const fres = (P, d, k, S) => ({ display: d, raw: P.r ? P.r(d, S) : d, caret: k, complete: !!d && M.validate(P, d, S).reason !== 'incomplete' });
+  const fres = (P, d, k, S) => {
+    const raw = P.r ? P.r(d, S) : d;
+    return { display: d, raw, canonical: P.n ? M.canonicalFromText(d, S) ?? '' : raw, caret: k, complete: !!d && M.validate(P, d, S).reason !== 'incomplete' };
+  };
   const dt = (s, Y) => {
     const m = +s.slice(2, 4), d = +s.slice(4, 6), x = new Date(Date.UTC(Y + +s.slice(0, 2), m - 1, d));
     return x.getUTCMonth() === m - 1 && x.getUTCDate() === d;
@@ -88,7 +98,7 @@ const EditTableMask = (() => {
       lower: { c: c => c.toLowerCase() },
       email: { c: F(/\S/), max: 254, v: v => /^[^\s@]+@[^\s@]+\.[^\s@.]{2,}$/.test(v) ? '' : 'invalid' },
       // percent: display con el decimal del locale; raw con punto ("10,50" → "10.5" en es-CO).
-      percent: { c: (c, S) => /[0-9]/.test(c) || c === S.d ? c : null, max: 6, strict: 1,
+      percent: { n: 1, c: (c, S) => /[0-9]/.test(c) || c === S.d ? c : null, max: 6, strict: 1,
         ok: (v, S) => new RegExp(`^\\d{0,3}(${esc(S.d)}\\d{0,2})?$`).test(v) && !(num(v, S) > 100),
         v: (v, S) => !new RegExp(`^(\\d+[.${esc(S.d)}]?\\d*|[.${esc(S.d)}]\\d+)$`).test(v) ? 'invalid' : num(v.replace('.', S.d), S) > 100 || /[.,]\d{3}/.test(v) ? 'rango' : '',
         f: (v, S) => v !== '' && isFinite(num(v.replace('.', S.d), S)) ? num(v.replace('.', S.d), S).toFixed(2).replace('.', S.d) : v,
@@ -137,9 +147,12 @@ const EditTableMask = (() => {
       const t = tk(P, p);
       return render(t, take(t, [...s], 0, '').raw, '');
     },
+    // Devuelve {raw, canonical} (R9).
     unformat(p, display, o = {}) {
       const P = preset(p), s = String(display ?? ''), ph = typeof o === 'string' ? o : o.placeholder ?? '_';
-      return fp(P) ? (P.r ? P.r(s, sep(o)) : s) : take(tk(P, p), [...s], 1, ph).raw.join('');
+      if (fp(P)) { const S = sep(o), raw = P.r ? P.r(s, S) : s; return { raw, canonical: P.n ? M.canonicalFromText(s, S) ?? '' : raw }; }
+      const raw = take(tk(P, p), [...s], 1, ph).raw.join('');
+      return { raw, canonical: raw };
     },
     // state {display, caret, end?}; action {type: insert|paste|backspace|delete, text}. Devuelve el estado nuevo.
     edit(p, st, a, o = {}) {
@@ -167,7 +180,7 @@ const EditTableMask = (() => {
     calc(e, o) {
       let s = String(e ?? '').trim();
       if (s[0] === '=') s = s.slice(1).trim();
-      const err = error => ({ ok: false, value: null, error });
+      const err = error => ({ ok: false, value: null, canonical: '', error });
       if (!s) return err('empty');
       if (s.length > 200) return err('length');
       const S = sep(o), D = esc(S.d), G = /\s/.test(S.g) ? '[ \\u00a0\\u202f]' : esc(S.g), T = [];
@@ -208,9 +221,37 @@ const EditTableMask = (() => {
       try {
         const v = E();
         if (j < T.length) X();
-        return isFinite(v) ? { ok: true, value: +v.toFixed(10) || 0, error: '' } : err('overflow');
+        return isFinite(v) ? { ok: true, value: +v.toFixed(10) || 0, canonical: M.toCanonical(v), error: '' } : err('overflow');
       } catch (x) { return err(x); }
     }
+  };
+  // R9: Number → cadena canónica sin exponente, redondeada a maxDecs y sin ceros finales. NaN/Infinity → ''.
+  M.toCanonical = (n, maxDecs = 10) => {
+    n = +n;
+    if (!isFinite(n)) return '';
+    // Redondea y toma la representación más corta de JS (String), expandiendo su exponente.
+    const r = Math.abs(n) < 1e21 ? +n.toFixed(Math.max(0, Math.min(100, maxDecs))) : n;
+    return M.canonicalFromText(String(r), { native: true });
+  };
+  // R9: texto tecleado (locale de opts, por omisión es-MX) o del control nativo (1e3, .5) → cadena canónica,
+  // sin Number. Conserva los decimales tecleados. '' → ''; si no es un número, null.
+  // opts.native: solo la sintaxis del <input type="number"> (punto decimal y exponente).
+  M.canonicalFromText = (text, o = {}) => {
+    const t = String(text ?? '').trim();
+    if (!t) return '';
+    const S = sep(o), G = /\s/.test(S.g) ? '[ \\u00a0\\u202f]' : esc(S.g);
+    let m = !o.native && new RegExp(`^([+-]?)\\s*((?:\\d{1,3}(?:${G}\\d{3})+|\\d+)?)(?:${esc(S.d)}(\\d*))?$`).exec(t);
+    if (m && /\d/.test(m[2] + (m[3] || ''))) return canon(m[1], m[2].replace(/\D/g, ''), m[3] || '');
+    m = /^([+-]?)(\d*)(?:\.(\d*))?(?:[eE]([+-]?\d{1,4}))?$/.exec(t);
+    if (!m || !/\d/.test(m[2] + (m[3] || ''))) return null;
+    let i = m[2], f = m[3] || '';
+    const e = +(m[4] || 0), ds = i + f, pos = i.length + e;
+    if (e) {
+      if (pos <= 0) { i = '0'; f = '0'.repeat(-pos) + ds; }
+      else if (pos >= ds.length) { i = ds + '0'.repeat(pos - ds.length); f = ''; }
+      else { i = ds.slice(0, pos); f = ds.slice(pos); }
+    }
+    return canon(m[1], i, f);
   };
   return M;
 })();

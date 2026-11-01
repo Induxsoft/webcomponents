@@ -77,7 +77,7 @@ test('cp: 5 dígitos', () => {
 });
 test('tel: 10 dígitos, display (999) 999-9999', () => {
   assert.equal(M.format('tel', '9611234567'), '(961) 123-4567');
-  assert.equal(M.unformat('tel', '(961) 123-4567'), '9611234567');
+  assert.equal(M.unformat('tel', '(961) 123-4567').raw, '9611234567');
   assert.equal(why('tel', '9611234567'), '');
   assert.equal(why('tel', '(961) 123-4567'), '');
   assert.equal(why('tel', '961123456'), 'incomplete');
@@ -101,7 +101,7 @@ test('percent: apply, format y unformat', () => {
   assert.equal(M.format('percent', '12.5'), '12.50');
   assert.equal(M.format('percent', '7'), '7.00');
   assert.equal(M.format('percent', ''), '');
-  assert.equal(M.unformat('percent', '12.50'), '12.50');
+  assert.equal(M.unformat('percent', '12.50').raw, '12.50');
 });
 test('upper y lower', () => {
   assert.equal(M.apply('upper', 'ñandú 12').display, 'ÑANDÚ 12');

@@ -30,6 +30,7 @@
       inp.value = r.display;
       inp.setSelectionRange(r.caret, r.caret);
       inp.dataset.raw = r.raw;
+      inp.dataset.canonical = r.canonical;
       inp.dataset.complete = r.complete;
       document.getElementById('estado').textContent = JSON.stringify(r);
     });

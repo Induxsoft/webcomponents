@@ -79,13 +79,13 @@ test('format: raw posicional, sin placeholder', () => {
   assert.equal(M.format('*-*', '--'), '---');
 });
 test('unformat: quita literales y placeholder', () => {
-  assert.equal(M.unformat('(999) 999-9999', '(555) 123-4567'), '5551234567');
-  assert.equal(M.unformat('(999) 999-9999', '(555) 12_-____'), '55512');
-  assert.equal(M.unformat('99#99', '1#2', '#'), '12');
+  assert.equal(M.unformat('(999) 999-9999', '(555) 123-4567').raw, '5551234567');
+  assert.equal(M.unformat('(999) 999-9999', '(555) 12_-____').raw, '55512');
+  assert.equal(M.unformat('99#99', '1#2', '#').raw, '12');
 });
 test('format y unformat son inversos', () => {
   for (const [p, raw] of [['9999-999-999', '1234567890'], ['AA-99', 'ñb12'], ['\\(XX\\)', 'a1']])
-    assert.equal(M.unformat(p, M.format(p, raw)), raw);
+    assert.equal(M.unformat(p, M.format(p, raw)).raw, raw);
 });
 test('caracteres fuera del BMP no rompen el patrón', () => {
   assert.deepEqual(ap('**', '😀a'), ['😀a', '😀a', true, 3]);
