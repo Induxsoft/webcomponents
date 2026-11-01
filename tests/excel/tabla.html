@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+    <meta charset="UTF-8">
+    <title>Prueba InduxsoftExcel sin EdiTable</title>
+    <!-- Esta página NO carga induxsoft.controls.editable.js: demuestra que InduxsoftExcel no depende de él. -->
+    <script src="../../src/js/induxsoft.controls.excel.js"></script>
+    <style>.no-print { color: gray; }</style>
+</head>
+<body>
+    <!-- Datos de prueba falsos. -->
+    <table id="ventas">
+        <caption>Ventas por zona</caption>
+        <thead>
+            <tr>
+                <th rowspan="2">Zona</th><th colspan="2">Importe</th><th rowspan="2" data-type="date">Fecha</th>
+                <th rowspan="2" class="no-print">Interno</th><th rowspan="2">Código</th><th rowspan="2">Avance</th><th rowspan="2" data-type="text">Folio</th>
+            </tr>
+            <tr><th>Bruto</th><th>Neto</th></tr>
+        </thead>
+        <tbody>
+            <tr><td rowspan="2">Norte</td><td>$1,234.56</td><td>-1,234.5</td><td>15/03/2026</td><td class="no-print">x</td><td>00123</td><td>12.5%</td><td>0042</td></tr>
+            <tr><td data-value="999.5">$ 999.50 aprox.</td><td>2,000</td><td data-value="2026-04-01">1 de abril</td><td class="no-print">y</td><td>ABC</td><td>100%</td><td>7</td></tr>
+            <tr style="display:none"><td>Oculta por estilo</td><td>1</td><td>1</td><td>01/01/2026</td><td class="no-print"></td><td></td><td></td><td></td></tr>
+            <tr hidden><td>Oculta por atributo</td><td>1</td><td>1</td><td>01/01/2026</td><td class="no-print"></td><td></td><td></td><td></td></tr>
+            <tr><td>Sur &amp; "Centro"</td><td colspan="2" data-type="number">5,000.00</td><td></td><td class="no-print"></td><td data-type="bool">sí</td><td>0.5</td><td>8</td></tr>
+        </tbody>
+        <tfoot>
+            <tr><td>Total</td><td>$7,234.06</td><td>765.5</td><td colspan="2"></td><td></td><td></td><td></td></tr>
+        </tfoot>
+    </table>
+
+    <!-- Sin thead: la primera fila de th se toma como encabezado. -->
+    <table id="simple">
+        <tr><th>Concepto</th><th>Monto</th></tr>
+        <tr><td>Renta</td><td>$12,000.00</td></tr>
+    </table>
+</body>
+</html>

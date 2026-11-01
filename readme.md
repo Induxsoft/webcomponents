@@ -512,3 +512,116 @@ ___
     miniature-prop="mini">
 </media-list>
 ```
+
+## InduxsoftExcel (exportar a Excel)
+
+`src/js/induxsoft.controls.excel.js` genera archivos **XLSX** (y CSV) en el navegador, **sin dependencias**. Es una biblioteca general: sirve para arreglos de objetos, tablas HTML normales y `edit-table`, y **no depende de EdiTable ni supone que esté cargado** (el componente tampoco la carga). Ejemplo: `examples/excel-demo.html`. Pruebas: `node tests/excel/run.mjs` (ver `tests/excel/README.md`).
+
+```html
+<script src="src/js/induxsoft.controls.excel.js"></script>
+<script>
+  InduxsoftExcel.download(miArreglo, 'clientes');                  // arreglo -> clientes.xlsx
+  InduxsoftExcel.download('#ventas', 'ventas');                    // <table> por selector
+  const blob = InduxsoftExcel.fromEditTable(document.getElementById('productos'));
+</script>
+```
+
+Se expone como `window.InduxsoftExcel` (o `globalThis` fuera del navegador) y como `module.exports` (CommonJS, p. ej. Node 18+ con `require`). Con ESM, impórtalo por efecto (`import './induxsoft.controls.excel.js'`) y usa `globalThis.InduxsoftExcel`; el archivo no usa `export` para no romper la carga con `<script>`.
+
+### Funciones
+
+Todas las `from*` son **sincrónicas** y devuelven un `Blob` XLSX (ZIP sin compresión). Las variantes `*Async` devuelven `Promise<Blob>` comprimido con DEFLATE.
+
+| Función | Qué recibe |
+|---|---|
+| `fromArray(rows, opts)` | Arreglo de objetos planos. |
+| `fromTable(tableOrSelector, opts)` | `<table>` HTML o selector CSS. Si recibe un `edit-table`, delega en `fromEditTable`. |
+| `fromEditTable(table, opts)` | `edit-table`. Se reconoce por *duck typing* (`DataArray` y `Columns`), sin `instanceof` ni referencias a la clase. |
+| `fromData({columns, rows, summary}, opts)` | La forma base; las tres anteriores la usan. |
+| `fromDataAsync`, `fromArrayAsync`, `fromTableAsync`, `fromEditTableAsync` | Lo mismo, con DEFLATE. |
+| `workbook([{name, source, opts}, ...])` | Libro de varias hojas; `source` puede ser arreglo, tabla, `edit-table`, selector u objeto `{columns, rows}`. Devuelve `{toBlob(), toBlobAsync(opts), download(nombre)}`. Los nombres repetidos se desambiguan: `Arreglo`, `Arreglo (2)`. |
+| `download(sourceOrBlob, fileName, opts)` | Descarga un `Blob` o convierte cualquier fuente a XLSX y la descarga. Agrega `.xlsx` si el nombre no termina en `.xlsx` ni `.csv`. |
+| `toCSV(source, opts)` | String CSV (RFC 4180, CRLF) de cualquier fuente. |
+| `exportEditTable(table, opts)` | Atajo: `download(table, export-name o id)`. |
+| `getEditTableData(table, opts)` | El objeto `{columns, rows, summary}` que se arma desde un `edit-table`. |
+
+En realidad las cuatro `from*` aceptan cualquier fuente y deciden por su tipo; los nombres distintos son para que el código se lea mejor.
+
+### `fromData`: columnas
+
+`columns: [{field, title, type, format, width, decs, prefix, sufix, thousandssep, numFmt, options, value, hidden}]` (o una lista de nombres de campo).
+
+- `type`: `Text`, `Memo`, `Number`, `Date`, `DateTime`, `Check`, `Select`, `Custom`, `NoEditable` (como EdiTable; sin distinguir mayúsculas). `NoEditable` con `format="true"` se trata como número.
+- **Números** (`Number`): se guardan como número. `format: 'true'` con `decs`, `thousandssep`, `prefix` y `sufix` se traduce a formato de Excel: `prefix:'$', decs:2, thousandssep:'true'` → `"$"#,##0.00`. Si no hay `format` pero sí alguno de esos atributos, también se aplica. `numFmt`, o un `format` que no sea `true`/`false`/`relative`, se usa tal cual como código de Excel (p. ej. `'0.000%'`). Un texto como `"$ 1,234.50 MXN"` se limpia a 1234.5; si no es número, queda como texto.
+- **Fechas** (`Date`, `DateTime`): se guardan como serial de Excel con formato `dd/mm/yyyy` o `dd/mm/yyyy hh:mm` (opciones `dateFormat` y `dateTimeFormat`). Aceptan `Date` e ISO (`YYYY-MM-DD`, `YYYY-MM-DDTHH:mm[:ss]`, también con espacio); se toman en hora local, sin zona. Lo que no es fecha queda como texto.
+- **Check y booleanos**: por omisión se escriben como texto `Sí`/`No` (lo mismo que muestra EdiTable y legible en cualquier Excel); con `raw: true` o `booleans: 'bool'`, como booleano de Excel. Textos `sí`, `si`, `true`, `1`, `on`, etc. cuentan como verdadero.
+- **Select**: si el valor es una llave de `options`, se exporta el texto de la opción (con `raw: true`, la llave).
+- `field` admite rutas con punto (`cliente.nombre`) y `value: row => ...` calcula el valor.
+- `width`: CSS (`120px`, `10rem`, `15ch`) o número de caracteres. Si no hay, se estima por el contenido (entre 6 y `maxWidth`, 60 por omisión).
+- `summary: {field: valor}` agrega una fila de totales en negritas; si la primera columna no tiene valor, lleva `Total` (`summaryLabel`).
+- Texto: se quitan los caracteres de control inválidos en XML, se escapan `& < > "`, se conservan los espacios y saltos de línea, y se corta a 32,767 caracteres (límite de Excel).
+
+### `fromArray`
+
+- Sin `opts.columns`, las columnas son las llaves en orden de aparición revisando **todas** las filas, y el tipo se infiere por los valores: número (también texto numérico del locale), fecha (`Date`, ISO o fecha del locale; `DateTime` si alguna trae hora), booleano (`Check`) o texto. Si se mezclan tipos, la columna es texto. Los objetos anidados se escriben como JSON.
+- `opts.columns` acepta objetos de columna o nombres de campo; las columnas sin `type` también se infieren.
+- `opts.summary` agrega la fila de totales.
+
+### `fromTable`
+
+- `thead` es el encabezado (puede tener varias filas), `tbody` el cuerpo y `tfoot` los totales en negritas. Sin `thead`, si la primera fila es solo de `th`, se toma como encabezado.
+- `colspan` y `rowspan` se vuelven celdas combinadas de Excel.
+- Omite filas y columnas ocultas (`display:none`, atributo `hidden`, clases `no-print` y `hide-on-print`); `includeHidden: true` las incluye. Una columna está oculta si lo está su `th` de la última fila del encabezado o todas sus celdas.
+- Toma el texto visible (`innerText`). `data-value` da el valor crudo (número con punto decimal o fecha ISO). `data-type="number|date|datetime|text|bool"` en la celda o en el `th` de la columna fuerza el tipo; `data-format` da el código de formato de Excel.
+- Sin `data-type`, reconoce números escritos según el locale (`$1,234.56`, `-1,234.5`, `12.5%`, `1.234,56 €`) y conserva su formato (`"$"#,##0.00`, `0.0%`...). Los enteros con cero a la izquierda (`00123`) quedan como texto. También reconoce fechas ISO y fechas del locale.
+- Nombre de hoja por omisión: `export-name`, `id` o `caption` de la tabla.
+
+### Locale (R7)
+
+Los números y fechas **escritos como texto** (`fromTable` y `fromArray`) se leen según el locale, que se resuelve así:
+
+1. la opción `locale` (BCP 47), o `decimal`, `thousands` y `dateOrder` (`'DMY'`, `'MDY'`, `'YMD'`);
+2. el atributo `lang` del elemento o de su ancestro más cercano (`closest('[lang]')`);
+3. `document.documentElement.lang`;
+4. `navigator.language`;
+5. `'es-MX'`.
+
+Los separadores y el orden de la fecha salen de `Intl.NumberFormat(locale).formatToParts(1234567.5)` y `Intl.DateTimeFormat(locale).formatToParts(...)` (con 1234567.5 porque `es-ES` no agrupa los números de cuatro cifras). Siempre se aceptan ISO 8601 y `data-value`. Las fechas `d/m/aaaa`, `m/d/aaaa` y `aaaa/m/d` admiten `/`, `.` o `-`; si alguna fecha de la columna tiene el primer número mayor que 12 (o el segundo), ese orden se fija para **toda la columna**; si ninguna lo resuelve, decide el locale. En `fromEditTable` no se interpreta texto: se usan los valores de `DataArray` (y `table.Locale`, si existe, para el CSV). El XLSX no depende del locale porque guarda valores.
+
+### `fromEditTable`
+
+- Con la versión 2 del componente usa `table.getExportData(opts)`.
+- Con la versión 1 arma el objeto desde `table.Columns` (title, field, type, format, decs, prefix, sufix, thousandssep, width), `table.hideColumns` y `table.DataArray`. Excluye las columnas `no-print`/`hide-on-print`, las ocultas (salvo `includeHidden`) y las de tipo `Badges`.
+- Select con `keyfield`: exporta el texto (`field`); con `raw`, la llave (`keyfield`). Sin `keyfield`: el texto de la opción.
+- `selectedOnly`: usa `getSelectedRows()` si existe (versión 2); en la versión 1, la fila actual.
+- Nombre de hoja por omisión: atributo `export-name` o `id`.
+
+### Opciones
+
+| Opción | Por omisión | Efecto |
+|---|---|---|
+| `sheetName` | según la fuente, o `Hoja1` | Se sanea: máx. 31 caracteres, sin `[]:*?/\` ni apóstrofo al inicio o al final. |
+| `selectedOnly` | `false` | Solo filas seleccionadas (`edit-table`). |
+| `includeSummary` | `true` si hay `summary` | `false` quita la fila de totales. |
+| `includeHidden` | `false` | Incluye columnas (y en tablas, filas) ocultas. |
+| `raw` | `false` | Valores sin traducir: llave de Select, booleanos de Excel; en CSV, punto decimal. |
+| `booleans` | `'text'` | `'bool'` escribe booleanos de Excel. `trueText`/`falseText` cambian `Sí`/`No`. |
+| `dateFormat`, `dateTimeFormat` | `dd/mm/yyyy`, `dd/mm/yyyy hh:mm` | Formato de fecha de Excel. |
+| `freeze`, `autoFilter` | `true` | Fijar el encabezado y poner autofiltro. |
+| `maxWidth` | `60` | Ancho máximo estimado, en caracteres. |
+| `locale`, `decimal`, `thousands`, `dateOrder` | ver R7 | Lectura de texto. |
+| `compress` | `true` | Solo en `*Async`: `false` usa STORE. |
+| `fileName` | | Nombre para `download`/`exportEditTable`. |
+| `delimiter` (CSV) | `;` si el locale usa coma decimal, si no `,` | Fuerza el delimitador. |
+| `bom` (CSV) | `false` | Antepone BOM UTF-8 para que Excel abra bien los acentos. |
+
+### Lo que genera y por qué
+
+- **ZIP propio** con CRC32. Las funciones sincrónicas usan **STORE** (sin compresión): no hay API sincrónica de compresión en el navegador y así no se necesita ninguna biblioteca. Las `*Async` usan `CompressionStream('deflate-raw')` (unas 9 veces más chico) y, si el navegador no la tiene, regresan a STORE.
+- **SpreadsheetML mínimo**: `[Content_Types].xml`, `_rels/.rels`, `xl/workbook.xml`, `xl/_rels/workbook.xml.rels`, `xl/worksheets/sheetN.xml`, `xl/styles.xml` y `xl/sharedStrings.xml`. Se usa **sharedStrings** (no `inlineStr`) porque cada texto distinto se guarda una vez por libro: con textos repetidos el archivo es más chico, y es la forma que más programas leen. `docProps/core.xml` se omite (es opcional).
+- Encabezado en negritas, panel fijado bajo el encabezado, autofiltro (con `_xlnm._FilterDatabase`), anchos de columna, celdas combinadas y fila de totales en negritas.
+- Rendimiento medido en Chromium headless: 20,000 filas × 10 columnas en unos 0.3–0.5 s (sincrónico, 7.4 MB) y 0.4–0.8 s (asíncrono, 0.85 MB).
+
+### CSV
+
+`toCSV(source, opts)` devuelve texto RFC 4180: campos entre comillas si llevan el delimitador, comillas o saltos de línea; comillas duplicadas; líneas con CRLF. Los números van sin separador de miles y con el separador decimal del locale (con `raw`, punto); las fechas `Date` como `AAAA-MM-DD[ HH:mm:ss]`; los booleanos `Sí`/`No`. Para descargarlo: `InduxsoftExcel.download(new Blob([csv], {type: 'text/csv'}), 'archivo.csv')`.

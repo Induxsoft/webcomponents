@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InduxsoftExcel: exportar a Excel</title>
+    <!-- InduxsoftExcel no depende de EdiTable; aquí se cargan los dos solo para mostrar las cuatro fuentes. -->
+    <script src="../src/js/induxsoft.controls.editable.js"></script>
+    <script src="../src/js/induxsoft.controls.excel.js"></script>
+    <style>
+        body { font-family: system-ui, sans-serif; margin: 1rem; }
+        section { border: 1px solid #DDD; border-radius: 5px; padding: 0 1rem 1rem; margin-bottom: 1rem; }
+        table.plana { border-collapse: collapse; }
+        table.plana th, table.plana td { border: 1px solid #CCC; padding: 2px 8px; }
+        button { margin: .25rem .25rem 0 0; }
+    </style>
+</head>
+<body>
+    <h2>InduxsoftExcel</h2>
+    <p>Datos de ejemplo ficticios. Cada botón genera el archivo en el navegador, sin servidor.</p>
+
+    <section>
+        <h3>1. Arreglo de objetos: <code>fromArray</code></h3>
+        <button id="btn-arreglo">XLSX (columnas inferidas)</button>
+        <button id="btn-arreglo-cols">XLSX (columnas explícitas)</button>
+        <button id="btn-csv">CSV</button>
+    </section>
+
+    <section>
+        <h3>2. Tabla HTML: <code>fromTable</code></h3>
+        <table id="ventas" class="plana">
+            <thead>
+                <tr><th rowspan="2">Zona</th><th colspan="2">Importe</th><th rowspan="2" data-type="date">Fecha</th><th rowspan="2" class="no-print">Uso interno</th></tr>
+                <tr><th>Bruto</th><th>Neto</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Norte</td><td>$1,234.56</td><td>$1,064.28</td><td>15/03/2026</td><td class="no-print">no se exporta</td></tr>
+                <tr><td>Sur</td><td>$980.00</td><td>$844.83</td><td>02/04/2026</td><td class="no-print">no se exporta</td></tr>
+            </tbody>
+            <tfoot>
+                <tr><td>Total</td><td>$2,214.56</td><td>$1,909.11</td><td></td><td class="no-print"></td></tr>
+            </tfoot>
+        </table>
+        <button id="btn-tabla">XLSX de la tabla</button>
+    </section>
+
+    <section>
+        <h3>3. EdiTable: <code>fromEditTable</code></h3>
+        <edit-table id="productos" export-name="Productos" data='[
+            {"clave":"P-01","nombre":"Cuaderno","precio":45.5,"unidad":"PZA","alta":"2026-01-15","activo":"Sí"},
+            {"clave":"P-02","nombre":"Lápiz","precio":7,"unidad":"CAJA","alta":"2026-02-03","activo":"No"}
+        ]'>
+            <edit-thead>
+                <edit-tr>
+                    <edit-th type="NoEditable" field="clave">Clave</edit-th>
+                    <edit-th type="Text" field="nombre" width="200px">Nombre</edit-th>
+                    <edit-th type="Number" field="precio" format="true" thousandssep="true" decs="2" prefix="$ ">Precio</edit-th>
+                    <edit-th type="Select" field="unidad" options='{"PZA":"PIEZA","CAJA":"CAJA"}'>Unidad</edit-th>
+                    <edit-th type="Date" field="alta">Alta</edit-th>
+                    <edit-th type="Check" field="activo">Activo</edit-th>
+                </edit-tr>
+            </edit-thead>
+        </edit-table>
+        <button id="btn-edittable">XLSX del edit-table</button>
+    </section>
+
+    <section>
+        <h3>4. Forma base y varias hojas: <code>fromData</code> y <code>workbook</code></h3>
+        <button id="btn-data">XLSX con fromData (con totales)</button>
+        <button id="btn-libro">Libro con las cuatro fuentes</button>
+    </section>
+
+    <script>
+        const clientes = [
+            { id: 1, nombre: 'Papelería Ejemplo', alta: new Date(2026, 0, 5), activo: true, contacto: { nombre: 'Ana Prueba' }, saldo: 1520.75 },
+            { id: 2, nombre: 'Abarrotes Demo', alta: '2026-02-10T10:30:00', activo: false, contacto: { nombre: 'Luis Ficticio' }, saldo: 0 }
+        ];
+        const datos = {
+            columns: [
+                { field: 'concepto', title: 'Concepto', type: 'Text' },
+                { field: 'importe', title: 'Importe', type: 'Number', format: 'true', decs: 2, thousandssep: 'true', prefix: '$' }
+            ],
+            rows: [{ concepto: 'Renta', importe: 12000 }, { concepto: 'Luz', importe: 1500.5 }],
+            summary: { importe: 13500.5 }
+        };
+        const on = (id, f) => document.getElementById(id).addEventListener('click', f);
+
+        on('btn-arreglo', () => InduxsoftExcel.download(clientes, 'clientes'));
+        on('btn-arreglo-cols', () => InduxsoftExcel.download(clientes, 'clientes-columnas', {
+            columns: ['nombre', { field: 'contacto.nombre', title: 'Contacto' }, { title: 'Estado', value: r => r.activo ? 'Activo' : 'Baja' },
+                { field: 'saldo', title: 'Saldo', type: 'Number', format: 'true', decs: 2, thousandssep: 'true', prefix: '$' }]
+        }));
+        on('btn-csv', () => {
+            const csv = InduxsoftExcel.toCSV(clientes, { bom: true });
+            InduxsoftExcel.download(new Blob([csv], { type: 'text/csv' }), 'clientes.csv');
+        });
+        on('btn-tabla', () => InduxsoftExcel.download(InduxsoftExcel.fromTable('#ventas'), 'ventas'));
+        on('btn-edittable', () => InduxsoftExcel.download(InduxsoftExcel.fromEditTable(document.getElementById('productos')), 'productos'));
+        on('btn-data', () => InduxsoftExcel.download(InduxsoftExcel.fromData(datos, { sheetName: 'Gastos' }), 'gastos'));
+        on('btn-libro', () => InduxsoftExcel.workbook([
+            { name: 'Clientes', source: clientes },
+            { name: 'Ventas', source: '#ventas' },
+            { name: 'Productos', source: document.getElementById('productos') },
+            { name: 'Gastos', source: datos }
+        ]).download('libro-completo'));
+    </script>
+</body>
+</html>

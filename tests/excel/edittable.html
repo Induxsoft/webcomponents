@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+    <meta charset="UTF-8">
+    <title>Prueba InduxsoftExcel con edit-table (versión 1)</title>
+    <script src="../../src/js/induxsoft.controls.editable.js"></script>
+    <script src="../../src/js/induxsoft.controls.excel.js"></script>
+</head>
+<body>
+    <!-- Datos de prueba falsos. -->
+    <edit-table id="productos" data='[
+        {"clave":"A-001","nombre":"Tornillo <M4> & \"tuerca\"","precio":"1234.5","unidad":"PZA","alta":"2026-01-15","mod":"2026-01-15T13:45:00","activo":"Sí","extra":"x","nota":"Línea 1\nLínea 2","interno":"no debe salir","oculto":"tampoco"},
+        {"clave":"A-002","nombre":"Arandela","precio":0.75,"unidad":"CAJA","alta":"2026-02-01","mod":"2026-02-01 08:00","activo":"No","extra":"","nota":"","interno":"","oculto":""},
+        {"clave":"A-003","nombre":"Rondana","precio":"$ 2,000.00 MXN","unidad":"PAQ","alta":"","mod":"","activo":true,"extra":"","nota":"","interno":"","oculto":""}
+    ]'>
+        <edit-thead>
+            <edit-tr>
+                <edit-th type="NoEditable" field="clave">Clave</edit-th>
+                <edit-th type="Text" field="nombre" width="250px">Nombre</edit-th>
+                <edit-th type="Number" field="precio" format="true" thousandssep="true" decs="2" prefix="$ " sufix=" MXN">Precio</edit-th>
+                <edit-th type="Select" field="unidad" options='{"PZA":"PIEZA","PAQ":"PAQUETE","CAJA":"CAJA"}'>Unidad</edit-th>
+                <edit-th type="Date" field="alta">Alta</edit-th>
+                <edit-th type="DateTime" field="mod">Modificado</edit-th>
+                <edit-th type="Check" field="activo">Activo</edit-th>
+                <edit-th type="Custom" field="extra">Extra</edit-th>
+                <edit-th type="Memo" field="nota">Nota</edit-th>
+                <edit-th type="Text" field="interno" class="no-print">Interno</edit-th>
+                <edit-th type="Text" field="oculto">Oculto</edit-th>
+            </edit-tr>
+        </edit-thead>
+    </edit-table>
+
+    <!-- Select con keyfield: field guarda el texto y keyfield la llave. -->
+    <edit-table id="conllave" data='[{"unidad_txt":"PIEZA","unidad_id":"PZA"},{"unidad_txt":"CAJA","unidad_id":"CAJA"}]'>
+        <edit-thead>
+            <edit-tr>
+                <edit-th type="Select" field="unidad_txt" keyfield="unidad_id" options='{"PZA":"PIEZA","CAJA":"CAJA"}'>Unidad</edit-th>
+            </edit-tr>
+        </edit-thead>
+    </edit-table>
+
+    <!-- Tabla HTML normal en la misma página, para el libro de varias hojas. -->
+    <table id="plana"><thead><tr><th>Concepto</th><th>Monto</th></tr></thead><tbody><tr><td>Luz</td><td>$1,500.00</td></tr></tbody></table>
+</body>
+</html>
