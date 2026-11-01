@@ -102,19 +102,21 @@ t('08', 'ResetLayout vuelve a lo declarado en edit-thead', ['§9-e'], async (c) 
 
 // ---------- §9.2 guardado automático ----------
 const RUTA = '/pantallas/productos.html';
+// Ruta única por prueba: en paralelo, dos pruebas con la misma ruta se reemplazan la página (ver AJUSTES.md).
+const R = (id) => '/pantallas/productos-d' + id + '.html';
 // Ajuste (AJUSTES.md): las que recargan o reemplazan la página usan su propia ruta (el servidor es compartido en paralelo).
 const RUTA_24 = '/pantallas/productos-24.html', RUTA_30 = '/pantallas/productos-30.html', RUTA_31 = '/pantallas/productos-31.html';
 t('20', 'cambio del usuario (ancho): se guarda en IndexedDB induxsoft-edittable/layouts con llave sha256(origin+pathname+"#"+id)', ['§9-g', '§9-h', '§9-i', '§9-j'], async (c) => {
-  await c.abrir(pag({ ruta: RUTA }));
+  await c.abrir(pag({ ruta: R('20') }));
   await ensanchar(c, 0, 60);
   await c.esperar(900);
   const g = await guardados(c);
-  const k = await llave(c, c.srv.base + RUTA + '#t1');
+  const k = await llave(c, c.srv.base + R('20') + '#t1');
   c.ok(Array.isArray(g), 'no existe la base induxsoft-edittable');
   c.contiene(g.map(x => x.key), k, 'llave');
 });
 t('21', 'se guarda con retraso de 500 ms (nada a los 200 ms)', ['§9-j'], async (c) => {
-  await c.abrir(pag({ ruta: RUTA }));
+  await c.abrir(pag({ ruta: R('21') }));
   await ensanchar(c, 0, 60);
   await c.esperar(200);
   const antes = (await guardados(c)) ?? [];
@@ -123,17 +125,17 @@ t('21', 'se guarda con retraso de 500 ms (nada a los 200 ms)', ['§9-j'], async 
   c.igual([antes.length, despues.length], [0, 1]);
 });
 t('22', 'lo que cambia el programador por código o con setLayout no se guarda', ['§9-j'], async (c) => {
-  await c.abrir(pag({ ruta: RUTA }));
+  await c.abrir(pag({ ruta: R('22') }));
   await c.ev(() => { const t = __ct.t('t1'); t.HideColumn && t.HideColumn('nombre'); t.setLayout({ v: 1, columns: [{ field: 'precio', order: 0 }] }); });
   await c.esperar(900);
   c.igual(((await guardados(c)) ?? []).length, 0);
 });
 t('23', 'al recargar se restaura (ancho), y la query string no cambia la llave', ['§9-k', '§9-i', '§9-n'], async (c) => {
-  await c.abrir(pag({ ruta: RUTA }));
+  await c.abrir(pag({ ruta: R('23') }));
   await ensanchar(c, 1, 80);
   const w = await c.ev(() => __ct.th('t1', 1).getBoundingClientRect().width);
   await c.esperar(900);
-  await c.page.goto(c.srv.base + RUTA + '?filtro=otro', { waitUntil: 'load' }); await c.esperar(150);
+  await c.page.goto(c.srv.base + R('23') + '?filtro=otro', { waitUntil: 'load' }); await c.esperar(150);
   c.cerca(await c.ev(() => __ct.th('t1', 1).getBoundingClientRect().width), w, 3, 'ancho restaurado');
 });
 t('24', 'la restauración no dispara eventos de usuario', ['§9-k'], async (c) => {
@@ -144,12 +146,12 @@ t('24', 'la restauración no dispara eventos de usuario', ['§9-k'], async (c) =
   c.igual(((await c.ev(() => window.lc)) ?? []).filter(r => ['resize', 'move', 'visibility', 'fixed', 'sort', 'group'].includes(r)), []);
 });
 t('25', 'design-key reemplaza pathname+"#"+id en la llave', ['§9-i'], async (c) => {
-  await c.abrir(pag({ ruta: RUTA, a: { 'design-key': 'usuario-7/productos' } }));
+  await c.abrir(pag({ ruta: R('25'), a: { 'design-key': 'usuario-7/productos' } }));
   await ensanchar(c, 0, 50); await c.esperar(900);
   c.contiene((await guardados(c, true)).map(x => x.key), await llave(c, c.srv.base + 'usuario-7/productos'));
 });
 t('26', 'sin id no se guarda nada', ['§9-m'], async (c) => {
-  await c.abrir({ body: tabla({ id: '', cols: COLS(), data: PRODUCTOS }), ruta: RUTA });
+  await c.abrir({ body: tabla({ id: '', cols: COLS(), data: PRODUCTOS }), ruta: R('26') });
   const h = await c.page.evaluateHandle(() => document.querySelector('edit-table').shadowRoot.querySelector('th .sizable-border'));
   const b = await h.asElement().boundingBox();
   await c.page.mouse.move(b.x + 2, b.y + 4); await c.page.mouse.down(); await c.page.mouse.move(b.x + 60, b.y + 4, { steps: 4 }); await c.page.mouse.up();
@@ -157,17 +159,17 @@ t('26', 'sin id no se guarda nada', ['§9-m'], async (c) => {
   c.igual(((await guardados(c)) ?? []).length, 0);
 });
 t('27', 'con el id de reserva interno tampoco se guarda', ['§9-m'], async (c) => {
-  await c.abrir(pag({ id: 'f077fb41716141eeb7ecb1ed0a1ce292', ruta: RUTA }));
+  await c.abrir(pag({ id: 'f077fb41716141eeb7ecb1ed0a1ce292', ruta: R('27') }));
   await ensanchar(c, 0, 50, 'f077fb41716141eeb7ecb1ed0a1ce292'); await c.esperar(900);
   c.igual(((await guardados(c)) ?? []).length, 0);
 });
 t('28', 'design-auto-save="false" no guarda', ['§9-g'], async (c) => {
-  await c.abrir(pag({ ruta: RUTA, a: { 'design-auto-save': 'false' } }));
+  await c.abrir(pag({ ruta: R('28'), a: { 'design-auto-save': 'false' } }));
   await ensanchar(c, 0, 50); await c.esperar(900);
   c.igual(((await guardados(c)) ?? []).length, 0);
 });
 t('29', 'DesignAutoSaveSort=false (omisión): el orden de las filas no se recuerda; DataArray[0] al recargar es el original', ['§9-n'], async (c) => {
-  await c.abrir(pag({ ruta: RUTA }));
+  await c.abrir(pag({ ruta: R('29') }));
   await c.clicTh('t1', 'codigo'); await c.clicTh('t1', 'codigo');
   await ensanchar(c, 1, 40); await c.esperar(900);
   await c.page.reload({ waitUntil: 'load' }); await c.esperar(150);
@@ -193,19 +195,19 @@ t('31', 'huella de columnas: si cambian los field declarados, el diseño guardad
   c.cerca(await c.ev(() => __ct.th('t1', 1).getBoundingClientRect().width), w0, 3, 'ancho declarado (carga limpia: ' + w0 + '), no el guardado');
 });
 t('32', 'IndexedDB no disponible: se desactiva sin errores y la tabla funciona', ['§9-l'], async (c) => {
-  await c.abrir(pag({ ruta: RUTA, antes: "<script>Object.defineProperty(window,'indexedDB',{get(){throw new Error('bloqueado');}});</script>" }));
+  await c.abrir(pag({ ruta: R('32'), antes: "<script>Object.defineProperty(window,'indexedDB',{get(){throw new Error('bloqueado');}});</script>" }));
   await ensanchar(c, 0, 50); await c.esperar(900);
   c.sinErrores();
   await c.clic('t1', 1, 1); await c.tecla('F2');
   c.igual(await c.ev(() => __ct.t('t1').Editing), true);
 });
 t('33', 'IndexedDB.open que falla (onerror): sin errores', ['§9-l'], async (c) => {
-  await c.abrir(pag({ ruta: RUTA, antes: "<script>IDBFactory.prototype.open=function(){const r={};setTimeout(()=>{r.error=new Error('x');r.onerror&&r.onerror({target:r});},0);return r;};</script>" }));
+  await c.abrir(pag({ ruta: R('33'), antes: "<script>IDBFactory.prototype.open=function(){const r={};setTimeout(()=>{r.error=new Error('x');r.onerror&&r.onerror({target:r});},0);return r;};</script>" }));
   await ensanchar(c, 0, 50); await c.esperar(900);
   c.sinErrores();
 });
 t('34', 'ForgetLayout() borra lo guardado de esta tabla; EditTable.ForgetAllLayouts() borra todo', ['§9-p'], async (c) => {
-  await c.abrir(pag({ ruta: RUTA, body: tabla({ id: 't2', cols: COLS(), data: PRODUCTOS }) }));
+  await c.abrir(pag({ ruta: R('34'), body: tabla({ id: 't2', cols: COLS(), data: PRODUCTOS }) }));
   await ensanchar(c, 0, 50); await ensanchar(c, 0, 50, 't2'); await c.esperar(900);
   c.igual((await guardados(c, true)).length, 2);
   await c.ev(async () => { await __ct.t('t1').ForgetLayout(); });
@@ -216,13 +218,13 @@ t('34', 'ForgetLayout() borra lo guardado de esta tabla; EditTable.ForgetAllLayo
   c.igual(((await guardados(c)) ?? []).length, 0);
 });
 t('35', 'ResetLayout borra lo guardado', ['§9-e', '§9-p'], async (c) => {
-  await c.abrir(pag({ ruta: RUTA }));
+  await c.abrir(pag({ ruta: R('35') }));
   await ensanchar(c, 0, 50); await c.esperar(900);
   await c.ev(() => __ct.t('t1').ResetLayout()); await c.esperar(200);
   c.igual(((await guardados(c)) ?? []).length, 0);
 });
 t('36', 'el registro guardado no incluye el orden de filas ni la agrupación por omisión', ['§9-n', '§11-k'], async (c) => {
-  await c.abrir(pag({ ruta: RUTA }));
+  await c.abrir(pag({ ruta: R('36') }));
   await c.clicTh('t1', 'codigo'); await ensanchar(c, 0, 50); await c.esperar(900);
   const lista = await guardados(c, true); c.ok(lista.length > 0, 'no se guardó nada'); const g = lista[0].value;
   const l = g.layout ?? g;
