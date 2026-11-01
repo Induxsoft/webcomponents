@@ -55,6 +55,7 @@ class EditTable extends HTMLElement
     attributeChangedCallback(name, oldValue, newValue)
     {
         if (newValue === oldValue || !this._f1Inicializada) return;
+        this._f3AtributoCambiado?.(name, newValue);   // F3: column-chooser, column-reorder y design-*
         switch (name)
         {
             case 'hidde-selector':
@@ -332,6 +333,7 @@ class EditTable extends HTMLElement
             this._resizableGrid(this._table);
             this._setSortEvent();
             this._setMoveEvent();
+            this._f3Inicializar?.();   // F3: columnas fijas, selector, reordenar y diseño guardado
 
             // Si no se ha proporcionado el atributo data para el dataArray se genera a partir del contenido de la tabla
             if (this.DataArray.length < 1) this.UpdateData();
@@ -395,6 +397,7 @@ class EditTable extends HTMLElement
         if (this._selIO) { this._selIO.disconnect(); this._selIO = null; }
         if (this._widthRO) { this._widthRO.disconnect(); this._widthRO = null; this._lastWidth = -1; }
         if (this._ensureRaf) { cancelAnimationFrame(this._ensureRaf); this._ensureRaf = 0; }
+        this._f3Liberar?.();   // F3: ResizeObserver de las columnas fijas y menú abierto
     }
 
     _f1Reconectar()
@@ -410,6 +413,7 @@ class EditTable extends HTMLElement
             this._setupSelectionKeeper();
             if (this._selTr && this._selTr.isConnected) this._trackSelection(this._selTr);
         } catch (e) { console.error('EditTable: error al reconectar', e); }
+        this._f3Reconectar?.();   // F3
     }
 
     // F1 (C5): lectura de atributos booleanos: "false", "0" y "no" significan falso.
@@ -671,6 +675,7 @@ class EditTable extends HTMLElement
                 const f = th?.getAttribute?.('field');
                 if (f != undefined && th.style.width) this._f1EstadoColumna(f).ancho = th.style.width;
             });
+            if (curCol) this._f3Redimensionado?.(curCol, curColWidth);   // F3: posiciones de las fijas y LayoutChanged 'resize'
             curCol = undefined;
             nxtCol = undefined;
             nxtCol = undefined;
@@ -780,6 +785,7 @@ class EditTable extends HTMLElement
                         this.Sort(this.DataArray, (field.getAttribute('field')??''), desc);
                     }
                     this._printRows();
+                    this._f3Ordenado?.((field.getAttribute('field')??''), desc);   // F3: layout.sort y LayoutChanged 'sort'
                 }
             };
         });
@@ -1141,7 +1147,13 @@ class EditTable extends HTMLElement
                 OnSort:"onsort",
                 BadgeClick:"badgeclick",
                 ViewModeChanged:"viewmodechanged",
-                MaskInvalid:"maskinvalid"           // F1 (C15): badInput del control nativo de Number
+                MaskInvalid:"maskinvalid",          // F1 (C15): badInput del control nativo de Number
+                ColumnFixedChanged:"columnfixedchanged",            // F3 (§6)
+                ColumnVisibilityChanged:"columnvisibilitychanged",  // F3 (§7)
+                BeforeColumnMove:"beforecolumnmove",                // F3 (§8)
+                ColumnMoved:"columnmoved",                          // F3 (§8)
+                LayoutChanged:"layoutchanged",                      // F3 (§9)
+                LayoutRejected:"layoutrejected"                     // F3 (§9)
             },
             SelectorId:"__table_selector",
             InputId:"__table_input",
@@ -1845,6 +1857,7 @@ class EditTable extends HTMLElement
 
             this._setMoveEvent();
             this._decorateRow(nr, indexRow, this.DataArray[indexRow]);
+            this._f3TrasDibujar?.();   // F3
 
             if (!nofocus)
                 this.CellFocus(nr.querySelector('td:not(.hidde-col)'));
@@ -2815,6 +2828,7 @@ class EditTable extends HTMLElement
         });
         this.Initialize(this._table.getAttribute('id'));
         this._setMoveEvent();
+        this._f3TrasDibujar?.();   // F3: clases y left de las columnas fijas en las filas nuevas
     }
 
     _setIndent=(td, indent=0)=>
@@ -4304,6 +4318,7 @@ class EditTable extends HTMLElement
         if (!hide) this._f1Ocultas = this._f1Ocultas.filter(f => f !== f1Field);
         else if (!this._f1Ocultas.includes(f1Field)) this._f1Ocultas.push(f1Field);
         this.hideColumns = this._f1DerivarHideColumns();
+        this._f3TrasOcultar?.(f1Field, !!hide);   // F3: recalcula las fijas y el menú
 
         this.RefreshBadges();
         return true;
@@ -4388,8 +4403,1012 @@ class EditTable extends HTMLElement
             case this.EdiTable.Const.Events.MaskInvalid:   // F1 (C15, R4)
                 this._getCurren().Events[this.EdiTable.Const.Events.MaskInvalid] = listener
                 break;
+            case this.EdiTable.Const.Events.ColumnFixedChanged:   // F3
+                this._getCurren().Events[this.EdiTable.Const.Events.ColumnFixedChanged] = listener
+                break;
+            case this.EdiTable.Const.Events.ColumnVisibilityChanged:   // F3
+                this._getCurren().Events[this.EdiTable.Const.Events.ColumnVisibilityChanged] = listener
+                break;
+            case this.EdiTable.Const.Events.BeforeColumnMove:   // F3
+                this._getCurren().Events[this.EdiTable.Const.Events.BeforeColumnMove] = listener
+                break;
+            case this.EdiTable.Const.Events.ColumnMoved:   // F3
+                this._getCurren().Events[this.EdiTable.Const.Events.ColumnMoved] = listener
+                break;
+            case this.EdiTable.Const.Events.LayoutChanged:   // F3
+                this._getCurren().Events[this.EdiTable.Const.Events.LayoutChanged] = listener
+                break;
+            case this.EdiTable.Const.Events.LayoutRejected:   // F3
+                this._getCurren().Events[this.EdiTable.Const.Events.LayoutRejected] = listener
+                break;
         }
     }
+    // ===== F3: columnas fijas (§6), mostrar y ocultar (§7), reordenar (§8) y diseño (§9) =====
+    //
+    // Sin fixed, column-chooser ni column-reorder no se agrega nada al DOM ni al CSS (R1). Lo único
+    // activo por omisión es el guardado automático de anchos en IndexedDB (§9.2, D3), con sus salvaguardas.
+    // Los eventos nuevos solo se llaman si el consumidor registró un manejador para ellos.
+
+    static { EditTable.features.push('fixed', 'chooser', 'reorder', 'layout'); }
+
+    DesignAutoSave = true;          // §9.2: design-auto-save
+    DesignKey = null;               // §9.2: design-key (reemplaza pathname + '#' + id)
+    DesignAutoSaveSort = false;     // §9.2: design-auto-save-sort (orden de filas y agrupación)
+
+    _f3Chooser = false;
+    _f3Reorder = false;
+    _f3Declarado = null;            // [{col, field, fixed, width}] en el orden de edit-thead
+    _f3Huella = '';
+    _f3Orden = null;                // {field, dir} del último orden por clic o por diseño
+    _f3Usuario = false;             // true mientras corre una acción del usuario (se autoguarda)
+    _f3Silencio = false;            // true mientras se aplica un diseño (sin LayoutChanged)
+    _f3Timer = 0;
+    _f3RO = null;
+    _f3ROClave = '';
+    _f3TeniaFijas = false;
+    _f3EstiloEl = null;
+    _f3Menu = null;
+    _f3MenuCampo = null;
+    _f3Boton = null;
+    _f3Indicador = null;
+    _f3Arrastre = null;
+    _f3Globales = false;
+
+    get ColumnChooser() { return this._f3Chooser; }
+    set ColumnChooser(v) { this._f3Chooser = this._f3Bool(v); if (this._f1Inicializada) this._f3AplicarChooser(); }
+    get ColumnReorder() { return this._f3Reorder; }
+    set ColumnReorder(v) { this._f3Reorder = this._f3Bool(v); if (this._f1Inicializada) this._f3AplicarReorder(); }
+
+    _f3Bool(v)
+    {
+        if (v === true) return true;
+        if (v === false || v == null) return false;
+        return !this._f1EsFalso(v);
+    }
+    _f3Sys() { return (this._etSysCols?.() ?? 0); }
+    _f3FilaEnc()
+    {
+        const th = this._table?.tHead;
+        if (!th) return null;
+        return th.rows[this.TheadRowIndex] ?? th.rows[0] ?? null;
+    }
+    _f3Indice(field) { return (field == undefined ? -1 : this.Columns.findIndex(c => c && c.field === field)); }
+    _f3EsFija(field) { return !!this._f1EstadoColumnas.get(field)?.fija; }
+    _f3Visible(c) { return !!c && (c.field == undefined || !this._f1ColumnaOculta(c.field)); }
+    _f3ThDe(field)
+    {
+        const i = this._f3Indice(field);
+        return (i < 0 ? null : (this._f3FilaEnc()?.cells[this._f3Sys() + i] ?? null));
+    }
+    _f3NumFijas() { return this.Columns.filter(c => c && c.field != undefined && this._f3EsFija(c.field)).length; }
+
+    _f3Disparar(nombre, args)
+    {
+        const k = this.EdiTable.Const.Events[nombre];
+        if (!k) return null;
+        let ev = this._getCurren().Events;
+        if (!ev || !Object.prototype.hasOwnProperty.call(ev, k)) ev = this.Events;
+        if (!ev || !Object.prototype.hasOwnProperty.call(ev, k)) return null;
+        const fn = ev[k];
+        if (typeof fn !== 'function') return null;
+        const a = (typeof args === 'function') ? args() : args;
+        a.sender = this._getCurren();
+        try { fn(a); } catch (e) { console.error('EditTable: error en el manejador de ' + nombre, e); }
+        return a;
+    }
+    _f3ComoUsuario(fn)
+    {
+        const antes = this._f3Usuario;
+        this._f3Usuario = true;
+        try { return fn(); } finally { this._f3Usuario = antes; }
+    }
+    _f3Cambio(reason)
+    {
+        if (this._f3Silencio) return;
+        this._f3Disparar('LayoutChanged', () => ({ layout: this.getLayout(), reason }));
+        if (this._f3Usuario) this._f3ProgramarGuardado(reason);
+    }
+
+    // ---------- ciclo de vida (enganches) ----------
+    _f3Inicializar()
+    {
+        try
+        {
+            const a = (n) => this.getAttribute(n);
+            if (this.hasAttribute('column-chooser')) this._f3Chooser = this._f3Bool(a('column-chooser'));
+            if (this.hasAttribute('column-reorder')) this._f3Reorder = this._f3Bool(a('column-reorder'));
+            if (this.hasAttribute('design-auto-save')) this.DesignAutoSave = this._f3Bool(a('design-auto-save'));
+            if (this.hasAttribute('design-key')) this.DesignKey = ((a('design-key') ?? '').trim() || null);
+            if (this.hasAttribute('design-auto-save-sort')) this.DesignAutoSaveSort = this._f3Bool(a('design-auto-save-sort'));
+
+            this._f3Declarado = this.Columns.map(c => ({
+                col: c, field: c?.field,
+                fixed: (c?.field != undefined && ['left', 'true'].includes(String(c?.fixed ?? '').trim().toLowerCase())),
+                width: (c?.width ?? null)
+            }));
+            this._f3Huella = EditTable._f3Sha256(this._f3Declarado.map(d => String(d.field ?? '')).join('\u001f'));
+            this._f3Declarado.forEach(d => { if (d.fixed) this._f1EstadoColumna(d.field).fija = true; });
+            if (this._f3Declarado.some(d => d.fixed))
+            {
+                this._f3Permutar(this._f3Normalizar(this.Columns.slice()));
+                this._f3Posiciones();
+            }
+            if (this._f3Chooser) this._f3AplicarChooser();
+            if (this._f3Reorder) this._f3AplicarReorder();
+            // Después de los DOMContentLoaded de los consumidores (pueden poner DesignKey o DataArray).
+            // La base se abre desde ya para que la restauración llegue lo antes posible.
+            if (this.DesignAutoSave && this._f3Llave()) EditTable._f3AbrirBd();
+            setTimeout(() => this._f3Restaurar(), 0);
+        }
+        catch (e) { console.error('EditTable F3: error al inicializar', e); }
+    }
+    _f3AtributoCambiado(name, v)
+    {
+        switch (name)
+        {
+            case 'column-chooser': this.ColumnChooser = (v !== null && this._f3Bool(v)); break;
+            case 'column-reorder': this.ColumnReorder = (v !== null && this._f3Bool(v)); break;
+            case 'design-auto-save': this.DesignAutoSave = (v === null ? true : this._f3Bool(v)); break;
+            case 'design-key': this.DesignKey = ((v ?? '').trim() || null); break;
+            case 'design-auto-save-sort': this.DesignAutoSaveSort = (v !== null && this._f3Bool(v)); break;
+        }
+    }
+    _f3Liberar()
+    {
+        if (this._f3RO) { this._f3RO.disconnect(); this._f3ROClave = ''; }
+        this._f3CerrarMenu(false);
+        this._f3FinArrastre();
+    }
+    _f3Reconectar() { if (this._f3TeniaFijas) this._f3Posiciones(); }
+    _f3TrasDibujar() { if (this._f3TeniaFijas) this._f3Posiciones(); }
+    _f3TrasOcultar(field, hide)
+    {
+        if (this._f3TeniaFijas) this._f3Posiciones();
+        this._f3ActualizarMenu();
+    }
+    _f3Redimensionado(th, antes)
+    {
+        if (Math.abs((th?.offsetWidth ?? 0) - (antes ?? 0)) < 1) return;
+        if (this._f3TeniaFijas) this._f3Posiciones();
+        this._f3ComoUsuario(() => this._f3Cambio('resize'));
+    }
+    _f3Ordenado(field, desc)
+    {
+        if (!field) return;
+        this._f3Orden = { field, dir: (desc ? 'DESC' : 'ASC') };
+        this._f3ComoUsuario(() => this._f3Cambio('sort'));
+    }
+
+    // ---------- reordenar físicamente: Columns, thead, tbody y tfoot juntos (R3) ----------
+    _f3Normalizar(orden)
+    {
+        const fija = (c) => (c && c.field != undefined && this._f3EsFija(c.field));
+        return [...orden.filter(fija), ...orden.filter(c => !fija(c))];
+    }
+    _f3Permutar(orden)
+    {
+        const cols = this.Columns, n = cols.length;
+        if (!Array.isArray(orden) || orden.length !== n) return false;
+        const perm = orden.map(c => cols.indexOf(c));
+        if (perm.some(p => p < 0) || new Set(perm).size !== n) return false;
+        if (perm.every((p, k) => p === k)) return false;
+
+        const t = this._table, sys = this._f3Sys();
+        const activo = this._shadow?.activeElement ?? null;
+        // F1 (C20) guarda los títulos declarados por cellIndex: se reasignan a la nueva posición.
+        const titulos = [];
+        this._f1TitulosDeclarados.forEach((v, k) => { const c = cols[k - sys]; if (c) titulos.push([c, v]); });
+
+        const filas = [];
+        if (t.tHead) filas.push(...t.tHead.rows);
+        Array.from(t.tBodies).forEach(tb => filas.push(...tb.rows));
+        if (t.tFoot) filas.push(...t.tFoot.rows);   // F2: el pie se mueve con las columnas
+        filas.forEach(tr => {
+            const celdas = Array.from(tr.cells);
+            if (celdas.length !== sys + n) return;   // filas de grupo o de relleno
+            const datos = celdas.slice(sys);
+            const frag = document.createDocumentFragment();
+            perm.forEach(p => frag.appendChild(datos[p]));
+            tr.appendChild(frag);
+        });
+
+        const nuevas = perm.map(p => cols[p]);
+        cols.splice(0, n, ...nuevas);
+        this._f1TitulosDeclarados.clear();
+        titulos.forEach(([c, v]) => this._f1TitulosDeclarados.set(cols.indexOf(c) + sys, v));
+        cols.forEach((c, i) => { if (c?.field != undefined) this._f1EstadoColumna(c.field).orden = i; });
+        this.hideColumns = this._f1DerivarHideColumns();
+        this._cardsInfo = null;
+        if (this.ShowAsTree) this._printRows();   // el botón del árbol vive en la primera columna
+        if (activo && activo.isConnected && this._shadow.activeElement !== activo)
+            try { activo.focus({ preventScroll: true }); } catch (e) { }
+        return true;
+    }
+
+    // ---------- §6 columnas fijas ----------
+    IsColumnFixed(field) { return this._f3Indice(field) >= 0 && this._f3EsFija(field); }
+    FixColumn(field, fixed = true)
+    {
+        fixed = !!fixed;
+        const i = this._f3Indice(field);
+        if (i < 0 || this._f3EsFija(field) === fixed) return false;
+        const col = this.Columns[i];
+        const resto = this.Columns.filter(c => c !== col);
+        this._f1EstadoColumna(field).fija = fixed;
+        resto.splice(this._f3NumFijas() - (fixed ? 1 : 0), 0, col);   // al final del grupo de las fijas
+        this._f3Permutar(this._f3Normalizar(resto));
+        this._f3Posiciones();
+        this._f3ActualizarMenu();
+        this._f3Disparar('ColumnFixedChanged', { field, fixed });
+        this._f3Cambio('fixed');
+        return true;
+    }
+    _f3Posiciones()
+    {
+        const t = this._table;
+        if (!t) return;
+        const n = this.Columns.length, sys = this._f3Sys();
+        const fijas = [];
+        this.Columns.forEach((c, i) => { if (c?.field != undefined && this._f3EsFija(c.field)) fijas.push(i); });
+        if (!fijas.length && !this._f3TeniaFijas) return;
+        this._f3Estilo();
+        this._f3TeniaFijas = fijas.length > 0;
+        t.classList.toggle('et-has-fixed', fijas.length > 0);
+
+        const enc = this._f3FilaEnc();
+        const visible = (cell) => cell && !cell.classList.contains('hidde-col');
+        const left = new Map();
+        let acc = 0, ultima = -1;
+        const obs = [];
+        if (fijas.length)
+        {
+            for (let s = 0; s < sys; s++) { const c = enc?.cells[s]; left.set(s, acc); if (visible(c)) { acc += c.getBoundingClientRect().width; obs.push(c); } }
+            fijas.forEach(i => { const c = enc?.cells[sys + i]; left.set(sys + i, acc); if (visible(c)) { acc += c.getBoundingClientRect().width; ultima = sys + i; obs.push(c); } });
+        }
+        const filas = [];
+        if (t.tHead) filas.push(...t.tHead.rows);
+        Array.from(t.tBodies).forEach(tb => filas.push(...tb.rows));
+        if (t.tFoot) filas.push(...t.tFoot.rows);
+        filas.forEach(tr => {
+            const cells = tr.cells;
+            if (cells.length !== sys + n) return;
+            for (let k = 0; k < cells.length; k++)
+            {
+                const cell = cells[k], l = left.get(k);
+                if (l !== undefined)
+                {
+                    if (!cell.classList.contains('et-fixed')) cell.classList.add('et-fixed');
+                    const px = l + 'px';
+                    if (cell.style.left !== px) cell.style.left = px;
+                    if (cell.classList.contains('et-fixed-last') !== (k === ultima)) cell.classList.toggle('et-fixed-last', k === ultima);
+                }
+                else if (cell.classList.contains('et-fixed'))
+                {
+                    cell.classList.remove('et-fixed', 'et-fixed-last');
+                    cell.style.left = '';
+                }
+            }
+        });
+
+        // sticky se pega al ancestro con scroll más cercano: si el contenedor interno no desplaza nada,
+        // deja de ser contenedor de scroll para que lo sea el de la página (sin crear contenedores nuevos).
+        const cont = t.parentElement;
+        if (cont)
+        {
+            if (fijas.length)
+            {
+                const libre = (cont.scrollWidth <= cont.clientWidth + 1 && cont.scrollHeight <= cont.clientHeight + 1);
+                if (cont.classList.contains('et-fixed-cont') !== libre) cont.classList.toggle('et-fixed-cont', libre);
+            }
+            else if (cont.classList.contains('et-fixed-cont')) cont.classList.remove('et-fixed-cont');
+        }
+
+        // Los anchos de las fijas pueden cambiar sin que nadie llame (contenido, ventana): ResizeObserver.
+        if (typeof ResizeObserver !== 'undefined')
+        {
+            if (!this._f3RO) this._f3RO = new ResizeObserver(() => { if (this._f3TeniaFijas) this._f3Posiciones(); });
+            const clave = obs.map(c => c.cellIndex).join(',') + '|' + obs.length;
+            if (clave !== this._f3ROClave || !this._f3ROVivos?.every(c => c.isConnected))
+            {
+                this._f3RO.disconnect();
+                obs.forEach(c => this._f3RO.observe(c));
+                this._f3ROClave = clave;
+                this._f3ROVivos = obs;
+            }
+        }
+    }
+
+    // ---------- §7 mostrar y ocultar ----------
+    IsColumnVisible(field) { return this._f3Indice(field) >= 0 && !this._f1ColumnaOculta(field); }
+    getVisibleColumns() { return this.Columns.filter(c => this._f3Visible(c)); }
+    HideColumn(field) { return this._f3Visibilidad(field, false); }
+    ShowColumn(field) { return this._f3Visibilidad(field, true); }
+    _f3Visibilidad(field, visible)
+    {
+        if (this._f3Indice(field) < 0 || this.IsColumnVisible(field) === visible) return false;
+        if (!visible && this.getVisibleColumns().length <= 1) return false;   // siempre queda una visible
+        this.hideColumn(field, !visible);
+        if (!visible) this._f3SacarFoco();
+        this._f3Disparar('ColumnVisibilityChanged', { field, visible });
+        this._f3Cambio('visibility');
+        return true;
+    }
+    // Si la celda actual quedó oculta, el foco pasa a la visible más cercana de la misma fila.
+    _f3SacarFoco()
+    {
+        const td = this.CurrentTd();
+        if (!td || !td.classList.contains('hidde-col')) return;
+        const celdas = Array.from(td.parentElement?.cells ?? []).slice(this._f3Sys());
+        const i = celdas.indexOf(td);
+        const vis = (c) => !c.classList.contains('hidde-col');
+        const dest = celdas.slice(i + 1).find(vis) ?? celdas.slice(0, Math.max(0, i)).reverse().find(vis);
+        if (dest) this.CellFocus(dest);
+    }
+
+    _f3AplicarChooser()
+    {
+        const cont = this._table?.parentElement;
+        if (!cont) return;
+        if (this._f3Chooser)
+        {
+            this._f3Estilo();
+            cont.classList.add('et-chooser-host');
+            if (!this._f3Boton)
+            {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'et-chooser-btn';
+                b.title = 'Columnas';
+                b.setAttribute('aria-label', 'Columnas');
+                b.setAttribute('aria-haspopup', 'menu');
+                b.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M1 2h4v12H1zm5 0h4v12H6zm5 0h4v12h-4z"/></svg>';
+                b.addEventListener('click', (e) => {
+                    e.preventDefault(); e.stopPropagation();
+                    if (this._f3MenuAbierto()) { this._f3CerrarMenu(true); return; }
+                    const r = b.getBoundingClientRect();
+                    this._f3AbrirMenu(r.right, r.bottom + 2, null, true);
+                });
+                this._f3Boton = b;
+            }
+            if (!this._f3Boton.isConnected) cont.appendChild(this._f3Boton);
+            this._f3EventosUI();
+        }
+        else
+        {
+            this._f3CerrarMenu(false);
+            this._f3Boton?.remove();
+            this._f3Menu?.remove();
+            this._f3Menu = null;
+            cont.classList.remove('et-chooser-host');
+        }
+    }
+    _f3MenuAbierto() { return !!this._f3Menu && this._f3Menu.classList.contains('et-open'); }
+    _f3AbrirMenu(x, y, field, alinearDerecha = false)
+    {
+        const cont = this._table?.parentElement;
+        if (!cont) return;
+        let m = this._f3Menu;
+        if (!m)
+        {
+            m = document.createElement('div');
+            m.className = 'et-chooser';
+            m.setAttribute('role', 'menu');
+            m.tabIndex = -1;
+            m.addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); this._f3CerrarMenu(true); } });
+            this._f3Menu = m;
+        }
+        if (!m.isConnected) cont.appendChild(m);
+        if (field == undefined)
+        {
+            const td = this.CurrentTd();
+            field = (td ? this.Columns[td.cellIndex - this._f3Sys()]?.field : undefined);
+        }
+        this._f3MenuCampo = (this._f3Indice(field) >= 0 ? field : null);
+        this._f3LlenarMenu();
+        m.classList.add('et-open');
+        m.style.left = '0px'; m.style.top = '0px';
+        const r = m.getBoundingClientRect();
+        let left = (alinearDerecha ? x - r.width : x), top = y;
+        left = Math.max(4, Math.min(left, window.innerWidth - r.width - 4));
+        if (top + r.height > window.innerHeight - 4) top = Math.max(4, window.innerHeight - r.height - 4);
+        m.style.left = Math.round(left) + 'px';
+        m.style.top = Math.round(top) + 'px';
+        try { m.focus({ preventScroll: true }); } catch (e) { }
+    }
+    _f3CerrarMenu(devolverFoco)
+    {
+        if (!this._f3MenuAbierto()) return;
+        this._f3Menu.classList.remove('et-open');
+        if (devolverFoco)
+        {
+            const sel = this.EdiTable.GetSelector();
+            try { (sel ?? this._f3Boton)?.focus({ preventScroll: true }); } catch (e) { }
+        }
+    }
+    _f3LlenarMenu()
+    {
+        const m = this._f3Menu;
+        if (!m) return;
+        m.textContent = '';
+        const f = this._f3MenuCampo;
+        const col = (f != null ? this.Columns[this._f3Indice(f)] : null);
+        const tit = (col ? String(col.title ?? f) : '');
+        const opcion = (texto, accion, apagada) => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.setAttribute('role', 'menuitem');
+            b.textContent = texto;
+            b.disabled = !!apagada;
+            b.addEventListener('click', (e) => { e.preventDefault(); this._f3CerrarMenu(true); this._f3ComoUsuario(accion); });
+            m.appendChild(b);
+        };
+        const fija = (col ? this._f3EsFija(f) : false);
+        opcion(col ? (fija ? `Soltar «${tit}» (dejar de fijar)` : `Fijar «${tit}» a la izquierda`) : 'Fijar o soltar columna', () => this.FixColumn(f, !fija), !col);
+        opcion(col ? `Ajustar ancho de «${tit}»` : 'Ajustar ancho', () => this._f3AjustarAncho(f), !col);
+        opcion('Restablecer diseño', () => this.ResetLayout(), false);
+        m.appendChild(document.createElement('hr'));
+        this.Columns.forEach(c => {
+            if (!c || c.field == undefined || this._f1EsFalso(c.chooser ?? '')) return;
+            const lab = document.createElement('label');
+            lab.setAttribute('role', 'menuitemcheckbox');
+            const cb = document.createElement('input');
+            cb.type = 'checkbox';
+            cb.checked = this.IsColumnVisible(c.field);
+            cb.addEventListener('change', () => {
+                const ok = this._f3ComoUsuario(() => (cb.checked ? this.ShowColumn(c.field) : this.HideColumn(c.field)));
+                if (!ok) cb.checked = this.IsColumnVisible(c.field);
+            });
+            cb._f3Campo = c.field;
+            const sp = document.createElement('span');
+            sp.textContent = String(c.title ?? c.field);
+            lab.append(cb, sp);
+            m.appendChild(lab);
+        });
+    }
+    _f3ActualizarMenu()
+    {
+        if (!this._f3MenuAbierto()) return;
+        this._f3Menu.querySelectorAll('input[type=checkbox]').forEach(cb => { cb.checked = this.IsColumnVisible(cb._f3Campo); });
+    }
+    // "Ajustar ancho": el ancho del contenido más largo (encabezado y celdas dibujadas).
+    _f3AjustarAncho(field)
+    {
+        const th = this._f3ThDe(field);
+        if (!th) return false;
+        const i = this._f3Indice(field), sys = this._f3Sys();
+        const medir = (el) => { if (!el) return 0; const r = document.createRange(); r.selectNodeContents(el); return r.getBoundingClientRect().width; };
+        let w = medir(th.querySelector('span') ?? th) + 30;
+        const filas = Array.from(this._table.tBodies[0]?.rows ?? []).slice(0, 1000);
+        filas.forEach(tr => {
+            const td = tr.cells[sys + i];
+            if (!td || td.classList.contains('hidde-col')) return;
+            w = Math.max(w, medir(td.querySelector('div[iscellcontent]') ?? td) + 18);
+        });
+        const css = Math.ceil(w) + 'px';
+        th.style.width = css;
+        this._f1EstadoColumna(field).ancho = css;
+        if (this._f3TeniaFijas) this._f3Posiciones();
+        this._f3Cambio('resize');
+        return true;
+    }
+
+    // ---------- §8 reordenar ----------
+    _f3DestinoValido(from, to)
+    {
+        const n = this.Columns.length;
+        if (from === to || from < 0 || to < 0 || from >= n || to >= n) return false;
+        const c = this.Columns[from];
+        if (!c || this._f1EsFalso(c.reorder ?? '')) return false;
+        const nf = this._f3NumFijas();
+        const fija = (c.field != undefined && this._f3EsFija(c.field));
+        return (fija ? to < nf : to >= nf);   // fijas y no fijas no se mezclan
+    }
+    MoveColumn(field, toIndex)
+    {
+        const from = this._f3Indice(field);
+        const n = this.Columns.length;
+        let to = Math.trunc(Number(toIndex));
+        if (from < 0 || !isFinite(to)) return false;
+        to = Math.max(0, Math.min(n - 1, to));
+        if (!this._f3DestinoValido(from, to)) return false;
+        const args = { field, from, to, cancel: false };
+        this._f3Disparar('BeforeColumnMove', args);
+        if (args.cancel) return false;
+        const orden = this.Columns.slice();
+        const [c] = orden.splice(from, 1);
+        orden.splice(to, 0, c);
+        this._f3Permutar(orden);
+        this._f3Posiciones();
+        this._f3ActualizarMenu();
+        this._f3Disparar('ColumnMoved', { field, from, to });
+        this._f3Cambio('move');
+        return true;
+    }
+    _f3AplicarReorder()
+    {
+        const enc = this._f3FilaEnc();
+        if (!enc) return;
+        if (this._f3Reorder) { this._f3Estilo(); this._f3EventosUI(); }
+        const sys = this._f3Sys();
+        Array.from(enc.cells).forEach((th, k) => {
+            if (k < sys) return;
+            const c = this.Columns[k - sys];
+            const movible = (this._f3Reorder && c && c.field != undefined && !this._f1EsFalso(c.reorder ?? ''));
+            if (movible)
+            {
+                th.setAttribute('draggable', 'true');
+                if (!th.hasAttribute('tabindex')) { th.setAttribute('tabindex', '0'); th._f3Tab = true; }
+            }
+            else if (th.getAttribute('draggable') === 'true')
+            {
+                th.removeAttribute('draggable');
+                if (th._f3Tab) { th.removeAttribute('tabindex'); th._f3Tab = false; }
+            }
+        });
+    }
+    _f3ThDeEvento(e)
+    {
+        let el = e.target;
+        if (el && el.nodeType !== 1) el = el.parentElement;
+        const th = el?.closest?.('th');
+        return (th && th.parentElement === this._f3FilaEnc() ? th : null);
+    }
+    _f3MostrarIndicador(x)
+    {
+        const cont = this._table?.parentElement;
+        if (!cont) return;
+        if (!this._f3Indicador)
+        {
+            this._f3Indicador = document.createElement('div');
+            this._f3Indicador.className = 'et-drop-indicator';
+        }
+        const ind = this._f3Indicador;
+        if (!ind.isConnected) cont.appendChild(ind);
+        const r = this._table.getBoundingClientRect();
+        const top = Math.max(0, r.top), bottom = Math.min(window.innerHeight, r.bottom);
+        ind.style.left = Math.round(x - 1) + 'px';
+        ind.style.top = Math.round(top) + 'px';
+        ind.style.height = Math.max(0, Math.round(bottom - top)) + 'px';
+    }
+    _f3OcultarIndicador() { this._f3Indicador?.remove(); }
+    _f3FinArrastre()
+    {
+        this._f3Arrastre = null;
+        this._f3OcultarIndicador();
+        this._table?.tHead?.querySelectorAll('th.et-dragging').forEach(th => th.classList.remove('et-dragging'));
+    }
+
+    // Listeners del encabezado (menú contextual, arrastre y teclado), y del documento para cerrar el menú.
+    // Solo se instalan con column-chooser o column-reorder.
+    _f3EventosUI()
+    {
+        const thead = this._table?.tHead;
+        if (thead && !thead._f3UI)
+        {
+            thead._f3UI = true;
+            thead.addEventListener('contextmenu', (e) => {
+                if (!this._f3Chooser) return;
+                const th = this._f3ThDeEvento(e);
+                if (!th) return;
+                e.preventDefault(); e.stopPropagation();
+                this._f3AbrirMenu(e.clientX, e.clientY, th.getAttribute('field'));
+            });
+            thead.addEventListener('dragstart', (e) => {
+                if (!this._f3Reorder) return;
+                const th = this._f3ThDeEvento(e);
+                const f = th?.getAttribute('field');
+                const i = this._f3Indice(f);
+                if (i < 0 || this._f1EsFalso(this.Columns[i].reorder ?? '')) return;
+                this._f3Arrastre = f;
+                try { e.dataTransfer.setData('text/plain', f); e.dataTransfer.effectAllowed = 'move'; } catch (x) { }
+                th.classList.add('et-dragging');
+            });
+            const destino = (e) => {
+                const th = this._f3ThDeEvento(e);
+                if (!th || this._f3Arrastre == null) return null;
+                const t = this._f3Indice(th.getAttribute('field'));
+                const from = this._f3Indice(this._f3Arrastre);
+                if (t < 0 || from < 0) return null;
+                const r = th.getBoundingClientRect();
+                const antes = (e.clientX < r.left + r.width / 2);
+                const to = (antes ? (from > t ? t : t - 1) : (from > t ? t + 1 : t));
+                if (!this._f3DestinoValido(from, to)) return null;
+                return { to, x: (antes ? r.left : r.right) };
+            };
+            const sobre = (e) => {
+                if (this._f3Arrastre == null) return;
+                const d = destino(e);
+                if (d) { e.preventDefault(); try { e.dataTransfer.dropEffect = 'move'; } catch (x) { } this._f3MostrarIndicador(d.x); }
+                else this._f3OcultarIndicador();
+            };
+            thead.addEventListener('dragenter', sobre);
+            thead.addEventListener('dragover', sobre);
+            thead.addEventListener('drop', (e) => {
+                if (this._f3Arrastre == null) return;
+                e.preventDefault(); e.stopPropagation();
+                const d = destino(e), f = this._f3Arrastre;
+                this._f3FinArrastre();
+                if (d) this._f3ComoUsuario(() => this.MoveColumn(f, d.to));
+            });
+            thead.addEventListener('dragend', () => this._f3FinArrastre());
+            thead.addEventListener('keydown', (e) => {
+                if (!this._f3Reorder || !(e.ctrlKey && e.shiftKey) || (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) return;
+                const th = this._f3ThDeEvento(e);
+                const f = th?.getAttribute('field');
+                const i = this._f3Indice(f);
+                if (i < 0) return;
+                e.preventDefault(); e.stopPropagation();
+                const paso = (e.key === 'ArrowLeft' ? -1 : 1);
+                let j = i + paso;
+                while (j >= 0 && j < this.Columns.length && !this._f3Visible(this.Columns[j])) j += paso;
+                if (j < 0 || j >= this.Columns.length) return;
+                this._f3ComoUsuario(() => this.MoveColumn(f, j));
+                try { th.focus({ preventScroll: true }); } catch (x) { }
+            });
+        }
+        if (!this._f3Globales)
+        {
+            this._f3Globales = true;
+            this._f1Global(document, 'mousedown', (e) => {
+                if (!this._f3MenuAbierto()) return;
+                const ruta = e.composedPath?.() ?? [];
+                if (!ruta.includes(this._f3Menu) && !ruta.includes(this._f3Boton)) this._f3CerrarMenu(false);
+            });
+            this._f1Global(document, 'keydown', (e) => { if (e.key === 'Escape' && this._f3MenuAbierto()) this._f3CerrarMenu(true); });
+        }
+    }
+
+    _f3Estilo()
+    {
+        if (this._f3EstiloEl || !this._shadow) return;
+        const st = document.createElement('style');
+        st.textContent = `
+                    /* ===== EditTable F3: columnas fijas, selector de columnas y reordenar ===== */
+                    table.et-has-fixed th.et-fixed, table.et-has-fixed td.et-fixed { position: sticky; z-index: 2; background-color: var(--et-fixed-bg, #FFF); background-clip: padding-box; }
+                    table.et-has-fixed thead > tr > th.et-fixed { z-index: 3; background-color: var(--et-fixed-head-bg, #F5F5F5); }
+                    table.et-has-fixed tfoot td.et-fixed, table.et-has-fixed tfoot th.et-fixed { z-index: 3; }
+                    table.et-has-fixed tbody tr:hover > td.et-fixed { background-color: var(--et-fixed-hover-bg, #F5F5F5); }
+                    table.et-has-fixed tbody tr.EdiTable-Row-Selected > td { background-color: inherit !important; }
+                    table.et-has-fixed .et-fixed-last { box-shadow: 4px 0 4px -2px rgba(0,0,0,.18); }
+                    table.et-has-fixed tbody tr.et-accent > td.et-fixed-last:first-child { box-shadow: inset 3px 0 0 var(--et-row-accent), 4px 0 4px -2px rgba(0,0,0,.18); }
+                    .et-fixed-cont { overflow: visible !important; }
+                    table.et-cards .et-fixed { position: static !important; box-shadow: none !important; }
+                    .et-chooser-host { position: relative; }
+                    .et-chooser-btn { position: absolute; top: 3px; right: 8px; z-index: 101; width: 20px; height: 20px; padding: 0; display: flex; align-items: center; justify-content: center; border: 1px solid #CCC; border-radius: 3px; background: #FFF; color: #555; cursor: pointer; }
+                    .et-chooser-btn:hover { background: #F0F4FB; }
+                    .et-chooser { display: none; position: fixed; z-index: 100000; min-width: 190px; max-height: 60vh; overflow: auto; padding: 4px 0; background: #FFF; color: #212529; border: 1px solid #CCC; border-radius: 4px; box-shadow: 0 4px 14px rgba(0,0,0,.18); font-size: .9rem; text-align: left; outline: none; }
+                    .et-chooser.et-open { display: block; }
+                    .et-chooser > button { display: block; width: 100%; padding: 4px 12px; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+                    .et-chooser > button:disabled { color: #999; cursor: default; }
+                    .et-chooser > button:not(:disabled):hover, .et-chooser > label:hover { background: #F0F4FB; }
+                    .et-chooser > hr { border: 0; border-top: 1px solid #EEE; margin: 4px 0; }
+                    .et-chooser > label { display: flex; gap: 6px; align-items: center; padding: 3px 12px; white-space: nowrap; cursor: pointer; }
+                    .et-drop-indicator { position: fixed; width: 3px; background: #3D75DD; z-index: 100001; pointer-events: none; }
+                    thead th.et-dragging { opacity: .5; }
+                    @media screen and (max-width: 768px) { .table-cards .et-fixed { position: static !important; box-shadow: none !important; } }
+                    @media print {
+                        .et-chooser-btn, .et-chooser, .et-drop-indicator { display: none !important; }
+                        table.et-has-fixed .et-fixed { position: static !important; box-shadow: none !important; }
+                    }
+        `;
+        this._shadow.appendChild(st);
+        this._f3EstiloEl = st;
+    }
+
+    // ---------- §9.1 objeto de diseño ----------
+    _f3Ancho(c)
+    {
+        const st = this._f1EstadoColumnas.get(c.field);
+        const w = (st?.ancho ?? c.width ?? null);
+        if (w == null || String(w).trim() === '') return null;
+        const m = /^\s*(-?\d+(?:\.\d+)?)\s*px\s*$/i.exec(String(w));
+        return (m ? Math.round(Number(m[1]) * 100) / 100 : String(w));
+    }
+    getLayout()
+    {
+        const columns = [];
+        this.Columns.forEach((c, i) => {
+            if (!c || c.field == undefined) return;
+            columns.push({ field: c.field, order: i, width: this._f3Ancho(c), hidden: this._f1ColumnaOculta(c.field), fixed: this._f3EsFija(c.field) });
+        });
+        let groups = [];
+        try { if (typeof this.getGroups === 'function') groups = (this.getGroups() ?? []).slice(); } catch (e) { }
+        return { v: 1, columns, sort: (this._f3Orden ? { ...this._f3Orden } : null), groups, density: 'normal' };
+    }
+    setLayout(obj, opts = {})
+    {
+        if (!obj || typeof obj !== 'object') return false;
+        const v = (obj.v == null ? 1 : Number(obj.v));
+        if (!(v <= 1))
+        {
+            this._f3Disparar('LayoutRejected', { layout: obj, reason: 'version', v: obj.v });
+            return false;
+        }
+        const antes = this._f3Silencio;
+        this._f3Silencio = true;
+        try { this._f3Aplicar(obj, { orden: true, visibilidad: true, fijacion: true, anchos: true, filas: true }); }
+        finally { this._f3Silencio = antes; }
+        if (!(opts && opts.silent))
+        {
+            const u = this._f3Usuario;
+            this._f3Usuario = false;   // lo que llega por setLayout no se guarda
+            try { this._f3Cambio('set'); } finally { this._f3Usuario = u; }
+        }
+        return true;
+    }
+    // Aplica un diseño. o: qué partes ({orden, visibilidad, fijacion, anchos, filas}).
+    _f3Aplicar(layout, o)
+    {
+        const lista = (Array.isArray(layout.columns) ? layout.columns : []);
+        const porCampo = new Map();
+        lista.forEach((x, i) => { if (x && x.field != undefined && !porCampo.has(x.field) && this._f3Indice(x.field) >= 0) porCampo.set(x.field, { x, i }); });
+
+        if (o.fijacion) porCampo.forEach(({ x }, f) => { if (typeof x.fixed === 'boolean') this._f1EstadoColumna(f).fija = x.fixed; });
+
+        let orden = this.Columns.slice();
+        if (o.orden)
+        {
+            const ord = (e) => ((typeof e.x.order === 'number' && isFinite(e.x.order)) ? e.x.order : e.i);
+            const listados = [...porCampo.values()].sort((a, b) => ord(a) - ord(b)).map(e => this.Columns[this._f3Indice(e.x.field)]);
+            orden = [...listados, ...this.Columns.filter(c => !listados.includes(c))];   // las nuevas, al final
+        }
+        this._f3Permutar(this._f3Normalizar(orden));
+
+        if (o.visibilidad)
+        {
+            const objetivo = new Map();
+            porCampo.forEach(({ x }, f) => { if (typeof x.hidden === 'boolean') objetivo.set(f, x.hidden); });
+            const oculta = (c) => (c.field == undefined ? false : (objetivo.has(c.field) ? objetivo.get(c.field) : this._f1ColumnaOculta(c.field)));
+            if (!this.Columns.some(c => c && !oculta(c)))
+            {
+                const p = this.Columns.find(c => c && c.field != undefined);
+                if (p) objetivo.set(p.field, false);
+            }
+            objetivo.forEach((h, f) => { if (this._f1ColumnaOculta(f) !== h) this.hideColumn(f, h); });
+            this._f3SacarFoco();
+        }
+
+        if (o.anchos) porCampo.forEach(({ x }, f) => {
+            const w = x.width;
+            if (w == null || w === '' || (typeof w === 'number' && !isFinite(w))) return;
+            const css = (typeof w === 'number' ? w + 'px' : String(w));
+            const th = this._f3ThDe(f);
+            if (th) th.style.width = css;
+            this._f1EstadoColumna(f).ancho = css;
+        });
+
+        if (o.filas)
+        {
+            const s = layout.sort;
+            if (s && s.field != undefined && this._f3Indice(s.field) >= 0) this._f3AplicarOrden(s.field, String(s.dir ?? '').toUpperCase() === 'DESC');
+            if (Array.isArray(layout.groups) && typeof this.GroupBy === 'function')
+            {
+                const g = layout.groups.filter(f => this._f3Indice(f) >= 0);
+                let act = [];
+                try { act = (this.getGroups?.() ?? []); } catch (e) { }
+                if (JSON.stringify(g) !== JSON.stringify(act)) { if (g.length) this.GroupBy(g); else this.Ungroup?.(); }
+            }
+        }
+        this._f3Posiciones();
+        this._f3ActualizarMenu();
+    }
+    _f3AplicarOrden(field, desc)
+    {
+        const ths = this._table.querySelectorAll('thead th');
+        ths.forEach(f => { f.classList.remove('ascendent'); f.classList.remove('descendent'); });
+        const th = this._f3ThDe(field);
+        // Mismas clases que el clic en el encabezado (invertidas, P36).
+        if (th) { th.classList.toggle('ascendent', desc); th.classList.toggle('descendent', !desc); }
+        if (this.ShowAsTree)
+        {
+            const op = this._getTreeOptions();
+            this.GetTree(op);
+            this.SortTree(this.DataArray, field, desc, op);
+            this.SetTree(this.DataArray, op);
+        }
+        else this.Sort(this.DataArray, field, desc);
+        this._printRows();
+        this._f3Orden = { field, dir: (desc ? 'DESC' : 'ASC') };
+    }
+    ResetLayout()
+    {
+        if (!this._f3Declarado) return false;
+        clearTimeout(this._f3Timer);
+        this._f3Timer = 0;
+        const antes = this._f3Silencio;
+        this._f3Silencio = true;
+        try
+        {
+            this._f3Declarado.forEach(d => {
+                if (d.field == undefined || this._f3Indice(d.field) < 0) return;
+                const st = this._f1EstadoColumna(d.field);
+                st.fija = d.fixed;
+                if (st.oculta) this.hideColumn(d.field, false);
+                const th = this._f3ThDe(d.field);
+                if (th) th.style.width = (d.width ?? '');
+                st.ancho = (d.width ?? null);
+            });
+            this._f3Permutar(this._f3Normalizar(this._f3Declarado.map(d => d.col)));
+            try { if (typeof this.Ungroup === 'function' && (this.getGroups?.() ?? []).length) this.Ungroup(); } catch (e) { }
+            this._f3Orden = null;
+            this._f3Posiciones();
+            this._f3ActualizarMenu();
+        }
+        finally { this._f3Silencio = antes; }
+        const u = this._f3Usuario;
+        this._f3Usuario = false;
+        try { this._f3Cambio('reset'); } finally { this._f3Usuario = u; }
+        this.ForgetLayout();
+        return true;
+    }
+
+    // ---------- §9.2 guardado automático en IndexedDB ----------
+    // Llave: sha256(origin + pathname + '#' + id) o sha256(origin + DesignKey), en hexadecimal (P17).
+    // Sin id estable no hay llave: sin id, el id de reserva o un id de V12 table_<hex> (P20).
+    _f3Llave()
+    {
+        try
+        {
+            const origen = location.origin;
+            if (this.DesignKey != null && String(this.DesignKey).trim() !== '') return EditTable._f3Sha256(origen + String(this.DesignKey));
+            const id = (this.getAttribute('id') ?? '').trim();
+            if (!id || id === 'f077fb41716141eeb7ecb1ed0a1ce292' || /^table_[0-9a-f]{6,}$/.test(id)) return null;
+            return EditTable._f3Sha256(origen + location.pathname + '#' + id);
+        }
+        catch (e) { return null; }
+    }
+    _f3ProgramarGuardado(reason)
+    {
+        if (!this.DesignAutoSave || reason === 'reset' || reason === 'set') return;
+        if ((reason === 'sort' || reason === 'group') && !this.DesignAutoSaveSort) return;
+        if (!this._f3Llave()) return;
+        clearTimeout(this._f3Timer);
+        this._f3Timer = setTimeout(() => { this._f3Timer = 0; this._f3Guardar(); }, 500);
+    }
+    _f3Guardar()
+    {
+        try
+        {
+            const k = this._f3Llave();
+            if (!k || !this.DesignAutoSave) return;
+            const layout = this.getLayout();
+            if (!this.DesignAutoSaveSort) { layout.sort = null; layout.groups = []; }
+            const rec = { v: 1, huella: this._f3Huella, layout, fecha: new Date().toISOString() };
+            EditTable._f3Op('readwrite', s => s.put(rec, k));
+        }
+        catch (e) { }
+    }
+    // Restaura sin eventos. Salvaguarda 3: solo lo que esta tabla deja cambiar al usuario.
+    _f3Restaurar()
+    {
+        try
+        {
+            if (!this.DesignAutoSave) return;
+            const k = this._f3Llave();
+            if (!k) return;
+            EditTable._f3Op('readonly', s => s.get(k)).then(rec => {
+                try
+                {
+                    if (!rec || typeof rec !== 'object' || !rec.layout || !this.isConnected) return;
+                    if (rec.huella !== this._f3Huella) { EditTable._f3Op('readwrite', s => s.delete(k)); return; }   // huella de columnas
+                    if (Number(rec.layout.v ?? 1) > 1) return;
+                    const antes = this._f3Silencio;
+                    this._f3Silencio = true;
+                    try
+                    {
+                        this._f3Aplicar(rec.layout, {
+                            orden: this._f3Reorder, visibilidad: this._f3Chooser, fijacion: this._f3Chooser,
+                            anchos: true, filas: this.DesignAutoSaveSort
+                        });
+                    }
+                    finally { this._f3Silencio = antes; }
+                }
+                catch (e) { console.error('EditTable: no se pudo restaurar el diseño', e); }
+            });
+        }
+        catch (e) { }
+    }
+    ForgetLayout()
+    {
+        clearTimeout(this._f3Timer);
+        this._f3Timer = 0;
+        const k = this._f3Llave();
+        if (!k) return Promise.resolve(false);
+        return EditTable._f3Op('readwrite', s => s.delete(k)).then(() => true);
+    }
+    static ForgetAllLayouts()
+    {
+        return EditTable._f3Op('readwrite', s => s.clear()).then(() => true);
+    }
+
+    static _f3Bd = undefined;
+    static _f3AbrirBd()
+    {
+        if (EditTable._f3Bd !== undefined) return EditTable._f3Bd;
+        EditTable._f3Bd = new Promise(res => {
+            try
+            {
+                const req = indexedDB.open('induxsoft-edittable', 1);
+                req.onupgradeneeded = () => { try { if (!req.result.objectStoreNames.contains('layouts')) req.result.createObjectStore('layouts'); } catch (e) { } };
+                req.onsuccess = () => {
+                    try
+                    {
+                        const db = req.result;
+                        db.onversionchange = () => { try { db.close(); } catch (e) { } EditTable._f3Bd = undefined; };
+                        res(db.objectStoreNames.contains('layouts') ? db : null);
+                    }
+                    catch (e) { res(null); }
+                };
+                req.onerror = () => res(null);
+                req.onblocked = () => res(null);
+            }
+            catch (e) { res(null); }   // sin IndexedDB (modo privado, iframe restringido): se desactiva
+        });
+        return EditTable._f3Bd;
+    }
+    static _f3Op(modo, fn)
+    {
+        return EditTable._f3AbrirBd().then(db => new Promise(res => {
+            if (!db) { res(null); return; }
+            try
+            {
+                const tx = db.transaction('layouts', modo);
+                const req = fn(tx.objectStore('layouts'));
+                tx.oncomplete = () => res(req ? req.result : null);
+                tx.onerror = () => res(null);
+                tx.onabort = () => res(null);
+            }
+            catch (e) { res(null); }
+        })).catch(() => null);
+    }
+
+    // sha256 en hexadecimal, síncrono y sin WebCrypto (crypto.subtle no existe fuera de https).
+    static _f3K = [
+        0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+        0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+        0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+        0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+        0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+        0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+        0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+        0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2];
+    static _f3Sha256(texto)
+    {
+        const K = EditTable._f3K;
+        const datos = new TextEncoder().encode(String(texto));
+        const l = datos.length;
+        const nb = ((l + 9 + 63) >> 6) << 6;
+        const m = new Uint8Array(nb);
+        m.set(datos);
+        m[l] = 0x80;
+        const dv = new DataView(m.buffer);
+        const bits = l * 8;
+        dv.setUint32(nb - 4, bits >>> 0);
+        dv.setUint32(nb - 8, Math.floor(bits / 0x100000000));
+        const H = [0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19];
+        const w = new Int32Array(64);
+        const rot = (x, n) => (x >>> n) | (x << (32 - n));
+        for (let o = 0; o < nb; o += 64)
+        {
+            for (let i = 0; i < 16; i++) w[i] = dv.getUint32(o + i * 4);
+            for (let i = 16; i < 64; i++)
+            {
+                const a = w[i - 15], b = w[i - 2];
+                w[i] = (w[i - 16] + (rot(a, 7) ^ rot(a, 18) ^ (a >>> 3)) + w[i - 7] + (rot(b, 17) ^ rot(b, 19) ^ (b >>> 10))) | 0;
+            }
+            let [a, b, c, d, e, f, g, h] = H;
+            for (let i = 0; i < 64; i++)
+            {
+                const t1 = (h + (rot(e, 6) ^ rot(e, 11) ^ rot(e, 25)) + ((e & f) ^ (~e & g)) + K[i] + w[i]) | 0;
+                const t2 = ((rot(a, 2) ^ rot(a, 13) ^ rot(a, 22)) + ((a & b) ^ (a & c) ^ (b & c))) | 0;
+                h = g; g = f; f = e; e = (d + t1) | 0; d = c; c = b; b = a; a = (t1 + t2) | 0;
+            }
+            H[0] = (H[0] + a) | 0; H[1] = (H[1] + b) | 0; H[2] = (H[2] + c) | 0; H[3] = (H[3] + d) | 0;
+            H[4] = (H[4] + e) | 0; H[5] = (H[5] + f) | 0; H[6] = (H[6] + g) | 0; H[7] = (H[7] + h) | 0;
+        }
+        return H.map(x => (x >>> 0).toString(16).padStart(8, '0')).join('');
+    }
+    // ===== F3: fin =====
 }
 
 customElements.define('edit-table', EditTable);
