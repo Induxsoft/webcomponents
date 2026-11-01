@@ -6405,12 +6405,19 @@ class EditTable extends HTMLElement
     _f2EsVerdadero(v) { return String(v ?? '').trim().toLowerCase() == 'true'; }
     _f2Calc(coldef) { return this._f2Tipo(coldef) == 'number' && this._f2EsVerdadero(coldef?.calc); }
     // Editor propio (input de texto): Number con mask, calc o locale explícito; Date con locale explícito.
+    // Integración (coordinador, 2026-11-01): el atributo locale de la tabla ya existía para format="relative"
+    // y no debe cambiar los editores de esas tablas (R8). Por eso el locale de la COLUMNA activa el editor
+    // propio siempre, y el de la TABLA solo en las Number con format numérico (no "relative") y en las Date
+    // con date-display="locale". La presentación (C16) y la lectura (R7) siguen usando el locale de la tabla.
     _f2EditorPropio(coldef)
     {
         const t = this._f2Tipo(coldef);
-        if (t == 'number') return !!(this._f2Mask(coldef) || this._f2Calc(coldef) || this._f2LocaleExplicito(coldef));
-        if (t == 'date') return !!this._f2LocaleExplicito(coldef);
-        return false;
+        if (t != 'number' && t != 'date') return false;
+        if (t == 'number' && (this._f2Mask(coldef) || this._f2Calc(coldef))) return true;
+        if (String(coldef?.locale ?? '').trim()) return true;
+        if (!this._f2LocaleExplicito(coldef)) return false;
+        if (t == 'number') { const f = String(coldef?.format ?? '').trim().toLowerCase(); return !!f && f != 'false' && f != 'relative'; }
+        return !!this._f2DateDisplay(coldef);
     }
     _f2OpcMask(coldef)
     {
