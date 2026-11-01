@@ -12,15 +12,15 @@
 
 </head>
 <body>
-<!-- R7: cada tabla toma el locale de su lang (con región). La de México muestra $1,234.50; la de Colombia, $1.234,50 (C16), acepta 1234,5 en su editor y ambas se exportan con valores numéricos correctos en un mismo libro; toCSV usa coma o punto y coma según el locale. -->
+<!-- R7 y C16: cada tabla declara su locale (locale="es-MX" y locale="es-CO"; un lang heredado no cambia la presentación, P29). La de México muestra $1,234.50; la de Colombia, $1.234,50, acepta 1234,5 en su editor y ambas se exportan con valores numéricos correctos en un mismo libro; toCSV usa coma o punto y coma según el locale. -->
 <div id="contenido">
-<div class="demo-barra" id="barra"></div><section lang="es-MX"><h3>México (lang="es-MX")</h3><div class="demo-caja"><edit-table id="mx" style="width:100%" >
+<div class="demo-barra" id="barra"></div><section lang="es-MX"><h3>México (locale="es-MX")</h3><div class="demo-caja"><edit-table id="mx" style="width:100%" locale="es-MX">
 <edit-thead><edit-tr>
 <edit-th type="Text" field="concepto">Concepto</edit-th>
 <edit-th type="Number" field="importe" textalign="end" format="true" decs="2" prefix="$" thousandssep="true">Importe</edit-th>
 <edit-th type="Date" field="fecha">Fecha</edit-th>
 </edit-tr></edit-thead>
-</edit-table></div></section><section lang="es-CO"><h3>Colombia (lang="es-CO")</h3><div class="demo-caja"><edit-table id="co" style="width:100%" >
+</edit-table></div></section><section lang="es-CO"><h3>Colombia (locale="es-CO")</h3><div class="demo-caja"><edit-table id="co" style="width:100%" locale="es-CO">
 <edit-thead><edit-tr>
 <edit-th type="Text" field="concepto">Concepto</edit-th>
 <edit-th type="Number" field="importe" textalign="end" format="true" decs="2" prefix="$" thousandssep="true">Importe</edit-th>
@@ -29,7 +29,7 @@
 </edit-table></div></section><pre class="demo-salida" id="salida"></pre>
 </div>
 <script>
-Demo.pagina({"titulo": "Locale: dos tablas, es-MX y es-CO", "tipo": "v2", "bajada": "R7: cada tabla toma el locale de su lang (con región). La de México muestra $1,234.50; la de Colombia, $1.234,50 (C16), acepta 1234,5 en su editor y ambas se exportan con valores numéricos correctos en un mismo libro; toCSV usa coma o punto y coma según el locale."});
+Demo.pagina({"titulo": "Locale: dos tablas, es-MX y es-CO", "tipo": "v2", "bajada": "R7 y C16: cada tabla declara su locale (locale=\"es-MX\" y locale=\"es-CO\"; un lang heredado no cambia la presentación, P29). La de México muestra $1,234.50; la de Colombia, $1.234,50, acepta 1234,5 en su editor y ambas se exportan con valores numéricos correctos en un mismo libro; toCSV usa coma o punto y coma según el locale."});
 
 Demo.observar('co');
 document.addEventListener('DOMContentLoaded', () => {

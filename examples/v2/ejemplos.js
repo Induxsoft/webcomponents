@@ -310,7 +310,7 @@ window.EJEMPLOS = [
   "archivo": "b06c-locale-dos-tablas.html",
   "titulo": "Locale: dos tablas, es-MX y es-CO",
   "tipo": "v2",
-  "descripcion": "R7: cada tabla toma el locale de su lang (con región). La de México muestra $1,234.50; la de Colombia, $1.234,50 (C16), acepta 1234,5 en su editor y ambas se exportan con valores numéricos correctos en un mismo libro; toCSV usa coma o punto y coma según el locale.",
+  "descripcion": "R7 y C16: cada tabla declara su locale (locale=\"es-MX\" y locale=\"es-CO\"; un lang heredado no cambia la presentación, P29). La de México muestra $1,234.50; la de Colombia, $1.234,50, acepta 1234,5 en su editor y ambas se exportan con valores numéricos correctos en un mismo libro; toCSV usa coma o punto y coma según el locale.",
   "spec": [
    "§0-R7",
    "§1-C16",

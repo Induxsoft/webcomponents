@@ -92,15 +92,17 @@ r('calc-ceros', 'R9: calc quita los ceros finales que deja el cálculo: "=1.10*1
   await editar(c, 't1', 0, 0, '=1.10*1');
   c.igual((await c.datos())[0].n, '1.1');
 }, { requiere: ['calc'] });
+// Ajuste (AJUSTES.md, decisión del coordinador del 2026-11-01): el locale de la tabla ya no activa el editor
+// propio en Number sin format ni en Date sin date-display; estas pruebas declaran el locale en la columna.
 for (const [teclea, esperado] of [['1.234,50', '1234.50'], [',5', '0.5'], ['007', '7'], ['-5', '-5'], ['1,10', '1.10']]) {
   r('loc-' + teclea, `R9: editor propio por locale es-CO: "${teclea}" → "${esperado}" (canónico, conserva ceros finales)`, ['§0-R9', '§0-R7'], async (c) => {
-    await c.abrir({ body: tabla({ a: { locale: 'es-CO' }, cols: [{ field: 'n', type: 'Number', title: 'N' }], data: [{ n: '' }] }) });
+    await c.abrir({ body: tabla({ cols: [{ field: 'n', type: 'Number', title: 'N', locale: 'es-CO' }], data: [{ n: '' }] }) });
     await editar(c, 't1', 0, 0, teclea);
     c.igual((await c.datos())[0].n, esperado);
   });
 }
 r('loc-nonum', 'R9: en el editor propio, un texto que no es número no se confirma', ['§0-R9'], async (c) => {
-  await c.abrir({ body: tabla({ a: { locale: 'es-CO' }, cols: [{ field: 'n', type: 'Number', title: 'N' }], data: [{ n: '1' }] }) });
+  await c.abrir({ body: tabla({ cols: [{ field: 'n', type: 'Number', title: 'N', locale: 'es-CO' }], data: [{ n: '1' }] }) });
   await editar(c, 't1', 0, 0, 'abc');
   c.igual([await c.ev(() => __ct.t('t1').Editing), (await c.datos())[0].n], [true, '1']);
 });
@@ -124,7 +126,7 @@ r('dt-seg', 'R9: datetime-seconds="true" pone step="1" y guarda YYYY-MM-DDTHH:mm
   c.igual((await c.datos())[0].f, '2026-02-01T10:30:15');
 });
 r('date-loc', 'R9: Date con locale es-CO usa editor propio: teclear 01/02/2026 guarda 2026-02-01', ['§0-R9', '§0-R7'], async (c) => {
-  await c.abrir({ body: tabla({ a: { locale: 'es-CO' }, cols: [{ field: 'f', type: 'Date', title: 'F' }], data: [{ f: '' }] }) });
+  await c.abrir({ body: tabla({ cols: [{ field: 'f', type: 'Date', title: 'F', locale: 'es-CO' }], data: [{ f: '' }] }) });
   await editar(c, 't1', 0, 0, '01/02/2026');
   c.igual((await c.datos())[0].f, '2026-02-01');
 });

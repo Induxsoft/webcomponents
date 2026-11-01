@@ -1,0 +1,23 @@
+# Ajustes a la batería de conformidad (integración F2–F4)
+
+*Integración de F2, F3 y F4 sobre F1 (rama `integracion-f2-f4`, 2026-11-01).* Son pruebas cuyos supuestos contradecían
+la spec o el comportamiento actual, no defectos del componente. Cada renglón: prueba → motivo → cambio.
+
+| Prueba | Motivo | Cambio |
+|---|---|---|
+| `fij-02` (`v06-columnas.mjs`) | Esperaba `position: static` en un `th` no fijo, pero el CSS base del componente ya pone `position: relative` en los `th` (desde `0ed1824`). | El `td` fijo debe ser `sticky`; el `th` no fijo puede ser `relative` o `static` (cualquiera que no sea `sticky`). |
+| `fij-06` (`v06-columnas.mjs`) | Igual que `fij-02`: al soltar una columna esperaba `static`. | Basta con que deje de ser `sticky` (`relative` o `static`). |
+| `dis-03` (`v09-diseno.mjs`) | Suponía que el ancho declarado en `setLayout` (150) es el que se ve, pero la tabla mide 700 px y reparte el sobrante. | Se compara contra una carga limpia de la misma página (otro contexto) que declara `precio` con `width="150px"` y aplica el mismo orden y visibilidad. Además, `getLayout()` debe devolver `width` 150. |
+| `dis-31` (`v09-diseno.mjs`) | Suponía que el ancho declarado (200 px) es el que se ve en la página nueva de 800 px. | Se compara contra una carga limpia (otro contexto, sin IndexedDB) de la misma página nueva. |
+| `dis-40` y `dis-43` (`v09-diseno.mjs`) | Comparaban el ancho de `codigo` entre la página A y la B, que tienen distinta visibilidad y orden (cambia el reparto del ancho). | Cada una se compara contra sí misma en la misma página B: `getLayout()` debe traer el ancho guardado en A, y el ancho que se ve debe ser igual al de una carga limpia de B a la que se le aplica por código (`setLayout`, `silent`) el diseño que quedó restaurado. |
+| `dis-24`, `dis-30` y `dis-31` (`v09-diseno.mjs`) | Compartían la ruta `/pantallas/productos.html` en paralelo; `dis-31` la reemplaza con `srv.registrar` y las otras recargan, así que una podía cargar la página de otra. | Rutas únicas: `/pantallas/productos-24.html`, `-30.html` y `-31.html`. Las pruebas de la llave siguen en la ruta original. |
+| `r1-01` a `r1-10` (`v12-limites-y-r1.mjs`) | La sonda registraba todos los `Const.Events` del componente bajo prueba. Registrar un evento nuevo ya es usar algo nuevo: por ejemplo, con un manejador de `LayoutChanged` (F3) aparecía `layoutchanged` al ordenar (`r1-01`, `r1-05`). | La lista de eventos se toma de `Const.Events` de la referencia (`0ed1824`), que se abre primero, y se usa la misma en las dos páginas. |
+| `clp-*` (`run.mjs`) | El portapapeles de Chromium headless se comparte entre contextos: en paralelo, una prueba leía lo que copió otra (por ejemplo, `clp-09` leyó `"Tor"`). | El runner corre las `clp-*` como seriales (al final, solas), igual que las de rendimiento. |
+| `num-C16c` (`c02-correcciones-number.mjs`) | Esperaba que un `lang="es-CO"` heredado cambiara la presentación. P29 (spec §13) lo descarta: C16 solo aplica con `locale` explícito. | La tabla declara `locale="es-CO"` dentro del ancestro `lang="es-CO"` y muestra `$1.234,50`; una segunda tabla en el mismo ancestro sin `locale` sigue en `$1,234.50`. El ejemplo `examples/v2/b06c-locale-dos-tablas.html` (y su descripción en `ejemplos.js`) usa `locale="es-MX"` y `locale="es-CO"` explícitos. |
+| `sum-13` (`v02-totales.mjs`) | Suponía que `AddRow()` agrega una entrada a `DataArray`; hoy `AddRow` (`InsertRow` sin índice) solo agrega la fila al DOM y la entrada se crea al editar. | Se comprueba que `AddRow()` sin datos no cambia el total y la fila de datos nueva se crea con `InsertRow(DataArray.length)`. |
+| `r9-loc-*`, `r9-loc-nonum`, `r9-date-loc` (`c03-correcciones-c17-c18-r9.mjs`) y `msk-r7-01b` (`v03-mascaras-dom.mjs`) | **Decisión del coordinador (2026-11-01) durante la integración.** El atributo `locale` de la tabla ya existía para `format="relative"`; con F2 cambiaba a `type="text"` los editores de todas las Number y Date de esas tablas. Ahora el `locale` de la columna activa siempre el editor propio, y el de la tabla solo en las Number con `format` numérico y en las Date con `date-display="locale"`. Hay que actualizar el texto de R7 en la spec. | `r9-*` declaran el `locale` en la columna. `msk-r7-01b` usa una Number con `format` (editor propio, acepta `1234,5`) y comprueba que la Number sin `format` de la misma tabla sigue con el control nativo. Prueba nueva `cmb-loc-relativo` (suite `v2-combinados`). |
+
+## Fuera de la batería
+
+- `tests/excel/validate.py`: `edittable: versión del componente detectada` esperaba `1`. Con F4 el componente tiene
+  `getExportData` y `fromEditTable` toma el camino v2 (las demás comprobaciones de ese bloque pasan igual). Ahora espera `2`.

@@ -111,8 +111,13 @@ t('r7-01', 'R7: Number con calc (editor propio) en una tabla dentro de lang="es-
   await editar(c, 't1', 0, 0, '1234,5');
   c.igual(Number((await c.datos())[0].n), 1234.5);
 }, { requiere: ['calc'] });
-t('r7-01b', 'R7: Number con locale explícito en la tabla usa el editor propio: acepta "1234,5" (es-CO)', ['§0-R7', '§1-C16'], async (c) => {
-  await c.abrir(pag([{ field: 'n', type: 'Number', title: 'N' }], [{ n: 0 }], { locale: 'es-CO' }));
+// Ajuste (AJUSTES.md, decisión del coordinador del 2026-11-01): el locale de la tabla (que ya existía para
+// format="relative") solo activa el editor propio en las Number con format numérico.
+t('r7-01b', 'R7: Number con format y locale explícito en la tabla usa el editor propio: acepta "1234,5" (es-CO); sin format, sigue el nativo', ['§0-R7', '§1-C16'], async (c) => {
+  await c.abrir(pag([{ field: 'n', type: 'Number', title: 'N', format: 'true', decs: '1' }, { field: 's', type: 'Number', title: 'S' }], [{ n: 0, s: 0 }], { locale: 'es-CO' }));
+  await c.foco('t1', 0, 1); await c.tecla('F2');
+  c.igual(await c.ev(() => __ct.sr('t1').querySelector('#__table_input').type), 'number', 'sin format: control nativo');
+  await c.tecla('Escape');
   await c.foco('t1', 0, 0); await c.tecla('F2');
   c.igual(await c.ev(() => __ct.sr('t1').querySelector('#__table_input').type), 'text', 'editor propio (no type=number)');
   await c.ev(() => { __ct.sr('t1').querySelector('#__table_input').value = ''; });

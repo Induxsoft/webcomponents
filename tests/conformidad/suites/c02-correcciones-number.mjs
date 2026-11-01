@@ -85,9 +85,12 @@ t('C16b', 'locale="es-CO" en la tabla: $1.234,50', '§1-C16', async (c) => {
   await c.abrir(pag(FMT(), [{ n: 1234.5 }], { locale: 'es-CO' }));
   c.igual(await c.ev(() => __ct.texto('t1', 0, 0)), '$1.234,50');
 });
-t('C16c', 'lang="es-CO" heredado de un ancestro: $1.234,50', '§1-C16', async (c) => {
-  await c.abrir({ body: `<div lang="es-CO">${tabla({ cols: FMT(), data: [{ n: 1234.5 }] })}</div>`, lang: 'es-MX' });
-  c.igual(await c.ev(() => __ct.texto('t1', 0, 0)), '$1.234,50');
+// Ajuste (AJUSTES.md): P29 (spec §13) descarta que un lang heredado cambie la presentación; C16 solo aplica con
+// locale explícito. La prueba usa locale="es-CO" dentro de un ancestro lang="es-CO" y comprueba también que el lang
+// heredado solo no cambia nada.
+t('C16c', 'locale="es-CO" explícito dentro de un lang="es-CO": $1.234,50; el lang heredado solo no cambia la presentación (P29)', '§1-C16', async (c) => {
+  await c.abrir({ body: `<div lang="es-CO">${tabla({ a: { locale: 'es-CO' }, cols: FMT(), data: [{ n: 1234.5 }] })}${tabla({ id: 't2', cols: FMT(), data: [{ n: 1234.5 }] })}</div>`, lang: 'es-MX' });
+  c.igual(await c.ev(() => [__ct.texto('t1', 0, 0), __ct.texto('t2', 0, 0)]), ['$1.234,50', '$1,234.50']);
 });
 t('C16d', 'locale en la columna aplica solo a esa columna', '§1-C16', async (c) => {
   await c.abrir(pag([...FMT({ locale: 'de-DE' }), { field: 'm', type: 'Number', title: 'M', format: 'true', decs: '2', thousandssep: 'true' }], [{ n: 1234.5, m: 1234.5 }], {}, { lang: '' }));

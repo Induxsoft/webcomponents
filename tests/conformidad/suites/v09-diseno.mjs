@@ -47,7 +47,12 @@ t('03', 'setLayout aplica orden, visibilidad, fijación y ancho, emparejando por
   c.igual(await campos(c), ['precio', 'codigo', 'nombre', 'cantidad']);
   const r = await c.ev(() => { const t = __ct.t('t1'); return [t.IsColumnFixed('precio'), t.IsColumnVisible('nombre'), Math.round(__ct.th('t1', 0).getBoundingClientRect().width)]; });
   c.igual([r[0], r[1]], [true, false]);
-  c.cerca(r[2], 150, 3, 'ancho');
+  // Ajuste (AJUSTES.md): con width:700px la tabla reparte el sobrante, así que 150 no es lo que se ve. Se compara
+  // contra una carga limpia de la misma página que declara precio con width 150px y aplica el mismo orden y visibilidad.
+  const o = await c.otra(pag({ cols: COLS().map(x => x.field === 'precio' ? { ...x, width: '150px' } : x) }));
+  const ref = await o.ev(() => { __ct.t('t1').setLayout({ v: 1, columns: [{ field: 'precio', order: 0, hidden: false, fixed: true }, { field: 'codigo', order: 1, hidden: false }, { field: 'nombre', order: 2, hidden: true }, { field: 'cantidad', order: 3 }] }); return Math.round(__ct.th('t1', 0).getBoundingClientRect().width); });
+  c.cerca(r[2], ref, 3, 'ancho (carga limpia con width 150px declarado: ' + ref + ')');
+  c.cerca((await lay(c)).columns.find(x => x.field === 'precio').width, 150, 1, 'getLayout().width');
 }, { requiere: ['fixed', 'chooser', 'reorder'] });
 t('04', 'setLayout: columnas que no existen y campos desconocidos se ignoran; las nuevas van al final con sus valores declarados', ['§9-c'], async (c) => {
   await c.abrir(pag());
@@ -97,6 +102,8 @@ t('08', 'ResetLayout vuelve a lo declarado en edit-thead', ['§9-e'], async (c) 
 
 // ---------- §9.2 guardado automático ----------
 const RUTA = '/pantallas/productos.html';
+// Ajuste (AJUSTES.md): las que recargan o reemplazan la página usan su propia ruta (el servidor es compartido en paralelo).
+const RUTA_24 = '/pantallas/productos-24.html', RUTA_30 = '/pantallas/productos-30.html', RUTA_31 = '/pantallas/productos-31.html';
 t('20', 'cambio del usuario (ancho): se guarda en IndexedDB induxsoft-edittable/layouts con llave sha256(origin+pathname+"#"+id)', ['§9-g', '§9-h', '§9-i', '§9-j'], async (c) => {
   await c.abrir(pag({ ruta: RUTA }));
   await ensanchar(c, 0, 60);
@@ -130,7 +137,7 @@ t('23', 'al recargar se restaura (ancho), y la query string no cambia la llave',
   c.cerca(await c.ev(() => __ct.th('t1', 1).getBoundingClientRect().width), w, 3, 'ancho restaurado');
 });
 t('24', 'la restauración no dispara eventos de usuario', ['§9-k'], async (c) => {
-  await c.abrir(pag({ ruta: RUTA, body: "<script>window.lc=[];document.getElementById('t1').Events.layoutchanged=(e)=>window.lc.push(e.reason);</script>" }));
+  await c.abrir(pag({ ruta: RUTA_24, body: "<script>window.lc=[];document.getElementById('t1').Events.layoutchanged=(e)=>window.lc.push(e.reason);</script>" }));
   await ensanchar(c, 1, 80); const w = await c.ev(() => __ct.th('t1', 1).getBoundingClientRect().width); await c.esperar(900);
   await c.page.reload({ waitUntil: 'load' }); await c.esperar(150);
   c.cerca(await c.ev(() => __ct.th('t1', 1).getBoundingClientRect().width), w, 3, 'se restauró el ancho');
@@ -168,18 +175,22 @@ t('29', 'DesignAutoSaveSort=false (omisión): el orden de las filas no se recuer
   c.igual((await lay(c)).sort, null);
 });
 t('30', 'design-auto-save-sort="true": el orden se recuerda', ['§9-n'], async (c) => {
-  await c.abrir(pag({ ruta: RUTA, a: { 'design-auto-save-sort': 'true' } }));
+  await c.abrir(pag({ ruta: RUTA_30, a: { 'design-auto-save-sort': 'true' } }));
   await c.clicTh('t1', 'codigo'); await c.clicTh('t1', 'codigo'); await c.esperar(900);
   await c.page.reload({ waitUntil: 'load' }); await c.esperar(200);
   c.igual(await c.ev(() => __ct.t('t1').DataArray[0].codigo), 'P-004');
 });
 t('31', 'huella de columnas: si cambian los field declarados, el diseño guardado se descarta', ['§9-o'], async (c) => {
-  await c.abrir(pag({ ruta: RUTA }));
+  await c.abrir(pag({ ruta: RUTA_31 }));
   await ensanchar(c, 1, 120); await c.esperar(900);
-  const w0 = 200;
-  c.srv.registrar(`<!DOCTYPE html><html lang="es-MX"><head><meta charset="utf-8"><script src="/__et/editable.js"></script></head><body>${tabla({ cols: COLS({ extra: [{ field: 'linea', title: 'Línea', width: '100px' }] }), data: PRODUCTOS, style: 'width:800px' })}</body></html>`, RUTA);
+  const nueva = `<!DOCTYPE html><html lang="es-MX"><head><meta charset="utf-8"><script src="/__et/editable.js"></script></head><body>${tabla({ cols: COLS({ extra: [{ field: 'linea', title: 'Línea', width: '100px' }] }), data: PRODUCTOS, style: 'width:800px' })}</body></html>`;
+  c.srv.registrar(nueva, RUTA_31);
   await c.page.reload({ waitUntil: 'load' }); await c.esperar(150);
-  c.cerca(await c.ev(() => __ct.th('t1', 1).getBoundingClientRect().width), w0, 6, 'ancho declarado, no el guardado');
+  // Ajuste (AJUSTES.md): el ancho declarado (200px) no es el que se ve (la tabla mide 800px). Se compara contra
+  // una carga limpia (otro contexto, sin IndexedDB) de la misma página nueva.
+  const o = await c.otra({ html: nueva }); await o.esperar(150);
+  const w0 = await o.ev(() => __ct.th('t1', 1).getBoundingClientRect().width);
+  c.cerca(await c.ev(() => __ct.th('t1', 1).getBoundingClientRect().width), w0, 3, 'ancho declarado (carga limpia: ' + w0 + '), no el guardado');
 });
 t('32', 'IndexedDB no disponible: se desactiva sin errores y la tabla funciona', ['§9-l'], async (c) => {
   await c.abrir(pag({ ruta: RUTA, antes: "<script>Object.defineProperty(window,'indexedDB',{get(){throw new Error('bloqueado');}});</script>" }));
@@ -244,12 +255,23 @@ async function abrirB(c, a) {
   const url = c.srv.registrar(htmlB(a), '/b-' + Object.keys(a).join('-') + '.html');
   await c.page.goto(url, { waitUntil: 'load' }); await c.esperar(150);
 }
+// Ajuste (AJUSTES.md): el ancho que se ve depende del orden y la visibilidad de la página, así que no se compara
+// con el de A. Referencia en la misma página B: una carga limpia (otro contexto, sin IndexedDB) a la que se le
+// aplica por código el diseño que quedó en la página restaurada (getLayout).
+async function anchoEnB(c, a) {
+  const l = await c.ev(() => __ct.t('t1').getLayout());
+  const o = await c.otra({ html: htmlB(a) }); await o.esperar(150);
+  return o.ev((l) => { __ct.t('t1').setLayout(l, { silent: true }); return __ct.thPorCampo('t1', 'codigo').getBoundingClientRect().width; }, l);
+}
+const anchoGuardado = (c) => c.ev(() => __ct.t('t1').getLayout().columns.find(x => x.field === 'codigo').width);
 t('40', 'salvaguarda 3: en una tabla sin atributos nuevos solo se restaura el ancho', ['§9-q', '§9-k'], async (c) => {
-  const w = await guardarCompleto(c);
+  await guardarCompleto(c);
+  const g = await anchoGuardado(c);
   await abrirB(c, {});
   c.igual(await campos(c), ['codigo', 'nombre', 'cantidad', 'precio'], 'orden declarado');
   c.igual(await c.ev(() => __ct.thPorCampo('t1', 'nombre').classList.contains('hidde-col')), false, 'visibilidad declarada');
-  c.cerca(await c.ev(() => __ct.thPorCampo('t1', 'codigo').getBoundingClientRect().width), w, 3, 'ancho restaurado');
+  c.cerca(await anchoGuardado(c), g, 1, 'getLayout: ancho restaurado');
+  c.cerca(await c.ev(() => __ct.thPorCampo('t1', 'codigo').getBoundingClientRect().width), await anchoEnB(c, {}), 3, 'ancho restaurado (misma página)');
 }, { requiere: ['reorder', 'chooser'] });
 t('41', 'salvaguarda 3: con column-reorder (sin column-chooser) se restaura el orden pero no la visibilidad', ['§9-q'], async (c) => {
   await guardarCompleto(c);
@@ -264,11 +286,14 @@ t('42', 'salvaguarda 3: con column-chooser (sin column-reorder) se restaura la v
   c.igual(await c.ev(() => __ct.thPorCampo('t1', 'nombre').classList.contains('hidde-col')), true);
 }, { requiere: ['reorder', 'chooser'] });
 t('43', 'salvaguarda 3: con los dos atributos se restaura todo', ['§9-q', '§9-n'], async (c) => {
-  const w = await guardarCompleto(c);
-  await abrirB(c, { 'column-reorder': 'true', 'column-chooser': 'true' });
+  await guardarCompleto(c);
+  const g = await anchoGuardado(c);
+  const a = { 'column-reorder': 'true', 'column-chooser': 'true' };
+  await abrirB(c, a);
   c.igual(await campos(c), ['codigo', 'nombre', 'precio', 'cantidad']);
   c.igual(await c.ev(() => __ct.thPorCampo('t1', 'nombre').classList.contains('hidde-col')), true);
-  c.cerca(await c.ev(() => __ct.thPorCampo('t1', 'codigo').getBoundingClientRect().width), w, 3);
+  c.cerca(await anchoGuardado(c), g, 1, 'getLayout: ancho restaurado');
+  c.cerca(await c.ev(() => __ct.thPorCampo('t1', 'codigo').getBoundingClientRect().width), await anchoEnB(c, a), 3, 'ancho restaurado (misma página)');
 }, { requiere: ['reorder', 'chooser'] });
 
 export default { nombre: 'v2-diseno', grupo: 'v2', pruebas: P };

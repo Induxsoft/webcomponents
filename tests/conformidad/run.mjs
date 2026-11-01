@@ -136,8 +136,11 @@ async function main() {
     process.stdout.write(marca);
   }
   // las pruebas de tiempo (serial: true) corren al final, solas, para que la carga en paralelo no las altere
+  // Ajuste (AJUSTES.md): las de portapapeles (clp-*) también son seriales, porque el portapapeles de Chromium
+  // headless se comparte entre contextos.
   const orden = tareas.map((x, i) => i);
-  const paralelas = orden.filter(i => !tareas[i].p.serial), seriales = orden.filter(i => tareas[i].p.serial);
+  const esSerial = (p) => !!p.serial || /^clp-/.test(p.id);
+  const paralelas = orden.filter(i => !esSerial(tareas[i].p)), seriales = orden.filter(i => esSerial(tareas[i].p));
   let cola = paralelas.slice();
   async function trabajadorCola() { while (cola.length) { const i = cola.shift(); await correr(i); } }
   await Promise.all(Array.from({ length: Math.max(1, N) }, trabajadorCola));

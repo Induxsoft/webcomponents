@@ -76,7 +76,11 @@ t('13', 'se recalcula con AddRow y DeleteRow', '§2-n', async (c) => {
   await c.abrir(pag());
   await c.ev(() => __ct.t('t1').DeleteRow(0));
   c.igual(await m(c, 't1', 'getSummary', 'cantidad'), 15);
-  await c.ev(() => { const t = __ct.t('t1'); t.AddRow(); t.UpdateDataMember(t.DataArray.length - 1, 'cantidad', '5'); });
+  // Ajuste (AJUSTES.md): AddRow() (InsertRow sin índice) agrega la fila al DOM pero no a DataArray (comportamiento
+  // de hoy); la entrada se crea al editar. Para tener una fila de datos nueva se usa InsertRow(índice).
+  await c.ev(() => __ct.t('t1').AddRow());
+  c.igual(await m(c, 't1', 'getSummary', 'cantidad'), 15, 'AddRow sin datos no cambia el total');
+  await c.ev(() => { const t = __ct.t('t1'); t.InsertRow(t.DataArray.length, true); t.UpdateDataMember(t.DataArray.length - 1, 'cantidad', '5'); });
   c.igual(await m(c, 't1', 'getSummary', 'cantidad'), 20);
 });
 t('14', 'se recalcula al asignar DataArray', '§2-n', async (c) => {

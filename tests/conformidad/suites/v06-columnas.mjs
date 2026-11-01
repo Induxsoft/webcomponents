@@ -30,7 +30,9 @@ f('02', 'position sticky en th y td de las fijas, con left = suma de anchos ante
     const td = __ct.td('t1', 0, 1); const cs = getComputedStyle(td);
     return { w0: ths[0].getBoundingClientRect().width, l1: parseFloat(getComputedStyle(ths[1]).left), tdPos: cs.position, tdLeft: parseFloat(cs.left), bg: cs.backgroundColor, last: ths.map(th => th.classList.contains('et-fixed-last')), tdLast: td.classList.contains('et-fixed-last'), pos2: getComputedStyle(ths[2]).position };
   });
-  c.igual([r.tdPos, r.pos2], ['sticky', 'static']);
+  // Ajuste (AJUSTES.md): el CSS base ya pone position: relative en los th; un th no fijo puede ser relative o static.
+  c.igual(r.tdPos, 'sticky');
+  c.ok(['relative', 'static'].includes(r.pos2), 'th no fijo sin sticky: ' + r.pos2);
   c.cerca(r.l1, r.w0, 1.5, 'left de la segunda fija');
   c.cerca(r.tdLeft, r.w0, 1.5, 'left del td');
   c.ok(r.bg !== 'rgba(0, 0, 0, 0)' && r.bg !== 'transparent', 'fondo sólido: ' + r.bg);
@@ -61,7 +63,9 @@ f('06', 'FixColumn(field,false) suelta la columna (deja de ser sticky)', ['§6-a
   await c.abrir(pag({ codigo: { fixed: 'left' }, nombre: { fixed: 'left' } }));
   await c.ev(() => __ct.t('t1').FixColumn('codigo', false));
   const s = await sticky(c);
-  c.igual(s.find(x => x.field === 'codigo').pos, 'static');
+  // Ajuste (AJUSTES.md): basta con que deje de ser sticky (el CSS base de los th es relative).
+  const pos = s.find(x => x.field === 'codigo').pos;
+  c.ok(pos !== 'sticky' && ['relative', 'static'].includes(pos), 'codigo ya no es sticky: ' + pos);
   c.igual(s.find(x => x.field === 'nombre').last, true);
 });
 f('07', 'las posiciones se recalculan al ocultar una columna fija anterior', ['§6-e'], async (c) => {

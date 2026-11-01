@@ -116,17 +116,21 @@ function compararFotos(c, a, b, autorizadas) {
 }
 function escenario(id, titulo, construir, accion, extra = {}) {
   r1(id, `R1 ${titulo}: DOM interno, DataArray, Columns y eventos idénticos a 0ed1824`, ['§0-R1'], async (c) => {
-    const fotos = [];
-    for (const src of ['et', 'ref']) {
+    const fotos = {};
+    // Ajuste (AJUSTES.md): la sonda registra solo los eventos que existen en 0ed1824 (Const.Events de la
+    // referencia). Registrar un evento nuevo ya es usar algo nuevo (por ejemplo, LayoutChanged al ordenar).
+    let nombres = null;
+    for (const src of ['ref', 'et']) {
       const cc = src === 'et' ? c : await c.otra({ ...construir(), src });
       if (src === 'et') await c.abrir({ ...construir(), src });
       // lostfocus lo dispara un setInterval de 1 s: depende del reloj, no del componente; se excluye de la comparación
-      await cc.ev(() => document.querySelectorAll('edit-table').forEach(e => __ct.grabar(e, Object.values(e.EdiTable.Const.Events).filter(n => n !== 'badgeclick' && n !== 'lostfocus'))));
+      if (!nombres) nombres = await cc.ev(() => Object.values(document.querySelector('edit-table').EdiTable.Const.Events).filter(n => n !== 'badgeclick' && n !== 'lostfocus'));
+      await cc.ev((nombres) => document.querySelectorAll('edit-table').forEach(e => __ct.grabar(e, nombres)), nombres);
       await accion(cc);
       await cc.esperar(30);
-      fotos.push(await foto(cc));
+      fotos[src] = await foto(cc);
     }
-    compararFotos(c, fotos[0], fotos[1], extra.autorizadas);
+    compararFotos(c, fotos.et, fotos.ref, extra.autorizadas);
   }, extra);
 }
 escenario('01', 'tabla básica: clic, edición de texto, Esc, ordenar, AddRow, borrar', () => paginaProductos(), async (c) => {
