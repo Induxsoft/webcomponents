@@ -24,9 +24,14 @@ Sale con código 0 si todo pasa e imprime `TODO BIEN`.
 | `tabla.html` | **No carga EdiTable** (la prueba lo comprueba): tabla con `colspan`/`rowspan`, `tfoot`, fila oculta por estilo y por atributo, columna `no-print`, `data-type`/`data-value`, números con formato mexicano; tabla sin `thead`; `fromArray` con columnas inferidas y explícitas, rutas con punto y `value`; libro de varias hojas; `toCSV` con BOM y delimitador forzado; `download(fuente, nombre)` capturado como descarga real. |
 | `../../examples/excel-demo.html` | Prueba de humo del ejemplo: pulsa cada botón y valida los archivos descargados. |
 
-## Locales (R7)
+## Locales (R7, revisado)
 
-`es-MX`, `en-US`, `es-ES`, `es-CO` y `de-DE` (`1.234,56 €`, `25.12.2026`); `lang` de la tabla contra el del documento, contra el del navegador y contra las opciones `locale` y `decimal`/`thousands`/`dateOrder`; fechas ambiguas resueltas por la columna (en ambos sentidos) y sin resolver (decide el locale); delimitador de CSV según el locale, forzado con `delimiter`, y `raw`.
+- `es-MX`, `en-US`, `es-ES`, `es-CO` y `de-DE` (`1.234,56 €`, `25.12.2026`).
+- Prioridad: opción `locale` y `decimal`/`thousands`/`dateOrder` > `lang` con región de la tabla o de un ancestro > `lang` del documento > inferencia por columna > `es-MX`.
+- La matriz se corre con el navegador en `en-US`, `de-DE`, `es-ES` y `es` (contexto de Playwright): sin `lang`, `1,234.56` siempre es 1234.56; `lang="es"` sin región no declara y sube al ancestro con región; `locale:'auto'` sí usa el navegador.
+- Inferencia por columna: `1.234,56` + `12,5` → coma decimal; `1.234.567` → punto de miles; también en `fromArray`.
+- Fechas ambiguas resueltas por la columna (en ambos sentidos) y sin resolver (decide el locale).
+- Delimitador de CSV según el locale, forzado con `delimiter`, con `raw`, y sin cambio por la inferencia.
 
 ## Requisitos
 

@@ -578,15 +578,21 @@ En realidad las cuatro `from*` aceptan cualquier fuente y deciden por su tipo; l
 
 ### Locale (R7)
 
-Los números y fechas **escritos como texto** (`fromTable` y `fromArray`) se leen según el locale, que se resuelve así:
+Los números y fechas **escritos como texto** (`fromTable` y `fromArray`) se leen así:
 
 1. la opción `locale` (BCP 47), o `decimal`, `thousands` y `dateOrder` (`'DMY'`, `'MDY'`, `'YMD'`);
-2. el atributo `lang` del elemento o de su ancestro más cercano (`closest('[lang]')`);
-3. `document.documentElement.lang`;
-4. `navigator.language`;
-5. `'es-MX'`.
+2. el atributo `lang` del elemento o del ancestro más cercano, **solo si trae región** (`es-MX`, `es-CO`, `en-US`). Un `lang` sin región (`es`, `en`) cuenta como no declarado y se sigue buscando hacia arriba;
+3. `document.documentElement.lang`, con la misma regla de la región;
+4. si nada de lo anterior lo declara, **se infiere por el contenido de cada columna**: si algún valor trae los dos separadores, el último es el decimal (`1.234,56` → coma decimal) y fija el formato de toda la columna; si no, un valor como `1,234,567` o `1.234.567` (separador, tres dígitos y el mismo separador) indica el de miles;
+5. si sigue siendo ambiguo (`12,5` o `1,234` solos): `'es-MX'` (punto decimal, coma de miles, día/mes/año).
 
-Los separadores y el orden de la fecha salen de `Intl.NumberFormat(locale).formatToParts(1234567.5)` y `Intl.DateTimeFormat(locale).formatToParts(...)` (con 1234567.5 porque `es-ES` no agrupa los números de cuatro cifras). Siempre se aceptan ISO 8601 y `data-value`. Las fechas `d/m/aaaa`, `m/d/aaaa` y `aaaa/m/d` admiten `/`, `.` o `-`; si alguna fecha de la columna tiene el primer número mayor que 12 (o el segundo), ese orden se fija para **toda la columna**; si ninguna lo resuelve, decide el locale. En `fromEditTable` no se interpreta texto: se usan los valores de `DataArray` (y `table.Locale`, si existe, para el CSV). El XLSX no depende del locale porque guarda valores.
+`navigator.language` **no participa** salvo con `locale: 'auto'`: es el idioma de la interfaz del navegador, no el del contenido (Chrome en "Español" reporta `es`, que con `Intl` da el formato de España).
+
+Los separadores y el orden de la fecha del locale salen de `Intl.NumberFormat(locale).formatToParts(1234567.5)` y `Intl.DateTimeFormat(locale).formatToParts(...)` (con 1234567.5 porque `es-ES` no agrupa los números de cuatro cifras). Siempre se aceptan ISO 8601 y `data-value`.
+
+Fechas: `d/m/aaaa`, `m/d/aaaa` y `aaaa/m/d`, con `/`, `.` o `-`. Si alguna fecha de la columna no puede ser ambigua (primer número mayor que 12, o el segundo), ese orden se fija para **toda la columna**; si ninguna lo resuelve, decide el locale de los pasos 1–3 o, en su defecto, `es-MX` (día/mes/año).
+
+En `fromEditTable` no se interpreta texto: se usan los valores de `DataArray` (y `table.Locale`, si existe, cuenta como locale declarado). El delimitador por omisión de `toCSV` sigue al locale de los pasos 1–3 y 5 (la inferencia por contenido no aplica al CSV). El XLSX no depende del locale porque guarda valores.
 
 ### `fromEditTable`
 
@@ -609,7 +615,7 @@ Los separadores y el orden de la fecha salen de `Intl.NumberFormat(locale).forma
 | `dateFormat`, `dateTimeFormat` | `dd/mm/yyyy`, `dd/mm/yyyy hh:mm` | Formato de fecha de Excel. |
 | `freeze`, `autoFilter` | `true` | Fijar el encabezado y poner autofiltro. |
 | `maxWidth` | `60` | Ancho máximo estimado, en caracteres. |
-| `locale`, `decimal`, `thousands`, `dateOrder` | ver R7 | Lectura de texto. |
+| `locale`, `decimal`, `thousands`, `dateOrder` | ver R7 | Lectura de texto. `locale: 'auto'` usa `navigator.language`. |
 | `compress` | `true` | Solo en `*Async`: `false` usa STORE. |
 | `fileName` | | Nombre para `download`/`exportEditTable`. |
 | `delimiter` (CSV) | `;` si el locale usa coma decimal, si no `,` | Fuerza el delimitador. |

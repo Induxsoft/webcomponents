@@ -210,9 +210,23 @@ try {
             add('amb-loc', mk('es-MX', [['1', '03/04/2026'], ['2', '05/06/2026']]));
             add('navegador', mk('', [['1,234.5', '03/04/2026']]));
             add('arreglo-de', [{ m: '1.234,56', f: '25.12.2026' }, { m: '2,5', f: '01.02.2026' }], { locale: 'de-DE' });
+            // R7 revisado: sin lang con región ni opción, el navegador no participa; se infiere por columna o queda es-MX.
+            add('sin-lang', mk('', [['1,234.56', '03/04/2026']]));
+            add('lang-es', mk('es', [['1,234', '03/04/2026']]));
+            const div = document.createElement('div');
+            div.setAttribute('lang', 'es-CO');
+            document.body.appendChild(div);
+            const anid = mk('es', [['1,5', '03/04/2026']]);
+            div.appendChild(anid);
+            add('anidada', anid);
+            add('columna', mk('', [['1.234,56', '03/04/2026'], ['12,5', '05/06/2026']]));
+            add('columna-miles', mk('', [['1.234.567', ''], ['12,5', '']]));
+            add('auto', mk('', [['1,234.5', '03/04/2026']]), { locale: 'auto' });
+            add('arreglo-inferido', [{ m: '1.234,56' }, { m: '12,5' }]);
             const wb = await b64(X.workbook(S).toBlob());
             const navTable = mk('', [['1', '2']]);
-            const loc = { nav: X._loc({}, navTable) };
+            const loc = { nav: X._loc({}, navTable), auto: X._loc({ locale: 'auto' }, navTable), langEs: X._loc({}, mk('es', [])), anidada: X._loc({}, anid) };
+            const csvColumna = X.toCSV(S.find(x => x.name === 'columna').source);
             document.documentElement.lang = 'de-DE';
             add('documento', mk('', [['1.234,5', '03/04/2026']]));
             loc.doc = X._loc({}, navTable);
@@ -223,6 +237,7 @@ try {
                 esES: X.toCSV(S[2].source), enUS: X.toCSV(S[1].source), forzado: X.toCSV(S[2].source, { delimiter: ',' }),
                 deArr: X.toCSV([{ a: 1.5, b: 'x;y' }], { locale: 'de-DE' }), raw: X.toCSV(S[2].source, { raw: true })
             };
+            csv.columna = csvColumna;
             return { wb, doc, loc, csv };
         });
         await c.close();
@@ -252,7 +267,11 @@ try {
     save('locales.xlsx', l1.wb); save('locale-documento.xlsx', l1.doc);
     const l2 = await localeCase('de-DE');
     save('locales-nav-de.xlsx', l2.wb);
-    results.locale = { en: { loc: l1.loc, csv: l1.csv }, de: { loc: l2.loc } };
+    const l3 = await localeCase('es-ES');
+    save('locales-nav-es-ES.xlsx', l3.wb);
+    const l4 = await localeCase('es');
+    save('locales-nav-es.xlsx', l4.wb);
+    results.locale = { en: { loc: l1.loc, csv: l1.csv }, de: { loc: l2.loc }, esES: { loc: l3.loc }, es: { loc: l4.loc } };
 } finally {
     await browser.close();
 }

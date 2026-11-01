@@ -65,19 +65,39 @@
     return quote(c.prefix) + (on(c.thousandssep) ? '#,##0' : '0') + (d ? '.' + '0'.repeat(d) : '') + quote(c.sufix);
   }
 
-  // Locale (R7): opts.locale | decimal/thousands/dateOrder > lang del elemento o ancestro > documento > navegador > es-MX.
-  // Separadores y orden de fecha salen de Intl (1234567.5: es-ES no agrupa números de 4 cifras).
+  // Locale (R7, revisado 2026-11-01): opts.locale | decimal/thousands/dateOrder > lang con región del elemento o
+  // sus ancestros > lang con región del documento > (al leer texto) inferencia por columna > es-MX.
+  // navigator.language solo con locale:'auto'. Separadores y orden de fecha salen de Intl (1234567.5: es-ES no agrupa 4 cifras).
+  const region = t => !!t && String(t).split(/[-_]/).some((x, i) => i && /^([A-Za-z]{2}|\d{3})$/.test(x));
   function loc(o, el) {
-    let L = o.locale || (el && el.Locale) || (el && el.closest && el.closest('[lang]')?.getAttribute('lang'))
-      || (typeof document !== 'undefined' && document.documentElement.lang) || (typeof navigator !== 'undefined' && navigator.language) || 'es-MX', p, d;
+    let L = o.locale === 'auto' ? (typeof navigator !== 'undefined' && navigator.language) : o.locale || (el && el.Locale);
+    const decl = !!(L || o.decimal || o.thousands || o.dateOrder);
+    for (let e = el && el.closest ? el.closest('[lang]') : null; !L && e; e = e.parentElement && e.parentElement.closest('[lang]')) if (region(e.getAttribute('lang'))) L = e.getAttribute('lang');
+    if (!L && typeof document !== 'undefined' && region(document.documentElement.lang)) L = document.documentElement.lang;
+    const declared = decl || !!L;
+    L = L || 'es-MX';
+    let p, d;
     try { p = new Intl.NumberFormat(L).formatToParts(1234567.5); d = new Intl.DateTimeFormat(L).formatToParts(new Date(2026, 10, 25)); }
-    catch (_) { return loc(Object.assign({}, o, { locale: 'es-MX' })); }
+    catch (_) { return Object.assign(loc(Object.assign({}, o, { locale: 'es-MX' })), { declared }); }
     const part = t => (p.find(x => x.type === t) || {}).value;
     const dec = o.decimal || part('decimal') || '.', th = o.thousands || part('group') || (dec === ',' ? '.' : ',');
     const ord = o.dateOrder || d.filter(x => /^(day|month|year)$/.test(x.type)).map(x => x.type[0].toUpperCase()).join('');
-    const e = x => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), g = /\s/.test(th) ? '\\s' : e(th);
-    return { L, dec, th, ord, re: new RegExp(`^([-+]?)\\s*([$€£]?)\\s*([-+]?)(\\d{1,3}(?:${g}\\d{3})+|\\d+)(?:${e(dec)}(\\d+))?(\\s*)(%|[$€£]|[A-Z]{3})?$`) };
+    return seps({ L, ord, declared }, dec, th);
   }
+  function seps(L, dec, th) {
+    const e = x => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), g = /\s/.test(th) ? '\\s' : e(th);
+    return Object.assign({}, L, { dec, th, re: new RegExp(`^([-+]?)\\s*([$€£]?)\\s*([-+]?)(\\d{1,3}(?:${g}\\d{3})+|\\d+)(?:${e(dec)}(\\d+))?(\\s*)(%|[$€£]|[A-Z]{3})?$`) });
+  }
+  // Inferencia por contenido (solo si el locale no se declaró): un valor con los dos separadores fija el decimal (el último);
+  // si no, "1,234,567" (separador, 3 dígitos, el mismo separador) fija el de miles. Si nada resuelve, queda es-MX.
+  function inferSeps(texts, L) {
+    if (L.declared) return L;
+    let dec;
+    for (const t of texts) { const a = t.lastIndexOf('.'), b = t.lastIndexOf(','); if (a >= 0 && b >= 0) { dec = a > b ? '.' : ','; break; } }
+    if (!dec) for (const t of texts) { const m = /\d([.,])\d{3}\1\d{3}(?!\d)/.exec(t); if (m) { dec = m[1] === '.' ? ',' : '.'; break; } }
+    return dec ? seps(L, dec, dec === '.' ? ',' : '.') : L;
+  }
+  const numText = v => typeof v === 'string' && /\d/.test(v) && /^[-+$€£%\s\d.,A-Z]+$/.test(v.trim()) && !ISO.test(v) && !dparts(v);
 
   // Texto con número del locale ("$1,234.56", "1.234,56 €", "12,5 %") -> [valor, numFmt]; "00123" sigue siendo texto.
   function locNum(s, L) {
@@ -144,8 +164,10 @@
       cols = [...seen];
     }
     cols = cols.map(c => typeof c === 'string' ? { field: c } : Object.assign({}, c));
+    for (const c of cols) c._loc = inferSeps(rows.map(r => val(c, r, o)).filter(numText), L);
     for (const c of cols) {
       if (c.type) continue;
+      const L = c._loc;
       let k = '', t = false;
       for (const r of rows) {
         const v = val(c, r, o);
@@ -162,7 +184,7 @@
     // Texto de números y fechas según el locale (los números y Date ya vienen como valores).
     S.cols.forEach((c, i) => {
       const t = low(c.type);
-      if (t === 'number') S.body.forEach(r => { const m = typeof r[i] === 'string' && locNum(r[i], L); if (m) r[i] = m[0]; });
+      if (t === 'number') S.body.forEach(r => { const m = typeof r[i] === 'string' && locNum(r[i], c._loc); if (m) r[i] = m[0]; });
       if (t === 'date' || t === 'datetime') {
         const ms = S.body.map(r => typeof r[i] === 'string' && !ISO.test(r[i]) && dparts(r[i]));
         const ord = colOrder(ms.filter(Boolean), L.ord);
@@ -250,7 +272,10 @@
     for (let c = 0; c < n; c++) cmap[c] = colHidden[c] ? -1 : nc++;
     const out = [[], [], []], merges = [], pend = [], L = loc(o, tb);
     for (let s = 0; s < 3; s++) for (let i = 0; i < nr[s]; i++) out[s].push(new Array(nc).fill(undefined));
-    const done = new Set(), off = [0, nr[0], nr[0] + nr[1]];
+    const done = new Set(), off = [0, nr[0], nr[0] + nr[1]], txts = new Map(), byCol = [];
+    const text = el => { if (!txts.has(el)) txts.set(el, (el.innerText ?? el.textContent ?? '').trim()); return txts.get(el); };
+    g.forEach((row, r) => sec[r] && rmap[r] >= 0 && row.forEach(x => { if (x && x.r === r && !hidden(x.el) && x.el.getAttribute('data-value') == null) (byCol[x.c] = byCol[x.c] || []).push(text(x.el)); }));
+    const colL = byCol.map(t => inferSeps((t || []).filter(numText), L));
     g.forEach(row => row.forEach(x => {
       if (!x || done.has(x)) return;
       done.add(x);
@@ -259,11 +284,11 @@
       for (let a = 0; a < x.rs; a++) if (rmap[x.r + a] >= 0) rr.push(rmap[x.r + a]);
       for (let b = 0; b < x.cs; b++) if (cmap[x.c + b] >= 0) cc.push(cmap[x.c + b]);
       if (!rr.length || !cc.length) return;
-      const s = sec[x.r], el = x.el, txt = (el.innerText ?? el.textContent ?? '').trim();
+      const s = sec[x.r], el = x.el, txt = text(el);
       const dv = el.getAttribute('data-value'), raw = dv ?? txt;
       const t = low(el.getAttribute('data-type') || colType[x.c]), f = el.getAttribute('data-format') || colFmt[x.c];
       // data-value e ISO 8601 se aceptan siempre; el texto visible se lee con el locale.
-      const m = locNum(txt, L), iso = x => x != null && ISO.test(x) && serial(x) !== null, dk = x => t !== 'datetime' && !hasTime(x) ? 'd' : 't';
+      const m = locNum(txt, colL[x.c] || L), iso = x => x != null && ISO.test(x) && serial(x) !== null, dk = x => t !== 'datetime' && !hasTime(x) ? 'd' : 't';
       const dn = dv != null && /^\s*-?\d+(\.\d+)?([eE][-+]?\d+)?\s*$/.test(dv) ? +dv : null;
       let v, dp;
       if (s === 0 || t === 'text' || t === 'string') v = new XC(raw, 's');

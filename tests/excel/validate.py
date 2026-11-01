@@ -250,24 +250,41 @@ eq('opción decimal/thousands/dateOrder', nd(L, 'explicito'), [(1234.56, D(2026,
 eq('fecha ambigua resuelta por la columna (en-US -> DMY)', nd(L, 'amb-en', (2, 3)), [(1, D(2026, 4, 3)), (2, D(2026, 4, 25))])
 eq('fecha ambigua resuelta por la columna (es-MX -> MDY)', nd(L, 'amb-mx', (2, 3)), [(1, D(2026, 4, 13)), (2, D(2026, 3, 4))])
 eq('fecha ambigua sin resolver: decide el locale', nd(L, 'amb-loc', (2, 3)), [(1, D(2026, 4, 3)), (2, D(2026, 6, 5))])
-eq('locale del navegador (en-US)', nd(L, 'navegador'), [(1234.5, D(2026, 3, 4))])
+eq('navegador en-US sin locale:auto no participa (es-MX)', nd(L, 'navegador'), [(1234.5, D(2026, 4, 3))])
 eq('arreglo con locale de-DE', nd(L, 'arreglo-de', (2, 3)), [(1234.56, D(2026, 12, 25)), (2.5, D(2026, 2, 1))])
 eq('locale del documento (de-DE) gana al navegador', nd('locale-documento.xlsx', 'documento'), [(1234.5, D(2026, 4, 3))])
 L2 = 'locales-nav-de.xlsx'
-eq('navegador de-DE: "1,234.5" no es número', nd(L2, 'navegador'), [('1,234.5', D(2026, 4, 3))])
+eq('navegador de-DE sin locale:auto no participa (es-MX)', nd(L2, 'navegador'), [(1234.5, D(2026, 4, 3))])
 eq('navegador de-DE: lang de la tabla sigue mandando', nd(L2, 'en-US'), [(1234.56, D(2026, 3, 4))])
 lc = R['locale']
-eq('resolución: navegador', lc['en']['loc']['nav'], ['en-US', '.', ',', 'MDY'])
+eq('resolución: sin lang ni opción -> es-MX (navegador en-US)', lc['en']['loc']['nav'], ['es-MX', '.', ',', 'DMY'])
 eq('resolución: documento', lc['en']['loc']['doc'], ['de-DE', ',', '.', 'DMY'])
 eq('resolución: lang de la tabla', lc['en']['loc']['tabla'], ['en-US', '.', ',', 'MDY'])
 eq('resolución: opción', lc['en']['loc']['opcion'], ['es-CO', ',', '.', 'DMY'])
-eq('resolución: navegador de-DE', lc['de']['loc']['nav'], ['de-DE', ',', '.', 'DMY'])
+for ctx in ('de', 'esES', 'es'):
+    eq(f'resolución: sin lang ni opción -> es-MX (navegador {ctx})', lc[ctx]['loc']['nav'], ['es-MX', '.', ',', 'DMY'])
+eq('resolución: locale:auto usa el navegador en-US', lc['en']['loc']['auto'], ['en-US', '.', ',', 'MDY'])
+eq('resolución: locale:auto usa el navegador es-ES', lc['esES']['loc']['auto'], ['es-ES', ',', '.', 'DMY'])
+eq('resolución: locale:auto usa el navegador es', lc['es']['loc']['auto'], ['es', ',', '.', 'DMY'])
+eq('resolución: lang="es" sin región = no declarado', lc['en']['loc']['langEs'], ['es-MX', '.', ',', 'DMY'])
+eq('resolución: lang="es" sube al ancestro con región', lc['en']['loc']['anidada'], ['es-CO', ',', '.', 'DMY'])
+for key, ctx in (('locales.xlsx', 'en-US'), ('locales-nav-de.xlsx', 'de-DE'), ('locales-nav-es-ES.xlsx', 'es-ES'), ('locales-nav-es.xlsx', 'es')):
+    eq(f'navegador {ctx}, página sin lang: "1,234.56" es 1234.56', nd(key, 'sin-lang'), [(1234.56, D(2026, 4, 3))])
+    eq(f'navegador {ctx}: lang="es" sin región no declara ("1,234" = 1234)', nd(key, 'lang-es'), [(1234, D(2026, 4, 3))])
+    eq(f'navegador {ctx}: inferencia por columna, coma decimal', nd(key, 'columna', (2, 3)), [(1234.56, D(2026, 4, 3)), (12.5, D(2026, 6, 5))])
+    eq(f'navegador {ctx}: inferencia por "1.234.567"', nd(key, 'columna-miles', (2, 3)), [(1234567, None), (12.5, None)])
+    eq(f'navegador {ctx}: arreglo con inferencia por columna', [load(key)['arreglo-inferido'][f'A{r}'].value for r in (2, 3)], [1234.56, 12.5])
+    eq(f'navegador {ctx}: lang="es" dentro de lang="es-CO"', nd(key, 'anidada'), [(1.5, D(2026, 4, 3))])
+eq('locale:auto con navegador en-US', nd('locales.xlsx', 'auto'), [(1234.5, D(2026, 3, 4))])
+eq('locale:auto con navegador es-ES ("1,234.5" no es número)', nd('locales-nav-es-ES.xlsx', 'auto'), [('1,234.5', D(2026, 4, 3))])
+eq('locale:auto con navegador es', nd('locales-nav-es.xlsx', 'auto'), [('1,234.5', D(2026, 4, 3))])
 cs = lc['en']['csv']
 eq('CSV es-ES: ";" y coma decimal', cs['esES'], 'N;F\r\n1234,56;2026-04-03\r\n')
 eq('CSV en-US: ","', cs['enUS'], 'N,F\r\n1234.56,2026-03-04\r\n')
 eq('CSV delimiter forzado', cs['forzado'], 'N,F\r\n"1234,56",2026-04-03\r\n')
 eq('CSV de-DE desde arreglo', cs['deArr'], 'a;b\r\n1,5;"x;y"\r\n')
 eq('CSV raw: punto decimal', cs['raw'], 'N;F\r\n1234.56;2026-04-03\r\n')
+eq('CSV: la inferencia por contenido no cambia el delimitador (es-MX)', cs['columna'], 'N,F\r\n1234.56,2026-04-03\r\n12.5,2026-06-05\r\n')
 
 # ---------- Node ----------
 ws = load('node.xlsx').active
