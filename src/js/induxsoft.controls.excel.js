@@ -234,6 +234,29 @@
     return { columns: cols, rows, summary };
   }
 
+  // P3 (spec §13): en un edit-table, R7 solo se aplica a los textos que no son canónicos (R9) en columnas Number,
+  // Date y DateTime; con el locale de la tabla (Locale o lang con región) o, si no hay, la inferencia por columna.
+  const CANON = /^-?\d+(\.\d+)?$/;
+  function etLocale(S, o, el) {
+    const L = loc(o, el);
+    S.cols.forEach((c, i) => {
+      const t = low(c.type);
+      if (t === 'number') {
+        const txt = S.body.map(r => r[i]).filter(v => typeof v === 'string' && !CANON.test(v.trim()) && numText(v));
+        if (!txt.length) return;
+        const cl = inferSeps(txt, L);
+        S.body.forEach(r => { if (typeof r[i] === 'string' && !CANON.test(r[i].trim())) { const m = locNum(r[i], cl); if (m) r[i] = m[0]; } });
+      }
+      else if (t === 'date' || t === 'datetime') {
+        const ms = S.body.map(r => typeof r[i] === 'string' && !ISO.test(r[i]) && dparts(r[i]));
+        if (!ms.some(Boolean)) return;
+        const ord = colOrder(ms.filter(Boolean), L.ord);
+        ms.forEach((m, j) => { if (m) S.body[j][i] = toDate(m, ord) ?? S.body[j][i]; });
+      }
+    });
+    return S;
+  }
+
   // <table> HTML: thead (encabezado), tbody, tfoot (totales); colspan/rowspan como celdas combinadas.
   function tableSheet(tb, o) {
     const hidden = el => !o.includeHidden && !!el && (el.hidden || NOPRINT.test(typeof el.className === 'string' ? el.className : '')
@@ -323,7 +346,7 @@
     const el = src.getAttribute ? src : null;
     const name = o.sheetName ?? (el && (el.getAttribute('export-name') || el.id || (src.caption && src.caption.textContent.trim())));
     let S;
-    if (isET(src)) S = fieldsSheet(etData(src, o), o);
+    if (isET(src)) S = etLocale(fieldsSheet(etData(src, o), o), o, el);
     else if (isTable(src)) S = tableSheet(src, o);
     else if (Array.isArray(src)) S = arraySheet(src, o);
     else if (!src.columns && Array.isArray(src.rows)) S = arraySheet(src.rows, Object.assign({ summary: src.summary }, o));
