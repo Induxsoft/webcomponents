@@ -1,0 +1,6 @@
+
+                tbody tr.et-row-checked{ background-color: #DCE8FB; }
+                th.et-sel-col, td.et-sel-col{ width: 2rem; min-width: 2rem; text-align: center; padding: 0 4px; cursor: default; }
+                th.et-sel-col input, td.et-sel-col input{ cursor: pointer; margin: 0; vertical-align: middle; }
+                .table-cards td.et-sel-col::before, table.et-cards td.et-sel-col::before{ content: none !important; }
+                @media print{ .et-sel-col{ display: none !important; } }

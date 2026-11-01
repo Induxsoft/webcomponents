@@ -76,6 +76,9 @@ class EditTable extends HTMLElement
                 }
                 break;
             }
+            case 'multi-select':   // F4 (C8, P28)
+                this.MultiSelect = newValue;
+                break;
             case 'show-tree':
             {
                 this._initTreeValues();
@@ -333,6 +336,7 @@ class EditTable extends HTMLElement
             this._resizableGrid(this._table);
             this._setSortEvent();
             this._setMoveEvent();
+            this._f4Iniciar();   // F4: multi-select (columna del sistema y selección)
             this._f3Inicializar?.();   // F3: columnas fijas, selector, reordenar y diseño guardado
 
             // Si no se ha proporcionado el atributo data para el dataArray se genera a partir del contenido de la tabla
@@ -607,7 +611,8 @@ class EditTable extends HTMLElement
         const idx = [];
         this._f1Ocultas.forEach(field => {
             const th = this._table?.querySelector(`thead th[field="${field}"]`);
-            if (th && !idx.includes(th.cellIndex)) idx.push(th.cellIndex);
+            const ci = (th ? th.cellIndex - this._f4SysDe(th.parentElement) : -1);   // F4: índice de datos
+            if (th && !idx.includes(ci)) idx.push(ci);
         });
         return idx;
     }
@@ -766,7 +771,7 @@ class EditTable extends HTMLElement
     {
         let index = -1;
         let tr = td?.parentElement;
-        if (tr) tr.querySelectorAll('td:not(.hidde-col)').forEach((_td, i) => { if (_td === td) index = i });
+        if (tr) tr.querySelectorAll('td:not(.hidde-col):not(.et-sel-col)').forEach((_td, i) => { if (_td === td) index = i });   // F4
         return index;
     }
     _getCurren=(setnew=false)=>
@@ -942,7 +947,7 @@ class EditTable extends HTMLElement
             
             let tr = getTr(e);
 
-            let td = tr.firstChild;
+            let td = (this._f4SysDe(tr) ? tr.cells[1] : null) ?? tr.firstChild;   // F4: primera celda de datos
             let cr = td.getBoundingClientRect();
             let lx = (cr.x + (cr.width / 2));
 
@@ -1176,7 +1181,9 @@ class EditTable extends HTMLElement
                 BeforeColumnMove:"beforecolumnmove",                // F3 (§8)
                 ColumnMoved:"columnmoved",                          // F3 (§8)
                 LayoutChanged:"layoutchanged",                      // F3 (§9)
-                LayoutRejected:"layoutrejected"                     // F3 (§9)
+                LayoutRejected:"layoutrejected",                    // F3 (§9)
+                SelectionChanged:"selectionchanged",   // F4 (§4.1)
+                BeforeCopy:"beforecopy"                // F4 (§4.2)
             },
             SelectorId:"__table_selector",
             InputId:"__table_input",
@@ -1279,6 +1286,7 @@ class EditTable extends HTMLElement
         SetSelectorKeyEventHandler:function(selector, _current)
         {
             const funct = (e) => {
+                if (this._f4Tecla(e)) return;   // F4: Ctrl+C copia (§4.2), Espacio marca la fila (§4.1)
                 // F1 (C2): Ctrl o Meta con una letra no empieza la edición. Ctrl/Meta + C, V, X y A
                 // conservan su comportamiento nativo (no se cancelan); AltGr (Ctrl+Alt) sigue escribiendo.
                 const f1Atajo = (e.ctrlKey || e.metaKey) && !e.altKey && !(e.getModifierState && e.getModifierState('AltGraph'))
@@ -1617,7 +1625,7 @@ class EditTable extends HTMLElement
      */
     NavToLastCell=(row)=>
     {
-        this.NavTo(row,(this._table.querySelectorAll('thead th:not(.hidde-col)').length-1));
+        this.NavTo(row,(this._table.querySelectorAll('thead th:not(.hidde-col):not(.et-sel-col)').length-1));   // F4
     }
     /**
      * Mueve el selector a la columna y fila especificada.
@@ -1632,7 +1640,7 @@ class EditTable extends HTMLElement
         if (rows<1 || cols<1 || row>rows-1 || col>cols-1 || col<0 || row<0) return;
         
         let tbody=this.GetTBody();
-        let td = tbody.querySelectorAll(this.EdiTable.Const.HTML.TR)[row].querySelectorAll(this.EdiTable.Const.HTML.TD+':not(.hidde-col)')[col];
+        let td = tbody.querySelectorAll(this.EdiTable.Const.HTML.TR)[row].querySelectorAll(this.EdiTable.Const.HTML.TD+':not(.hidde-col):not(.et-sel-col)')[col];   // F4
         this.CellFocus( td );
     }
     /**
@@ -1686,9 +1694,11 @@ class EditTable extends HTMLElement
 
         if (rows<1 || cols<1 || row>rows-1 || row<0) return false;
 
+        const f4Fila = this.DataArray[row];   // F4
         this.GetTrByIndex(row).remove();
         this.DataArray.splice(row, 1);
         if(this._dataArrayBackup) this._dataArrayBackup.splice(row, 1);
+        this._f4FilaBorrada(f4Fila, row);   // F4: la fila borrada sale de la selección
 
         if (this._getCurren().Events[this.EdiTable.Const.Events.RowDeleted]!=undefined)
             this._getCurren().Events[this.EdiTable.Const.Events.RowDeleted](eventArgs);
@@ -1705,7 +1715,7 @@ class EditTable extends HTMLElement
         let tr=this.GetTrByIndex(row);
 
         if (tr==undefined) return false;
-        var tds=tr.querySelectorAll(this.EdiTable.Const.HTML.TD);
+        var tds=tr.querySelectorAll(this.EdiTable.Const.HTML.TD+':not(.et-sel-col)');   // F4: celdas de datos
 
         if (tds==undefined) return false;
 
@@ -1751,7 +1761,7 @@ class EditTable extends HTMLElement
         let tr=this.GetTrByIndex(row);
 
         if (tr==undefined) return false;
-        var tds=tr.querySelectorAll(this.EdiTable.Const.HTML.TD);
+        var tds=tr.querySelectorAll(this.EdiTable.Const.HTML.TD+':not(.et-sel-col)');   // F4: celdas de datos
 
         if (tds==undefined) return false;
 
@@ -1873,9 +1883,10 @@ class EditTable extends HTMLElement
                     this.CellFocus(td);
                 }
             });
+            this._f4FilaInsertada(nr);   // F4: celda del sistema de la fila nueva
             // F1 (A2): solo los td del tbody.
             this._shadow.querySelectorAll(this.EdiTable.Const.HTML.TABLE+"#"+this.tableId+" > "+this.EdiTable.Const.HTML.TBODY+" "+this.EdiTable.Const.HTML.TD).forEach(td => {
-                if (this.hideColumns.includes(td.cellIndex)) td.classList.add('hidde-col');
+                if (this.hideColumns.includes(this.ColIndexOfTd(td))) td.classList.add('hidde-col');   // F4: índice de datos
             });
 
             this._setMoveEvent();
@@ -1883,7 +1894,7 @@ class EditTable extends HTMLElement
             this._f3TrasDibujar?.();   // F3
 
             if (!nofocus)
-                this.CellFocus(nr.querySelector('td:not(.hidde-col)'));
+                this.CellFocus(nr.querySelector('td:not(.hidde-col):not(.et-sel-col)'));   // F4
             
             var eventArgs={
                 sender:this._getCurren(),
@@ -1923,7 +1934,7 @@ class EditTable extends HTMLElement
 
             if (tr)
             {
-                let ths=tr.querySelectorAll(this.EdiTable.Const.HTML.TH);
+                let ths=tr.querySelectorAll(this.EdiTable.Const.HTML.TH+':not(.et-sel-col)');   // F4: sin la columna del sistema
                 if (ths) return ths.length;
             }
         }
@@ -1938,7 +1949,7 @@ class EditTable extends HTMLElement
     {
         if (tr)
         {
-            let tds=tr.querySelectorAll(this.EdiTable.Const.HTML.TD);
+            let tds=tr.querySelectorAll(this.EdiTable.Const.HTML.TD+':not(.et-sel-col)');   // F4
             if (tds) return tds.length;
         }
 
@@ -2026,7 +2037,7 @@ class EditTable extends HTMLElement
         if (td==null)
             return -1;
         
-        return td.cellIndex;
+        return td.cellIndex - this._f4SysDe(td.parentElement);   // F4: índice de datos (la celda del sistema da -1)
     }
     /**
      * @returns Retorna el **índice** de la celda *td* actualmente seleccionada en relación a su fila, -1 si la celda es *null*, o no pertenece a una fila *tr*.
@@ -2038,7 +2049,7 @@ class EditTable extends HTMLElement
         if (current_td==null)
             return -1;
         
-        return current_td.cellIndex;
+        return current_td.cellIndex - this._f4SysDe(current_td.parentElement);   // F4: índice de datos
     }
     /**
      * Ejecuta el evento LeaveCell de la celda especificada.
@@ -2600,7 +2611,7 @@ class EditTable extends HTMLElement
         }
 
         let parent_tr = active_cell.parentElement;
-        let target_cell = parent_tr.querySelectorAll(this.EdiTable.Const.HTML.TD+":not(.hidde-col)")[this._getVisibleColumnIndex(active_cell)-1];
+        let target_cell = parent_tr.querySelectorAll(this.EdiTable.Const.HTML.TD+":not(.hidde-col):not(.et-sel-col)")[this._getVisibleColumnIndex(active_cell)-1];   // F4
         this.CellFocus(target_cell);
     }
     /**
@@ -2616,7 +2627,7 @@ class EditTable extends HTMLElement
         let parent_tr = active_cell.parentElement;
         // console.log(active_cell_index);
         // console.log(parent_tr.querySelectorAll(this.EdiTable.Const.HTML.TD+":not(.hidde-col)").length);
-        if (this._getVisibleColumnIndex(active_cell)==parent_tr.querySelectorAll(this.EdiTable.Const.HTML.TD+":not(.hidde-col)").length-1)
+        if (this._getVisibleColumnIndex(active_cell)==parent_tr.querySelectorAll(this.EdiTable.Const.HTML.TD+":not(.hidde-col):not(.et-sel-col)").length-1)   // F4
         {
             if (!this.EverMove)
                 return;
@@ -2626,7 +2637,7 @@ class EditTable extends HTMLElement
             return;
         }
 
-        let target_cell = parent_tr.querySelectorAll(this.EdiTable.Const.HTML.TD+":not(.hidde-col)")[this._getVisibleColumnIndex(active_cell)+1];
+        let target_cell = parent_tr.querySelectorAll(this.EdiTable.Const.HTML.TD+":not(.hidde-col):not(.et-sel-col)")[this._getVisibleColumnIndex(active_cell)+1];   // F4
         this.CellFocus(target_cell);
     }
     /**
@@ -2877,6 +2888,7 @@ class EditTable extends HTMLElement
         });
         this.Initialize(this._table.getAttribute('id'));
         this._setMoveEvent();
+        this._f4TrasDibujar();   // F4: celdas del sistema y selección después de redibujar
         this._f3TrasDibujar?.();   // F3: clases y left de las columnas fijas en las filas nuevas
     }
 
@@ -3291,10 +3303,11 @@ class EditTable extends HTMLElement
         // F1 (C20): Columns[i].title también cambia (la exportación CSV de V12 lo lee).
         // i es la posición del th entre los th del thead, como en _processAtributesColumn.
         const f1Th = th.closest('th');
-        const f1i = Array.from(this._table.querySelectorAll('thead th')).indexOf(f1Th);
+        const f1i = Array.from(this._table.querySelectorAll('thead th:not(.et-sel-col)')).indexOf(f1Th);   // F4
         if (f1i >= 0 && this.Columns[f1i])
         {
-            if (!this._f1TitulosDeclarados.has(f1Th.cellIndex)) this._f1TitulosDeclarados.set(f1Th.cellIndex, this.Columns[f1i].title);
+            const f4Ci = f1Th.cellIndex - this._f4SysDe(f1Th.parentElement);   // F4: índice de datos
+            if (!this._f1TitulosDeclarados.has(f4Ci)) this._f1TitulosDeclarados.set(f4Ci, this.Columns[f1i].title);
             this.Columns[f1i].title = f1Th.textContent;
         }
         return true;
@@ -3558,7 +3571,7 @@ class EditTable extends HTMLElement
         t.classList.toggle('et-cards-nolabels', ['0', '0px', '0%', 'none'].includes(lw));
 
         const headRow = t.querySelectorAll('thead tr')[this.TheadRowIndex];
-        if (headRow) headRow.querySelectorAll('th').forEach((th, i) => th.classList.toggle('et-table-hidden', ((this.Columns[i]?.table ?? '') == 'false')));
+        if (headRow) headRow.querySelectorAll('th:not(.et-sel-col)').forEach((th, i) => th.classList.toggle('et-table-hidden', ((this.Columns[i]?.table ?? '') == 'false')));   // F4: sin la columna del sistema
     }
 
     _toPx=(value)=>
@@ -3775,7 +3788,7 @@ class EditTable extends HTMLElement
         const tr = this._getSelectedTr();
         if (!tr) return false;
 
-        const firstTd = tr.querySelector('td:not(.hidde-col)');
+        const firstTd = tr.querySelector('td:not(.hidde-col):not(.et-sel-col)');   // F4
         const isCard = !!(firstTd && getComputedStyle(firstTd).display != 'table-cell');
         const selTd = this.CurrentTd();
         const target = (!isCard && selTd && tr.contains(selTd)) ? selTd : tr;
@@ -3851,6 +3864,7 @@ class EditTable extends HTMLElement
         if (!tr) return;
         data = data ?? {};
         tr._etData = data;
+        this._f4MarcarFila(tr, idx);   // F4: et-row-checked según la selección del modelo
 
         // Clases de la fila
         (tr._etClasses ?? []).forEach(c => tr.classList.remove(c));
@@ -3871,7 +3885,7 @@ class EditTable extends HTMLElement
         const slots = ((this.CardsLayout || 'grid') == 'slots');
         const ranks = { avatar: 0, title: 1, meta: 2, subtitle: 3, badge: 4, body: 5, footer: 6 };
 
-        Array.from(tr.cells).forEach((td, i) => {
+        this._f4CeldasDatos(tr).forEach((td, i) => {   // F4: sin la celda del sistema
             const coldef = this.Columns[i];
 
             (td._etClasses ?? []).forEach(c => td.classList.remove(c));
@@ -4123,7 +4137,7 @@ class EditTable extends HTMLElement
         if (!list.length) return;
 
         const info = this._getCardsInfo();
-        const cells = Array.from(tr.cells);
+        const cells = this._f4CeldasDatos(tr);   // F4
 
         // Columnas de tipo Badges: el desarrollador decide dónde se ven
         if (info.badgeCols.length)
@@ -4375,6 +4389,536 @@ class EditTable extends HTMLElement
     hideColumns=[];
     _f1TitulosDeclarados = new Map();   // F1 (C20): cellIndex → título declarado, para data-cell
 
+    // ===== F4: selección de varias filas, portapapeles y exportar (spec §4.1, §4.2 y §5)
+    // La selección vive en el modelo: un Set con los objetos de DataArray. Sobrevive a ordenar, a
+    // UpdateRow y a insertar o borrar filas; al asignar un DataArray con otros objetos, se vacía.
+    // Con multi-select="checkbox" hay una celda del sistema (th/td.et-sel-col) al principio de cada fila;
+    // no está en Columns ni pasa por onTdPaint, y todo lo que cuenta celdas habla de columnas de datos.
+    static { this.features.push('multiselect', 'clipboard', 'export'); }
+
+    _f4Modo = null;            // 'checkbox' | 'row' | null
+    _f4Sel = new Set();        // objetos de DataArray seleccionados
+    _f4Indices = new Map();    // objeto → índice de DataArray en el último aviso (para 'removed')
+    _f4Ancla = null;           // objeto de la última fila marcada (Mayús+clic)
+    _f4Listo = false;          // ya se inicializó la tabla
+    _f4Escucha = false;
+    _f4Estilo = null;
+    _f4ThSel = null;           // th.et-sel-col, si existe
+
+    get MultiSelect() { return this._f4Modo; }
+    set MultiSelect(v)
+    {
+        const m = this._f4Normalizar(v);
+        if (m === this._f4Modo) return;
+        this._f4Modo = m;
+        if (this._f4Listo) this._f4Aplicar();
+    }
+
+    /** Número de celdas del sistema al principio de cada fila (0 sin multi-select="checkbox"). F2 y F3 lo leen. */
+    _etSysCols() { return (this._f4ThSel && this._f4ThSel.isConnected) ? 1 : 0; }
+
+    _f4Normalizar(v)
+    {
+        v = String(v ?? '').trim().toLowerCase();
+        return (v === 'checkbox' || v === 'row') ? v : null;
+    }
+    // Celdas del sistema de una fila concreta (las filas recién dibujadas todavía no las tienen).
+    _f4SysDe(tr)
+    {
+        if (!this._f4ThSel) return 0;
+        const c = tr?.cells?.[0];
+        return (c && c.classList.contains('et-sel-col')) ? 1 : 0;
+    }
+    _f4CeldasDatos(tr)
+    {
+        const a = Array.from(tr.cells);
+        return this._f4SysDe(tr) ? a.slice(1) : a;
+    }
+
+    _f4Iniciar()
+    {
+        if (this.hasAttribute('multi-select')) this._f4Modo = this._f4Normalizar(this.getAttribute('multi-select'));
+        this._f4Listo = true;
+        if (this._f4Modo || this._f4Sel.size) this._f4Aplicar();
+    }
+    _f4Aplicar()
+    {
+        if (!this._table) return;
+        this._f4Preparar();
+        if (this._f4Modo === 'checkbox') this._f4PonerColumna(); else this._f4QuitarColumna();
+        this._f4Repintar();
+    }
+    // CSS y listeners de clic: solo se agregan cuando se usa la función (R1).
+    _f4Preparar()
+    {
+        if (!this._f4Estilo && this._shadow)
+        {
+            const st = document.createElement('style');
+            st.setAttribute('data-et', 'f4');
+            st.textContent = `
+                tbody tr.et-row-checked{ background-color: #DCE8FB; }
+                th.et-sel-col, td.et-sel-col{ width: 2rem; min-width: 2rem; text-align: center; padding: 0 4px; cursor: default; }
+                th.et-sel-col input, td.et-sel-col input{ cursor: pointer; margin: 0; vertical-align: middle; }
+                .table-cards td.et-sel-col::before, table.et-cards td.et-sel-col::before{ content: none !important; }
+                @media print{ .et-sel-col{ display: none !important; } }`;
+            this._shadow.appendChild(st);
+            this._f4Estilo = st;
+        }
+        if (!this._f4Escucha && this._table)
+        {
+            this._f4Escucha = true;
+            // En captura: corre antes que td.onclick (CellFocus) y que el clic del selector (StartEdit).
+            this._table.addEventListener('click', (e) => this._f4Clic(e), true);
+            this._table.addEventListener('mousedown', (e) => this._f4Presion(e), true);
+        }
+    }
+    _f4PonerColumna()
+    {
+        const thead = this._table.tHead;
+        const hr = thead?.rows?.[0];
+        if (!hr) return;
+        if (!this._f4ThSel)
+        {
+            const th = document.createElement('th');
+            th.className = 'et-sel-col';
+            if (thead.rows.length > 1) th.rowSpan = thead.rows.length;
+            th.innerHTML = '<input type="checkbox" tabindex="-1" aria-label="Seleccionar todas">';
+            hr.insertBefore(th, hr.firstChild);
+            this._f4ThSel = th;
+        }
+        const tbody = this._f1TBodyPrincipal();
+        if (tbody) Array.from(tbody.rows).forEach(tr => this._f4FilaNueva(tr));
+    }
+    _f4QuitarColumna()
+    {
+        if (!this._f4ThSel) return;
+        const tbody = this._f1TBodyPrincipal();
+        if (tbody) Array.from(tbody.rows).forEach(tr => { if (this._f4SysDe(tr)) tr.cells[0].remove(); });
+        this._f4ThSel.remove();
+        this._f4ThSel = null;
+    }
+    _f4FilaNueva(tr)
+    {
+        if (!this._f4ThSel || !tr || this._f4SysDe(tr)) return;
+        const td = document.createElement('td');
+        td.className = 'et-sel-col';
+        td.innerHTML = '<input type="checkbox" tabindex="-1" aria-label="Seleccionar fila">';
+        tr.insertBefore(td, tr.firstChild);
+        if (this._f4Sel.size) td.firstChild.checked = this._f4Sel.has(this.DataArray[this._getRowIndex(tr)]);
+    }
+    _f4MarcarFila(tr, idx)
+    {
+        if (!tr || (!this._f4Sel.size && !this._f4Modo && !tr.classList.contains('et-row-checked'))) return;
+        const on = (this._f4Sel.size > 0 && idx >= 0 && this._f4Sel.has(this.DataArray[idx]));
+        tr.classList.toggle('et-row-checked', on);
+        if (this._f4SysDe(tr)) { const c = tr.cells[0].querySelector('input'); if (c) c.checked = on; }
+    }
+    _f4Repintar()
+    {
+        const tbody = this._f1TBodyPrincipal();
+        if (tbody) Array.from(tbody.rows).forEach(tr => this._f4MarcarFila(tr, this._getRowIndex(tr)));
+        this._f4Encabezado();
+    }
+    _f4Encabezado()
+    {
+        const i = this._f4ThSel?.querySelector('input');
+        if (!i) return;
+        const n = this.DataArray.filter(r => r && typeof r == 'object').length;
+        const s = this.getSelectedRows().length;
+        i.checked = (n > 0 && s >= n);
+        i.indeterminate = (s > 0 && s < n);
+    }
+
+    // ---------- puntos de enganche ----------
+    _f4TrasDibujar()
+    {
+        if (!this._f4Listo || (!this._f4Modo && !this._f4Sel.size)) return;
+        this._f4Podar();
+        if (this._f4ThSel) { const tb = this._f1TBodyPrincipal(); if (tb) Array.from(tb.rows).forEach(tr => this._f4FilaNueva(tr)); }
+        this._f4Encabezado();
+    }
+    _f4FilaInsertada(tr)
+    {
+        if (!this._f4ThSel) return;
+        this._f4FilaNueva(tr);
+        this._f4Encabezado();
+    }
+    _f4FilaBorrada(obj, row)
+    {
+        if (!this._f4Sel.size && !this._f4ThSel) return;
+        if (obj && this._f4Sel.has(obj) && !this.DataArray.includes(obj))
+        {
+            this._f4Sel.delete(obj);
+            this._f4Avisar([], [row]);
+        }
+        else this._f4Encabezado();
+    }
+    // Quita de la selección los objetos que ya no están en DataArray (por ejemplo, un DataArray nuevo).
+    _f4Podar()
+    {
+        if (!this._f4Sel.size) return;
+        const vivos = new Set();
+        this.DataArray.forEach(r => { if (this._f4Sel.has(r)) vivos.add(r); });
+        if (vivos.size === this._f4Sel.size) return;
+        const removed = [...this._f4Sel].filter(o => !vivos.has(o)).map(o => this._f4Indices.get(o)).filter(i => i !== undefined);
+        this._f4Sel = vivos;
+        this._f4Avisar([], removed);
+    }
+
+    // ---------- cambios de selección ----------
+    _f4Indice()
+    {
+        const m = new Map();
+        this.DataArray.forEach((r, i) => { if (r && typeof r == 'object' && !m.has(r)) m.set(r, i); });
+        return m;
+    }
+    _f4Objetos(indices)
+    {
+        const out = [];
+        (Array.isArray(indices) ? indices : [indices]).forEach(i => {
+            const n = Number(i);
+            if (!Number.isInteger(n) || n < 0 || n >= this.DataArray.length) return;
+            const r = this.DataArray[n];
+            if (r && typeof r == 'object') out.push(r);
+        });
+        return out;
+    }
+    // Aplica una selección nueva (Set de objetos). Solo avisa si algo cambió (P14).
+    _f4Fijar(nuevo)
+    {
+        const antes = this._f4Sel;
+        const idx = this._f4Indice();
+        const added = [], removed = [];
+        nuevo.forEach(o => { if (!antes.has(o) && idx.has(o)) added.push(idx.get(o)); });
+        antes.forEach(o => { if (!nuevo.has(o)) { const i = idx.has(o) ? idx.get(o) : this._f4Indices.get(o); if (i !== undefined) removed.push(i); } });
+        const iguales = (antes.size === nuevo.size) && [...nuevo].every(o => antes.has(o));
+        if (iguales) return false;
+        this._f4Sel = nuevo;
+        if (this._f4Listo) { this._f4Preparar(); this._f4Repintar(); }
+        this._f4Avisar(added, removed);
+        return true;
+    }
+    _f4Avisar(added, removed)
+    {
+        const ord = (a, b) => a - b;
+        const selected = this.getSelectedRows();
+        this._f4Indices = new Map(selected.map(i => [this.DataArray[i], i]));
+        if (this._f4Listo) this._f4Encabezado();
+        // F2 (summary-scope="selected") recalcula al cambiar la selección.
+        if (this.SummaryScope === 'selected' && typeof this.RefreshSummaries === 'function')
+        {
+            try { this.RefreshSummaries(); } catch (err) { console.error('EditTable: RefreshSummaries', err); }
+        }
+        const fn = this._getCurren().Events[this.EdiTable.Const.Events.SelectionChanged];
+        if (fn) fn({ selected, added: [...new Set(added)].sort(ord), removed: [...new Set(removed)].sort(ord) });
+    }
+    _f4Alternar(i)
+    {
+        const r = this._f4Objetos([i])[0];
+        if (!r) return;
+        const s = new Set(this._f4Sel);
+        if (s.has(r)) s.delete(r); else s.add(r);
+        this._f4Fijar(s);
+    }
+    _f4Rango(i, agregar)
+    {
+        let a = (this._f4Ancla ? this.DataArray.indexOf(this._f4Ancla) : -1);
+        if (a < 0) a = this.CurrentRowIndex();
+        if (a < 0) a = i;
+        const s = agregar ? new Set(this._f4Sel) : new Set();
+        for (let k = Math.min(a, i); k <= Math.max(a, i); k++) this._f4Objetos([k]).forEach(o => s.add(o));
+        this._f4Fijar(s);
+    }
+
+    // ---------- ratón y teclado ----------
+    _f4CeldaDe(e)
+    {
+        const cell = e.target?.closest?.('td,th');
+        return (cell && cell.closest('table') === this._table) ? cell : null;
+    }
+    _f4Presion(e)
+    {
+        if (!this._f4Modo && !this._f4ThSel) return;
+        const cell = this._f4CeldaDe(e);
+        if (!cell) return;
+        // La casilla no se lleva el foco: el teclado sigue en la celda actual (§4.1: no cambia la celda actual).
+        if (cell.classList.contains('et-sel-col')) e.preventDefault();
+        else if (this._f4Modo === 'row' && e.shiftKey && cell.tagName === 'TD') e.preventDefault();   // sin seleccionar texto
+    }
+    _f4Clic(e)
+    {
+        if (!this._f4Modo && !this._f4ThSel) return;
+        const cell = this._f4CeldaDe(e);
+        if (!cell) return;
+        const tbody = this._f1TBodyPrincipal();
+        if (cell.classList.contains('et-sel-col'))
+        {
+            e.stopPropagation();
+            if (cell.tagName === 'TH') { this._f4Todas(); return; }
+            const i = this._getRowIndex(cell.parentElement);
+            if (i < 0) return;
+            if (e.shiftKey) this._f4Rango(i, true); else this._f4Alternar(i);
+            this._f4Ancla = this.DataArray[i];
+            this._f4MarcarFila(cell.parentElement, i);   // la casilla nativa ya cambió: se alinea con el modelo
+            return;
+        }
+        if (this._f4Modo !== 'row' || cell.tagName !== 'TD' || cell.parentElement?.parentElement !== tbody) return;
+        const input = this.EdiTable.GetInput();
+        if (this.Editing && input && cell.contains(input)) return;
+        const i = this._getRowIndex(cell.parentElement);
+        if (i < 0) return;
+        const ctrl = (e.ctrlKey || e.metaKey);
+        if (!ctrl && !e.shiftKey) { this._f4Ancla = this.DataArray[i]; return; }   // clic normal: sigue como hoy
+        e.stopPropagation();
+        e.preventDefault();
+        if (e.shiftKey) this._f4Rango(i, ctrl);
+        else { this._f4Alternar(i); this._f4Ancla = this.DataArray[i]; }
+        if (this.CurrentTd() !== cell) this.CellFocus(cell);   // Ctrl+clic no inicia la edición
+    }
+    _f4Todas()
+    {
+        const n = this.DataArray.filter(r => r && typeof r == 'object').length;
+        if (n > 0 && this.getSelectedRows().length >= n) this.ClearSelection(); else this.SelectAll();
+    }
+    // Teclado del selector (sin edición en curso). true si la tecla se atendió aquí.
+    _f4Tecla(e)
+    {
+        if (e.altKey || (e.getModifierState && e.getModifierState('AltGraph'))) return false;
+        const ctrl = (e.ctrlKey || e.metaKey);
+        if (ctrl && !e.shiftKey && (e.key ?? '').toLowerCase() === 'c')
+        {
+            e.preventDefault();
+            e.stopPropagation();
+            this.copySelection();
+            return true;
+        }
+        if (!ctrl && (e.key === ' ' || e.key === 'Spacebar') && this._f4Modo)
+        {
+            e.preventDefault();
+            e.stopPropagation();
+            const i = this.CurrentRowIndex();
+            if (i >= 0) { this._f4Alternar(i); this._f4Ancla = this.DataArray[i]; }
+            return true;
+        }
+        return false;
+    }
+
+    // ---------- API de selección (§4.1) ----------
+    /** Índices de DataArray seleccionados, ordenados. */
+    getSelectedRows=()=>
+    {
+        if (!this._f4Sel.size) return [];
+        const r = [];
+        this.DataArray.forEach((o, i) => { if (this._f4Sel.has(o)) r.push(i); });
+        return r;
+    }
+    /** Objetos de DataArray seleccionados, en el orden de DataArray. */
+    getSelectedData=()=> this.getSelectedRows().map(i => this.DataArray[i]);
+    SelectRows=(indices, add=false)=>
+    {
+        const s = add ? new Set(this._f4Sel) : new Set();
+        this._f4Objetos(indices ?? []).forEach(o => s.add(o));
+        return this._f4Fijar(s);
+    }
+    UnselectRows=(indices)=>
+    {
+        const s = new Set(this._f4Sel);
+        this._f4Objetos(indices ?? []).forEach(o => s.delete(o));
+        return this._f4Fijar(s);
+    }
+    SelectAll=()=> this._f4Fijar(new Set(this.DataArray.filter(r => r && typeof r == 'object')));
+    ClearSelection=()=> this._f4Fijar(new Set());
+    IsRowSelected=(i)=>
+    {
+        const r = this.DataArray[Number(i)];
+        return !!(r && this._f4Sel.has(r));
+    }
+
+    // ---------- columnas y valores ----------
+    // Orden: el de Columns (R3, F3 lo mantiene igual al del DOM). Visibilidad: el estado por field de F1.
+    _f4Columnas({ incluirOcultas = false, sinImpresion = false, conField = false } = {})
+    {
+        const out = [];
+        this.Columns.forEach((col, i) => {
+            if (!col || this._isBadgesCol(col)) return;
+            if (col.field == undefined && (conField || !col.template)) return;
+            const cls = String(col.class ?? '');
+            if (sinImpresion && (cls.includes('no-print') || cls.includes('hide-on-print'))) return;
+            const oculta = (col.field != undefined && this._f1ColumnaOculta(col.field));
+            if (oculta && !incluirOcultas) return;
+            out.push({ i, col, oculta });
+        });
+        return out;
+    }
+    _f4Titulo(col) { return String(col.title ?? col.field ?? '').trim(); }
+    // Valor del modelo (forma de InduxsoftExcel.fromEditTable v1): Select con keyfield → texto, o la llave con raw;
+    // Select sin keyfield → texto de options, o la llave con raw.
+    _f4Valor(col, data, raw)
+    {
+        if (!data) return undefined;
+        let v = (col.field != undefined ? data[col.field] : undefined);
+        if (String(col.type ?? '').toLowerCase() === 'select' && col.options && typeof col.options == 'object')
+        {
+            if (col.keyfield != undefined) { if (raw) v = data[col.keyfield]; }
+            else if (!raw && Object.prototype.hasOwnProperty.call(col.options, v)) v = col.options[v];
+        }
+        return v;
+    }
+    // Texto como se ve (formato numérico, plantilla como texto) o crudo.
+    _f4Texto(col, data, raw)
+    {
+        if (!data) return '';
+        let v = this._f4Valor(col, data, raw);
+        if (!raw && col.template)
+        {
+            try { const t = document.createElement('template'); t.innerHTML = String(this.applyTemplate(col.template, data) ?? ''); v = t.content.textContent; }
+            catch (err) { }
+        }
+        if (v === undefined || v === null) return '';
+        if (!raw && v !== '' && this._withFormat(col, v)) return this._aplyFormat(col, v);
+        return String(v);
+    }
+    _f4FilasExportar(selectedOnly)
+    {
+        if (!selectedOnly) return this.DataArray.map((_, i) => i);
+        const s = this.getSelectedRows();
+        if (s.length || this._f4Modo) return s;
+        const c = this.CurrentRowIndex();
+        return (c >= 0 ? [c] : []);
+    }
+
+    // ---------- portapapeles (§4.2) ----------
+    /** TSV (\r\n) de las filas seleccionadas o, sin selección, de la celda actual. opts: {headers, raw}. */
+    getClipboardText=(opts={})=>
+    {
+        opts = opts ?? {};
+        const raw = !!opts.raw;
+        const tsv = (s) => (/[\t\r\n"]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s);
+        let cols, lineas, headers = opts.headers;
+        const filas = this.getSelectedRows();
+        if (filas.length)
+        {
+            cols = this._f4Columnas();
+            if (headers === undefined) headers = true;   // P13: filas completas llevan títulos
+            lineas = filas.map(r => cols.map(c => this._f4Texto(c.col, this.DataArray[r], raw)));
+        }
+        else
+        {
+            const td = this.CurrentTd();
+            const r = this.RowIndexOfTd(td), col = this.Columns[this.ColIndexOfTd(td)];
+            if (!td || r < 0 || !col) return '';
+            cols = [{ col }];
+            if (headers === undefined) headers = false;
+            lineas = [[this._f4Texto(col, this.DataArray[r], raw)]];
+        }
+        if (headers) lineas.unshift(cols.map(c => this._f4Titulo(c.col)));
+        return lineas.map(l => l.map(tsv).join('\t')).join('\r\n');
+    }
+    /** Copia al portapapeles (BeforeCopy permite cambiar el texto o cancelar). Devuelve una promesa con true si se copió. */
+    copySelection=(opts={})=>
+    {
+        const eventArgs = { text: this.getClipboardText(opts), cancel: false };
+        const fn = this._getCurren().Events[this.EdiTable.Const.Events.BeforeCopy];
+        if (fn) fn(eventArgs);
+        if (eventArgs.cancel) return Promise.resolve(false);
+        const text = String(eventArgs.text ?? '');
+        try
+        {
+            if (navigator.clipboard && typeof navigator.clipboard.writeText == 'function')
+                return navigator.clipboard.writeText(text).then(() => true, () => this._f4CopiarExec(text));
+        }
+        catch (err) { }
+        return Promise.resolve(this._f4CopiarExec(text));
+    }
+    // Sin navigator.clipboard (origen no seguro): execCommand sobre un textarea temporal dentro del shadow.
+    _f4CopiarExec(text)
+    {
+        const raiz = this._shadow ?? document.body;
+        const prev = (this._shadow?.activeElement ?? document.activeElement);
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.cssText = 'position:fixed;top:0;left:-9999px;opacity:0;';
+        raiz.appendChild(ta);
+        let ok = false;
+        try { ta.select(); ok = document.execCommand('copy'); } catch (err) { ok = false; }
+        ta.remove();
+        try { if (prev && prev !== ta && typeof prev.focus == 'function') prev.focus({ preventScroll: true }); } catch (err) { }
+        return ok;
+    }
+
+    // ---------- exportar (§5) ----------
+    /** {columns, rows, summary}: la forma que recibe InduxsoftExcel.fromData. opts: {selectedOnly, raw, includeHidden}. */
+    getExportData=(opts={})=>
+    {
+        opts = opts ?? {};
+        const raw = !!opts.raw;
+        const cols = this._f4Columnas({ incluirOcultas: !!opts.includeHidden, sinImpresion: true, conField: true });
+        const columns = cols.map(({ col, oculta }) => {
+            const x = {};
+            for (const k of ['field', 'title', 'type', 'format', 'width', 'decs', 'prefix', 'sufix', 'thousandssep'])
+                if (col[k] !== undefined) x[k] = col[k];
+            x.title = this._f4Titulo(col);
+            x.type = (col.type ?? this.ColumnsDefaultType);
+            const ancho = this._f1EstadoColumnas.get(col.field)?.ancho;
+            if (ancho) x.width = ancho;
+            if (oculta) x.hidden = true;
+            return x;
+        });
+        const rows = this._f4FilasExportar(!!opts.selectedOnly).map(i => {
+            const d = this.DataArray[i], o = {};
+            cols.forEach(({ col }) => { o[col.field] = this._f4Valor(col, d, raw); });
+            return o;
+        });
+        let summary = null;
+        if (typeof this.getSummaries == 'function')
+        {
+            try { summary = this.getSummaries() ?? null; } catch (err) { summary = null; }
+        }
+        return { columns, rows, summary };
+    }
+    /** CSV RFC 4180. opts: {selectedOnly, raw, includeHidden, headers=true, delimiter=',', bom=false, includeSummary=false}. */
+    exportCSV=(opts={})=>
+    {
+        opts = opts ?? {};
+        const raw = !!opts.raw;
+        const sep = String(opts.delimiter ?? opts.separator ?? ',');
+        const esc = (s) => { s = String(s ?? ''); return (s.includes(sep) || /["\r\n]/.test(s)) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+        const cols = this._f4Columnas({ incluirOcultas: !!opts.includeHidden, sinImpresion: true, conField: true });
+        const lineas = [];
+        if (opts.headers !== false) lineas.push(cols.map(c => esc(this._f4Titulo(c.col))).join(sep));
+        this._f4FilasExportar(!!opts.selectedOnly).forEach(i => lineas.push(cols.map(c => esc(this._f4Texto(c.col, this.DataArray[i], raw))).join(sep)));
+        if (opts.includeSummary && typeof this.getSummaries == 'function')
+        {
+            let s = null;
+            try { s = this.getSummaries(); } catch (err) { s = null; }
+            if (s && cols.some(c => s[c.col.field] != null))
+                lineas.push(cols.map(c => {
+                    const v = s[c.col.field];
+                    if (v == null) return '';
+                    return esc(!raw && this._withFormat(c.col, v) ? this._aplyFormat(c.col, v) : v);
+                }).join(sep));
+        }
+        return (opts.bom ? '﻿' : '') + lineas.join('\r\n');
+    }
+    /** Descarga exportCSV(opts) como archivo (con BOM por omisión, para que Excel lea los acentos). */
+    downloadCSV=(fileName='export.csv', opts={})=>
+    {
+        const csv = this.exportCSV(Object.assign({ bom: true }, opts ?? {}));
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = (fileName || 'export.csv');
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        return true;
+    }
+    // ===== F4: fin
+
     addEventListener(type, listener) {
         const known = Object.values(this.EdiTable.Const.Events);
         if (typeof type == "string" && !known.includes(type.toLowerCase()))
@@ -4469,6 +5013,12 @@ class EditTable extends HTMLElement
                 break;
             case this.EdiTable.Const.Events.LayoutRejected:   // F3
                 this._getCurren().Events[this.EdiTable.Const.Events.LayoutRejected] = listener
+                break;
+            case this.EdiTable.Const.Events.SelectionChanged:   // F4 (R4)
+                this._getCurren().Events[this.EdiTable.Const.Events.SelectionChanged] = listener
+                break;
+            case this.EdiTable.Const.Events.BeforeCopy:   // F4 (R4)
+                this._getCurren().Events[this.EdiTable.Const.Events.BeforeCopy] = listener
                 break;
         }
     }
@@ -4644,9 +5194,10 @@ class EditTable extends HTMLElement
 
         const t = this._table, sys = this._f3Sys();
         const activo = this._shadow?.activeElement ?? null;
-        // F1 (C20) guarda los títulos declarados por cellIndex: se reasignan a la nueva posición.
+        // F1 (C20) guarda los títulos declarados por índice de datos (el i de Columns que usa _f1PintarCelda;
+        // F4 también guarda cellIndex - sys): se reasignan a la nueva posición. (Integración: antes se restaba sys.)
         const titulos = [];
-        this._f1TitulosDeclarados.forEach((v, k) => { const c = cols[k - sys]; if (c) titulos.push([c, v]); });
+        this._f1TitulosDeclarados.forEach((v, k) => { const c = cols[k]; if (c) titulos.push([c, v]); });
 
         const filas = [];
         if (t.tHead) filas.push(...t.tHead.rows);
@@ -4664,7 +5215,7 @@ class EditTable extends HTMLElement
         const nuevas = perm.map(p => cols[p]);
         cols.splice(0, n, ...nuevas);
         this._f1TitulosDeclarados.clear();
-        titulos.forEach(([c, v]) => this._f1TitulosDeclarados.set(cols.indexOf(c) + sys, v));
+        titulos.forEach(([c, v]) => this._f1TitulosDeclarados.set(cols.indexOf(c), v));
         cols.forEach((c, i) => { if (c?.field != undefined) this._f1EstadoColumna(c.field).orden = i; });
         this.hideColumns = this._f1DerivarHideColumns();
         this._cardsInfo = null;

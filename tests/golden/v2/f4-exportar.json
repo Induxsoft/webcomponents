@@ -1,0 +1,620 @@
+{
+ "id": "v2/f4-exportar",
+ "titulo": "getExportData y exportCSV: orden y visibilidad, sin no-print, Select como texto, selectedOnly, raw, includeHidden",
+ "etiquetas": ["v2","f4","exportar"],
+ "archivo": "escenarios/v2/exportar.mjs",
+ "pasos": [
+  {
+   "nombre": "inicio",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": true,
+      "modoShadowPedido": "closed",
+      "dom": [
+       "\"\\n                \"",
+       "<style>",
+       " @@ESTILO sha256:e02dcdadace9a84f",
+       "</style>",
+       "\"\\n            \"",
+       "<div style=\"min-height: 2rem; max-height: 100%; overflow: auto; padding-bottom: 5px\">",
+       " <table id=\"t1\">",
+       "  <thead>",
+       "   <tr>",
+       "    <th class=\"et-sel-col\">",
+       "     <input type=\"checkbox\" tabindex=\"-1\" aria-label=\"Seleccionar todas\" {value=\"on\" checked=false}></input>",
+       "    </th>",
+       "    <th field=\"codigo\" type=\"Text\">",
+       "     <span>",
+       "      \"Código\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:123px;\"></div>",
+       "    </th>",
+       "    <th field=\"nombre\" type=\"Text\">",
+       "     <span>",
+       "      \"Nombre\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:123px;\"></div>",
+       "    </th>",
+       "    <th field=\"linea\" type=\"Text\" class=\"no-print\">",
+       "     <span>",
+       "      \"Línea\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:123px;\"></div>",
+       "    </th>",
+       "    <th field=\"u\" type=\"Select\" options=\"{\\\"PZA\\\":\\\"PIEZA\\\",\\\"CJ\\\":\\\"CAJA\\\"}\">",
+       "     <span>",
+       "      \"Unidad\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:123px;\"></div>",
+       "    </th>",
+       "    <th field=\"precio\" type=\"Number\" format=\"true\" decs=\"2\" prefix=\"$\" thousandssep=\"true\">",
+       "     <span>",
+       "      \"Precio\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:123px;\"></div>",
+       "    </th>",
+       "   </tr>",
+       "  </thead>",
+       "  <tbody>",
+       "   <tr>",
+       "    <td class=\"et-sel-col\">",
+       "     <input type=\"checkbox\" tabindex=\"-1\" aria-label=\"Seleccionar fila\" {value=\"on\" checked=false}></input>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Código\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"A,1\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Dice \\\"hola\\\"\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Línea\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"x\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Unidad\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"CJ\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Precio\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"$1,234.50\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"et-sel-col\">",
+       "     <input type=\"checkbox\" tabindex=\"-1\" aria-label=\"Seleccionar fila\" {value=\"on\" checked=false}></input>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Código\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"B\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"dos\\nlíneas\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Línea\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"y\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Unidad\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"PZA\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Precio\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"$2.00\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"et-sel-col\">",
+       "     <input type=\"checkbox\" tabindex=\"-1\" aria-label=\"Seleccionar fila\" {value=\"on\" checked=false}></input>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Código\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"C\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Tres\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Línea\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"z\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Unidad\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"XX\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Precio\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\"></div>",
+       "    </td>",
+       "   </tr>",
+       "  </tbody>",
+       " </table>",
+       "</div>",
+       "<style data-et=\"f4\">",
+       " @@ESTILO sha256:28a2d53f99bdf1a7",
+       "</style>"
+      ],
+      "shadowEsElGuardado": true,
+      "datos": [
+       {"codigo":"A,1","nombre":"Dice \"hola\"","linea":"x","u":"CJ","precio":1234.5},
+       {"codigo":"B","nombre":"dos\nlíneas","linea":"y","u":"PZA","precio":2},
+       {"codigo":"C","nombre":"Tres","linea":"z","u":"XX","precio":""}
+      ],
+      "columnas": [
+       {"field":"codigo","type":"Text","title":"Código"},
+       {"field":"nombre","type":"Text","title":"Nombre"},
+       {"field":"linea","type":"Text","class":"no-print","title":"Línea"},
+       {"field":"u","type":"Select","options":{"PZA":"PIEZA","CJ":"CAJA"},"title":"Unidad"},
+       {
+        "field": "precio",
+        "type": "Number",
+        "format": "true",
+        "decs": "2",
+        "prefix": "$",
+        "thousandssep": "true",
+        "title": "Precio"
+       }
+      ],
+      "respaldo": null,
+      "props": [
+       "IsDirty = false",
+       "Editing = false",
+       "ReadOnly = false",
+       "AutoAddRow = true",
+       "AutoDelRow = true",
+       "EverMove = true",
+       "PagOffSet = 10",
+       "TheadRowIndex = 0",
+       "ColumnsDefaultType = \"Text\"",
+       "ShowAsTree = false",
+       "CanMoveRow = false",
+       "Key = \"id\"",
+       "ParentKey = \"idp\"",
+       "Childs = \"__items\"",
+       "TreeOptions = {}",
+       "sorTable = true",
+       "_sorTable = true",
+       "htmlEncode = false",
+       "autoConfirm = false",
+       "hiddeSelector = false",
+       "hiddeRowSelector = false",
+       "minRowHeight = \"none\"",
+       "maxRowHeight = \"none\"",
+       "rowHeight = \"100%\"",
+       "cardsResponsive = false",
+       "editableResponsive = false",
+       "tableId = \"t1\"",
+       "NumFormat = {\"default_decimals\":\".\",\"thousands\":\",\",\"decimals\":\".\"}",
+       "CSS = {\"Cell\":\"EdiTable-Cell\",\"RowSelected\":\"EdiTable-Row-Selected\"}",
+       "hideColumns = []",
+       "_expandOnStart = false",
+       "KeepSelectionVisible = true",
+       "CardsMode = null",
+       "CardsLayout = \"grid\"",
+       "CardsBreakpoint = \"768px\"",
+       "CardsBreakpointTarget = \"viewport\"",
+       "IsCardView = false",
+       "_count_isdirty = 0",
+       "_current_row = -1",
+       "attributes = [\"id\",\"style\",\"multi-select\",\"data\"]",
+       "BadgesField = \"__badges\"",
+       "BadgeTooltip = \"native\"",
+       "BadgeSelectsRow = false",
+       "NativeEvents = false",
+       "TemplateEncode = false",
+       "Locale = null",
+       "RowClassField = null",
+       "_TreeValueIndent = 1",
+       "_TreeUnitIndent = \"rem\"",
+       "temp_html = \"[undefined]\"",
+       "CurrentRowIndex() = -1",
+       "CurrentColIndex() = -1",
+       "TRCount() = 3",
+       "THCount() = 5",
+       "ColumnsCount() = 5",
+       "CurrentTd() = null",
+       "focusedTable==_getCurren() = false",
+       "Events reemplazado = 0",
+       "Events claves = []",
+       "scroll = {\"contenedor\":[0,0]}"
+      ],
+      "estilos": [
+       "host = display:inline;position:static;width:100%;height:auto;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "contenedor = display:block;position:static;width:968px;height:123px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:auto;overflow-y:auto",
+       "table = display:table;position:static;width:968px;height:123px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "thead = display:table-header-group;position:sticky;width:966px;height:27px;color:rgb(0, 0, 0);background-color:rgb(245, 245, 245);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[0] = display:table-cell;position:relative;width:32px;height:27px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[1] = display:table-cell;position:relative;width:153px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[2] = display:table-cell;position:relative;width:214px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[3] = display:table-cell;position:relative;width:124px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[4] = display:table-cell;position:relative;width:155px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[5] = display:table-cell;position:relative;width:195px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0] = display:table-row;position:relative;width:966px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[0] = display:table-cell;position:static;width:32px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[1] = display:table-cell;position:relative;width:161px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[2] = display:table-cell;position:relative;width:222px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[3] = display:table-cell;position:relative;width:132px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[4] = display:table-cell;position:relative;width:163px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[5] = display:table-cell;position:relative;width:203px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1] = display:table-row;position:relative;width:966px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[0] = display:table-cell;position:static;width:32px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[1] = display:table-cell;position:relative;width:161px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[2] = display:table-cell;position:relative;width:222px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[3] = display:table-cell;position:relative;width:132px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[4] = display:table-cell;position:relative;width:163px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[5] = display:table-cell;position:relative;width:203px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2] = display:table-row;position:relative;width:966px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[0] = display:table-cell;position:static;width:32px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[1] = display:table-cell;position:relative;width:161px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[2] = display:table-cell;position:relative;width:222px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[3] = display:table-cell;position:relative;width:132px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[4] = display:table-cell;position:relative;width:163px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[5] = display:table-cell;position:relative;width:203px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+      ]
+     }
+    ],
+    "luz": [
+     "<body {foco}>",
+     " \"\\n\"",
+     " <edit-table id=\"t1\" style=\"width:100%\" multi-select=\"checkbox\" data=\"[{\\\"codigo\\\":\\\"A,1\\\",\\\"nombre\\\":\\\"Dice \\\\\\\"hola\\\\\\\"\\\",\\\"linea\\\":\\\"x\\\",\\\"u\\\":\\\"CJ\\\",\\\"precio\\\":1234.5},{\\\"codigo\\\":\\\"B\\\",\\\"nombre\\\":\\\"dos\\\\nlíneas\\\",\\\"linea\\\":\\\"y\\\",\\\"u\\\":\\\"PZA\\\",\\\"precio\\\":2},{\\\"codigo\\\":\\\"C\\\",\\\"nombre\\\":\\\"Tres\\\",\\\"linea\\\":\\\"z\\\",\\\"u\\\":\\\"XX\\\",\\\"precio\\\":\\\"\\\"}]\">",
+     "  #shadow-root -> tablas[0]",
+     " </edit-table>",
+     " \"\\n\"",
+     " <script>",
+     "  \"\\nwindow.__etExtra = () => { const t = ET('t1'); return {\\n  datos: t.getExportData(), sel: t.getExportData({ selectedOnly: true, raw: true, includeHidden: true }),\\n  csv: t.exportCSV(), csvCrudo: t.exportCSV({ raw: true, delimiter: ';', bom: true }) }; };\\n\"",
+     " </script>",
+     " \"\\n\\n\"",
+     "</body>"
+    ],
+    "foco": {"documento":{"ruta":"html>body"},"shadow":null},
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": {
+     "valor": {
+      "datos": {
+       "columns": [
+        {"field":"codigo","title":"Código","type":"Text"},
+        {"field":"nombre","title":"Nombre","type":"Text"},
+        {"field":"u","title":"Unidad","type":"Select"},
+        {
+         "field": "precio",
+         "title": "Precio",
+         "type": "Number",
+         "format": "true",
+         "decs": "2",
+         "prefix": "$",
+         "thousandssep": "true"
+        }
+       ],
+       "rows": [
+        {"codigo":"A,1","nombre":"Dice \"hola\"","u":"CAJA","precio":1234.5},
+        {"codigo":"B","nombre":"dos\nlíneas","u":"PIEZA","precio":2},
+        {"codigo":"C","nombre":"Tres","u":"XX","precio":""}
+       ],
+       "summary": null
+      },
+      "sel": {
+       "columns": [
+        {"field":"codigo","title":"Código","type":"Text"},
+        {"field":"nombre","title":"Nombre","type":"Text"},
+        {"field":"u","title":"Unidad","type":"Select"},
+        {
+         "field": "precio",
+         "title": "Precio",
+         "type": "Number",
+         "format": "true",
+         "decs": "2",
+         "prefix": "$",
+         "thousandssep": "true"
+        }
+       ],
+       "rows": [],
+       "summary": null
+      },
+      "csv": "Código,Nombre,Unidad,Precio\r\n\"A,1\",\"Dice \"\"hola\"\"\",CAJA,\"$1,234.50\"\r\nB,\"dos\nlíneas\",PIEZA,$2.00\r\nC,Tres,XX,",
+      "csvCrudo": "﻿Código;Nombre;Unidad;Precio\r\nA,1;\"Dice \"\"hola\"\"\";CJ;1234.5\r\nB;\"dos\nlíneas\";PZA;2\r\nC;Tres;XX;"
+     }
+    },
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 2,
+      "nodo:mousedown": 6,
+      "document:mousemove": 5,
+      "document:mouseup": 5,
+      "nodo:click": 1,
+      "window:beforeprint": 1,
+      "window:afterprint": 1
+     },
+     "intervalos": 1
+    }
+   }
+  },
+  {
+   "nombre": "ocultar nombre y seleccionar la fila 1",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [18,1,["    <th field=\"nombre\" type=\"Text\" class=\"hidde-col\">"]],
+        [54,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Nombre\">"]],
+        [75,1,["   <tr class=\"et-row-checked\">"]],
+        [
+         77,
+         1,
+         [
+          "     <input type=\"checkbox\" tabindex=\"-1\" aria-label=\"Seleccionar fila\" {value=\"on\" checked=true}></input>"
+         ]
+        ],
+        [84,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Nombre\">"]],
+        [114,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Nombre\">"]]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": "@=paso-anterior",
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": {"$parche":[[29,1,["hideColumns = [1]"]]]},
+      "estilos": {
+       "$parche": [
+        [
+         5,
+         5,
+         [
+          "th[1] = display:table-cell;position:relative;width:209px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[2] = display:none;position:relative;width:auto;height:auto;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[3] = display:table-cell;position:relative;width:170px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[4] = display:table-cell;position:relative;width:212px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[5] = display:table-cell;position:relative;width:266px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         12,
+         6,
+         [
+          "tr[0].td[1] = display:table-cell;position:relative;width:217px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[2] = display:none;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[3] = display:table-cell;position:relative;width:178px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[4] = display:table-cell;position:relative;width:220px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[5] = display:table-cell;position:relative;width:274px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1] = display:table-row;position:relative;width:966px;height:30px;color:rgb(0, 0, 0);background-color:rgb(220, 232, 251);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         19,
+         5,
+         [
+          "tr[1].td[1] = display:table-cell;position:relative;width:217px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[2] = display:none;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[3] = display:table-cell;position:relative;width:178px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[4] = display:table-cell;position:relative;width:220px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[5] = display:table-cell;position:relative;width:274px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         26,
+         5,
+         [
+          "tr[2].td[1] = display:table-cell;position:relative;width:217px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[2] = display:none;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[3] = display:table-cell;position:relative;width:178px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[4] = display:table-cell;position:relative;width:220px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[5] = display:table-cell;position:relative;width:274px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": "@=paso-anterior",
+    "foco": "@=paso-anterior",
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": {
+     "valor": {
+      "datos": {
+       "columns": [
+        {"field":"codigo","title":"Código","type":"Text"},
+        {"field":"u","title":"Unidad","type":"Select"},
+        {
+         "field": "precio",
+         "title": "Precio",
+         "type": "Number",
+         "format": "true",
+         "decs": "2",
+         "prefix": "$",
+         "thousandssep": "true"
+        }
+       ],
+       "rows": [
+        {"codigo":"A,1","u":"CAJA","precio":1234.5},
+        {"codigo":"B","u":"PIEZA","precio":2},
+        {"codigo":"C","u":"XX","precio":""}
+       ],
+       "summary": null
+      },
+      "sel": {
+       "columns": [
+        {"field":"codigo","title":"Código","type":"Text"},
+        {"field":"nombre","title":"Nombre","type":"Text","hidden":true},
+        {"field":"u","title":"Unidad","type":"Select"},
+        {
+         "field": "precio",
+         "title": "Precio",
+         "type": "Number",
+         "format": "true",
+         "decs": "2",
+         "prefix": "$",
+         "thousandssep": "true"
+        }
+       ],
+       "rows": [{"codigo":"B","nombre":"dos\nlíneas","u":"PZA","precio":2}],
+       "summary": null
+      },
+      "csv": "Código,Unidad,Precio\r\n\"A,1\",CAJA,\"$1,234.50\"\r\nB,PIEZA,$2.00\r\nC,XX,",
+      "csvCrudo": "﻿Código;Unidad;Precio\r\nA,1;CJ;1234.5\r\nB;PZA;2\r\nC;XX;"
+     }
+    },
+    "internos": "@=paso-anterior"
+   }
+  },
+  {
+   "nombre": "mostrar nombre",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [18,1,["    <th field=\"nombre\" type=\"Text\" class=\"\">"]],
+        [54,1,["    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">"]],
+        [84,1,["    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">"]],
+        [114,1,["    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">"]]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": "@=paso-anterior",
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": {"$parche":[[29,1,["hideColumns = []"]]]},
+      "estilos": {
+       "$parche": [
+        [
+         5,
+         5,
+         [
+          "th[1] = display:table-cell;position:relative;width:153px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[2] = display:table-cell;position:relative;width:214px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[3] = display:table-cell;position:relative;width:124px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[4] = display:table-cell;position:relative;width:155px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[5] = display:table-cell;position:relative;width:195px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         12,
+         5,
+         [
+          "tr[0].td[1] = display:table-cell;position:relative;width:161px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[2] = display:table-cell;position:relative;width:222px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[3] = display:table-cell;position:relative;width:132px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[4] = display:table-cell;position:relative;width:163px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[5] = display:table-cell;position:relative;width:203px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         19,
+         5,
+         [
+          "tr[1].td[1] = display:table-cell;position:relative;width:161px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[2] = display:table-cell;position:relative;width:222px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[3] = display:table-cell;position:relative;width:132px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[4] = display:table-cell;position:relative;width:163px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[5] = display:table-cell;position:relative;width:203px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         26,
+         5,
+         [
+          "tr[2].td[1] = display:table-cell;position:relative;width:161px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[2] = display:table-cell;position:relative;width:222px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[3] = display:table-cell;position:relative;width:132px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[4] = display:table-cell;position:relative;width:163px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[5] = display:table-cell;position:relative;width:203px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": "@=paso-anterior",
+    "foco": "@=paso-anterior",
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": {
+     "valor": {
+      "datos": {
+       "columns": [
+        {"field":"codigo","title":"Código","type":"Text"},
+        {"field":"nombre","title":"Nombre","type":"Text"},
+        {"field":"u","title":"Unidad","type":"Select"},
+        {
+         "field": "precio",
+         "title": "Precio",
+         "type": "Number",
+         "format": "true",
+         "decs": "2",
+         "prefix": "$",
+         "thousandssep": "true"
+        }
+       ],
+       "rows": [
+        {"codigo":"A,1","nombre":"Dice \"hola\"","u":"CAJA","precio":1234.5},
+        {"codigo":"B","nombre":"dos\nlíneas","u":"PIEZA","precio":2},
+        {"codigo":"C","nombre":"Tres","u":"XX","precio":""}
+       ],
+       "summary": null
+      },
+      "sel": {
+       "columns": [
+        {"field":"codigo","title":"Código","type":"Text"},
+        {"field":"nombre","title":"Nombre","type":"Text"},
+        {"field":"u","title":"Unidad","type":"Select"},
+        {
+         "field": "precio",
+         "title": "Precio",
+         "type": "Number",
+         "format": "true",
+         "decs": "2",
+         "prefix": "$",
+         "thousandssep": "true"
+        }
+       ],
+       "rows": [{"codigo":"B","nombre":"dos\nlíneas","u":"PZA","precio":2}],
+       "summary": null
+      },
+      "csv": "Código,Nombre,Unidad,Precio\r\n\"A,1\",\"Dice \"\"hola\"\"\",CAJA,\"$1,234.50\"\r\nB,\"dos\nlíneas\",PIEZA,$2.00\r\nC,Tres,XX,",
+      "csvCrudo": "﻿Código;Nombre;Unidad;Precio\r\nA,1;\"Dice \"\"hola\"\"\";CJ;1234.5\r\nB;\"dos\nlíneas\";PZA;2\r\nC;Tres;XX;"
+     }
+    },
+    "internos": "@=paso-anterior"
+   }
+  }
+ ]
+}

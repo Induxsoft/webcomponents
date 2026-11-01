@@ -431,7 +431,8 @@
        "index": 0,
        "previous_index": -1
       }
-     }
+     },
+     {"evento":"beforecopy","tabla":"t1","consumidor":false,"args":{"text":"Producto de prueba 1","cancel":false}}
     ],
     "callbacks": [],
     "callbacksTruncados": 0,
