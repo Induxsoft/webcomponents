@@ -185,6 +185,26 @@ t('54', 'getExportData con totales: summary sale de getSummaries; sin columnas c
   c.igual((await m(c, 't1', 'getExportData')).summary, null);
 }, { requiere: ['summary', 'export'] });
 
+// ---------- F2 (editor propio) + corrección A1 de F1 (auto-confirm no roba el foco) ----------
+for (const [id, col, teclea] of [['mascara', { field: 'cp', type: 'Text', title: 'CP', mask: '99999' }, '12'], ['calc', { field: 'n', type: 'Number', title: 'N', calc: 'true' }, '=1/0']]) {
+  t('a1-' + id, `auto-confirm con un valor inválido en el editor propio (${id}): el intervalo no avisa ni roba el foco a otro campo`, ['§3-c', '§1-C15'], async (c) => {
+    await c.abrir({ body: tabla({ a: { 'auto-confirm': 'true' }, cols: [col, { field: 'b', type: 'Text', title: 'B' }], data: [{ [col.field]: '', b: 'x' }] }) + '<input id="externo">',
+      script: "document.addEventListener('DOMContentLoaded',()=>{window.mi=[];document.getElementById('t1').addEventListener('MaskInvalid',(e)=>window.mi.push(e.reason));});" });
+    await c.foco('t1', 0, 0); await c.tecla('F2');
+    await c.ev(() => { __ct.sr('t1').querySelector('#__table_input').value = ''; });
+    await c.escribir(teclea);
+    await c.page.click('#externo'); await c.escribir('abc');
+    await c.esperar(1300); await c.escribir('def');
+    await c.esperar(1300); await c.escribir('ghi');
+    c.igual(await c.ev(() => [document.getElementById('externo').value, document.activeElement.id]), ['abcdefghi', 'externo']);
+    c.igual(await c.ev(() => window.mi), [], 'sin MaskInvalid desde el intervalo');
+    c.igual((await c.datos())[0][col.field], '', 'no se confirmó el valor inválido');
+    // el usuario vuelve y confirma: ahora sí avisa
+    await c.ev(() => __ct.sr('t1').querySelector('#__table_input').focus()); await c.tecla('Enter');
+    c.ok((await c.ev(() => window.mi)).length === 1, 'MaskInvalid al confirmar el usuario');
+  }, { requiere: [id === 'calc' ? 'calc' : 'mask'] });
+}
+
 // ---------- locale de la tabla que ya existía para format="relative" ----------
 t('loc-relativo', 'una tabla con locale (usado para format="relative") no cambia los editores de las Number y Date sin format', ['§0-R7', '§0-R8'], async (c) => {
   await c.abrir({ body: tabla({ a: { locale: 'es-MX' }, cols: [{ field: 'f', type: 'Date', title: 'Cuándo', format: 'relative' }, { field: 'n', type: 'Number', title: 'N' }, { field: 'd', type: 'Date', title: 'D' }, { field: 'm', type: 'Number', title: 'M', format: 'true', decs: '2' }], data: [{ f: '2026-06-01', n: '12.5', d: '2026-02-01', m: 3 }] }) });

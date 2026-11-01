@@ -57,4 +57,17 @@ export default [
       ['quitar multi-select', h => h.js(() => ET('t1').removeAttribute('multi-select'))],
     ],
   },
+  {
+    id: 'combinados-a1-editor-propio', titulo: 'auto-confirm con un calc inválido (=1/0) en el editor propio de F2: el intervalo no avisa ni roba el foco (A1 de F1)',
+    etiquetas: E, origen: 'revisión de F1 (A1); spec §3', registro: 'consumer',
+    html: pagina({ body: tabla({ attrs: { 'auto-confirm': 'true' }, data: [{ n: '', b: 'x' }], cols: [{ field: 'n', title: 'N', type: 'Number', calc: 'true' }, { field: 'b', title: 'B', type: 'Text' }] }) + '<input id="externo">',
+      script: `window.__mi = []; document.addEventListener('DOMContentLoaded', () => ET('t1').addEventListener('MaskInvalid', (e) => window.__mi.push(e.reason)));
+window.__etExtra = () => ({ externo: document.getElementById('externo').value, foco: document.activeElement && document.activeElement.id, editando: ET('t1').Editing, mi: window.__mi.slice(), datos: ET('t1').DataArray });` }),
+    pasos: [
+      ['clic, F2 y teclear =1/0', async h => { await h.clicCelda('t1', 0, 0); await h.tecla('F2'); await h.js(() => { ETs('t1').querySelector('#__table_input').value = ''; }); await h.escribir('=1/0'); }],
+      ['clic en el input externo y teclear abc', async h => { await h.clic('#externo'); await h.escribir('abc'); }],
+      ['pasan 1.3 s (intervalo de auto-confirm) y teclear def', async h => { await h.esperar(1300); await h.escribir('def'); }],
+      ['pasan 1.3 s y teclear ghi', async h => { await h.esperar(1300); await h.escribir('ghi'); }],
+    ],
+  },
 ];
