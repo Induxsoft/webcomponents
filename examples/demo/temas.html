@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Temas y paletas · EdiTable 2</title>
+<link rel="stylesheet" href="assets/sitio.css">
+<script src="assets/sitio.js"></script>
+<script src="assets/tema-edittable.js"></script>
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="assets/datos.js"></script>
+</head>
+<body>
+<a class="saltar" href="#principal">Saltar al contenido</a>
+<div class="sitio">
+<nav id="sitio-nav"></nav>
+<div class="principal">
+<header class="barra-sup" id="sitio-barra"></header>
+<main id="principal" class="contenido" data-proximamente="theme">
+<header class="pag-enc">
+  <span class="ceja">Próximamente · F8</span>
+  <h1>Cuatro temas de fábrica y una paleta a la medida</h1>
+  <p class="bajada">Hoy cada aplicación arma su tema con <code>control-styles</code> (este sitio lo hace con <code>assets/tema-edittable.js</code>). En 2.0 basta con un atributo: <code>theme="claro|oscuro|jade|libro-mayor"</code>, y <code>palette</code> para cambiar colores puntuales sin reescribir CSS.</p>
+</header>
+<div id="aviso" role="status"></div>
+
+<section class="demo" aria-label="Demostración">
+<div id="demo">
+  <div class="rejilla-2">
+    <figure style="margin:0">
+      <figcaption><code>theme="claro"</code></figcaption>
+      <edit-table id="t-claro" theme="claro" data-tema="propio" readonly="true">
+        <edit-thead><edit-tr>
+          <edit-th type="NoEditable" field="codigo" width="90px">Código</edit-th>
+          <edit-th type="NoEditable" field="descripcion">Descripción</edit-th>
+          <edit-th type="NoEditable" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" summary="sum">Precio</edit-th>
+        </edit-tr></edit-thead>
+      </edit-table>
+    </figure>
+    <figure style="margin:0">
+      <figcaption><code>theme="oscuro"</code></figcaption>
+      <edit-table id="t-oscuro" theme="oscuro" data-tema="propio" readonly="true">
+        <edit-thead><edit-tr>
+          <edit-th type="NoEditable" field="codigo" width="90px">Código</edit-th>
+          <edit-th type="NoEditable" field="descripcion">Descripción</edit-th>
+          <edit-th type="NoEditable" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" summary="sum">Precio</edit-th>
+        </edit-tr></edit-thead>
+      </edit-table>
+    </figure>
+    <figure style="margin:0">
+      <figcaption><code>theme="jade"</code></figcaption>
+      <edit-table id="t-jade" theme="jade" data-tema="propio" readonly="true">
+        <edit-thead><edit-tr>
+          <edit-th type="NoEditable" field="codigo" width="90px">Código</edit-th>
+          <edit-th type="NoEditable" field="descripcion">Descripción</edit-th>
+          <edit-th type="NoEditable" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" summary="sum">Precio</edit-th>
+        </edit-tr></edit-thead>
+      </edit-table>
+    </figure>
+    <figure style="margin:0">
+      <figcaption><code>theme="libro-mayor"</code> con <code>palette</code></figcaption>
+      <edit-table id="t-libro" theme="libro-mayor" palette='{"accent":"#7a4b1f","header":"#f3ead8"}' data-tema="propio" readonly="true">
+        <edit-thead><edit-tr>
+          <edit-th type="NoEditable" field="codigo" width="90px">Código</edit-th>
+          <edit-th type="NoEditable" field="descripcion">Descripción</edit-th>
+          <edit-th type="NoEditable" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" summary="sum">Precio</edit-th>
+        </edit-tr></edit-thead>
+      </edit-table>
+    </figure>
+  </div>
+  <div class="barra" style="margin-top:14px">
+    <label for="acento">Acento de la cuarta tabla</label>
+    <input type="color" id="acento" value="#7a4b1f">
+  </div>
+</div>
+</section>
+
+<div id="codigo"></div>
+
+<div class="explica">
+  <div class="tarjeta">
+    <h2>API que usa esta página (propuesta para F8)</h2>
+    <ul>
+      <li>Bandera <code>'theme'</code>. Atributo <code>theme</code> (propiedad <code>Theme</code>) con <code>claro</code>, <code>oscuro</code>, <code>jade</code> o <code>libro-mayor</code>; observado, así que cambiarlo después de cargar se aplica.</li>
+      <li>Atributo <code>palette</code>: JSON con colores puntuales (<code>accent</code>, <code>header</code>…) que se vuelven variables <code>--et-*</code>.</li>
+      <li>Sin <code>theme</code>, el componente se ve como hoy (regla R1); <code>control-styles</code> sigue ganando.</li>
+    </ul>
+  </div>
+  <div class="tarjeta">
+    <h2>Mientras tanto</h2>
+    <ul>
+      <li>Sin la bandera, los atributos se ignoran y las cuatro tablas se ven con el estilo de la versión actual.</li>
+      <li>Estas tablas llevan <code>data-tema="propio"</code> para que el sitio no les ponga su tema.</li>
+    </ul>
+  </div>
+</div>
+</main>
+</div>
+</div>
+<script data-demo>
+document.addEventListener('DOMContentLoaded', () => {
+  const datos = Datos.productos(5).map(p => ({ codigo: p.codigo, descripcion: p.descripcion, precio: p.precio }));
+  ['t-claro', 't-oscuro', 't-jade', 't-libro'].forEach((id) => {
+    const t = document.getElementById(id);
+    t.DataArray = datos.map(r => ({ ...r }));
+    t._printRows();
+  });
+  document.getElementById('acento').oninput = (e) => {
+    document.getElementById('t-libro').setAttribute('palette', JSON.stringify({ accent: e.target.value, header: '#f3ead8' }));
+  };
+});
+</script>
+</body>
+</html>

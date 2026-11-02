@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>API y eventos · EdiTable 2</title>
+<link rel="stylesheet" href="assets/sitio.css">
+<script src="assets/sitio.js"></script>
+<script src="assets/tema-edittable.js"></script>
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="assets/datos.js"></script>
+</head>
+<body>
+<a class="saltar" href="#principal">Saltar al contenido</a>
+<div class="sitio">
+<nav id="sitio-nav"></nav>
+<div class="principal">
+<header class="barra-sup" id="sitio-barra"></header>
+<main id="principal" class="contenido">
+<header class="pag-enc">
+  <span class="ceja">Captura · reglas de negocio sin pelear con el componente</span>
+  <h1>Cada paso de la captura avisa, y casi todos se pueden cancelar</h1>
+  <p class="bajada">Un conteo de inventario físico. Los eventos <code>Before*</code> deciden si se entra a una celda, si se acepta un valor o si se borra una fila. <code>IsDirty</code> sabe si hay cambios sin guardar, y la bitácora muestra en vivo cada evento con sus argumentos.</p>
+  <div class="chips"><span class="chip neutro">BeforeCellFocus</span><span class="chip neutro">BeforeUpdateCell</span><span class="chip neutro">BeforeRowDelete</span><span class="chip neutro">IsDirty · backup · restore</span></div>
+</header>
+
+<section class="demo" aria-label="Demostración">
+<div id="demo">
+  <div class="barra">
+    <span class="chip" id="estado" role="status">Sin cambios</span>
+    <span class="sep"></span>
+    <label><input type="checkbox" id="permitir-borrar"> Permitir borrar (<kbd>Ctrl</kbd>+<kbd>Supr</kbd>)</label>
+    <button type="button" class="btn primario" id="guardar">Guardar conteo</button>
+    <button type="button" class="btn" id="deshacer">Deshacer cambios</button>
+  </div>
+  <div class="caja-tabla">
+    <edit-table id="conteo">
+      <edit-thead><edit-tr>
+        <edit-th type="NoEditable" field="codigo" width="110px">Código</edit-th>
+        <edit-th type="NoEditable" field="descripcion" minwidth="200px">Descripción</edit-th>
+        <edit-th type="NoEditable" field="ubicacion" width="100px">Ubicación</edit-th>
+        <edit-th type="NoEditable" field="sistema" textalign="end" width="100px">Sistema</edit-th>
+        <edit-th type="Number" field="conteo" textalign="end" width="100px">Conteo</edit-th>
+        <edit-th type="NoEditable" field="diferencia" textalign="end" width="110px">Diferencia</edit-th>
+        <edit-th type="Text" field="nota" minwidth="160px">Nota</edit-th>
+      </edit-tr></edit-thead>
+    </edit-table>
+  </div>
+  <div class="barra" style="margin:14px 0 0">
+    <strong>Bitácora de eventos</strong><span class="sep"></span>
+    <label><input type="checkbox" id="ver-foco" checked> Incluir foco y teclado</label>
+    <button type="button" class="btn" id="limpiar">Limpiar</button>
+  </div>
+  <ol class="bitacora" id="bitacora" aria-live="polite" aria-label="Eventos recientes"></ol>
+</div>
+</section>
+
+<div id="codigo"></div>
+
+<div class="explica">
+  <div class="tarjeta prueba">
+    <h2>Pruebe</h2>
+    <ul>
+      <li>Escriba <code>2.5</code> en <strong>Conteo</strong>: <code>BeforeUpdateCell</code> lo rechaza y la celda sigue en edición.</li>
+      <li>Intente entrar a la fila del pasillo <strong>C</strong>: está cerrada y <code>BeforeCellFocus</code> lo impide.</li>
+      <li>Con <kbd>Ctrl</kbd>+<kbd>Supr</kbd> se borra una fila solo si marca «Permitir borrar».</li>
+      <li>Cambie algo y vea el indicador; <strong>Deshacer cambios</strong> llama a <code>restore()</code> y lo regresa a «Sin cambios».</li>
+    </ul>
+  </div>
+  <div class="tarjeta">
+    <h2>Contrato de los eventos</h2>
+    <ul>
+      <li>Se registran con <code>t.addEventListener('nombre', fn)</code> o <code>t.Events[nombre] = fn</code>; hay <strong>un manejador por evento</strong> (el último gana).</li>
+      <li>Los nombres están en <code>t.EdiTable.Const.Events</code>; los <code>Before*</code> se cancelan con <code>e.cancel = true</code>.</li>
+      <li>Los índices de fila (<code>e.row</code>, <code>getSelectedRows()</code>…) siempre son de <code>DataArray</code>.</li>
+    </ul>
+  </div>
+</div>
+</main>
+</div>
+</div>
+<script data-demo>
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('conteo');
+  const E = t.EdiTable.Const.Events;
+  t.DataArray = Datos.productos(12).map((p, i) => ({
+    codigo: p.codigo, descripcion: p.descripcion, ubicacion: 'Pasillo ' + 'ABCD'[i % 4] + '-' + (1 + (i % 3)),
+    sistema: p.existencia, conteo: i % 3 === 0 ? '' : String(p.existencia - (i % 5 === 1 ? 2 : 0)), diferencia: '', nota: '',
+  }));
+  const calcular = (r) => { r.diferencia = r.conteo === '' ? '' : String(Number(r.conteo) - Number(r.sistema)); };
+  t.DataArray.forEach(calcular);
+  t._printRows();
+  t.backup(); // punto de partida para IsDirty
+
+  // --- Bitácora: un renglón por evento, con sus argumentos resumidos
+  const bit = document.getElementById('bitacora'), verFoco = document.getElementById('ver-foco');
+  const RUIDO = [E.BeforeCellFocus, E.EnterCell, E.LeaveCell, E.RowChanged, E.InputCreated, E.BeforeSetInput];
+  const resumen = (a) => JSON.stringify(a, (k, v) => k === 'sender' ? undefined : (v && v.nodeType === 1 ? '<' + v.nodeName.toLowerCase() + '>' : (k === 'coldef' && v ? v.field : v)));
+  const log = (nombre, args, nota) => {
+    if (!verFoco.checked && RUIDO.includes(nombre)) return;
+    const li = document.createElement('li');
+    li.innerHTML = '<time></time><b></b><span></span>';
+    li.children[0].textContent = new Date().toLocaleTimeString('es-MX');
+    li.children[1].textContent = nombre;
+    li.children[2].textContent = (nota ? nota + ' · ' : '') + (resumen(args) || '');
+    bit.prepend(li);
+    while (bit.children.length > 150) bit.lastChild.remove();
+  };
+
+  // --- Reglas de negocio con eventos cancelables
+  const reglas = {
+    [E.BeforeCellFocus]: (e) => {
+      const td = e.td && e.td.closest ? e.td.closest('td') : null;
+      const r = td ? t.DataArray[t.RowIndexOfTd(td)] : null;
+      if (r && r.ubicacion.startsWith('Pasillo C')) { e.cancel = true; return 'cancelado: pasillo C cerrado'; }
+    },
+    [E.BeforeUpdateCell]: (e) => {
+      if (e.coldef.field === 'conteo' && e.text !== '' && !/^\d+$/.test(String(e.text).trim())) { e.cancel = true; return 'cancelado: el conteo es un entero ≥ 0'; }
+    },
+    [E.BeforeRowDelete]: (e) => {
+      if (!document.getElementById('permitir-borrar').checked) { e.cancel = true; return 'cancelado: borrar no está permitido'; }
+    },
+    [E.FieldUpdated]: (e) => { const r = t.DataArray[e.row]; if (r) { calcular(r); t.UpdateRow(e.row); } },
+    [E.IsDirtyChanged]: () => pintarEstado(),
+  };
+
+  // Un solo manejador por evento: aplica la regla (si hay) y escribe en la bitácora
+  Object.values(E).filter(n => n !== E.BadgeClick).forEach((n) => {
+    t.addEventListener(n, (e) => { const nota = reglas[n] ? reglas[n](e) : ''; log(n, e, nota); });
+  });
+
+  const est = document.getElementById('estado');
+  const pintarEstado = () => { est.textContent = t.IsDirty ? 'Cambios sin guardar' : 'Sin cambios'; est.className = 'chip' + (t.IsDirty ? ' falta' : ''); };
+  document.getElementById('guardar').onclick = () => { t.backup(); pintarEstado(); log('guardar', null, 'backup(): el estado actual es el nuevo punto de partida'); };
+  document.getElementById('deshacer').onclick = () => { t.restore(); t.DataArray.forEach(calcular); t._printRows(); pintarEstado(); log('deshacer', null, 'restore()'); };
+  document.getElementById('limpiar').onclick = () => { bit.innerHTML = ''; };
+  pintarEstado();
+  t.NavTo(0, 4);
+});
+</script>
+</body>
+</html>

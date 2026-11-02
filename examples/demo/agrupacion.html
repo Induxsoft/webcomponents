@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agrupación y subtotales · EdiTable 2</title>
+<link rel="stylesheet" href="assets/sitio.css">
+<script src="assets/sitio.js"></script>
+<script src="assets/tema-edittable.js"></script>
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="assets/datos.js"></script>
+</head>
+<body>
+<a class="saltar" href="#principal">Saltar al contenido</a>
+<div class="sitio">
+<nav id="sitio-nav"></nav>
+<div class="principal">
+<header class="barra-sup" id="sitio-barra"></header>
+<main id="principal" class="contenido" data-requiere="group summary">
+<header class="pag-enc">
+  <span class="ceja">Consulta · análisis sin salir de la lista</span>
+  <h1>Ventas por región y vendedor, arrastrando encabezados</h1>
+  <p class="bajada">Arrastre un encabezado al panel para agrupar; agregue otro para un segundo nivel. Cada grupo muestra cuántas filas tiene y los subtotales de las columnas con <code>summary</code>. <code>DataArray</code> no se reordena: la agrupación es solo de la vista.</p>
+  <div class="chips" id="chips"></div>
+</header>
+
+<section class="demo" aria-label="Demostración">
+<div id="demo">
+  <div class="barra">
+    <button type="button" class="btn" id="por-region">Región › Vendedor</button>
+    <button type="button" class="btn" id="por-mes">Mes › Línea</button>
+    <button type="button" class="btn" id="sin-grupos">Sin agrupar</button>
+    <span class="sep"></span>
+    <button type="button" class="btn" id="colapsar">Colapsar todo</button>
+    <button type="button" class="btn" id="expandir">Expandir todo</button>
+  </div>
+  <div class="caja-tabla" style="max-height:520px;overflow-y:auto">
+    <edit-table id="ventas" group-panel="true" group-summary="inline" summary-scope="all" readonly="true">
+      <edit-thead><edit-tr>
+        <edit-th type="NoEditable" field="folio" width="100px" groupable="false">Folio</edit-th>
+        <edit-th type="NoEditable" field="mes" width="80px">Mes</edit-th>
+        <edit-th type="NoEditable" field="region" width="100px">Región</edit-th>
+        <edit-th type="NoEditable" field="vendedor" width="130px">Vendedor</edit-th>
+        <edit-th type="NoEditable" field="linea" width="100px">Línea</edit-th>
+        <edit-th type="NoEditable" field="cantidad" textalign="end" width="80px" summary="sum">Piezas</edit-th>
+        <edit-th type="NoEditable" field="importe" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="120px" summary="sum">Importe</edit-th>
+        <edit-th type="NoEditable" field="margen" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="110px" summary="sum">Margen</edit-th>
+      </edit-tr></edit-thead>
+    </edit-table>
+  </div>
+  <p class="bajada" id="grupos" style="font-size:13px;margin:10px 0 0" aria-live="polite"></p>
+</div>
+</section>
+
+<div id="codigo"></div>
+
+<div class="explica">
+  <div class="tarjeta prueba">
+    <h2>Pruebe</h2>
+    <ul>
+      <li>Arrastre <strong>Línea</strong> al panel de arriba; luego quite un nivel con su <strong>×</strong> o reordene las fichas arrastrándolas.</li>
+      <li>Con el teclado: flechas para moverse por las filas de grupo, <kbd>Enter</kbd> o <kbd>Espacio</kbd> para expandir o colapsar.</li>
+      <li>Ordene por <strong>Importe</strong>: se ordena dentro de cada grupo.</li>
+    </ul>
+  </div>
+  <div class="tarjeta">
+    <h2>Detalles</h2>
+    <ul>
+      <li><code>group-panel="true"</code> muestra el panel; <code>groupable="false"</code> excluye una columna.</li>
+      <li><code>group-summary="inline"</code> pone cada subtotal bajo su columna; sin él, van en una sola celda.</li>
+      <li>API: <code>GroupBy([campos])</code>, <code>Ungroup()</code>, <code>ExpandAllGroups()</code>, <code>CollapseAllGroups()</code>; eventos <code>BeforeGroup</code>, <code>GroupChanged</code> y <code>GroupToggled</code>.</li>
+      <li>Funciona junto con <code>virtual-rows</code> para miles de filas.</li>
+    </ul>
+  </div>
+</div>
+</main>
+</div>
+</div>
+<script data-demo>
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('ventas');
+  const $ = (id) => document.getElementById(id);
+  t.DataArray = Datos.ventas(400);
+  t._printRows();
+
+  const pintar = () => {
+    const g = t.getGroups().map(f => t.Columns.find(c => c.field === f).title);
+    $('grupos').textContent = g.length ? 'Agrupado por: ' + g.join(' › ') + ' · total general en el pie' : 'Sin agrupación: arrastre un encabezado al panel.';
+  };
+  t.addEventListener('GroupChanged', pintar);
+
+  $('por-region').onclick = () => t.GroupBy(['region', 'vendedor']);
+  $('por-mes').onclick = () => t.GroupBy(['mes', 'linea']);
+  $('sin-grupos').onclick = () => t.Ungroup();
+  $('colapsar').onclick = () => t.CollapseAllGroups();
+  $('expandir').onclick = () => t.ExpandAllGroups();
+
+  t.GroupBy(['region', 'vendedor']);
+  t.CollapseAllGroups();
+  t.ExpandGroup(['Sur']);
+  pintar();
+});
+</script>
+</body>
+</html>

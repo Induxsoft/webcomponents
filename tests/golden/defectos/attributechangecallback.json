@@ -628,7 +628,11 @@
         "design-key",
         "design-auto-save-sort",
         "virtual-rows",
-        "group-panel"
+        "group-panel",
+        "theme",
+        "palette",
+        "striped",
+        "density"
        ],
        "tieneChanged": "function",
        "tieneChange": "function"

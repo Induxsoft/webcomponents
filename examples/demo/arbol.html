@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Árbol de cuentas · EdiTable 2</title>
+<link rel="stylesheet" href="assets/sitio.css">
+<script src="assets/sitio.js"></script>
+<script src="assets/tema-edittable.js"></script>
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="assets/datos.js"></script>
+</head>
+<body>
+<a class="saltar" href="#principal">Saltar al contenido</a>
+<div class="sitio">
+<nav id="sitio-nav"></nav>
+<div class="principal">
+<header class="barra-sup" id="sitio-barra"></header>
+<main id="principal" class="contenido">
+<header class="pag-enc">
+  <span class="ceja">Consulta · contabilidad</span>
+  <h1>Catálogo de cuentas en árbol, editable y reorganizable</h1>
+  <p class="bajada">Con <code>show-tree</code>, <code>key</code> y <code>parentkey</code> la lista plana se vuelve jerarquía: cuentas de mayor y subcuentas que se expanden por nivel, se renombran en la celda y se mueven arrastrando o con sangría.</p>
+  <div class="chips"><span class="chip neutro">show-tree</span><span class="chip neutro">can-move-row</span><span class="chip neutro">RowIndent</span><span class="chip neutro">CellClass</span></div>
+</header>
+
+<section class="demo" aria-label="Demostración">
+<div id="demo">
+  <div class="barra">
+    <span style="font-size:13px;color:var(--texto-2)">Mostrar hasta el nivel:</span>
+    <button type="button" class="btn" data-nivel="1">1 · Género</button>
+    <button type="button" class="btn" data-nivel="2">2 · Mayor</button>
+    <button type="button" class="btn" data-nivel="3">3 · Subcuenta</button>
+    <span class="sep"></span>
+    <button type="button" class="btn" id="sangrar">Sangrar →</button>
+    <button type="button" class="btn" id="subir">← Subir de nivel</button>
+  </div>
+  <div class="caja-tabla" style="max-height:520px;overflow-y:auto">
+    <edit-table id="cuentas" show-tree="true" key="sys_pk" parentkey="parent" can-move-row="true"
+      control-styles="td.negativo{color:var(--error)} tr[indent='0'] td{font-weight:650}">
+      <edit-thead><edit-tr>
+        <edit-th type="NoEditable" field="cuenta" width="170px">Cuenta</edit-th>
+        <edit-th type="Text" field="nombre" minwidth="260px">Nombre</edit-th>
+        <edit-th type="Select" field="naturaleza" keyfield="nat" width="120px" options='{"D":"Deudora","A":"Acreedora"}'>Naturaleza</edit-th>
+        <edit-th type="NoEditable" field="saldo" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="160px">Saldo</edit-th>
+      </edit-tr></edit-thead>
+    </edit-table>
+  </div>
+</div>
+</section>
+
+<div id="codigo"></div>
+
+<div class="explica">
+  <div class="tarjeta prueba">
+    <h2>Pruebe</h2>
+    <ul>
+      <li>Clic en el triángulo de una cuenta para expandirla o colapsarla; los botones de nivel lo hacen para todo el catálogo.</li>
+      <li>Arrastre una subcuenta sobre otra cuenta: en la mitad izquierda queda como hermana, en la derecha como hija.</li>
+      <li>Escriba sobre un nombre para renombrar la cuenta.</li>
+    </ul>
+  </div>
+  <div class="tarjeta">
+    <h2>Notas</h2>
+    <ul>
+      <li>El árbol se arma desde una lista plana; <code>DataArray</code> queda en el orden del árbol.</li>
+      <li><code>CellClass</code> pinta los saldos acreedores sin tocar el DOM a mano.</li>
+      <li>El árbol no se combina con agrupación ni con <code>virtual-rows</code>: si se piden juntos, gana el árbol y se avisa en la consola.</li>
+    </ul>
+  </div>
+</div>
+</main>
+</div>
+</div>
+<script data-demo>
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('cuentas');
+  t.CellClass = (r, field) => field === 'saldo' && Number(r.saldo) < 0 ? 'negativo' : '';
+  t.DataArray = Datos.cuentas();
+  t._expandOnStart = true;
+  t._printTreeData();
+
+  const filas = () => [...t.GetTBody().querySelectorAll('tr')];
+  const nivel = (n) => {
+    filas().forEach(tr => t.ExpandRow(tr));                        // primero todo abierto
+    filas().filter(tr => Number(tr.getAttribute('indent')) === n - 1).forEach(tr => t.CollapseRow(tr));
+  };
+  document.querySelectorAll('[data-nivel]').forEach(b => { b.onclick = () => nivel(Number(b.dataset.nivel)); });
+
+  const actual = () => t.GetTrByIndex(t.CurrentRowIndex());
+  document.getElementById('sangrar').onclick = () => { const tr = actual(); if (tr) t.RowIndent(tr, true); };
+  document.getElementById('subir').onclick = () => { const tr = actual(); if (tr) t.RowIndent(tr, false); };
+  nivel(2);
+  t.NavTo(0, 1);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>20 000 productos · EdiTable 2</title>
+<link rel="stylesheet" href="assets/sitio.css">
+<script src="assets/sitio.js"></script>
+<script src="assets/tema-edittable.js"></script>
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="assets/datos.js"></script>
+</head>
+<body>
+<a class="saltar" href="#principal">Saltar al contenido</a>
+<div class="sitio">
+<nav id="sitio-nav"></nav>
+<div class="principal">
+<header class="barra-sup" id="sitio-barra"></header>
+<main id="principal" class="contenido" data-requiere="virtual">
+<header class="pag-enc">
+  <span class="ceja">Consulta · piloto de V12 «lista de productos»</span>
+  <h1>20 000 productos, sin paginar y sin esperar</h1>
+  <p class="bajada">Con <code>virtual-rows</code> solo se dibujan las filas que se ven más un margen. El catálogo completo vive en <code>DataArray</code>: se desplaza, se ordena y se edita como si estuviera todo en pantalla. Los tiempos de abajo se miden en vivo en su navegador.</p>
+  <div class="chips" id="chips"></div>
+</header>
+
+<section class="demo" aria-label="Demostración">
+<div id="demo">
+  <div class="barra">
+    <button type="button" class="btn primario" id="recorrer">Recorrer de arriba abajo</button>
+    <button type="button" class="btn" id="ir">Ir a la fila 15 000</button>
+    <button type="button" class="btn" id="recargar">Volver a cargar</button>
+    <span class="sep"></span>
+    <label>Filas <select id="cuantas"><option>1000</option><option>5000</option><option selected>20000</option><option>50000</option></select></label>
+  </div>
+  <div class="caja-tabla" id="desplazable" style="height:460px;overflow-y:auto">
+    <edit-table id="catalogo" virtual-rows="true" row-height="34px">
+      <edit-thead><edit-tr>
+        <edit-th type="NoEditable" field="codigo" width="110px">Código</edit-th>
+        <edit-th type="Text" field="descripcion" minwidth="220px">Descripción</edit-th>
+        <edit-th type="NoEditable" field="linea" width="120px">Línea</edit-th>
+        <edit-th type="NoEditable" field="marca" width="130px">Marca</edit-th>
+        <edit-th type="Number" field="existencia" textalign="end" width="100px">Existencia</edit-th>
+        <edit-th type="Number" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="120px">Precio</edit-th>
+      </edit-tr></edit-thead>
+    </edit-table>
+  </div>
+  <div class="metricas" aria-live="polite">
+    <div class="metrica"><b id="m-carga">—</b><span>primer dibujo</span></div>
+    <div class="metrica"><b id="m-fps">—</b><span>desplazamiento (cuadros/s)</span></div>
+    <div class="metrica"><b id="m-peor">—</b><span>cuadro más lento</span></div>
+    <div class="metrica"><b id="m-orden">—</b><span>último ordenamiento</span></div>
+    <div class="metrica"><b id="m-dom">—</b><span>filas en el DOM</span></div>
+  </div>
+</div>
+</section>
+
+<div id="codigo"></div>
+
+<div class="explica">
+  <div class="tarjeta prueba">
+    <h2>Pruebe</h2>
+    <ul>
+      <li><strong>Recorrer de arriba abajo</strong> desplaza las 20 000 filas en 3 segundos y mide los cuadros por segundo.</li>
+      <li>Clic en <strong>Precio</strong> para ordenar el catálogo completo; se mide el tiempo.</li>
+      <li>Con el teclado: <kbd>AvPág</kbd>, <kbd>Ctrl</kbd>+<kbd>Fin</kbd>, o escriba sobre una descripción para editarla.</li>
+      <li>Cambie a 50 000 filas para ver hasta dónde llega su equipo.</li>
+    </ul>
+  </div>
+  <div class="tarjeta">
+    <h2>Condiciones</h2>
+    <ul>
+      <li>Alto de fila uniforme: <code>row-height</code> lo fija (o se mide).</li>
+      <li>El contenedor con scroll es el ancestro con <code>overflow-y: auto</code>, o el que diga <code>scroll-container</code>.</li>
+      <li><code>onTdPaint</code> y <code>onRowPaint</code> solo se llaman para las filas dibujadas; al imprimir se dibujan todas.</li>
+      <li>Meta del laboratorio: primer dibujo en menos de 150 ms y desplazamiento a 60 cuadros/s.</li>
+    </ul>
+  </div>
+</div>
+</main>
+</div>
+</div>
+<script data-demo>
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('catalogo');
+  const caja = document.getElementById('desplazable');
+  const $ = (id) => document.getElementById(id);
+  const enDom = () => { $('m-dom').textContent = t.GetTBody().querySelectorAll('tr:not(.et-spacer)').length.toLocaleString('es-MX'); };
+
+  const cargar = () => {
+    const n = Number($('cuantas').value);
+    const datos = Datos.productos(n);           // se genera fuera de la medición
+    const t0 = performance.now();
+    t.DataArray = datos;
+    t._printRows();
+    $('m-carga').textContent = Math.round(performance.now() - t0) + ' ms';
+    caja.scrollTop = 0; enDom();
+  };
+
+  // Ordenar: OnSort se dispara antes de ordenar; el siguiente cuadro ya trae la tabla dibujada
+  t.addEventListener('onsort', () => {
+    const t0 = performance.now();
+    requestAnimationFrame(() => { $('m-orden').textContent = Math.round(performance.now() - t0) + ' ms'; enDom(); });
+  });
+
+  // Recorrido automático: mide cuadros por segundo y el cuadro más lento
+  $('recorrer').onclick = () => {
+    const dur = 3000, max = caja.scrollHeight - caja.clientHeight, t0 = performance.now();
+    let cuadros = 0, peor = 0, previo = t0;
+    const paso = (ahora) => {
+      cuadros++; peor = Math.max(peor, ahora - previo); previo = ahora;
+      const k = Math.min(1, (ahora - t0) / dur);
+      caja.scrollTop = max * k;
+      if (k < 1) requestAnimationFrame(paso);
+      else { $('m-fps').textContent = Math.round(cuadros * 1000 / (ahora - t0)); $('m-peor').textContent = Math.round(peor) + ' ms'; enDom(); }
+    };
+    requestAnimationFrame(paso);
+  };
+  $('ir').onclick = () => { t.NavTo(Math.min(14999, t.DataArray.length - 1), 1); enDom(); };
+  $('recargar').onclick = cargar;
+  $('cuantas').onchange = cargar;
+  caja.addEventListener('scroll', enDom, { passive: true });
+  cargar();
+});
+</script>
+</body>
+</html>

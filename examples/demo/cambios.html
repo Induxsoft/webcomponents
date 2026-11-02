@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cambios para guardar · EdiTable 2</title>
+<link rel="stylesheet" href="assets/sitio.css">
+<script src="assets/sitio.js"></script>
+<script src="assets/tema-edittable.js"></script>
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="assets/datos.js"></script>
+</head>
+<body>
+<a class="saltar" href="#principal">Saltar al contenido</a>
+<div class="sitio">
+<nav id="sitio-nav"></nav>
+<div class="principal">
+<header class="barra-sup" id="sitio-barra"></header>
+<main id="principal" class="contenido" data-proximamente="changes">
+<header class="pag-enc">
+  <span class="ceja">Próximamente · F8</span>
+  <h1>Mandar al servidor solo lo que cambió</h1>
+  <p class="bajada">Se editan precios, se agregan y se borran productos; al guardar, <code>getChanges()</code> entrega tres listas —altas, cambios y bajas— listas para el guardado de CRUD-L o de V12, sin reenviar el catálogo completo.</p>
+</header>
+<div id="aviso" role="status"></div>
+
+<section class="demo" aria-label="Demostración">
+<div id="demo">
+  <div class="barra">
+    <button type="button" class="btn" id="alta">Agregar producto</button>
+    <button type="button" class="btn" id="baja">Borrar el actual</button>
+    <span class="sep"></span>
+    <button type="button" class="btn primario" id="ver">Ver lo que se enviaría</button>
+    <button type="button" class="btn" id="aceptar">Guardado: aceptar cambios</button>
+  </div>
+  <div class="caja-tabla">
+    <edit-table id="precios" key="sys_pk">
+      <edit-thead><edit-tr>
+        <edit-th type="Text" field="codigo" width="110px">Código</edit-th>
+        <edit-th type="Text" field="descripcion" minwidth="240px">Descripción</edit-th>
+        <edit-th type="Number" field="costo" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="120px">Costo</edit-th>
+        <edit-th type="Number" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="120px" calc="true">Precio</edit-th>
+        <edit-th type="Check" field="activo" textalign="center" width="90px">Activo</edit-th>
+      </edit-tr></edit-thead>
+    </edit-table>
+  </div>
+  <pre class="salida" id="envio" aria-live="polite"></pre>
+</div>
+</section>
+
+<div id="codigo"></div>
+
+<div class="explica">
+  <div class="tarjeta">
+    <h2>API que usa esta página (propuesta para F8)</h2>
+    <ul>
+      <li>Bandera <code>'changes'</code>. <code>getChanges()</code> devuelve <code>{added, modified, deleted}</code>: filas nuevas, filas cambiadas (con su llave) y filas borradas.</li>
+      <li><code>AcceptChanges()</code> toma el estado actual como nuevo punto de partida (como <code>backup()</code>, pero también olvida altas y bajas).</li>
+      <li>La llave de cada fila es el atributo <code>key</code> de la tabla.</li>
+    </ul>
+  </div>
+  <div class="tarjeta">
+    <h2>Mientras tanto</h2>
+    <ul>
+      <li>Hoy existe <code>IsDirty</code> y <code>getIsDirty(i)</code> por fila, pero no se sabe qué filas son nuevas ni cuáles se borraron.</li>
+      <li>Sin la bandera, la página muestra lo que hoy se puede saber: las filas modificadas según <code>getIsDirty</code>.</li>
+    </ul>
+  </div>
+</div>
+</main>
+</div>
+</div>
+<script data-demo>
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('precios');
+  const $ = (id) => document.getElementById(id);
+  t.DataArray = Datos.productos(8).map(p => ({ sys_pk: p.sys_pk, codigo: p.codigo, descripcion: p.descripcion, costo: String(p.costo), precio: String(p.precio), activo: p.activo ? 'Sí' : 'No' }));
+  t._printRows();
+  t.backup();
+
+  let siguiente = 9001;
+  $('alta').onclick = () => { t.AddRow(); const i = t.DataArray.length - 1; Object.assign(t.DataArray[i], { sys_pk: siguiente++, codigo: 'P-NUEVO', activo: 'Sí' }); t.UpdateRow(i); t.NavTo(i, 1); };
+  $('baja').onclick = () => { const i = t.CurrentRowIndex(); if (i >= 0) t.DeleteRow(i); };
+
+  $('ver').onclick = () => {
+    if (EditTable.features.includes('changes')) {
+      const c = t.getChanges();
+      $('envio').textContent = 'POST /api/productos/guardar\n' + JSON.stringify({ added: c.added, modified: c.modified, deleted: c.deleted.map(r => r.sys_pk) }, null, 1);
+    } else {
+      const modificadas = t.DataArray.filter((r, i) => { try { return t.getIsDirty(i); } catch (e) { return false; } });
+      $('envio').textContent = '// Sin getChanges(): solo se sabe qué filas difieren del respaldo (getIsDirty)\n' + JSON.stringify(modificadas, null, 1);
+    }
+  };
+  $('aceptar').onclick = () => { if (t.AcceptChanges) t.AcceptChanges(); else t.backup(); $('envio').textContent = '// Cambios aceptados: el estado actual es el nuevo punto de partida.'; };
+  t.NavTo(0, 3);
+});
+</script>
+</body>
+</html>

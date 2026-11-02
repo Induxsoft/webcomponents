@@ -89,6 +89,7 @@ class EditTable extends HTMLElement
         this._f2AtributoCambiado(name, newValue);   // F2: summary-scope
         this._f5AtributoCambiado?.(name, newValue);   // F5: virtual-rows
         this._f6AtributoCambiado(name, newValue);   // F6: group-panel
+        this._f8bAtributoCambiado(name, newValue);   // F8b: theme, palette, striped, density
     }
 
     // F1 (C9, C11): se inicializa una sola vez. Mientras la página carga, en DOMContentLoaded y en el
@@ -379,6 +380,7 @@ class EditTable extends HTMLElement
             this.setAutoConfirm();
             this.checkAndSetRowCards();
             this._f5Iniciar?.();   // F5: virtual-rows (después de UpdateData y de la vista de tarjetas)
+            this._f8bIniciar();   // F8b: variables --et-* en el CSSOM y theme/palette/striped/density
         }
         this._f1Inicializada = true;
         // F1 (C11): si lo sacaron del documento antes de inicializarse, no deja nada activo.
@@ -2759,6 +2761,7 @@ class EditTable extends HTMLElement
     SetTdValue=(td, value, valideEncode=false, coldef=null)=>
     {
         if(!coldef) coldef = this.GetColumnDefOfTd(td);
+        if (this._f8bMarcas) this._f8bTd(td, value, coldef);   // F8b: et-num / et-neg (solo con tema)
         value = this._f2Presentar(coldef, value);   // F2: máscara, decimal del locale y date-display (solo visual)
 
         if (this._withFormat(coldef, value))
@@ -4570,6 +4573,7 @@ class EditTable extends HTMLElement
                 @media print{ .et-sel-col{ display: none !important; } }`;
             this._shadow.appendChild(st);
             this._f4Estilo = st;
+            this._f8bReescribirTodo?.();   // F8b: variables del tema en la hoja nueva
         }
         if (!this._f4Escucha && this._table)
         {
@@ -5358,6 +5362,7 @@ class EditTable extends HTMLElement
                 @media print { table.et-virtual > tbody > tr.et-spacer { display: none; } }`;
             this._shadow.appendChild(st);
             this._f5Estilo = st;
+            this._f8bReescribirTodo?.();   // F8b: variables del tema en la hoja nueva
         }
         this._table.classList.add('et-virtual');
         const h = /^\s*([\d.]+)px\s*$/i.exec(String(this.rowHeight ?? ''));
@@ -6472,6 +6477,7 @@ class EditTable extends HTMLElement
         `;
         this._shadow.appendChild(st);
         this._f3EstiloEl = st;
+        this._f8bReescribirTodo?.();   // F8b: variables del tema en la hoja nueva
     }
 
     // ---------- §9.1 objeto de diseño ----------
@@ -7537,6 +7543,7 @@ class EditTable extends HTMLElement
             @media print { table > tfoot { position: static; } }
             @media screen and (max-width: 768px) { .table-cards > tfoot { display: none !important; } }`;
         this._shadow.prepend(estilo);
+        this._f8bReescribirTodo?.();   // F8b: variables del tema en la hoja nueva
         this._f2Pie = document.createElement('tfoot');
         this._f2Pie.appendChild(document.createElement('tr')).className = 'et-summary-row';
         this._table.appendChild(this._f2Pie);
@@ -7881,6 +7888,7 @@ class EditTable extends HTMLElement
             @media print{ .et-group-panel{ display:none !important; } .et-group-toggle{ display:none; } }`;
         this._shadow.appendChild(st);
         this._f6EstiloEl = st;
+        this._f8bReescribirTodo?.();   // F8b: variables del tema en la hoja nueva
     }
     // Panel hermano del contenedor de la tabla (antes de él), nunca lo envuelve: div:has(table#id) de V12 no lo alcanza.
     _f6AplicarPanel()
@@ -10202,6 +10210,512 @@ class EditTable extends HTMLElement
         }, () => this._f8LayoutRes?.(false));
     }
     // ===== F8a: fin
+
+    // ===== F8b: temas (theme, palette, striped, density) y variables CSS --et-* =====
+    // Sin theme, palette, striped ni density el DOM y el CSS calculado son los de hoy (R1, R8): el texto de los
+    // <style> no cambia (lo comparan el banco y los consumidores); las variables se enganchan en el CSSOM
+    // (_f8bReescribir), con el valor actual como respaldo. Precedencia: respaldo < tema < --et-* externas < palette.
+    static { this.features.push('theme'); EditTable._f1Observados.push('theme', 'palette', 'striped', 'density'); }
+
+    // Variables derivadas: si no se definen, toman la de su padre (externa, palette o del tema).
+    static _f8bPadres = {
+        'header-border': 'border', 'header-pad-y': 'cell-pad-y', 'footer-bg': 'header-bg', 'footer-fg': 'header-fg',
+        'menu-bg': 'bg', 'menu-fg': 'fg', 'menu-border': 'border', 'menu-hover-bg': 'hover-bg',
+        'panel-bg': 'header-bg', 'panel-border': 'border', 'chip-bg': 'bg', 'chip-border': 'input-border',
+        'card-border': 'border', 'group-bg': 'header-bg', 'group-hover-bg': 'hover-bg',
+        'fixed-bg': 'bg', 'fixed-head-bg': 'header-bg', 'fixed-hover-bg': 'hover-bg', 'badge-bg': 'muted-fg',
+        'checked-bg': 'sel-bg-soft'
+    };
+    // Valor de una propiedad: --et-<n>, si no --et-<padre>, si no el del tema (--et-t-<n>), si no el respaldo.
+    static _f8bV(n, fb)
+    {
+        const t = `var(--et-t-${n}${fb != null ? ', ' + fb : ''})`;
+        const p = EditTable._f8bPadres[n];
+        return p ? `var(--et-${n}, var(--et-${p}, ${t}))` : `var(--et-${n}, ${t})`;
+    }
+    // Mapa de reescritura: selectorText (como lo normaliza el navegador) → [propiedad, variable, respaldo actual].
+    // Solo se reescriben las propiedades que la regla ya declara; el respaldo es el valor de hoy.
+    static _f8bMapa()
+    {
+        if (EditTable._f8bMapaCache) return EditTable._f8bMapaCache;
+        const V = EditTable._f8bV;
+        const flecha = (c) => `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='${c}' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e")`;
+        const ed = (pad) => [['outline-color', V('input-border', '#ced4da')], ['padding', pad], ['font-size', V('font-size', '1rem')],
+            ['color', V('input-fg', '#212529')], ['background-color', V('input-bg', '#fff')]];
+        const py = V('input-pad-y', '0.375rem'), px = V('input-pad-x', '0.75rem');
+        const inputs = '.Editable-Input-Number, .Editable-Input-Text, .Editable-Input-Memo, .Editable-Input-Date, .Editable-Input-DateTime, .Editable-Input-Select';
+        const foco = V('focus-ring', '#3D75DD');
+        const m = {
+            // ---- base (shadow principal y _getExtraCss)
+            '.EdiTable-Selector': [['background-color', V('active-bg', 'rgba(255,255,255,.7)')], ['border-color', V('active-border', '#FFF')], ['border-radius', V('radius', '3px')], ['color', V('active-fg', '#000')]],
+            '.EdiTable-Cell': [['height', V('row-height', '1.4rem')], ['outline-color', V('border', '#EDEDED')], ['padding', `${V('cell-pad-y', '4px')} ${V('cell-pad-x', '4px')}`]],
+            '.EdiTable-Row-Selected': [['background-color', V('sel-bg', '#3D75DD')], ['color', V('sel-fg', '#FFF')]],
+            'table': [['font-size', V('font-size', '1rem')]],
+            'tbody tr:hover': [['background-color', V('hover-bg', '#F5F5F5')]],
+            'thead': [['background-color', V('header-bg', '#F5F5F5')]],
+            'thead tr th': [['padding', `${V('header-pad-y', '4px')} ${V('header-pad-x', '8px')}`], ['outline-color', V('header-border', '#DDD')], ['font-weight', V('header-weight', 'normal')]],
+            [inputs]: ed(`${py} ${px}`),
+            '.Editable-Input-Select': [...ed(`${py} 2.25rem ${py} ${px}`), ['background-image', V('select-arrow', flecha('%23343a40'))]],
+            '.EdiTable-Button': [['color', V('accent', '#3D75DD')]],
+            '.tr-border-bottom td': [['border-bottom-color', V('muted-fg', '#888')]],
+            '.icon-child div::before': [['background-color', V('header-bg', '#F5F5F5')]],
+            '.bg-child': [['background-color', V('hover-bg', '#F5F5F5')], ['color', V('fg', '#000')]],
+            '.dragging': [['background-color', V('hover-bg', '#EDEDED')], ['color', V('fg', '#000')]],
+            '.induxsoft-form-control': ed(null),
+            '.induxsoft-form-control:disabled, .induxsoft-form-control[readonly]': [['background-color', V('input-disabled-bg', '#e9ecef')]],
+            '.induxsoft-buttons': ed(null),
+            '.induxsoft-buttons:hover': [['color', V('input-fg', '#212529')], ['background-color', V('hover-bg', '#F5F5F5')]],
+            '.induxsoft-form-select': [...ed(null), ['background-image', V('select-arrow', flecha('%23343a40'))]],
+            '.et-badge': [['background', V('badge-bg', '#8696A0')], ['color', V('badge-color', '#FFF')], ['border-radius', V('badge-radius', '999px')]],
+            '.et-badge:focus-visible': [['outline-color', foco]],
+            '.et-tooltip': [['background', V('tooltip-bg', '#1F2328')], ['color', V('tooltip-fg', '#FFF')], ['border-radius', V('radius', '4px')]],
+            'table.et-cards tbody tr': [['outline-color', V('card-border', '#DDD')]],
+            '& tbody tr': [['outline-color', V('card-border', '#DDD')]],
+            // ---- F2: pie de totales
+            'table > tfoot': [['background-color', V('footer-bg', '#F5F5F5')]],
+            'tfoot td.et-summary': [['outline-color', V('header-border', '#DDD')]],
+            // ---- F3: columnas fijas, selector de columnas y reordenar
+            'table.et-has-fixed th.et-fixed, table.et-has-fixed td.et-fixed': [['background-color', V('fixed-bg', '#FFF')]],
+            'table.et-has-fixed thead > tr > th.et-fixed': [['background-color', V('fixed-head-bg', '#F5F5F5')]],
+            'table.et-has-fixed tbody tr:hover > td.et-fixed': [['background-color', V('fixed-hover-bg', '#F5F5F5')]],
+            '.et-chooser-btn': [['border-color', V('menu-border', '#CCC')], ['border-radius', V('radius', '3px')], ['background', V('menu-bg', '#FFF')], ['color', V('muted-fg', '#555')]],
+            '.et-chooser-btn:hover': [['background', V('menu-hover-bg', '#F0F4FB')]],
+            '.et-chooser': [['background', V('menu-bg', '#FFF')], ['color', V('menu-fg', '#212529')], ['border-color', V('menu-border', '#CCC')], ['border-radius', V('radius', '4px')]],
+            '.et-chooser > button:disabled': [['color', V('muted-fg', '#999')]],
+            '.et-chooser > button:not(:disabled):hover, .et-chooser > label:hover': [['background', V('menu-hover-bg', '#F0F4FB')]],
+            '.et-chooser > hr': [['border-top-color', V('menu-border', '#EEE')]],
+            '.et-drop-indicator': [['background', V('accent', '#3D75DD')]],
+            // ---- F4: filas marcadas con casilla
+            'tbody tr.et-row-checked': [['background-color', V('checked-bg', '#DCE8FB')]],
+            // ---- F6: panel y filas de grupo
+            '.et-group-panel': [['border-color', V('panel-border', '#CCC')], ['border-radius', V('radius', '4px')], ['background', V('panel-bg', '#FAFAFA')], ['color', V('muted-fg', '#555')]],
+            '.et-group-panel:empty::before': [['color', V('muted-fg', '#888')]],
+            '.et-group-panel.et-drop-over': [['border-color', V('accent', '#3D75DD')], ['background', V('menu-hover-bg', '#F0F4FB')]],
+            '.et-group-chip': [['border-color', V('chip-border', '#BBB')], ['border-radius', V('chip-radius', '12px')], ['background', V('chip-bg', '#FFF')], ['color', V('fg', '#212529')]],
+            '.et-group-chip:focus': [['border-color', foco]],
+            '.et-chip-remove': [['color', V('muted-fg', '#666')]],
+            '.et-chip-remove:hover': [['color', V('fg', '#000')]],
+            'tbody tr.et-group-row > td': [['outline-color', V('header-border', '#DDD')], ['background-color', V('group-bg', '#EEF2F7')]],
+            'tbody tr.et-group-row:hover > td': [['background-color', V('group-hover-bg', '#E5EBF3')]],
+            'tbody tr.et-group-row:focus-within > td': [['box-shadow', `inset 0 2px 0 ${foco}, inset 0 -2px 0 ${foco}`]],
+            '.et-group-count': [['color', V('muted-fg', '#666')]],
+            'table.et-has-fixed tbody tr.et-group-row > td.et-fixed': [['background-color', V('group-bg', '#EEF2F7')]],
+        };
+        // ed(null): las clases induxsoft-* usan el relleno con !important de hoy; no se toca
+        for (const k of ['.induxsoft-form-control', '.induxsoft-buttons', '.induxsoft-form-select']) m[k] = m[k].filter(x => x[1] != null);
+        // Reglas nuevas, de especificidad 0 y al principio de la hoja: cualquier regla del sitio les gana, y sin
+        // variables valen 'revert' (lo mismo que no declarar nada).
+        const nuevas = [
+            `:where(table) { background-color: ${V('bg', 'revert')}; color: ${V('fg', 'revert')}; }`,
+            `:where(thead tr th) { color: ${V('header-fg', 'revert')}; text-transform: ${V('header-transform', 'revert')}; letter-spacing: ${V('header-spacing', 'revert')}; font-size: ${V('header-font-size', 'revert')}; }`,
+            `:where(table > tfoot) { color: ${V('footer-fg', 'revert')}; }`,
+        ];
+        return (EditTable._f8bMapaCache = { m, nuevas });
+    }
+
+    // ---- Temas predeterminados. Las claves son el nombre de la variable sin --et-; 'color-scheme' no es variable.
+    static _f8bExplicitos = {
+        claro: {
+            'color-scheme': 'light',
+            font: 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif', 'font-size': '0.875rem',
+            bg: '#FFFFFF', fg: '#1F2328', 'muted-fg': '#59636E',
+            'header-bg': '#F3F5F8', 'header-fg': '#1F2328', 'header-border': '#D0D7DE', 'header-weight': '600',
+            border: '#E1E5EA', 'row-alt-bg': '#F8FAFC', 'hover-bg': '#EDF2F8',
+            'sel-bg': '#2F66CC', 'sel-fg': '#FFFFFF', 'sel-bg-soft': '#DCE7FA',
+            'active-cell': '#0B3D91', 'active-bg': '#FFFFFF', 'active-fg': '#1F2328', 'active-border': '#FFFFFF',
+            accent: '#2F66CC', 'focus-ring': '#2F66CC',
+            'input-bg': '#FFFFFF', 'input-fg': '#1F2328', 'input-border': '#8C959F', 'input-disabled-bg': '#EEF1F4',
+            'mark-bg': '#FFF1A8', 'mark-fg': '#1F2328', error: '#C62828', 'error-bg': '#FDECEC', warn: '#8A5A00', ok: '#1A7F37', 'neg-fg': '#C62828',
+            'tooltip-bg': '#1F2328', 'tooltip-fg': '#FFFFFF', 'badge-bg': '#6E7781', 'badge-color': '#FFFFFF',
+            radius: '4px', 'chip-radius': '12px', 'badge-radius': '999px',
+            'cell-pad-x': '6px', 'cell-pad-y': '4px', 'header-pad-x': '8px', 'row-height': '1.6rem',
+            'input-pad-y': '0.25rem', 'input-pad-x': '0.5rem', 'num-font': 'inherit'
+        },
+        oscuro: {
+            'color-scheme': 'dark',
+            font: 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif', 'font-size': '0.875rem',
+            bg: '#15181C', fg: '#E6EDF3', 'muted-fg': '#9DA7B3',
+            'header-bg': '#1F242B', 'header-fg': '#E6EDF3', 'header-border': '#3A424C', 'header-weight': '600',
+            border: '#2C333B', 'row-alt-bg': '#1A1E23', 'hover-bg': '#242B33',
+            'sel-bg': '#2C5AA8', 'sel-fg': '#FFFFFF', 'sel-bg-soft': '#1E3352',
+            'active-cell': '#8CC2FF', 'active-bg': '#0D1117', 'active-fg': '#E6EDF3', 'active-border': '#0D1117',
+            accent: '#6CA8FF', 'focus-ring': '#8CC2FF',
+            'input-bg': '#0D1117', 'input-fg': '#E6EDF3', 'input-border': '#5A6572', 'input-disabled-bg': '#1F242B',
+            'mark-bg': '#6B5800', 'mark-fg': '#FFF6CC', error: '#FF8A80', 'error-bg': '#3D1F1F', warn: '#E3B341', ok: '#5FD07A', 'neg-fg': '#FF8A80',
+            'tooltip-bg': '#E6EDF3', 'tooltip-fg': '#15181C', 'badge-bg': '#56606C', 'badge-color': '#FFFFFF',
+            'select-arrow': `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23C9D1D9' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e")`,
+            radius: '4px', 'chip-radius': '12px', 'badge-radius': '999px',
+            'cell-pad-x': '6px', 'cell-pad-y': '4px', 'header-pad-x': '8px', 'row-height': '1.6rem',
+            'input-pad-y': '0.25rem', 'input-pad-x': '0.5rem', 'num-font': 'inherit'
+        },
+        // Inspirado en la bandeja de agentes de agent.induxsoft.net (ai_broadcast.css): superficie blanca, fondo
+        // gris azulado, verde de acento, encabezado en versalitas tenues, filas amplias y esquinas redondeadas.
+        jade: {
+            'color-scheme': 'light',
+            font: '"Segoe UI", system-ui, -apple-system, Roboto, sans-serif', 'font-size': '0.875rem',
+            bg: '#FFFFFF', fg: '#1A202C', 'muted-fg': '#5A6577',
+            'header-bg': '#F4F6F9', 'header-fg': '#4A5568', 'header-border': '#E2E8F0', 'header-weight': '600',
+            'header-transform': 'uppercase', 'header-spacing': '.04em', 'header-font-size': '0.72rem',
+            border: '#E2E8F0', 'row-alt-bg': '#F8FAFB', 'hover-bg': '#EEF9F2',
+            'sel-bg': '#D1FAE5', 'sel-fg': '#064E3B', 'sel-bg-soft': '#E6F7EE',
+            'active-cell': '#128C4A', 'active-bg': '#FFFFFF', 'active-fg': '#1A202C', 'active-border': '#FFFFFF',
+            accent: '#0F7A41', 'focus-ring': '#128C4A',
+            'input-bg': '#FFFFFF', 'input-fg': '#1A202C', 'input-border': '#A0AEC0', 'input-disabled-bg': '#F4F6F9',
+            'mark-bg': '#FDE68A', 'mark-fg': '#1A202C', error: '#C53030', 'error-bg': '#FFF5F5', warn: '#B45309', ok: '#0F7A41', 'neg-fg': '#C53030',
+            'tooltip-bg': '#1A202C', 'tooltip-fg': '#FFFFFF', 'badge-bg': '#667781', 'badge-color': '#FFFFFF',
+            radius: '8px', 'chip-radius': '20px', 'badge-radius': '999px',
+            'cell-pad-x': '12px', 'cell-pad-y': '7px', 'header-pad-x': '12px', 'header-pad-y': '8px', 'row-height': '2rem',
+            'input-pad-y': '0.25rem', 'input-pad-x': '0.6rem', 'num-font': 'inherit'
+        },
+        // Estilo «Libro mayor» de V12 (cuenta-maestra-dk2, recursos/libro-mayor.css): tinta sobre papel, reglas
+        // finas, azul de acento, encabezado en versalitas, cifras en monoespaciada y esquinas angulares.
+        'libro-mayor': {
+            'color-scheme': 'light',
+            font: '"IBM Plex Sans", system-ui, sans-serif', 'font-size': '0.875rem',
+            'num-font': '"IBM Plex Mono", ui-monospace, monospace',
+            bg: '#FFFFFF', fg: '#1B1F24', 'muted-fg': '#5B6470',
+            'header-bg': '#F3F4F6', 'header-fg': '#4E5661', 'header-border': '#D9DDE3', 'header-weight': '600',
+            'header-transform': 'uppercase', 'header-spacing': '.04em', 'header-font-size': '0.75rem',
+            border: '#E3E6EA', 'row-alt-bg': '#F8F9FA', 'hover-bg': '#EEF1F5',
+            'sel-bg': '#1D4F91', 'sel-fg': '#FFFFFF', 'sel-bg-soft': '#E4ECF7',
+            'active-cell': '#1B1F24', 'active-bg': '#FFFFFF', 'active-fg': '#1B1F24', 'active-border': '#FFFFFF',
+            accent: '#1D4F91', 'focus-ring': '#1D4F91',
+            'input-bg': '#FFFFFF', 'input-fg': '#1B1F24', 'input-border': '#9AA3AE', 'input-disabled-bg': '#F3F4F6',
+            'mark-bg': '#FBEBD0', 'mark-fg': '#4A3200', error: '#A13A14', 'error-bg': '#FBE9E3', warn: '#6E4700', ok: '#1E6B3A', 'neg-fg': '#A13A14',
+            'tooltip-bg': '#1B1F24', 'tooltip-fg': '#FFFFFF', 'badge-bg': '#5B6470', 'badge-color': '#FFFFFF',
+            radius: '0', 'chip-radius': '0', 'badge-radius': '0',
+            'cell-pad-x': '10px', 'cell-pad-y': '5px', 'header-pad-x': '10px', 'header-pad-y': '6px', 'row-height': '1.8rem',
+            'input-pad-y': '0.25rem', 'input-pad-x': '0.6rem'
+        }
+    };
+    static _f8bAlias = { light: 'claro', dark: 'oscuro', 'libro mayor': 'libro-mayor', 'libromayor': 'libro-mayor' };
+    static _f8bDensidades = {
+        compacta: { 'cell-pad-y': '1px', 'cell-pad-x': '4px', 'header-pad-y': '2px', 'header-pad-x': '6px', 'row-height': '1.15rem', 'input-pad-y': '0', 'input-pad-x': '0.35rem' },
+        normal: {},
+        comoda: { 'cell-pad-y': '8px', 'cell-pad-x': '10px', 'header-pad-y': '8px', 'header-pad-x': '12px', 'row-height': '2.2rem', 'input-pad-y': '0.45rem', 'input-pad-x': '0.75rem' }
+    };
+    static _f8bDensidadAlias = { 'cómoda': 'comoda', compact: 'compacta', comfortable: 'comoda', compacto: 'compacta', comodo: 'comoda' };
+    static _f8bEspaciado = new Set(['cell-pad-x', 'cell-pad-y', 'header-pad-x', 'header-pad-y', 'row-height', 'input-pad-x', 'input-pad-y']);
+    static _f8bResueltos = {};
+    static _f8bVivas = new Set();
+
+    // Completa una paleta: lo explícito, después lo de la base y, para las derivadas, su padre.
+    static _f8bResolver(explicita, base)
+    {
+        const r = { ...(base ?? {}) };
+        Object.assign(r, explicita);
+        for (const [n, p] of Object.entries(EditTable._f8bPadres))
+            if (!(n in explicita) && ((p in explicita) || !(n in r)) && (p in r)) r[n] = r[p];
+        return r;
+    }
+    static _f8bTema(nombre)
+    {
+        const n = EditTable._f8bNombre(nombre);
+        if (!n) return null;
+        if (!EditTable._f8bResueltos[n] && EditTable._f8bExplicitos[n])
+            EditTable._f8bResueltos[n] = EditTable._f8bResolver(EditTable._f8bExplicitos[n], null);
+        return EditTable._f8bResueltos[n] ?? null;
+    }
+    static _f8bNombre(v)
+    {
+        const s = String(v ?? '').trim().toLowerCase();
+        if (!s || s === 'none' || s === 'ninguno' || s === 'false') return '';
+        return EditTable._f8bAlias[s] ?? s;
+    }
+    /** EditTable.themes: { nombre: paleta resuelta } (copias). 'auto' sigue a prefers-color-scheme (claro/oscuro). */
+    static get themes()
+    {
+        const o = {};
+        for (const n of Object.keys(EditTable._f8bExplicitos)) o[n] = { ...EditTable._f8bTema(n) };
+        return o;
+    }
+    /**
+     * Registra (o reemplaza) un tema. paleta: { 'header-bg': '#…', … } (con o sin '--et-'). opciones.base: tema del
+     * que toma lo que falta (por omisión 'claro'; null para ninguno). Las tablas que ya lo usan se actualizan.
+     */
+    static defineTheme(nombre, paleta, opciones = {})
+    {
+        const n = EditTable._f8bNombre(nombre);
+        if (!n || n === 'auto' || !/^[a-z0-9][a-z0-9_-]*$/.test(n)) throw new Error('EditTable.defineTheme: nombre de tema inválido: ' + nombre);
+        const limpia = EditTable._f8bLimpiar(paleta, 'defineTheme');
+        const b = opciones?.base === null ? null : EditTable._f8bTema(opciones?.base ?? 'claro');
+        EditTable._f8bExplicitos[n] = limpia;
+        EditTable._f8bResueltos[n] = EditTable._f8bResolver(limpia, b);
+        for (const w of EditTable._f8bVivas) { const t = w.deref(); if (!t) EditTable._f8bVivas.delete(w); else if (t._f8bTemaNombre() === n || t._f8bTemaNombre() === 'auto') t._f8bAplicar(); }
+        return { ...EditTable._f8bResueltos[n] };
+    }
+    // Valida una paleta: objeto o JSON; claves [a-z0-9-] (sin '--et-'); valores de texto o número sin ; { } < >.
+    static _f8bLimpiar(p, donde)
+    {
+        if (typeof p === 'string') { try { p = p.trim() ? JSON.parse(p) : {}; } catch (e) { console.warn(`EditTable: ${donde}: JSON inválido; se ignora.`); return {}; } }
+        if (!p || typeof p !== 'object' || Array.isArray(p)) { if (p != null) console.warn(`EditTable: ${donde}: se esperaba un objeto; se ignora.`); return {}; }
+        const r = {};
+        for (let [k, v] of Object.entries(p))
+        {
+            k = String(k).trim().replace(/^--et-/, '').replace(/[A-Z]/g, c => '-' + c.toLowerCase());
+            if (!/^[a-z0-9][a-z0-9-]*$/.test(k) || (typeof v !== 'string' && typeof v !== 'number') || /[;{}<>]/.test(String(v)) || String(v).trim() === '')
+            { console.warn(`EditTable: ${donde}: se ignora ${JSON.stringify(k)}.`); continue; }
+            r[k] = String(v).trim();
+        }
+        return r;
+    }
+
+    // ---- Estado de la instancia
+    _f8bTemaProp = undefined;     // Theme asignado por propiedad (gana al atributo)
+    _f8bPaleta = null;            // palette (objeto limpio) o null
+    _f8bRayas = null;             // striped: true, false o null (por omisión: sí con tema)
+    _f8bDens = '';                // density
+    _f8bEstilo = null;            // <style data-et="f8b">, solo si hay algo activo
+    _f8bHojas = new WeakSet();    // hojas ya reescritas
+    _f8bMarcas = false;           // et-num / et-neg en las celdas (solo con tema)
+
+    _f8bIniciar()
+    {
+        EditTable._f8bVivas.add(new WeakRef(this));
+        this._f8bReescribirTodo();
+        if (this._f8bPaleta === null && this.hasAttribute('palette')) this._f8bPaleta = EditTable._f8bLimpiar(this.getAttribute('palette'), 'palette');
+        if (this._f8bRayas === null && this.hasAttribute('striped')) this._f8bRayas = this._f8bBool(this.getAttribute('striped'));
+        if (!this._f8bDens && this.hasAttribute('density')) this._f8bDens = this._f8bDensidad(this.getAttribute('density'));
+        this._f8bAplicar();
+    }
+    _f8bBool(v) { const s = String(v ?? '').trim().toLowerCase(); return s === '' ? null : !(s === 'false' || s === '0' || s === 'no'); }
+    _f8bDensidad(v)
+    {
+        const s = String(v ?? '').trim().toLowerCase();
+        const d = EditTable._f8bDensidadAlias[s] ?? s;
+        if (s && !EditTable._f8bDensidades[d]) console.warn('EditTable: density desconocida: ' + v);
+        return EditTable._f8bDensidades[d] ? d : '';
+    }
+    _f8bTemaNombre()
+    {
+        const n = EditTable._f8bNombre(this._f8bTemaProp !== undefined ? this._f8bTemaProp : this.getAttribute('theme'));
+        if (n && n !== 'auto' && !EditTable._f8bTema(n)) { if (this._f8bAvisado !== n) { this._f8bAvisado = n; console.warn('EditTable: tema desconocido: ' + n); } return ''; }
+        return n;
+    }
+
+    get Theme() { return this._f8bTemaNombre(); }
+    // Theme = undefined devuelve el control al atributo theme; null o '' quitan el tema.
+    set Theme(v) { this._f8bTemaProp = (v === undefined ? undefined : v == null ? '' : String(v)); if (this._f1Inicializada) this._f8bAplicar(); }
+    get Palette() { return this._f8bPaleta ? { ...this._f8bPaleta } : null; }
+    set Palette(v) { this._f8bPaleta = (v == null ? null : EditTable._f8bLimpiar(v, 'Palette')); if (this._f1Inicializada) this._f8bAplicar(); }
+    /** SetPalette(obj, {merge}) : reemplaza la paleta (merge:false, por omisión) o la combina con la actual. null la quita. */
+    SetPalette(obj, opciones = {})
+    {
+        const nueva = (obj == null ? null : EditTable._f8bLimpiar(obj, 'SetPalette'));
+        this._f8bPaleta = (opciones?.merge && nueva) ? { ...(this._f8bPaleta ?? {}), ...nueva } : nueva;
+        if (this._f1Inicializada) this._f8bAplicar();
+        return this.Palette;
+    }
+    get Striped() { return this._f8bRayasEfectivo(); }
+    set Striped(v) { this._f8bRayas = (v == null || v === '' ? null : this._f8bBool(v)); if (this._f1Inicializada) this._f8bAplicar(); }
+    get Density() { return this._f8bDens || 'normal'; }
+    set Density(v) { this._f8bDens = this._f8bDensidad(v); if (this._f1Inicializada) this._f8bAplicar(); }
+    _f8bRayasEfectivo() { return this._f8bRayas ?? !!this._f8bTemaNombre(); }
+
+    _f8bAtributoCambiado(name, v)
+    {
+        switch (name)
+        {
+            case 'theme': if (this._f8bTemaProp === undefined) this._f8bAplicar(); break;
+            case 'palette': this._f8bPaleta = (v == null ? null : EditTable._f8bLimpiar(v, 'palette')); this._f8bAplicar(); break;
+            case 'striped': this._f8bRayas = (v == null ? null : this._f8bBool(v)); this._f8bAplicar(); break;
+            case 'density': this._f8bDens = this._f8bDensidad(v); this._f8bAplicar(); break;
+        }
+    }
+
+    // ---- Variables en el CSSOM. Se reescriben las hojas del shadow una sola vez cada una (las de F2-F6 al crearse).
+    _f8bReescribirTodo()
+    {
+        if (!this._shadow || EditTable._f8bSinVariables) return;
+        const cs = this.getAttribute('control-styles') ?? '';
+        this._shadow.querySelectorAll('style').forEach(st =>
+        {
+            const sh = st.sheet;
+            if (!sh || this._f8bHojas.has(sh) || st === this._f8bEstilo) return;
+            this._f8bHojas.add(sh);
+            try { this._f8bReescribir(st, sh, cs); } catch (e) { console.warn('EditTable: no se pudieron enganchar las variables del tema', e); }
+        });
+    }
+    _f8bReescribir(st, sh, cs)
+    {
+        const { m, nuevas } = EditTable._f8bMapa();
+        const reglas = sh.cssRules;
+        // En la hoja principal se respeta control-styles: solo se tocan las reglas de antes y de después de él.
+        let desde = 0, hasta = reglas.length, ini = reglas.length, esBase = false;
+        const txt = st.textContent;
+        if (txt.includes('.EdiTable-Selector{'))
+        {
+            esBase = true;
+            const i = cs ? txt.lastIndexOf(cs) : -1;
+            if (i >= 0)
+            {
+                const cuenta = (t) => { const h = new CSSStyleSheet(); h.replaceSync(t); return h.cssRules.length; };
+                ini = cuenta(txt.slice(0, i));
+                const fin = cuenta(txt.slice(i + cs.length));
+                hasta = reglas.length - fin;
+                if (ini > hasta) { ini = 0; hasta = reglas.length; }   // no se pudo ubicar: solo las de después
+            }
+            else { ini = reglas.length; hasta = reglas.length; }
+        }
+        const recorrer = (lista, raiz) =>
+        {
+            for (let k = 0; k < lista.length; k++)
+            {
+                if (raiz && esBase && k >= ini && k < hasta) continue;   // control-styles
+                const r = lista[k];
+                if (r.style && r.selectorText != null)
+                {
+                    const cambios = m[r.selectorText];
+                    if (cambios) for (const [p, v] of cambios)
+                        if (r.style.getPropertyValue(p) !== '') r.style.setProperty(p, v, r.style.getPropertyPriority(p));
+                }
+                if (r.cssRules?.length) recorrer(r.cssRules, false);
+            }
+        };
+        recorrer(reglas, true);
+        if (esBase) for (let k = nuevas.length - 1; k >= 0; k--) sh.insertRule(nuevas[k], 0);
+    }
+
+    // ---- Aplicar tema, paleta, rayas y densidad (en caliente: solo el <style data-et="f8b"> y clases).
+    _f8bAplicar()
+    {
+        if (!this._shadow) return;
+        const nombre = this._f8bTemaNombre();
+        const rayas = this._f8bRayasEfectivo();
+        const pal = this._f8bPaleta && Object.keys(this._f8bPaleta).length ? this._f8bPaleta : null;
+        const dens = EditTable._f8bDensidades[this._f8bDens] ?? {};
+        const nada = !nombre && !pal && !rayas && !Object.keys(dens).length;
+        this._f8bMarcasActivas(!!nombre);
+        if (nada)
+        {
+            if (this._f8bEstilo) { this._f8bEstilo.remove(); this._f8bEstilo = null; }
+            return;
+        }
+        const css = this._f8bCss(nombre, pal, rayas, dens);
+        if (!this._f8bEstilo)
+        {
+            this._f8bEstilo = document.createElement('style');
+            this._f8bEstilo.setAttribute('data-et', 'f8b');
+            this._shadow.prepend(this._f8bEstilo);   // antes de la hoja principal: control-styles le gana en empates
+        }
+        if (this._f8bEstilo.textContent !== css) this._f8bEstilo.textContent = css;
+    }
+    _f8bCss(nombre, pal, rayas, dens)
+    {
+        const vars = (o, filtro) => Object.entries(o).filter(([k]) => k !== 'color-scheme' && (!filtro || filtro(k))).map(([k, v]) => `--et-t-${k}: ${v};`).join(' ');
+        const esquema = (o) => o['color-scheme'] ? ` color-scheme: ${o['color-scheme']};` : '';
+        const color = (k) => !EditTable._f8bEspaciado.has(k);
+        let s = '';
+        if (nombre === 'auto')
+        {
+            const c = EditTable._f8bTema('claro'), o = EditTable._f8bTema('oscuro');
+            s += `:host { ${vars(c)}${esquema(c)} }\n@media (prefers-color-scheme: dark) { :host { ${vars(o)}${esquema(o)} } }\n`;
+        }
+        else if (nombre) { const t = EditTable._f8bTema(nombre); s += `:host { ${vars(t)}${esquema(t)} }\n`; }
+        if (Object.keys(dens).length) s += `:host { ${vars(dens)} }\n`;
+        if (nombre)
+        {
+            const t = nombre === 'auto' ? EditTable._f8bTema('oscuro') : EditTable._f8bTema(nombre);
+            // Impresión: un tema oscuro (o auto) se imprime con los colores del claro.
+            if (t['color-scheme'] === 'dark') { const c = EditTable._f8bTema('claro'); s += `@media print { :host { ${vars(c, color)} color-scheme: light; } }\n`; }
+            s += this._f8bCssTema();
+        }
+        if (rayas) s += this._f8bCssRayas();
+        if (pal) s += `:host { ${Object.entries(pal).map(([k, v]) => `--et-${k}: ${v} !important;`).join(' ')} }\n`;
+        return s;
+    }
+    // Reglas que solo existen con tema. Van antes de la hoja principal; su especificidad está calculada para ganarle
+    // solo a la regla base que corresponde (comentado en cada una).
+    _f8bCssTema()
+    {
+        const V = EditTable._f8bV, sel = this.CSS?.RowSelected || 'EdiTable-Row-Selected';
+        return `
+            table, .et-chooser, .et-group-panel, .et-tooltip, input, select, textarea, button { font-family: ${V('font')}; }
+            /* (0,1,1) > .EdiTable-Cell: contorno de la celda activa, distinto del relleno de la fila */
+            td.EdiTable-Cell:where(:has(#__table_selector, #__table_input)) { outline: 2px solid ${V('active-cell')}; outline-offset: -2px; }
+            td.et-num, th.et-num, tfoot td.et-summary { font-variant-numeric: tabular-nums; }
+            tfoot td.et-summary { text-align: right; font-family: ${V('num-font', 'inherit')}; }
+            td.et-num { font-family: ${V('num-font', 'inherit')}; }
+            td.et-num .cell-content { justify-content: flex-end; text-align: right; }
+            th.et-num { text-align: right; }
+            tr:not(.${sel}) > td.et-neg { color: ${V('neg-fg')}; }
+            :where(button, input, select, textarea, th, [tabindex]):focus-visible:where(:not(#__table_input)) { outline: 2px solid ${V('focus-ring')}; outline-offset: 1px; }
+            input[type=checkbox], input[type=radio] { accent-color: ${V('accent')}; }
+            .et-chooser { box-shadow: 0 6px 18px rgba(0,0,0,.22); }
+            /* (0,2,3) > celda fija (0,2,2): en el pie, las fijas y la del sistema llevan el fondo del pie */
+            table.et-has-fixed tfoot td.et-fixed, tfoot > tr > td.et-sel-col { background-color: ${V('footer-bg')}; }
+        `;
+    }
+    _f8bCssRayas()
+    {
+        const alt = EditTable._f8bV('row-alt-bg', '#F7F7F7');
+        const par = ':where(:nth-child(even of tr:not(.et-spacer, .hidde-row, .et-group-row)))';
+        return `
+            /* (0,0,2): pierde con tbody tr:hover (0,1,2), la fila seleccionada (!important) y la marcada (0,1,2) */
+            tbody > tr${par} { background-color: ${alt}; }
+            /* (0,2,4): gana a la celda fija (0,2,2) y pierde con su hover (0,3,3) */
+            table.et-has-fixed tbody > tr${par} > td.et-fixed { background-color: ${alt}; }
+        `;
+    }
+
+    // ---- Celdas numéricas y negativas (solo con tema): clases et-num y et-neg.
+    _f8bEsNum(c)
+    {
+        const t = String(c?.type ?? '').toLowerCase();
+        return t === 'number' || (t === 'noeditable' && (c?.format ?? '') == 'true');
+    }
+    _f8bEsNeg(v)
+    {
+        if (typeof v === 'number') return v < 0;
+        return /^\s*[-−]\s*(\d|\.\d)/.test(String(v ?? '')) || /^\s*\(\s*[$\d]/.test(String(v ?? ''));
+    }
+    // Enganche de SetTdValue: value es el valor sin formato (o el HTML de un editor, que no cambia las clases).
+    _f8bTd(td, value, coldef)
+    {
+        if (!td?.classList) return;
+        const s = typeof value === 'string' ? value : '';
+        if (s.includes('__table_selector') || s.includes('__table_input')) return;
+        const c = coldef ?? this.GetColumnDefOfTd(td), num = this._f8bEsNum(c);
+        let neg = false;
+        if (num && !c?.template)
+        {
+            // Valor crudo (número o cadena canónica): se usa tal cual. Texto con formato o HTML (al dejar la celda
+            // se repinta con el innerHTML del selector, p. ej. "$-2,242.16"): se toma de DataArray.
+            if (typeof value === 'number' || /^\s*[-\u2212]?\s*(\d|\.\d)[\d.,\s]*$/.test(s)) neg = this._f8bEsNeg(value);
+            else { const i = this._getRowIndex(td.parentElement); neg = i >= 0 && this._f8bEsNeg(this.DataArray?.[i]?.[c.field]); }
+        }
+        td.classList.toggle('et-num', num);
+        td.classList.toggle('et-neg', neg || !!td._f8Cls?.includes('et-neg'));   // F8a: conserva et-neg puesta por una regla
+    }
+    _f8bMarcasActivas(on)
+    {
+        if (!this._table || on === this._f8bMarcas) return;   // solo al encender o apagar el tema
+        this._f8bMarcas = on;
+        const head = this._table.tHead?.rows?.[0];
+        if (head) for (const th of head.cells)
+        {
+            const f = th.getAttribute('field');
+            const c = f != null ? this.Columns.find(x => x.field === f) : null;
+            th.classList.toggle('et-num', on && this._f8bEsNum(c));
+            if (!th.classList.length) th.removeAttribute('class');
+        }
+        const tb = this._f1TBodyPrincipal?.() ?? this._table.tBodies?.[0];
+        if (!tb) return;
+        for (const tr of tb.rows)
+        {
+            if (tr.classList.contains('et-group-row') || tr.classList.contains('et-spacer')) continue;
+            const idx = on ? this._getRowIndex(tr) : -1, d = idx >= 0 ? this.DataArray?.[idx] : null;
+            for (const td of tr.cells)
+            {
+                if (!td.classList.contains(this.CSS.Cell)) continue;
+                if (!on) { td.classList.remove('et-num'); if (!td._f8Cls?.includes('et-neg')) td.classList.remove('et-neg'); continue; }   // F8a: regla
+                const c = this.GetColumnDefOfTd(td), num = this._f8bEsNum(c);
+                td.classList.toggle('et-num', num);
+                td.classList.toggle('et-neg', !!(num && d && !c?.template && this._f8bEsNeg(d[c.field])) || !!td._f8Cls?.includes('et-neg'));   // F8a: regla
+            }
+        }
+    }
+    // ===== F8b: fin
 }
 
 customElements.define('edit-table', EditTable);

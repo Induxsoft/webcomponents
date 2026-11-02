@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Temas, paleta y densidad · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+<style>
+  .temas-controles { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: end; margin: 0 0 10px; }
+  .temas-controles label { display: flex; flex-direction: column; gap: 3px; font-size: 13px; }
+  .temas-paleta { display: grid; grid-template-columns: 1fr auto; gap: 6px; margin: 0 0 12px; }
+  .temas-paleta textarea { font: 12px/1.4 ui-monospace, monospace; min-height: 54px; }
+  .temas-colores { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 12px; font-size: 13px; }
+  .temas-colores label { display: flex; gap: 4px; align-items: center; }
+  .temas-lienzo { padding: 12px; border-radius: 6px; transition: none; }
+  /* Ejemplo de un tema de V12 hecho solo con CSS: las variables --et-* del contenedor llegan al shadow DOM y le ganan al tema */
+  .v12-azul { --et-header-bg: #0F3D6E; --et-header-fg: #FFFFFF; --et-header-border: #0B2F55; --et-sel-bg: #0F3D6E; --et-accent: #0F3D6E; }
+</style>
+</head>
+<body>
+<!-- theme="claro|oscuro|jade|libro-mayor|auto" (propiedad Theme), palette='{"header-bg":"#…"}' (Palette, SetPalette), striped y density. Las variables --et-* de un contenedor del sitio también llegan al shadow DOM. -->
+<div id="contenido">
+<div class="temas-controles">
+  <label>Tema <select id="tema">
+    <option value="">(sin tema: aspecto actual)</option>
+    <option value="claro">claro</option><option value="oscuro">oscuro</option>
+    <option value="jade">jade</option><option value="libro-mayor" selected>libro-mayor</option>
+    <option value="auto">auto (prefers-color-scheme)</option>
+  </select></label>
+  <label>Densidad <select id="densidad"><option value="">normal</option><option value="compacta">compacta</option><option value="comoda">cómoda</option></select></label>
+  <label>Filas alternadas <select id="rayas"><option value="">por omisión (sí con tema)</option><option value="true">true</option><option value="false">false</option></select></label>
+  <label><span><input type="checkbox" id="v12"> variables de un contenedor (.v12-azul)</span></label>
+  <label><span><input type="checkbox" id="tarjetas"> segunda tabla en tarjetas</span></label>
+</div>
+<div class="temas-colores" id="colores"></div>
+<div class="temas-paleta">
+  <textarea id="paleta" spellcheck="false" placeholder='{"header-bg":"#123456","sel-bg":"#0F5E5A"}'></textarea>
+  <div style="display:flex;flex-direction:column;gap:4px"><button type="button" id="aplicar">SetPalette (merge)</button><button type="button" id="quitar">Quitar palette</button></div>
+</div>
+<div class="demo-barra" id="barra"></div>
+<div class="temas-lienzo" id="lienzo">
+<div class="demo-caja" style="max-height:420px">
+<edit-table id="t1" style="width:100%" theme="libro-mayor" multi-select="checkbox" group-panel="true" column-chooser="true">
+<edit-thead><edit-tr>
+<edit-th type="Text" field="codigo" width="90px" fixed="left">Código</edit-th>
+<edit-th type="Text" field="nombre" minwidth="220px">Cliente</edit-th>
+<edit-th type="Text" field="ciudad" width="140px">Ciudad</edit-th>
+<edit-th type="Badges" field="_estado" width="110px">Estado</edit-th>
+<edit-th type="Number" field="saldo" width="130px" format="true" decs="2" prefix="$" thousandssep="true" summary="sum">Saldo</edit-th>
+<edit-th type="Number" field="limite" width="120px" format="true" decs="0" thousandssep="true" summary="max">Límite</edit-th>
+<edit-th type="Date" field="alta" width="130px">Alta</edit-th>
+<edit-th type="Text" field="rfc" mask="rfc" width="150px">RFC</edit-th>
+</edit-tr></edit-thead>
+</edit-table>
+</div>
+<div id="caja2" class="demo-caja" style="width:420px;max-width:100%;margin-top:14px;display:none">
+<edit-table id="t2" style="width:100%" theme="libro-mayor" hidde-selector="true" cards-mode="always" cards-layout="slots">
+<edit-thead><edit-tr>
+<edit-th type="Badges" field="_avatar" badgegroup="avatar" card="true" cardslot="avatar"></edit-th>
+<edit-th type="Text" field="username" card="true" cardslot="title">Contacto</edit-th>
+<edit-th type="Text" field="ultimo" card="true" cardslot="subtitle">Último mensaje</edit-th>
+<edit-th type="Badges" field="_estado" card="true" cardslot="badge">Estado</edit-th>
+</edit-tr></edit-thead>
+</edit-table>
+</div>
+</div>
+</div>
+<script>
+Demo.pagina({"titulo": "Temas, paleta y densidad", "tipo": "v2", "bajada": "theme (Theme) elige un tema predeterminado; palette (Palette, SetPalette) fija colores encima de cualquier tema; las variables --et-* de un contenedor del sitio llegan al shadow DOM. Sin theme el aspecto es el actual."});
+Demo.requiere(["theme"]);
+Demo.observar('t1');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1'), t2 = document.getElementById('t2');
+  const lienzo = document.getElementById('lienzo');
+  t.RowBadges = (r) => [r.saldo < 0 ? { id: 'mora', text: 'Mora', bg: '#A13A14', color: '#fff' } : { id: 'al-dia', text: 'Al día', bg: '#1E6B3A', color: '#fff' }];
+  t.RowAccent = (r) => r.saldo < 0 ? '#A13A14' : null;
+  t.DataArray = DatosDemo.clientes(30); t._printRows();
+  const ini = (n) => n.split(' ').map(x => x[0]).slice(0, 2).join('');
+  t2.RowBadges = (r) => [{ id: 'avatar', group: 'avatar', text: ini(r.username), bg: '#0b6e63', color: '#fff' }, { id: 'estado', text: r.estado, bg: '#2847a8', color: '#fff' }];
+  t2.DataArray = DatosDemo.agentes(4).map(r => ({ ...r, ultimo: 'Mensaje de prueba ' + r.mensajes })); t2._printRows(); t2.RefreshView();
+
+  const fondo = () => {
+    const n = t.Theme, temas = EditTable.themes;
+    const oscuro = n === 'oscuro' || (n === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches);
+    lienzo.style.background = oscuro ? temas.oscuro.bg : '';
+    lienzo.style.color = oscuro ? temas.oscuro.fg : '';
+  };
+  const tema = document.getElementById('tema');
+  tema.onchange = () => { t.Theme = tema.value; t2.Theme = tema.value; fondo(); };
+  document.getElementById('densidad').onchange = (e) => { t.Density = e.target.value; };
+  document.getElementById('rayas').onchange = (e) => { t.Striped = e.target.value === '' ? null : e.target.value; };
+  document.getElementById('v12').onchange = (e) => lienzo.classList.toggle('v12-azul', e.target.checked);
+  document.getElementById('tarjetas').onchange = (e) => { document.getElementById('caja2').style.display = e.target.checked ? '' : 'none'; };
+  const caja = document.getElementById('paleta');
+  const mostrar = () => { caja.value = t.Palette ? JSON.stringify(t.Palette) : ''; };
+  document.getElementById('aplicar').onclick = () => { t.SetPalette(caja.value || {}, { merge: true }); mostrar(); };
+  document.getElementById('quitar').onclick = () => { t.SetPalette(null); mostrar(); };
+  // Editor de paleta en vivo: unos cuantos colores
+  const colores = document.getElementById('colores');
+  for (const [k, txt] of [['header-bg', 'encabezado'], ['header-fg', 'texto del encabezado'], ['sel-bg', 'selección'], ['accent', 'acento'], ['row-alt-bg', 'fila alterna'], ['neg-fg', 'negativos']]) {
+    const l = document.createElement('label'); const i = document.createElement('input'); i.type = 'color';
+    i.oninput = () => { t.SetPalette({ [k]: i.value }, { merge: true }); mostrar(); };
+    l.append(i, ' ' + txt); colores.appendChild(l);
+  }
+  Demo.boton('barra', 'Seleccionar fila 2', () => { t.NavTo(2, 1); });
+  Demo.boton('barra', 'GroupBy(["ciudad"])', () => Demo.llamar(t, 'GroupBy', ['ciudad']));
+  Demo.boton('barra', 'Ungroup()', () => Demo.llamar(t, 'Ungroup'));
+  Demo.boton('barra', 'EditTable.themes (consola)', () => console.log(EditTable.themes));
+  fondo();
+});
+</script>
+</body>
+</html>

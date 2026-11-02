@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tarjetas en móvil · EdiTable 2</title>
+<link rel="stylesheet" href="assets/sitio.css">
+<script src="assets/sitio.js"></script>
+<script src="assets/tema-edittable.js"></script>
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="assets/datos.js"></script>
+</head>
+<body>
+<a class="saltar" href="#principal">Saltar al contenido</a>
+<div class="sitio">
+<nav id="sitio-nav"></nav>
+<div class="principal">
+<header class="barra-sup" id="sitio-barra"></header>
+<main id="principal" class="contenido">
+<header class="pag-enc">
+  <span class="ceja">Consulta · la misma lista en escritorio y en el teléfono</span>
+  <h1>De tabla a tarjetas, según el espacio que haya</h1>
+  <p class="bajada">Una bandeja de pedidos a domicilio. En pantalla ancha es una tabla; cuando el contenedor se angosta, cada fila se vuelve una tarjeta con avatar, título, estado y hace cuánto llegó. Badges, color de acento por fila y fechas relativas vienen del componente.</p>
+  <div class="chips"><span class="chip neutro">cards-mode="auto"</span><span class="chip neutro">RowBadges</span><span class="chip neutro">RowAccent</span><span class="chip neutro">format="relative"</span></div>
+</header>
+
+<section class="demo" aria-label="Demostración">
+<div id="demo">
+  <div class="barra">
+    <label for="ancho">Ancho del contenedor</label>
+    <input type="range" id="ancho" min="320" max="1000" step="10" value="1000" style="width:220px">
+    <output id="ancho-val" for="ancho">1000 px</output>
+    <span class="sep"></span>
+    <span class="chip neutro" id="modo" role="status">vista: tabla</span>
+  </div>
+  <div id="marco" style="width:1000px;max-width:100%;margin:0 auto;transition:width .2s">
+    <div class="caja-tabla">
+      <edit-table id="pedidos" readonly="true" hidde-selector="true" cards-mode="auto" cards-breakpoint="640px" cards-breakpoint-target="container"
+        cards-layout="slots" cards-hide-empty="true" badge-tooltip="custom">
+        <edit-thead><edit-tr>
+          <edit-th type="Badges" field="_avatar" badgegroup="avatar" card="true" cardslot="avatar"></edit-th>
+          <edit-th type="NoEditable" field="cliente" card="true" cardslot="title">Cliente</edit-th>
+          <edit-th type="NoEditable" field="pedido" card="true" cardslot="subtitle">Pedido</edit-th>
+          <edit-th type="NoEditable" field="canal">Canal</edit-th>
+          <edit-th type="NoEditable" field="total" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" card="true" cardslot="subtitle">Total</edit-th>
+          <edit-th type="NoEditable" field="hora" format="relative" card="true" cardslot="meta">Recibido</edit-th>
+          <edit-th type="NoEditable" field="repartidor" card="true" cardslot="subtitle" cardlabel="Reparte">Repartidor</edit-th>
+          <edit-th type="Badges" field="_estado" card="true" cardslot="badge">Estado</edit-th>
+        </edit-tr></edit-thead>
+      </edit-table>
+    </div>
+  </div>
+</div>
+</section>
+
+<div id="codigo"></div>
+
+<div class="explica">
+  <div class="tarjeta prueba">
+    <h2>Pruebe</h2>
+    <ul>
+      <li>Mueva el control de ancho por debajo de 640 px: la tabla se vuelve tarjetas sin recargar nada.</li>
+      <li>Pase el puntero sobre un badge: el tooltip es del componente (<code>badge-tooltip="custom"</code>).</li>
+      <li>Abra la página en un teléfono: la vista de tarjetas sale sola.</li>
+    </ul>
+  </div>
+  <div class="tarjeta">
+    <h2>Cómo se configura</h2>
+    <ul>
+      <li><code>cards-breakpoint-target="container"</code> mide el contenedor, no la ventana: sirve dentro de paneles y diálogos.</li>
+      <li>Cada columna elige su lugar en la tarjeta con <code>cardslot</code>: <code>avatar</code>, <code>title</code>, <code>subtitle</code>, <code>meta</code>, <code>badge</code>.</li>
+      <li><code>ViewModeChanged</code> avisa cuando cambia la vista; <code>IsCardView</code> la consulta.</li>
+    </ul>
+  </div>
+</div>
+</main>
+</div>
+</div>
+<script data-demo>
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('pedidos');
+  const COLOR = { 'Nuevo': '#2f5bd3', 'Preparando': '#6f42c1', 'En camino': '#0d7a6f', 'Entregado': '#6b7785', 'Retrasado': '#b42318' };
+  const iniciales = (n) => n.split(' ').map(x => x[0]).slice(0, 2).join('');
+
+  t.RowBadges = (r) => [
+    { id: 'avatar', group: 'avatar', text: iniciales(r.cliente), bg: COLOR[r.estado], color: '#fff', tooltip: r.cliente + ' · ' + r.telefono },
+    { id: 'estado', text: r.estado, bg: COLOR[r.estado], color: '#fff', tooltip: r.piezas + ' piezas' },
+    r.canal === 'WhatsApp' && { id: 'wa', text: 'WA', bg: '#1a7f37', color: '#fff', tooltip: 'Llegó por WhatsApp' },
+  ];
+  t.RowAccent = (r) => r.estado === 'Retrasado' ? '#b42318' : (r.estado === 'Nuevo' ? '#2f5bd3' : null);
+  t.DataArray = Datos.pedidos(14);
+  t._printRows();
+  t.RefreshView();
+
+  const modo = document.getElementById('modo');
+  const pintar = () => { modo.textContent = t.IsCardView ? 'vista: tarjetas' : 'vista: tabla'; };
+  t.addEventListener('viewmodechanged', pintar);
+  document.getElementById('ancho').oninput = (e) => {
+    document.getElementById('marco').style.width = e.target.value + 'px';
+    document.getElementById('ancho-val').textContent = e.target.value + ' px';
+  };
+  pintar();
+});
+</script>
+</body>
+</html>

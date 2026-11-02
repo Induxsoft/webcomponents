@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Impresión · EdiTable 2</title>
+<link rel="stylesheet" href="assets/sitio.css">
+<script src="assets/sitio.js"></script>
+<script src="assets/tema-edittable.js"></script>
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="assets/datos.js"></script>
+</head>
+<body>
+<a class="saltar" href="#principal">Saltar al contenido</a>
+<div class="sitio">
+<nav id="sitio-nav"></nav>
+<div class="principal">
+<header class="barra-sup" id="sitio-barra"></header>
+<main id="principal" class="contenido">
+<header class="pag-enc">
+  <span class="ceja">Consulta · lo que se ve no siempre se imprime</span>
+  <h1>Una lista de nómina que se imprime limpia</h1>
+  <p class="bajada">Las columnas marcadas con <code>no-print</code> o <code>hide-on-print</code> desaparecen al imprimir y vuelven exactamente como estaban al terminar. Con <code>virtual-rows</code> se dibujan todas las filas antes de imprimir. El pie con totales sale en cada impresión.</p>
+  <div class="chips"><span class="chip neutro">class="no-print"</span><span class="chip neutro">class="hide-on-print"</span><span class="chip neutro">beforeprint · afterprint</span></div>
+</header>
+
+<section class="demo" aria-label="Demostración">
+<div id="demo">
+  <div class="barra no-imprimir">
+    <button type="button" class="btn primario" id="imprimir">Imprimir</button>
+    <button type="button" class="btn" id="vista" aria-pressed="false">Vista previa</button>
+    <span class="sep"></span>
+    <span style="font-size:13px;color:var(--texto-2)">Periodo: 16 al 31 de octubre de 2026 · quincenal</span>
+  </div>
+  <div class="caja-tabla">
+    <edit-table id="nomina" readonly="true">
+      <edit-thead><edit-tr>
+        <edit-th type="NoEditable" field="numero" width="80px">Núm.</edit-th>
+        <edit-th type="NoEditable" field="nombre" minwidth="200px" summary="count" summary-label="{value} empleados">Empleado</edit-th>
+        <edit-th type="NoEditable" field="depto" width="130px">Departamento</edit-th>
+        <edit-th type="NoEditable" field="puesto" width="150px" class="hide-on-print">Puesto</edit-th>
+        <edit-th type="NoEditable" field="cuenta" width="130px" class="no-print">Cuenta de depósito</edit-th>
+        <edit-th type="NoEditable" field="sueldo" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="110px" summary="sum">Percepciones</edit-th>
+        <edit-th type="NoEditable" field="isr" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="100px" summary="sum">ISR</edit-th>
+        <edit-th type="NoEditable" field="imss" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="90px" summary="sum">IMSS</edit-th>
+        <edit-th type="NoEditable" field="neto" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="120px" summary="sum">Neto</edit-th>
+      </edit-tr></edit-thead>
+    </edit-table>
+  </div>
+</div>
+</section>
+
+<div id="codigo"></div>
+
+<div class="explica">
+  <div class="tarjeta prueba">
+    <h2>Pruebe</h2>
+    <ul>
+      <li><strong>Vista previa</strong> dispara <code>beforeprint</code>: se ocultan <strong>Puesto</strong> y la <strong>Cuenta de depósito</strong>; al quitarla, regresan.</li>
+      <li><strong>Imprimir</strong> abre el diálogo del navegador; el sitio también oculta su menú y el código al imprimir.</li>
+    </ul>
+  </div>
+  <div class="tarjeta">
+    <h2>Detalles</h2>
+    <ul>
+      <li>Al terminar de imprimir cada columna vuelve a su estado previo: si el usuario la había ocultado, sigue oculta (corrección C3 de la versión 2).</li>
+      <li>V12 imprime clonando la tabla interna; con <code>virtual-rows</code> debe llamar antes a <code>RenderAll()</code>.</li>
+      <li><code>InduxsoftExcel</code> respeta las mismas clases al exportar.</li>
+    </ul>
+  </div>
+</div>
+</main>
+</div>
+</div>
+<script data-demo>
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('nomina');
+  t.DataArray = Datos.empleados(18);
+  t._printRows();
+
+  document.getElementById('imprimir').onclick = () => window.print();
+  const vista = document.getElementById('vista');
+  vista.onclick = () => {
+    const activa = vista.getAttribute('aria-pressed') !== 'true';
+    window.dispatchEvent(new Event(activa ? 'beforeprint' : 'afterprint'));
+    vista.setAttribute('aria-pressed', String(activa));
+    vista.textContent = activa ? 'Salir de la vista previa' : 'Vista previa';
+  };
+});
+</script>
+</body>
+</html>

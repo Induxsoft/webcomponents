@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Código v1 sin cambios · EdiTable 2</title>
+<link rel="stylesheet" href="assets/sitio.css">
+<script src="assets/sitio.js"></script>
+<script src="assets/tema-edittable.js"></script>
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="assets/datos.js"></script>
+</head>
+<body>
+<a class="saltar" href="#principal">Saltar al contenido</a>
+<div class="sitio">
+<nav id="sitio-nav"></nav>
+<div class="principal">
+<header class="barra-sup" id="sitio-barra"></header>
+<main id="principal" class="contenido">
+<header class="pag-enc">
+  <span class="ceja">Compatibilidad · lo que ya funciona sigue funcionando</span>
+  <h1>Código escrito para la versión 1, corriendo en la 2 sin tocarlo</h1>
+  <p class="bajada">Esta página usa solo lo que existía antes: <code>data</code> en el atributo, <code>Events[…]</code>, <code>onTdPaint</code>, <code>ButtonOnClick</code>, <code>hideColumn</code>, <code>backup</code> y <code>_printRows()</code>, con sintaxis de siempre. Sin atributos nuevos, la versión 2 genera el mismo DOM, el mismo CSS y los mismos eventos; lo comprueba la batería de conformidad del repositorio.</p>
+  <div class="chips" id="compat"></div>
+</header>
+
+<section class="demo" aria-label="Demostración">
+<div id="demo">
+  <div class="barra">
+    <button id="btn-add">+ Renglón</button>
+    <button id="btn-del">− Renglón</button>
+    <button id="btn-costo">Mostrar u ocultar costo</button>
+    <span class="sep"></span>
+    <span id="lbl-estado"></span>
+  </div>
+  <edit-table id="tbl_cotizacion" style="width: 100%;" min-row-height="1rem"
+    data='[
+      {"clave": "A-100", "descripcion": "Licencia anual de punto de venta", "cantidad": 2, "costo": 1450, "precio": 2490, "entrega": "2026-11-05", "factura": "Sí", "nota": ""},
+      {"clave": "A-210", "descripcion": "Póliza de soporte por 12 meses", "cantidad": 1, "costo": 3100, "precio": 4990, "entrega": "2026-11-05", "factura": "Sí", "nota": ""},
+      {"clave": "S-015", "descripcion": "Instalación en sitio", "cantidad": 1, "costo": 900, "precio": 750, "entrega": "2026-11-12", "factura": "No", "nota": "Precio especial"}
+    ]'>
+    <edit-thead>
+      <edit-tr>
+        <edit-th type="Text" field="clave" maxlength="10">Clave</edit-th>
+        <edit-th type="Text" field="descripcion">Descripción</edit-th>
+        <edit-th type="Number" field="cantidad" textalign="end">Cantidad</edit-th>
+        <edit-th type="Number" field="costo" textalign="end" format="true" decs="2" prefix="$" thousandssep="true">Costo</edit-th>
+        <edit-th type="Number" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true">Precio</edit-th>
+        <edit-th type="Date" field="entrega">Entrega</edit-th>
+        <edit-th type="Check" field="factura" textalign="center">Factura</edit-th>
+        <edit-th type="Custom" field="nota" button="true" buttondata="✎">Nota</edit-th>
+      </edit-tr>
+    </edit-thead>
+  </edit-table>
+</div>
+</section>
+
+<div id="codigo"></div>
+
+<div class="explica">
+  <div class="tarjeta">
+    <h2>Por qué importa</h2>
+    <ul>
+      <li>EdiTable corre en cientos de sitios de V12, en FactuDesk y en otras aplicaciones; todos se actualizan sin cambiar su código.</li>
+      <li>Cada función nueva se activa con un atributo propio. Sin él, nada cambia (regla R1 de la especificación).</li>
+      <li>Antes de usar algo de la 2, un consumidor pregunta: <code>EditTable.features.includes('summary')</code>.</li>
+      <li>Verificado: esta misma página, con la copia <code>0ed1824</code> de la versión 1 en lugar de la 2, pasa la misma prueba (editar, ocultar columna, <code>IsDirty</code>, <code>onTdPaint</code>).</li>
+    </ul>
+  </div>
+  <div class="tarjeta">
+    <h2>Lo único que sí cambió</h2>
+    <ul>
+      <li>Defectos que perdían datos o no hacían nada: <kbd>Ctrl</kbd>+<kbd>C</kbd> ya no empieza a editar, <code>restore()</code> deja <code>IsDirty</code> en falso, <code>readonly="false"</code> es editable, <code>NavToEnd</code> funciona.</li>
+      <li>Confirmar una celda sin cambiarla ya no reescribe el valor (fechas que venían del servidor con otro formato).</li>
+    </ul>
+  </div>
+</div>
+</main>
+</div>
+</div>
+<script data-demo>
+document.addEventListener("DOMContentLoaded", function () {
+    var tabla = document.getElementById("tbl_cotizacion");
+    var eventos = tabla.EdiTable.Const.Events;
+
+    tabla.AutoAddRow = false;
+
+    // Precio por debajo del costo: en rojo
+    function colorPrecio(td, idx) {
+        var r = tabla.DataArray[idx];
+        td.style.color = Number(r.precio) < Number(r.costo) ? "#c0392b" : "";
+    }
+    tabla.onTdPaint = function (td, idx, icol, field) {
+        if (field == "precio") colorPrecio(td, idx);
+    };
+
+    tabla.Events[eventos.BeforeUpdateCell] = function (e) {
+        if (e.coldef.field == "cantidad" && Number(e.text) <= 0) {
+            alert("La cantidad debe ser mayor que cero");
+            e.cancel = true;
+        }
+    };
+
+    tabla.Events[eventos.FieldUpdated] = function (e) {
+        // UpdateRow no llama a onTdPaint: se vuelve a pintar la celda del precio
+        tabla.UpdateRow(e.row);
+        colorPrecio(tabla.GetTrByIndex(e.row).cells[4], e.row);
+    };
+
+    tabla.Events[eventos.IsDirtyChanged] = function (e) {
+        document.getElementById("lbl-estado").innerText = tabla.IsDirty ? "Con cambios" : "Sin cambios";
+    };
+
+    tabla.ButtonOnClick = function (irow, icol, coldef) {
+        var texto = prompt("Nota del renglón", tabla.DataArray[irow].nota || "");
+        if (texto != null) {
+            tabla.DataArray[irow].nota = texto;
+            tabla.UpdateRow(irow);
+        }
+    };
+
+    var costoVisible = true;
+    document.getElementById("btn-costo").onclick = function () {
+        costoVisible = !costoVisible;
+        tabla.hideColumn("costo", !costoVisible);
+    };
+    document.getElementById("btn-add").onclick = function () { tabla.AddRow(); };
+    document.getElementById("btn-del").onclick = function () {
+        if (tabla.CurrentRowIndex() >= 0) tabla.DeleteRow(tabla.CurrentRowIndex());
+    };
+
+    tabla._printRows();
+    tabla.backup();
+    document.getElementById("lbl-estado").innerText = "Sin cambios";
+});
+</script>
+<script>
+/* Fuera de la demostración: comprobaciones en vivo de que el código v1 se comporta como siempre. */
+document.addEventListener('DOMContentLoaded', () => setTimeout(() => {
+  const t = document.getElementById('tbl_cotizacion'), c = document.getElementById('compat');
+  const s = t._shadow;
+  const pruebas = [
+    ['DataArray desde el atributo data', t.DataArray.length === 3],
+    ['Columns sin columnas del sistema', t.Columns.length === 8 && t.Columns.every(x => x.field)],
+    ['sin tfoot ni panel de grupos', !s.querySelector('tfoot') && !s.querySelector('.et-group-panel')],
+    ['onTdPaint aplicado', [...s.querySelectorAll('tbody td')].some(td => td.style.color)],
+    ['ids internos de siempre', !!s.querySelector('table#tbl_cotizacion')],
+    ['EditTable.version ' + Sitio.version(), true],
+  ];
+  pruebas.forEach(([txt, ok]) => { const e = document.createElement('span'); e.className = 'chip' + (ok ? '' : ' falta'); e.textContent = (ok ? '✓ ' : '✗ ') + txt; c.appendChild(e); });
+}, 50));
+</script>
+</body>
+</html>
