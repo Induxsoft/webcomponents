@@ -47,7 +47,7 @@ t('05', 'virtualización + teclado + impresión', ['L-virtual-teclado-impresion'
   c.igual(r, [999, 1000, 999]);
 }, { requiere: ['virtual'] });
 t('06', 'selección + virtualización: la selección sobrevive al desplazamiento', ['§4-h', '§10-g'], async (c) => {
-  await c.abrir({ body: `<div id="sc" style="height:300px;overflow:auto">${tabla({ a: { 'virtual-rows': 'true', 'row-height': '28px', 'multi-select': 'checkbox' }, cols: COLS() })}</div>`, script: `document.addEventListener('DOMContentLoaded',()=>{const t=document.getElementById('t1');t.DataArray=${JSON.stringify(muchas(1000))};t._printRows();t.SelectRows([1,900]);});` });
+  await c.abrir({ body: `<div id="sc" style="height:300px;overflow:auto">${tabla({ a: { 'virtual-rows': 'true', 'row-height': '28px', 'multi-select': 'checkbox', 'control-styles': 'div:has(table#t1){overflow:revert !important}' }, cols: COLS() })}</div>`, script: `document.addEventListener('DOMContentLoaded',()=>{const t=document.getElementById('t1');t.DataArray=${JSON.stringify(muchas(1000))};t._printRows();t.SelectRows([1,900]);});` });
   await c.ev(async () => { document.getElementById('sc').scrollTop = 895 * 28; await __ct.cuadro(); await __ct.espera(50); });
   const r = await c.ev(() => [__ct.t('t1').getSelectedRows(), Array.from(__ct.sr('t1').querySelectorAll('tbody > tr.et-row-checked')).map(tr => Array.from(tr.cells).find(td => !td.classList.contains('et-sel-col')).textContent.trim())]);
   c.igual(r, [[1, 900], ['P-00901']]);

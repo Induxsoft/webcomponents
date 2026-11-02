@@ -9,7 +9,7 @@ class EditTable extends HTMLElement
     _dataArrayBackup = null;
     _sorTable=true;
     // F1: versión y funciones disponibles (R6). La lista se llena en las fases siguientes.
-    static version = "2.0.0-beta.1";   // integración F1+F2+F3+F4
+    static version = "2.0.0-beta.2";   // integración F1+F2+F3+F4+F5+F6
     static features = [];
 
     constructor()
@@ -88,6 +88,7 @@ class EditTable extends HTMLElement
         }
         this._f2AtributoCambiado(name, newValue);   // F2: summary-scope
         this._f5AtributoCambiado?.(name, newValue);   // F5: virtual-rows
+        this._f6AtributoCambiado(name, newValue);   // F6: group-panel
     }
 
     // F1 (C9, C11): se inicializa una sola vez. Mientras la página carga, en DOMContentLoaded y en el
@@ -341,6 +342,7 @@ class EditTable extends HTMLElement
             this._setMoveEvent();
             this._f4Iniciar();   // F4: multi-select (columna del sistema y selección)
             this._f3Inicializar?.();   // F3: columnas fijas, selector, reordenar y diseño guardado
+            this._f6Iniciar();   // F6: group-panel y group-summary
 
             // Si no se ha proporcionado el atributo data para el dataArray se genera a partir del contenido de la tabla
             if (this.DataArray.length < 1) this.UpdateData();
@@ -755,6 +757,7 @@ class EditTable extends HTMLElement
     }
     _f1IndiceDeTr=(tr, tbody)=>
     {
+        if (this._f6Grupos.length) return this._f6IndiceDeTr(tr);   // F6: índice de DataArray saltando las filas de grupo
         if (this._f1MapaValido(tbody)) return (this._f1Indices.get(tr) ?? -1);
         if (this._f1Estado === 1 && this._f1MO && !this._f1Anidados)
         {
@@ -766,6 +769,7 @@ class EditTable extends HTMLElement
     }
     _f1TrDeIndice=(row, tbody)=>
     {
+        if (this._f6Grupos.length) return this._f6TrDeIndice(row);   // F6
         if (this._f1MapaValido(tbody)) return this._f1Orden[row];
         return tbody.getElementsByTagName('tr')[row];
     }
@@ -1295,6 +1299,7 @@ class EditTable extends HTMLElement
         SetSelectorKeyEventHandler:function(selector, _current)
         {
             const funct = (e) => {
+                if (this._f6Tecla(e, selector)) return;   // F6: Ctrl+Inicio/Fin, RePág/AvPág y Ctrl+Supr en el orden visible
                 if (this._f4Tecla(e)) return;   // F4: Ctrl+C copia (§4.2), Espacio marca la fila (§4.1)
                 // F1 (C2): Ctrl o Meta con una letra no empieza la edición. Ctrl/Meta + C, V, X y A
                 // conservan su comportamiento nativo (no se cancelan); AltGr (Ctrl+Alt) sigue escribiendo.
@@ -1647,6 +1652,7 @@ class EditTable extends HTMLElement
         let cols=this.ColumnsCount();
 
         if (rows<1 || cols<1 || row>rows-1 || col>cols-1 || col<0 || row<0) return;
+        if (this._f6NavTo(row, col)) return;   // F6: row es índice de DataArray
         
         let tbody=this.GetTBody();
         // F5: getElementsByTagName da los mismos tr que querySelectorAll sin armar la lista completa; en virtual, GetTrByIndex.
@@ -1711,6 +1717,7 @@ class EditTable extends HTMLElement
         this.DataArray.splice(row, 1);
         if(this._dataArrayBackup) this._dataArrayBackup.splice(row, 1);
         if (this._f5Activo) this._f5TrasBorrar(row);   // F5: reindexa las filas dibujadas
+        this._f6FilaBorrada(row);   // F6
         this._f4FilaBorrada(f4Fila, row);   // F4: la fila borrada sale de la selección
         this._f2Programar();   // F2: recálculo de totales (RowDeleted)
 
@@ -1727,7 +1734,7 @@ class EditTable extends HTMLElement
     UpdateRow=(row)=>
     {
         let tr=(this._f5Activo ? this._f5TrDibujado(row) : this.GetTrByIndex(row));   // F5: sin desplazar
-        if (tr==undefined && this._f5Activo) { this._f2Programar(); return (row >= 0 && row < this.DataArray.length); }   // F5: se dibujará desde el modelo
+        if (tr==undefined && this._f5Activo) { this._f2Programar(); this._f6Programar(); return (row >= 0 && row < this.DataArray.length); }   // F5: se dibujará desde el modelo; F5+F6: grupos
 
         if (tr==undefined) return false;
         var tds=tr.querySelectorAll(this.EdiTable.Const.HTML.TD+':not(.et-sel-col)');   // F4: celdas de datos
@@ -1756,6 +1763,7 @@ class EditTable extends HTMLElement
 
         this._decorateRow(tr, row, data);
         this._f2Programar();   // F2: recálculo de totales (restore, UpdateRow)
+        this._f6Programar();   // F6: subtotales y grupo de la fila
 
         return true;
     }
@@ -1845,6 +1853,7 @@ class EditTable extends HTMLElement
             if (this._getCurren().Events[this.EdiTable.Const.Events.FieldUpdated]!=undefined && !stopfire)
                 this._getCurren().Events[this.EdiTable.Const.Events.FieldUpdated](eventArgs);
         }
+        this._f6AlActualizar(row, field, stopfire);   // F6: subtotales y filas nuevas en su grupo
 
         return this.DataArray[row];
     }
@@ -1876,7 +1885,7 @@ class EditTable extends HTMLElement
 
         if (tbody)
         {
-            var nr=tbody.insertRow(rw);
+            var nr=(this._f6InsertarTr(tbody, rw) ?? tbody.insertRow(rw));   // F6: con grupos, al final de los datos o junto a la fila rw
             var indexRow=this._getRowIndex(nr);
 
             for (let i=0;i<cols;i++)
@@ -1909,6 +1918,7 @@ class EditTable extends HTMLElement
             if (this.hideColumns.length) this._shadow.querySelectorAll(this.EdiTable.Const.HTML.TABLE+"#"+this.tableId+" > "+this.EdiTable.Const.HTML.TBODY+" "+this.EdiTable.Const.HTML.TD).forEach(td => {
                 if (this.hideColumns.includes(this.ColIndexOfTd(td))) td.classList.add('hidde-col');   // F4: índice de datos
             });
+            this._f6TrasColumnas();   // F6: el ciclo anterior también toca las celdas de las filas de grupo
 
             this._setMoveEvent();
             this._decorateRow(nr, indexRow, this.DataArray[indexRow]);
@@ -1934,6 +1944,7 @@ class EditTable extends HTMLElement
     TRCount=()=>
     {
         if (this._f5Activo) return this.DataArray.length;   // F5 (P22): en modo virtual, todas las filas del modelo
+        if (this._f6Grupos.length) return this._f6NumFilas();   // F6: sin las filas de grupo
         var tbody=this.GetTBody();
         if (tbody)
         {
@@ -2146,6 +2157,7 @@ class EditTable extends HTMLElement
      */
     StartEdit=(td,text,clear)=>
     {
+        if (this._f6EsGrupo(td)) return;   // F6: las filas de grupo no se editan
         if (this.ReadOnly) return;
         
         let columnDef=this.GetColumnDef();
@@ -2370,6 +2382,7 @@ class EditTable extends HTMLElement
                 else
                     eventArgs.text=combo.options[combo.selectedIndex].text;
 
+                this._f6Confirmando = !f1SinCambio;   // F6: edición del usuario
                 if (!f1SinCambio) this.UpdateDataMember (this.RowIndexOfTd(eventArgs.td),columnDef.keyfield,input.value);
             }
             f1TextoLeido = eventArgs.text;
@@ -2410,6 +2423,7 @@ class EditTable extends HTMLElement
 
         //td.innerHTML = eventArgs.text;
         this.SetTdValue(td, eventArgs.text, true);
+        this._f6Confirmando = true;   // F6: edición del usuario
         this.UpdateDataMember(this.RowIndexOfTd(td),columnDef.field,eventArgs.text);
 
         return true;
@@ -2491,6 +2505,7 @@ class EditTable extends HTMLElement
      */
     CellFocus=(td)=>
     {
+        if (this._f6EsGrupo(td)) { this._f6EnfocarGrupo(td.closest('tr')); return; }   // F6 (P24)
         this._fireBlur=false;
 
         var eventArgs={
@@ -2603,6 +2618,7 @@ class EditTable extends HTMLElement
         }
 
         this._current_row = this.CurrentRowIndex();
+        this._f6TrasFoco(td);   // F6: las filas nuevas que se dejan se colocan en su grupo
     }
     /**
      * Mueve el selector una celda hacia arriba de la celda *td* especificada.
@@ -2610,6 +2626,7 @@ class EditTable extends HTMLElement
      */
     NavUp=(active_cell)=>
     {
+        if (this._f6Nav(active_cell, -1)) return;   // F6: recorre también las filas de grupo
         if (this._f5Activo) return this._f5Nav(active_cell, -1);   // F5: en virtual, por el modelo
         let active_cell_index=active_cell.cellIndex;
         let parent_tr = active_cell.parentElement;
@@ -2674,6 +2691,7 @@ class EditTable extends HTMLElement
      */
     NavDown=(active_cell)=> 
     {
+        if (this._f6Nav(active_cell, 1)) return;   // F6
         if (this._f5Activo) return this._f5Nav(active_cell, 1);   // F5: en virtual, por el modelo
         let active_cell_index=active_cell.cellIndex;
         let parent_tr = active_cell.parentElement;
@@ -2938,6 +2956,7 @@ class EditTable extends HTMLElement
         });
         } finally { this._f5HijosCache = null; }   // F5
         this.Initialize(this._table.getAttribute('id'));
+        this._f6TrasDibujar();   // F6: mapa de índices y filas de grupo (antes de F4 y F3)
         this._setMoveEvent();
         this._f4TrasDibujar();   // F4: celdas del sistema y selección después de redibujar
         this._f3TrasDibujar?.();   // F3: clases y left de las columnas fijas en las filas nuevas
@@ -3893,6 +3912,7 @@ class EditTable extends HTMLElement
         const tbody = this._table?.querySelector('tbody');
         if (!tbody) return;
         if (this._f5Activo) { Array.from(tbody.rows).forEach(tr => { const i = this._f5Idx.get(tr); if (i !== undefined) fn(tr, i, (tr._etData ?? this.DataArray[i] ?? {})); }); return; }   // F5: solo filas de datos dibujadas
+        if (this._f6Grupos.length) return this._f6CadaFila(fn);   // F6: sin filas de grupo, con el índice de DataArray
         Array.from(tbody.rows).forEach((tr, i) => fn(tr, i, (tr._etData ?? this.DataArray[i] ?? {})));
     }
 
@@ -4430,7 +4450,7 @@ class EditTable extends HTMLElement
         let th = this._table.querySelector(`thead th[field="${fieldColumn}"]`);
         if (!th) return false;
 
-        this._table.querySelectorAll('tbody tr:not(.et-spacer)').forEach(tr => tr.cells[th.cellIndex].classList.toggle('hidde-col',hide));   // F5: sin las filas de relleno
+        this._table.querySelectorAll('tbody tr:not(.et-spacer)').forEach(tr => tr._f6Grupo || tr.cells[th.cellIndex].classList.toggle('hidde-col',hide));   // F5: sin las filas de relleno; F6: sin las filas de grupo
         th.classList.toggle('hidde-col', hide);
         this._f2OcultarCeldaPie(th.cellIndex, hide);   // F2: la celda del pie sigue a la columna
 
@@ -4440,6 +4460,7 @@ class EditTable extends HTMLElement
         if (!hide) this._f1Ocultas = this._f1Ocultas.filter(f => f !== f1Field);
         else if (!this._f1Ocultas.includes(f1Field)) this._f1Ocultas.push(f1Field);
         this.hideColumns = this._f1DerivarHideColumns();
+        this._f6TrasColumnas();   // F6: celdas de las filas de grupo
         this._f3TrasOcultar?.(f1Field, !!hide);   // F3: recalcula las fijas y el menú
 
         this.RefreshBadges();
@@ -4476,6 +4497,7 @@ class EditTable extends HTMLElement
             // Integración F2/F3: la celda del sistema cambió después de inicializar. El pie (F2) rehace sus
             // celdas y sus totales, y F3 recalcula el left de las fijas (también en el pie).
             if (this._f2CeldasPie?.()) this._f2Programar?.();
+            this._f6TrasColumnas();   // F6: celda del sistema en las filas de grupo
             this._f3Posiciones?.();
         }
     }
@@ -4692,6 +4714,7 @@ class EditTable extends HTMLElement
         if (a < 0) a = this.CurrentRowIndex();
         if (a < 0) a = i;
         const s = agregar ? new Set(this._f4Sel) : new Set();
+        if (this._f6Grupos.length) { this._f6IndicesEntre(a, i).forEach(k => this._f4Objetos([k]).forEach(o => s.add(o))); this._f4Fijar(s); return; }   // F6: rango en el orden visible
         for (let k = Math.min(a, i); k <= Math.max(a, i); k++) this._f4Objetos([k]).forEach(o => s.add(o));
         this._f4Fijar(s);
     }
@@ -5087,6 +5110,9 @@ class EditTable extends HTMLElement
             case this.EdiTable.Const.Events.BeforeCopy:   // F4 (R4)
                 this._getCurren().Events[this.EdiTable.Const.Events.BeforeCopy] = listener
                 break;
+            case this.EdiTable.Const.Events.BeforeGroup:    // F6 (R4)
+            case this.EdiTable.Const.Events.GroupChanged:   // F6 (R4)
+            case this.EdiTable.Const.Events.GroupToggled:   // F6 (R4)
             case this.EdiTable.Const.Events.SummaryCalculated:   // F2 (R4)
             case this.EdiTable.Const.Events.ValueTypeFallback:   // F2 (R4)
                 this._getCurren().Events[type.toLowerCase()] = listener
@@ -5181,7 +5207,12 @@ class EditTable extends HTMLElement
     {
         if (name == 'virtual-rows') this.VirtualRows = (v !== null && this._f5Bool(v));
     }
-    _f5Debe() { return this._f5Listo && this._f5Pedido && !!this._table && !this.ShowAsTree && !this._isCardView; }
+    _f5Debe()
+    {
+        // F5+F6 (decisión de integración): en árbol no se virtualiza; se avisa una vez por consola.
+        if (this._f5Listo && this._f5Pedido && this.ShowAsTree && !this._f5AvisoArbol) { this._f5AvisoArbol = true; console.warn('EditTable: virtual-rows no se aplica con show-tree; el árbol se dibuja completo.'); }
+        return this._f5Listo && this._f5Pedido && !!this._table && !this.ShowAsTree && !this._isCardView;
+    }
     // Desde _printRows: true si hay que dibujar en modo virtual. Si dejó de aplicar (árbol, tarjetas), sale del modo.
     _f5DebeVirtualizar()
     {
@@ -5212,6 +5243,7 @@ class EditTable extends HTMLElement
     /** Filas lógicas que se dibujan (punto de extensión de F6, ver arriba). */
     _f5Filas()
     {
+        { const f6 = this._f6FilasV?.(); if (f6) return f6; }   // F5+F6: con grupos, filas de grupo y de datos visibles
         const n = (this.DataArray ?? []).length, out = new Array(n);
         for (let i = 0; i < n; i++) out[i] = { tipo: 'datos', indice: i };
         return out;
@@ -5226,6 +5258,7 @@ class EditTable extends HTMLElement
         this._f5Lista = ((thead && thead.hasChildNodes()) ? this._f5Filas() : []);
         this._f5Pos = new Int32Array(datos.length).fill(-1);
         this._f5Lista.forEach((e, p) => { if (e && e.tipo === 'datos' && e.indice >= 0 && e.indice < datos.length) this._f5Pos[e.indice] = p; });
+        this._f6TrasArmar?.();   // F5+F6: pathKey → posición de cada fila de grupo
     }
     // Vuelve a armar la lista conservando las filas dibujadas. mapa: índice viejo → índice nuevo (o -1).
     _f5Rearmar(mapa = (i) => i)
@@ -5234,6 +5267,7 @@ class EditTable extends HTMLElement
         this._f5Armar();
         this._f5Trs = new Map();
         viejos.forEach(tr => {
+            if (tr._f6Grupo) { const pg = (this._f6PosGrupo?.get(tr._f6Grupo.pathKey) ?? -1); if (pg < 0) tr.remove(); else { this._f5PosTr.set(tr, pg); this._f5Trs.set(pg, tr); } return; }   // F5+F6
             const i0 = this._f5Idx.get(tr);
             const i = (i0 === undefined ? -1 : mapa(i0));
             const p = ((i >= 0 && i < this._f5Pos.length) ? this._f5Pos[i] : -1);
@@ -5242,6 +5276,7 @@ class EditTable extends HTMLElement
             this._f5PosTr.set(tr, p);
             this._f5Trs.set(p, tr);
         });
+        this._f6TrasRearmar?.();   // F5+F6: orden del DOM y conteos de las filas de grupo dibujadas
     }
     // Si alguien reasignó o cambió el largo de DataArray sin _printRows. true si volvió a dibujar todo.
     _f5Sincronizar()
@@ -5270,6 +5305,7 @@ class EditTable extends HTMLElement
         const tbody = this._table.querySelector('tbody');
         if (!this._f5Activo) { this._f5Activo = true; this._f5Entrar(); }
         if (this._f1MO) { this._f1MO.disconnect(); this._f1MO = null; this._f1TBody = null; }   // como _printRows
+        this._f6AlRedibujarV?.();   // F5+F6: el mapa propio de F6 no se usa en virtual
         tbody.innerHTML = '';
         this._f5Trs = new Map();
         this._f5PosTr = new WeakMap();
@@ -5368,7 +5404,7 @@ class EditTable extends HTMLElement
     _f5FilaActual()
     {
         const el = this._shadow?.getElementById(this.EdiTable.Const.InputId) ?? this._shadow?.getElementById(this.EdiTable.Const.SelectorId);
-        const tr = el?.closest('tr');
+        const tr = el?.closest('tr') ?? this._shadow?.activeElement?.closest?.('tr.et-group-row');   // F5+F6: o la fila de grupo con el foco
         return (tr ? (this._f5PosTr.get(tr) ?? -1) : -1);
     }
     _f5Relleno(filas)
@@ -5561,7 +5597,8 @@ class EditTable extends HTMLElement
         if (this._f5Sincronizar()) { }
         const rows = this.DataArray.length, cols = this.ColumnsCount();
         if (rows < 1 || cols < 1 || !(row <= rows - 1) || row < 0) return undefined;
-        const p = this._f5Pos[row];
+        let p = this._f5Pos[row];
+        if (p < 0 && this._f6Grupos?.length) p = (this._f6MostrarFilaV?.(row) ?? -1);   // F5+F6: expande los grupos que la contienen
         return (p >= 0 ? this._f5IrA(p) : undefined);
     }
     _f5Nav(active_cell, d)
@@ -5601,6 +5638,7 @@ class EditTable extends HTMLElement
         const nuevo = {};
         if (rw != undefined) this.DataArray.splice(rw, 0, nuevo); else this.DataArray.push(nuevo);
         const i = this.DataArray.indexOf(nuevo);
+        this._f6InsertadaV?.(nuevo, (rw != undefined ? this.DataArray[i + 1] : null));   // F5+F6: pendiente hasta que se confirma (§11)
         this._f5Rearmar(j => (j >= i ? j + 1 : j));
         if (this.ColumnsCount() < 1) { this._f5Pintar(); return; }
         this.Columns.forEach(c => { if (c != undefined && c.default != undefined) this.UpdateDataMember(i, c.field, c.default, true); });
@@ -5935,6 +5973,7 @@ class EditTable extends HTMLElement
         cols.forEach((c, i) => { if (c?.field != undefined) this._f1EstadoColumna(c.field).orden = i; });
         this.hideColumns = this._f1DerivarHideColumns();
         this._cardsInfo = null;
+        this._f6TrasColumnas();   // F6: filas de grupo en el orden nuevo
         if (this.ShowAsTree) this._printRows();   // el botón del árbol vive en la primera columna
         if (activo && activo.isConnected && this._shadow.activeElement !== activo)
             try { activo.focus({ preventScroll: true }); } catch (e) { }
@@ -7662,6 +7701,1215 @@ class EditTable extends HTMLElement
         return r;
     }
     // ===== F2: fin
+
+    // ===== F6: agrupación por columna arrastrando, con subtotales (spec §11, P24-P26)
+    //
+    // Sin group-panel ni GroupBy() no se agrega nada al DOM ni al CSS (R1): todos los enganches revisan
+    // this._f6Grupos.length y salen si está vacío.
+    // Modelo: las filas de datos (tr) se conservan; agrupar solo las reacomoda en el tbody y agrega
+    // tr.et-group-row (sin índice de datos, R2). El índice de cada tr de datos vive en un mapa propio
+    // (_f6Idx: tr → índice de DataArray, _f6Trs: índice → tr) que reemplaza al de F1 mientras hay grupos.
+    // DataArray no se reordena por agrupar (I3). Las filas de datos de un grupo colapsado llevan hidde-row
+    // (y et-group-hidden), así que NavUp/NavDown y F2 (summary-scope="visible") ya las saltan.
+    // La lista de filas lógicas sale de una función pura, EditTable.groupRows, para que F5 la dibuje virtual.
+    static { this.features.push('group'); }
+
+    _f6Grupos = [];            // fields de agrupación, en orden de nivel
+    _f6Colapsados = new Set(); // pathKey (JSON del arreglo de llaves) de los grupos colapsados
+    _f6Idx = new WeakMap();    // tr de datos → índice de DataArray
+    _f6Trs = [];               // índice de DataArray → tr
+    _f6Pend = new Set();       // filas nuevas (AddRow/InsertRow) que todavía no se colocan en su grupo
+    _f6PendApi = new Set();    // filas nuevas que recibieron datos por código (UpdateDataMember sin edición)
+    _f6PendV = new Map();      // F5+F6: en virtual, objeto de DataArray nuevo → {ancla, tocado, api}
+    _f6PosGrupo = new Map();   // F5+F6: en virtual, pathKey → posición en la lista de F5
+    _f6Cache = null;           // F5+F6: lista ya calculada para el siguiente _f5Filas()
+    _f6Confirmando = false;    // ConfirmEdit está por llamar a UpdateDataMember (edición del usuario)
+    _f6Programado = false;
+    _f6Panel = null;
+    _f6EstiloEl = null;
+    _f6Arrastre = null;        // field del th que se arrastra
+    _f6Chip = null;            // field de la chip que se arrastra
+    _f6Col = 0;                // última columna visible de datos (para volver de una fila de grupo)
+    _f6UI = false;
+    GroupPanel = false;        // group-panel ↔ GroupPanel
+    _f6Resumen = 'cell';       // group-summary: 'cell' (una celda) | 'inline' (una celda por columna)
+    _f6Eventos = Object.assign(this.EdiTable.Const.Events, { BeforeGroup: 'beforegroup', GroupChanged: 'groupchanged', GroupToggled: 'grouptoggled' });
+
+    get GroupSummary() { return this._f6Resumen; }
+    set GroupSummary(v)
+    {
+        this._f6Resumen = (String(v ?? '').trim().toLowerCase() === 'inline' ? 'inline' : 'cell');
+        if (this._f6Grupos.length) this._f6Dibujar();
+    }
+
+    // ---------- función pura: filas lógicas (para F5) ----------
+    /**
+     * Lista de filas lógicas de una tabla agrupada, sin DOM.
+     * data: DataArray. fields: campos de agrupación. opts:
+     *  - indices: índices de data a incluir, en su orden actual (por omisión 0..n-1);
+     *  - collapsed: Set o arreglo de pathKey (JSON.stringify del arreglo de llaves) colapsados;
+     *  - desc: {field: true} para invertir el orden de los grupos de ese nivel.
+     * Devuelve [{type:'group', level, field, key, value, path, pathKey, count, indices, expanded, visible}
+     *          | {type:'data', index, level, visible}]. Los grupos van ordenados por llave (vacío primero,
+     * números como números) y dentro de cada grupo las filas conservan el orden de `indices`.
+     */
+    static groupRows(data, fields, opts = {})
+    {
+        data = (Array.isArray(data) ? data : []);
+        fields = (Array.isArray(fields) ? fields : []);
+        const col = (opts.collapsed instanceof Set ? opts.collapsed : new Set(opts.collapsed ?? []));
+        const desc = (opts.desc ?? {});
+        const base = (Array.isArray(opts.indices) ? opts.indices : data.map((_, i) => i));
+        const llave = (v) => (v == null ? '' : String(v));
+        const num = (v) => (typeof v === 'number' ? v : (typeof v === 'string' && /^\s*-?\d+(\.\d+)?\s*$/.test(v) ? Number(v) : NaN));
+        const coll = (typeof Intl !== 'undefined' ? new Intl.Collator('es', { numeric: true }) : null);
+        const comparar = (a, b) => {
+            if (a.k === b.k) return 0;
+            if (a.k === '') return -1;
+            if (b.k === '') return 1;
+            const na = num(a.v), nb = num(b.v);
+            if (!isNaN(na) && !isNaN(nb) && na !== nb) return na - nb;
+            const r = (coll ? coll.compare(a.k, b.k) : (a.k < b.k ? -1 : 1));
+            return (r !== 0 ? r : (a.k < b.k ? -1 : 1));
+        };
+        const out = [];
+        const nivel = (indices, level, path, visible) => {
+            if (level >= fields.length)
+            {
+                indices.forEach(index => out.push({ type: 'data', index, level, visible }));
+                return;
+            }
+            const field = fields[level];
+            const cubetas = new Map();
+            indices.forEach(i => {
+                const v = data[i]?.[field];
+                const k = llave(v);
+                let c = cubetas.get(k);
+                if (!c) { c = { k, v, indices: [] }; cubetas.set(k, c); }
+                c.indices.push(i);
+            });
+            const lista = [...cubetas.values()].sort(comparar);
+            if (desc[field]) lista.reverse();
+            lista.forEach(c => {
+                const p = [...path, c.k];
+                const pathKey = JSON.stringify(p);
+                const expanded = !col.has(pathKey);
+                out.push({ type: 'group', level, field, key: c.k, value: c.v, path: p, pathKey, count: c.indices.length, indices: c.indices, expanded, visible });
+                nivel(c.indices, level + 1, p, visible && expanded);
+            });
+        };
+        nivel(base, 0, [], true);
+        return out;
+    }
+
+    // ---------- inicialización y atributos ----------
+    _f6Iniciar()
+    {
+        try
+        {
+            if (this.hasAttribute('group-summary')) this._f6Resumen = (String(this.getAttribute('group-summary')).trim().toLowerCase() === 'inline' ? 'inline' : 'cell');
+            if (this.hasAttribute('group-panel')) this.GroupPanel = this._f3Bool ? this._f3Bool(this.getAttribute('group-panel')) : (this.getAttribute('group-panel') == 'true');
+            if (this.GroupPanel) this._f6AplicarPanel();
+        }
+        catch (e) { console.error('EditTable F6: error al inicializar', e); }
+    }
+    _f6AtributoCambiado(name, v)
+    {
+        if (name !== 'group-panel') return;
+        this.GroupPanel = (v !== null && !this._f1EsFalso(v));
+        this._f6AplicarPanel();
+    }
+    _f6Disparar(nombre, args)
+    {
+        const k = this.EdiTable.Const.Events[nombre];
+        const ev = this._getCurren().Events;
+        const fn = (ev && ev[k]) ?? this.Events?.[k];
+        if (typeof fn !== 'function') return args;
+        args.sender = this._getCurren();
+        try { fn(args); } catch (e) { console.error('EditTable: error en el manejador de ' + nombre, e); }
+        return args;
+    }
+    _f6Estilo()
+    {
+        if (this._f6EstiloEl || !this._shadow) return;
+        const st = document.createElement('style');
+        st.setAttribute('data-et', 'f6');
+        st.textContent = `
+            .et-group-panel{ display:flex; flex-wrap:wrap; gap:6px; align-items:center; min-height:2rem; padding:4px 6px; margin-bottom:4px; border:1px dashed #CCC; border-radius:4px; background:#FAFAFA; color:#555; font-size:.9rem; box-sizing:border-box; }
+            .et-group-panel:empty::before{ content: attr(data-placeholder); color:#888; }
+            .et-group-panel.et-drop-over{ border-color:#3D75DD; background:#F0F4FB; }
+            .et-group-chip{ display:inline-flex; align-items:center; gap:2px; padding:2px 2px 2px 10px; border:1px solid #BBB; border-radius:12px; background:#FFF; color:#212529; cursor:grab; user-select:none; outline:none; }
+            .et-group-chip:focus{ border-color:#3D75DD; }
+            .et-group-chip.et-dragging{ opacity:.5; }
+            .et-chip-remove{ border:0; background:none; cursor:pointer; padding:0 6px; font-size:1rem; line-height:1; color:#666; }
+            .et-chip-remove:hover{ color:#000; }
+            tbody tr.et-group-row > td{ padding:4px 6px; outline:1px solid #DDD; background-color:var(--et-group-bg, #EEF2F7); font-weight:600; cursor:default; }
+            tbody tr.et-group-row:hover > td{ background-color:var(--et-group-hover-bg, #E5EBF3); }
+            tbody tr.et-group-row:focus-within > td{ box-shadow: inset 0 2px 0 #3D75DD, inset 0 -2px 0 #3D75DD; }
+            .et-group-label{ display:inline-flex; align-items:center; gap:6px; position:sticky; left:0; white-space:nowrap; outline:none; }
+            .et-group-toggle{ display:inline-block; width:1rem; text-align:center; cursor:pointer; }
+            tr.et-group-row[aria-expanded="false"] .et-group-toggle{ transform: rotate(-90deg); }
+            .et-group-count, .et-group-sums, td.et-group-sum{ font-weight:normal; }
+            .et-group-count{ color:#666; }
+            table.et-has-fixed tbody tr.et-group-row > td.et-fixed{ background-color:var(--et-group-bg, #EEF2F7); }
+            .table-cards tr.et-group-row td::before, table.et-cards tr.et-group-row td::before{ content:none !important; }
+            @media print{ .et-group-panel{ display:none !important; } .et-group-toggle{ display:none; } }`;
+        this._shadow.appendChild(st);
+        this._f6EstiloEl = st;
+    }
+    // Panel hermano del contenedor de la tabla (antes de él), nunca lo envuelve: div:has(table#id) de V12 no lo alcanza.
+    _f6AplicarPanel()
+    {
+        if (!this._table || !this._shadow) return;
+        if (!this.GroupPanel)
+        {
+            if (this._f6Panel) { this._f6Panel.remove(); }
+            this._f6Draggables(false);
+            return;
+        }
+        this._f6Estilo();
+        if (!this._f6Panel)
+        {
+            const p = document.createElement('div');
+            p.className = 'et-group-panel';
+            p.setAttribute('data-placeholder', 'Arrastre aquí el encabezado de una columna para agrupar');
+            this._f6Panel = p;
+            this._f6EventosPanel(p);
+        }
+        const cont = this._table.parentElement;
+        if (!this._f6Panel.isConnected && cont && cont.parentNode) cont.parentNode.insertBefore(this._f6Panel, cont);
+        this._f6EventosEncabezado();
+        this._f6Draggables(true);
+        this._f6PintarPanel();
+    }
+    _f6Agrupable(field)
+    {
+        const c = this.Columns.find(x => x && x.field === field);
+        return !!(c && field != undefined && field !== '' && !this._f1EsFalso(c.groupable ?? ''));
+    }
+    // Los th agrupables se pueden arrastrar (aunque no haya column-reorder).
+    _f6Draggables(on)
+    {
+        const enc = this._f3FilaEnc ? this._f3FilaEnc() : this._table?.tHead?.rows[0];
+        if (!enc) return;
+        Array.from(enc.cells).forEach(th => {
+            const f = th.getAttribute('field');
+            if (th.classList.contains('et-sel-col') || f == null) return;
+            if (on && this._f6Agrupable(f)) { if (th.getAttribute('draggable') !== 'true') { th.setAttribute('draggable', 'true'); th._f6Drag = true; } }
+            else if (th._f6Drag && !(this._f3Reorder && !this._f1EsFalso(this.Columns.find(c => c?.field === f)?.reorder ?? ''))) { th.removeAttribute('draggable'); th._f6Drag = false; }
+        });
+    }
+    _f6EventosEncabezado()
+    {
+        const thead = this._table?.tHead;
+        if (!thead || thead._f6UI) return;
+        thead._f6UI = true;
+        thead.addEventListener('dragstart', (e) => {
+            if (!this.GroupPanel) return;
+            let el = e.target; if (el && el.nodeType !== 1) el = el.parentElement;
+            const th = el?.closest?.('th');
+            const f = th?.getAttribute('field');
+            this._f6Arrastre = (f != null && this._f6Agrupable(f) && !this._f6Grupos.includes(f)) ? f : null;
+            if (this._f6Arrastre != null) { try { if (!e.dataTransfer.getData('text/plain')) e.dataTransfer.setData('text/plain', f); e.dataTransfer.effectAllowed = 'move'; } catch (x) { } }
+        });
+        thead.addEventListener('dragend', () => { this._f6Arrastre = null; this._f6Panel?.classList.remove('et-drop-over'); });
+    }
+    _f6EventosPanel(p)
+    {
+        const sobre = (e) => {
+            if (this._f6Arrastre == null && this._f6Chip == null) return;
+            e.preventDefault();
+            try { e.dataTransfer.dropEffect = 'move'; } catch (x) { }
+            p.classList.add('et-drop-over');
+            this._f3OcultarIndicador?.();
+        };
+        p.addEventListener('dragenter', sobre);
+        p.addEventListener('dragover', sobre);
+        p.addEventListener('dragleave', (e) => { if (!p.contains(e.relatedTarget)) p.classList.remove('et-drop-over'); });
+        p.addEventListener('drop', (e) => {
+            p.classList.remove('et-drop-over');
+            const th = this._f6Arrastre, chip = this._f6Chip;
+            if (th == null && chip == null) return;
+            e.preventDefault(); e.stopPropagation();
+            this._f6Arrastre = null; this._f6Chip = null;
+            this._f3FinArrastre?.();
+            // Posición: antes de la chip bajo el puntero si cae en su mitad izquierda; si no, después; al final por omisión.
+            const chips = Array.from(p.children);
+            let pos = this._f6Grupos.length;
+            for (let k = 0; k < chips.length; k++)
+            {
+                const r = chips[k].getBoundingClientRect();
+                if (e.clientX < r.left + r.width / 2 && (e.clientY <= r.bottom || k === chips.length - 1)) { pos = k; break; }
+            }
+            const g = this._f6Grupos.slice();
+            if (chip != null)
+            {
+                const from = g.indexOf(chip);
+                if (from < 0) return;
+                g.splice(from, 1);
+                if (pos > from) pos--;
+                g.splice(pos, 0, chip);
+            }
+            else
+            {
+                if (!this._f6Agrupable(th) || g.includes(th)) return;
+                g.splice(pos, 0, th);
+            }
+            this._f6ComoUsuario(() => this.GroupBy(g));
+        });
+    }
+    _f6ComoUsuario(fn) { return (typeof this._f3ComoUsuario === 'function') ? this._f3ComoUsuario(fn) : fn(); }
+    _f6Titulo(field)
+    {
+        const c = this.Columns.find(x => x && x.field === field);
+        return String(c?.title ?? field ?? '').trim();
+    }
+    _f6PintarPanel()
+    {
+        const p = this._f6Panel;
+        if (!p) return;
+        p.innerHTML = '';
+        this._f6Grupos.forEach(f => {
+            const chip = document.createElement('div');
+            chip.className = 'et-group-chip';
+            chip.setAttribute('data-field', f);
+            chip.setAttribute('draggable', 'true');
+            chip.setAttribute('tabindex', '0');
+            const s = document.createElement('span');
+            s.className = 'et-chip-label';
+            s.textContent = this._f6Titulo(f);
+            const x = document.createElement('button');
+            x.type = 'button';
+            x.className = 'et-chip-remove';
+            x.setAttribute('data-remove', '');
+            x.setAttribute('tabindex', '-1');
+            x.setAttribute('aria-label', 'Quitar agrupación por ' + this._f6Titulo(f));
+            x.textContent = '×';
+            chip.append(s, x);
+            x.addEventListener('click', (e) => { e.stopPropagation(); this._f6ComoUsuario(() => this.GroupBy(this._f6Grupos.filter(g => g !== f))); });
+            chip.addEventListener('dragstart', (e) => {
+                this._f6Chip = f;
+                chip.classList.add('et-dragging');
+                try { e.dataTransfer.setData('text/plain', f); e.dataTransfer.effectAllowed = 'move'; } catch (z) { }
+            });
+            chip.addEventListener('dragend', () => { this._f6Chip = null; chip.classList.remove('et-dragging'); });
+            chip.addEventListener('keydown', (e) => {
+                const g = this._f6Grupos.slice(), i = g.indexOf(f);
+                if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); this._f6ComoUsuario(() => this.GroupBy(g.filter(x => x !== f))); }
+                else if (e.ctrlKey && (e.key === 'ArrowLeft' || e.key === 'ArrowRight'))
+                {
+                    const j = i + (e.key === 'ArrowLeft' ? -1 : 1);
+                    if (j < 0 || j >= g.length) return;
+                    e.preventDefault();
+                    g.splice(i, 1); g.splice(j, 0, f);
+                    this._f6ComoUsuario(() => this.GroupBy(g));
+                    this._f6Panel?.querySelector(`.et-group-chip[data-field="${CSS.escape(f)}"]`)?.focus();
+                }
+            });
+            p.appendChild(chip);
+        });
+    }
+
+    // ---------- API (§11) ----------
+    getGroups() { return this._f6Grupos.slice(); }
+    GroupBy(fields)
+    {
+        let g = (Array.isArray(fields) ? fields : (fields == null || fields === '' ? [] : [fields]));
+        g = g.map(f => String(f)).filter((f, k, a) => a.indexOf(f) === k && this._f6Agrupable(f));
+        if (g.length && this.ShowAsTree)
+        {
+            console.warn('EditTable: la agrupación no funciona junto con show-tree; se conserva el árbol.');
+            return false;
+        }
+        if (JSON.stringify(g) === JSON.stringify(this._f6Grupos)) return false;
+        const args = this._f6Disparar('BeforeGroup', { groups: g.slice(), cancel: false });
+        if (args.cancel) return false;
+        if (Array.isArray(args.groups)) g = args.groups.map(f => String(f)).filter((f, k, a) => a.indexOf(f) === k && this._f6Agrupable(f));
+        this._f6Aplicar(g);
+        this._f6PintarPanel();
+        this._f6Disparar('GroupChanged', { groups: g.slice() });
+        this._f3Cambio?.('group');
+        this._f2Programar?.();
+        return true;
+    }
+    Ungroup() { return this.GroupBy([]); }
+    ExpandAllGroups() { return this._f6Todos(true); }
+    CollapseAllGroups() { return this._f6Todos(false); }
+    ExpandGroup(path) { return this._f6Alternar(path, true); }
+    CollapseGroup(path) { return this._f6Alternar(path, false); }
+
+    _f6Aplicar(g)
+    {
+        const tbody = this._f1TBodyPrincipal();
+        if (!tbody) { this._f6Grupos = g; return; }
+        if (this._f5Activo) { this._f6Grupos = g; this._f6Colapsados = new Set(); this._f6PendV.clear(); if (g.length) this._f6Estilo(); this._f6RearmarV(); return; }   // F5+F6: la lista virtual incluye los grupos
+        const antes = this._f6Grupos.length > 0;
+        if (!antes && g.length)
+        {
+            // Antes de agrupar, la posición del tr es el índice (mapa de F1).
+            this._f6Trs = [];
+            this._f6Idx = new WeakMap();
+            this._f6Pend.clear(); this._f6PendApi.clear();
+            let i = 0;
+            Array.from(tbody.rows).forEach(tr => {
+                if (tr.classList.contains('et-group-row') || tr.classList.contains('et-spacer')) return;
+                this._f6Trs[i] = tr; this._f6Idx.set(tr, i);
+                if (i >= this.DataArray.length) this._f6Pend.add(tr);
+                i++;
+            });
+        }
+        this._f6Grupos = g;
+        this._f6Colapsados = new Set();
+        if (g.length) { this._f6Estilo(); this._f6Dibujar(); }
+        else if (antes) this._f6Desagrupar(tbody);
+    }
+    // Vuelve a la lista normal: filas de datos en el orden de DataArray (las nuevas sin datos, en su índice).
+    _f6Desagrupar(tbody)
+    {
+        const act = this._shadow?.activeElement;
+        const enGrupo = !!act?.closest?.('tr.et-group-row');
+        tbody.querySelectorAll(':scope > tr.et-group-row').forEach(r => r.remove());
+        const frag = document.createDocumentFragment();
+        this._f6Trs.forEach(tr => { if (tr) { tr.classList.remove('hidde-row', 'et-group-hidden'); frag.appendChild(tr); } });
+        tbody.appendChild(frag);
+        this._f6Trs = []; this._f6Idx = new WeakMap(); this._f6Pend.clear(); this._f6PendApi.clear();
+        this._f6Restaurar(act, null);
+        if (enGrupo) this.EdiTable.focusedTable = null;
+        this._f3TrasDibujar?.();
+        this._f2Programar?.();
+    }
+    _f6Todos(expandir)
+    {
+        if (!this._f6Grupos.length) return false;
+        const antes = this._f6Colapsados.size;
+        if (expandir) this._f6Colapsados.clear();
+        else this._f6Modelo().forEach(e => { if (e.type === 'group') this._f6Colapsados.add(e.pathKey); });
+        if (antes === this._f6Colapsados.size && (expandir || antes === 0)) { if (expandir) return false; }
+        this._f6Visibilidad();
+        this._f6Disparar('GroupToggled', { path: null, expanded: !!expandir, all: true });
+        return true;
+    }
+    _f6Alternar(path, expandir)
+    {
+        if (!this._f6Grupos.length || !Array.isArray(path)) return false;
+        const k = JSON.stringify(path.map(x => (x == null ? '' : String(x))));
+        if (this._f5Activo) return this._f6AlternarV(k, expandir);   // F5+F6
+        const tr = this._f6FilaDeGrupo(k);
+        if (!tr) return false;
+        if (expandir === undefined) expandir = this._f6Colapsados.has(k);
+        if (this._f6Colapsados.has(k) === !expandir) return false;
+        if (expandir) this._f6Colapsados.delete(k); else this._f6Colapsados.add(k);
+        this._f6Visibilidad();
+        // Si el foco quedó dentro de lo que se colapsó, pasa a la fila del grupo.
+        const cur = this.CurrentTd()?.closest('tr');
+        const act = this._shadow?.activeElement?.closest?.('tr');
+        if (!expandir && ((cur && cur.classList.contains('hidde-row')) || (act && act !== tr && act.classList.contains('hidde-row')))) this._f6EnfocarGrupo(this._f6FilaDeGrupo(k));
+        this._f6Disparar('GroupToggled', { path: JSON.parse(k), expanded: !!expandir });
+        return true;
+    }
+    _f6FilaDeGrupo(pathKey)
+    {
+        if (this._f5Activo) { const p = this._f6PosGrupo.get(pathKey); return (p == null ? null : (this._f5Trs.get(p) ?? null)); }   // F5+F6: solo si está dibujada
+        const tbody = this._f1TBodyPrincipal();
+        if (!tbody) return null;
+        for (const tr of tbody.rows) if (tr._f6Grupo && tr._f6Grupo.pathKey === pathKey) return tr;
+        return null;
+    }
+
+    // ---------- modelo y dibujo ----------
+    // Orden de los grupos de un nivel invertido si la tabla está ordenada DESC por ese campo
+    // (th.ascendent marca DESC: clases invertidas, P36).
+    _f6Desc()
+    {
+        const d = {};
+        this._f6Grupos.forEach(f => { const th = (this._f3ThDe ? this._f3ThDe(f) : null); if (th && th.classList.contains('ascendent')) d[f] = true; });
+        return d;
+    }
+    _f6Modelo(pend)
+    {
+        const idx = [];
+        if (this._f5Activo)   // F5+F6: todas las filas del modelo, menos las nuevas pendientes
+        {
+            if (pend === undefined) pend = this._f6PendIdx();
+            for (let i = 0; i < this.DataArray.length; i++) if (!pend || !pend.has(i)) idx.push(i);
+        }
+        else
+        for (let i = 0; i < this.DataArray.length; i++) { const tr = this._f6Trs[i]; if (tr && !this._f6Pend.has(tr)) idx.push(i); }
+        return EditTable.groupRows(this.DataArray, this._f6Grupos, { indices: idx, collapsed: this._f6Colapsados, desc: this._f6Desc() });
+    }
+    _f6Subtotales(indices)
+    {
+        const out = [];
+        if (typeof this._f2TieneTotal !== 'function') return out;
+        const filas = indices.map(i => this.DataArray[i]).filter(r => r != undefined);
+        this.Columns.forEach((col, i) => {
+            if (!this._f2TieneTotal(col) || col.field == undefined) return;
+            let texto = '';
+            try { texto = this._f2TextoPie(col, this._f2CalcularColumna(col, filas, 'group')); } catch (e) { texto = ''; }
+            out.push({ i, col, texto });
+        });
+        return out;
+    }
+    _f6TextoLlave(e)
+    {
+        const col = this.Columns.find(c => c && c.field === e.field);
+        let t = e.key;
+        try { if (col && e.indices.length && typeof this._f4Texto === 'function') t = this._f4Texto(col, this.DataArray[e.indices[0]], false); } catch (x) { }
+        t = String(t ?? '');
+        return (t.trim() === '' ? '(vacío)' : t);
+    }
+    // Construye un tr.et-group-row (sin índice de datos).
+    _f6FilaGrupo(e)
+    {
+        const tr = document.createElement('tr');
+        tr.className = 'et-group-row';
+        tr.setAttribute('data-level', String(e.level));
+        tr.setAttribute('data-key', e.key);
+        tr.setAttribute('aria-level', String(e.level + 1));
+        tr.setAttribute('aria-expanded', String(e.expanded));
+        if (!e.visible) tr.classList.add('hidde-row', 'et-group-hidden');
+        tr._f6Grupo = e;
+        const sys = (this._etSysCols?.() ?? 0);
+        for (let s = 0; s < sys; s++) { const td = document.createElement('td'); td.className = 'et-sel-col'; tr.appendChild(td); }
+
+        const etiqueta = document.createElement('div');
+        etiqueta.className = 'et-group-label';
+        etiqueta.setAttribute('tabindex', '-1');
+        etiqueta.style.paddingLeft = (e.level * 1.25) + 'rem';
+        const tg = document.createElement('span'); tg.className = 'et-group-toggle'; tg.textContent = '▾';
+        const ti = document.createElement('span'); ti.className = 'et-group-title'; ti.textContent = this._f6Titulo(e.field) + ':';
+        const ll = document.createElement('span'); ll.className = 'et-group-key'; ll.textContent = this._f6TextoLlave(e);
+        const ct = document.createElement('span'); ct.className = 'et-group-count'; ct.textContent = '(' + e.count + ')';
+        etiqueta.append(tg, ti, ll, ct);
+
+        const subt = this._f6Subtotales(e.indices);
+        const oculta = (c) => (c?.field != undefined && this._f1ColumnaOculta(c.field));
+        if (this._f6Resumen === 'inline')
+        {
+            const primera = this.Columns.findIndex(c => c && !oculta(c));
+            this.Columns.forEach((c, i) => {
+                const td = document.createElement('td');
+                td.className = 'et-group-cell';
+                if (oculta(c)) td.classList.add('hidde-col');
+                if (i === primera) td.appendChild(etiqueta);
+                const s = subt.find(x => x.i === i);
+                if (s && s.texto !== '')
+                {
+                    td.classList.add('et-group-sum');
+                    td.setAttribute('data-summary', String(c.summary).trim().toLowerCase());
+                    if (i === primera) td.append(' ', s.texto); else td.textContent = s.texto;
+                    if (c.textalign) td.style.textAlign = c.textalign;
+                }
+                tr.appendChild(td);
+            });
+        }
+        else
+        {
+            const td = document.createElement('td');
+            td.className = 'et-group-cell';
+            td.colSpan = Math.max(1, this.Columns.filter(c => c && !oculta(c)).length);
+            const partes = subt.filter(s => s.texto !== '').map(s => String(s.col.title ?? s.col.field).trim() + ': ' + s.texto);
+            if (partes.length)
+            {
+                const su = document.createElement('span');
+                su.className = 'et-group-sums';
+                su.textContent = '· ' + partes.join(' · ');
+                etiqueta.appendChild(su);
+            }
+            td.appendChild(etiqueta);
+            tr.appendChild(td);
+        }
+        tr._f6Firma = e.count + '|' + subt.map(s => s.texto).join('|') + '|' + ll.textContent;
+        tr.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            if (ev.target.closest('.et-group-toggle')) this._f6Alternar(tr._f6Grupo.path);
+            this._f6EnfocarGrupo(this._f6FilaDeGrupo(tr._f6Grupo.pathKey) ?? tr);
+        });
+        tr.addEventListener('dblclick', (ev) => { if (!ev.target.closest('.et-group-toggle')) this._f6Alternar(tr._f6Grupo.path); });
+        etiqueta.addEventListener('keydown', (ev) => this._f6TeclaGrupo(ev, tr));
+        return tr;
+    }
+    // Reacomoda el tbody: filas de grupo nuevas + filas de datos existentes (no se vuelven a pintar).
+    // Las filas nuevas pendientes se quedan junto a la fila que tenían antes.
+    _f6Dibujar()
+    {
+        const tbody = this._f1TBodyPrincipal();
+        if (!tbody || !this._f6Grupos.length) return;
+        if (this._f5Activo) { this._f6RearmarV({ expandirActual: true }); return; }   // F5+F6
+        const act = this._shadow?.activeElement;
+        const grupoFoco = act?.closest?.('tr.et-group-row')?._f6Grupo?.pathKey ?? null;
+        const anclas = [];
+        Array.from(tbody.rows).forEach(tr => {
+            if (!this._f6Pend.has(tr)) return;
+            let a = tr.previousElementSibling;
+            while (a && this._f6Pend.has(a)) a = a.previousElementSibling;
+            anclas.push([tr, a ? (a._f6Grupo ? 'g' + a._f6Grupo.pathKey : a) : null]);
+        });
+        tbody.querySelectorAll(':scope > tr.et-group-row').forEach(r => r.remove());
+        const seq = [];
+        let ent = this._f6Modelo();
+        // Si la fila con el foco quedó dentro de un grupo colapsado (por ejemplo, al editar su llave), se expande.
+        const ci = this._f6IndiceDeTr(this.CurrentTd()?.closest('tr'));
+        if (ci >= 0 && ent.some(e => e.type === 'data' && e.index === ci && !e.visible))
+        {
+            ent.forEach(e => { if (e.type === 'group' && e.indices.includes(ci)) this._f6Colapsados.delete(e.pathKey); });
+            ent = this._f6Modelo();
+        }
+        ent.forEach(e => {
+            if (e.type === 'group') { seq.push(this._f6FilaGrupo(e)); return; }
+            const tr = this._f6Trs[e.index];
+            tr.classList.toggle('hidde-row', !e.visible);
+            tr.classList.toggle('et-group-hidden', !e.visible);
+            seq.push(tr);
+        });
+        anclas.forEach(([tr, a]) => {
+            tr.classList.remove('hidde-row', 'et-group-hidden');
+            let k = -1;
+            if (a === null) k = -1;
+            else k = seq.findIndex(x => (typeof a === 'string' ? (x._f6Grupo && 'g' + x._f6Grupo.pathKey === a) : x === a));
+            if (a !== null && k < 0) k = seq.length - 1;
+            seq.splice(k + 1, 0, tr);
+        });
+        const frag = document.createDocumentFragment();
+        seq.forEach(tr => frag.appendChild(tr));
+        tbody.appendChild(frag);
+        this._f6Restaurar(act, grupoFoco);
+        this._f3TrasDibujar?.();
+        this._f2Programar?.();
+    }
+    _f6Restaurar(act, grupoFoco)
+    {
+        try
+        {
+            if (grupoFoco != null) { const g = this._f6FilaDeGrupo(grupoFoco); if (g) { g.querySelector('.et-group-label')?.focus({ preventScroll: true }); return; } }
+            if (act && act.isConnected && this._shadow.activeElement !== act && typeof act.focus === 'function') act.focus({ preventScroll: true });
+        }
+        catch (e) { }
+    }
+    // Solo cambia la visibilidad (expandir o colapsar), sin mover filas.
+    _f6Visibilidad()
+    {
+        const tbody = this._f1TBodyPrincipal();
+        if (!tbody) return;
+        if (this._f5Activo) { this._f6RearmarV(); return; }   // F5+F6
+        const pila = [];   // pila[nivel] = ese nivel y sus ancestros visibles y expandidos
+        for (const tr of tbody.rows)
+        {
+            const g = tr._f6Grupo;
+            if (g)
+            {
+                const vis = (g.level === 0 ? true : !!pila[g.level - 1]);
+                const exp = !this._f6Colapsados.has(g.pathKey);
+                g.expanded = exp; g.visible = vis;
+                tr.setAttribute('aria-expanded', String(exp));
+                tr.classList.toggle('hidde-row', !vis);
+                tr.classList.toggle('et-group-hidden', !vis);
+                pila[g.level] = vis && exp;
+                pila.length = g.level + 1;
+                continue;
+            }
+            const vis = (this._f6Pend.has(tr) || !pila.length || !!pila[this._f6Grupos.length - 1]);
+            tr.classList.toggle('hidde-row', !vis);
+            tr.classList.toggle('et-group-hidden', !vis);
+        }
+        this._f2Programar?.();
+    }
+    _f6Programar()
+    {
+        if (!this._f6Grupos.length || this._f6Programado) return;
+        this._f6Programado = true;
+        queueMicrotask(() => this._f6Sincronizar());
+    }
+    // Coloca las filas nuevas que ya se confirmaron y, si el orden lógico cambió, vuelve a acomodar;
+    // si no, solo actualiza conteos y subtotales de las filas de grupo.
+    _f6Sincronizar()
+    {
+        this._f6Programado = false;
+        const tbody = this._f1TBodyPrincipal();
+        if (!tbody || !this._f6Grupos.length) return;
+        if (this._f5Activo) return this._f6SincronizarV();   // F5+F6
+        const cur = this.CurrentTd()?.closest('tr') ?? null;
+        const colocadas = [];
+        this._f6Pend.forEach(tr => {
+            const i = this._f6Idx.get(tr);
+            if (!tr.isConnected || i == undefined) { this._f6Pend.delete(tr); this._f6PendApi.delete(tr); return; }
+            if (this.DataArray[i] == undefined) return;
+            if (tr === cur && !this._f6PendApi.has(tr)) return;   // el usuario la sigue capturando
+            this._f6Pend.delete(tr);
+            if (this._f6PendApi.has(tr)) { this._f6PendApi.delete(tr); colocadas.push(i); }
+        });
+        // Las que recibieron datos por código se vuelven a pintar con ellos.
+        colocadas.forEach(i => {
+            const tr = this._f6Trs[i];
+            const sel = this.EdiTable.GetSelector();
+            const td = (sel && tr.contains(sel)) ? sel.closest('td') : null;
+            this.UpdateRow(i);
+            if (td && !td.contains(this.EdiTable.GetSelector())) this.CellFocus(td);
+        });
+        const ent = this._f6Modelo();
+        const actual = [];
+        for (const tr of tbody.rows) { if (!this._f6Pend.has(tr)) actual.push(tr._f6Grupo ? 'g' + tr._f6Grupo.pathKey : tr); }
+        const nuevo = ent.map(e => (e.type === 'group' ? 'g' + e.pathKey : this._f6Trs[e.index]));
+        const igual = (actual.length === nuevo.length && actual.every((x, k) => x === nuevo[k]));
+        if (!igual) { this._f6Dibujar(); return; }
+        const porClave = new Map(ent.filter(e => e.type === 'group').map(e => [e.pathKey, e]));
+        Array.from(tbody.rows).forEach(tr => {
+            if (!tr._f6Grupo) return;
+            const e = porClave.get(tr._f6Grupo.pathKey);
+            if (!e) return;
+            const nueva = this._f6FilaGrupo(e);
+            if (nueva._f6Firma === tr._f6Firma) { tr._f6Grupo = e; return; }
+            const foco = tr.contains(this._shadow.activeElement);
+            tr.replaceWith(nueva);
+            if (foco) nueva.querySelector('.et-group-label')?.focus({ preventScroll: true });
+        });
+        this._f3TrasDibujar?.();
+    }
+    // Vuelve a construir las filas de grupo (cambió el orden, la visibilidad de columnas o la celda del sistema).
+    _f6TrasColumnas()
+    {
+        if (!this._f6Grupos.length) { if (this.GroupPanel) this._f6Draggables(true); return; }
+        const tbody = this._f1TBodyPrincipal();
+        if (!tbody) return;
+        if (this._f5Activo)   // F5+F6: solo las filas de grupo dibujadas
+        {
+            Array.from(this._f5Trs).forEach(([p, tr]) => { if (tr._f6Grupo) this._f6Reemplazar(tr, this._f6FilaGrupo(this._f5Lista[p]?.g ?? tr._f6Grupo)); });
+            this._f3TrasDibujar?.();
+            if (this.GroupPanel) { this._f6Draggables(true); this._f6PintarPanel(); }
+            return;
+        }
+        const porClave = new Map(this._f6Modelo().filter(e => e.type === 'group').map(e => [e.pathKey, e]));
+        Array.from(tbody.rows).forEach(tr => {
+            if (!tr._f6Grupo) return;
+            const e = porClave.get(tr._f6Grupo.pathKey) ?? tr._f6Grupo;
+            const foco = tr.contains(this._shadow.activeElement);
+            const nueva = this._f6FilaGrupo(e);
+            tr.replaceWith(nueva);
+            if (foco) nueva.querySelector('.et-group-label')?.focus({ preventScroll: true });
+        });
+        if (this.GroupPanel) { this._f6Draggables(true); this._f6PintarPanel(); }
+    }
+
+    // ---------- enganches en el código existente ----------
+    _f6IndiceDeTr(tr) { const i = (this._f5Activo ? this._f5Idx.get(tr) : this._f6Idx.get(tr)); return (i == undefined ? -1 : i); }   // F5+F6
+    _f6TrDeIndice(row) { return this._f6Trs[row]; }
+    _f6NumFilas()
+    {
+        const tbody = this._f1TBodyPrincipal();
+        if (!tbody) return 0;
+        let n = 0;
+        for (const tr of tbody.rows) if (!tr._f6Grupo) n++;
+        return n;
+    }
+    _f6EsGrupo(td) { return !!(this._f6Grupos.length && td && td.closest && td.closest('tr')?._f6Grupo); }
+    // _printRows volvió a dibujar las filas en el orden de DataArray: se rehace el mapa y se agrupa.
+    _f6TrasDibujar()
+    {
+        if (!this._f6Grupos.length) return;
+        if (this.ShowAsTree)
+        {
+            console.warn('EditTable: la agrupación no funciona junto con show-tree; se conserva el árbol.');
+            this._f6Grupos = []; this._f6Trs = []; this._f6Idx = new WeakMap(); this._f6Pend.clear(); this._f6PendApi.clear();
+            this._f6PintarPanel();
+            return;
+        }
+        const tbody = this._f1TBodyPrincipal();
+        this._f6Trs = []; this._f6Idx = new WeakMap(); this._f6Pend.clear(); this._f6PendApi.clear();
+        this._f6PendV.clear(); this._f6PosGrupo = new Map();   // F5+F6: salió del modo virtual
+        Array.from(tbody.rows).forEach((tr, i) => { this._f6Trs[i] = tr; this._f6Idx.set(tr, i); });
+        this._f6Dibujar();
+    }
+    _f6FilaBorrada(row)
+    {
+        if (!this._f6Grupos.length) return;
+        if (this._f5Activo) return;   // F5+F6: _f5TrasBorrar ya rehízo la lista (con conteos y subtotales)
+        const [tr] = this._f6Trs.splice(row, 1);
+        if (tr) { this._f6Pend.delete(tr); this._f6PendApi.delete(tr); }
+        this._f6Reindexar(row);
+        this._f6Programar();
+    }
+    _f6Reindexar(desde)
+    {
+        for (let i = desde; i < this._f6Trs.length; i++) { const tr = this._f6Trs[i]; if (tr) this._f6Idx.set(tr, i); }
+    }
+    // InsertRow con grupos: AddRow va al final de los datos; InsertRow(rw) en el índice rw, junto a la fila
+    // que tenía ese índice. La fila queda pendiente hasta que se confirma (§11, AutoAddRow).
+    _f6InsertarTr(tbody, rw)
+    {
+        if (!this._f6Grupos.length) return null;
+        const tr = document.createElement('tr');
+        let idx;
+        if (rw != undefined)
+        {
+            idx = Math.max(0, Math.min(Math.trunc(Number(rw)) || 0, this._f6Trs.length));
+            const ref = this._f6Trs[idx];
+            this._f6Trs.splice(idx, 0, tr);
+            this._f6Reindexar(idx);
+            if (ref && ref.parentElement === tbody) tbody.insertBefore(tr, ref); else tbody.appendChild(tr);
+        }
+        else
+        {
+            idx = Math.max(this.DataArray.length, this._f6Trs.length);
+            this._f6Trs[idx] = tr;
+            this._f6Idx.set(tr, idx);
+            tbody.appendChild(tr);
+        }
+        this._f6Pend.add(tr);
+        return tr;
+    }
+    _f6AlActualizar(row, field, stopfire)
+    {
+        const usuario = this._f6Confirmando;
+        this._f6Confirmando = false;
+        if (!this._f6Grupos.length) return;
+        if (this._f5Activo)   // F5+F6: fila nueva pendiente (por objeto)
+        {
+            const info = (this.DataArray[row] != null ? this._f6PendV.get(this.DataArray[row]) : undefined);
+            if (info) { info.tocado = true; if (!usuario && !stopfire) info.api = true; }
+            this._f6Programar();
+            return;
+        }
+        const tr = this._f6Trs[row];
+        if (tr && this._f6Pend.has(tr) && !usuario && !stopfire) this._f6PendApi.add(tr);
+        this._f6Programar();
+    }
+    // Al pasar el foco a otra fila, las filas nuevas que se dejaron se colocan en su grupo.
+    _f6TrasFoco(td)
+    {
+        if (this._f5Activo && this._f6Grupos.length && this._f6PendV.size)   // F5+F6
+        {
+            const i = this._f5Idx.get(td?.closest?.('tr')), o = (i === undefined ? undefined : this.DataArray[i]);
+            for (const x of this._f6PendV.keys()) if (x !== o) { this._f6Programar(); return; }
+            return;
+        }
+        if (!this._f6Grupos.length || !this._f6Pend.size) return;
+        const tr = td?.closest?.('tr');
+        for (const p of this._f6Pend) if (p !== tr) { this._f6Programar(); return; }
+    }
+    _f6CadaFila(fn)
+    {
+        const tbody = this._f1TBodyPrincipal();
+        if (!tbody) return;
+        Array.from(tbody.rows).forEach(tr => {
+            if (tr._f6Grupo) return;
+            const i = this._f6IndiceDeTr(tr);
+            fn(tr, i, (tr._etData ?? this.DataArray[i] ?? {}));
+        });
+    }
+    // Índices de datos entre dos filas, en el orden en que se ven (Mayús+clic de F4).
+    _f6IndicesEntre(a, b)
+    {
+        if (this._f5Activo)   // F5+F6: por posiciones de la lista virtual (las filas de grupos colapsados no están)
+        {
+            let pa = this._f5Pos[a] ?? -1, pb = this._f5Pos[b] ?? -1;
+            if (pa < 0 || pb < 0) return [...new Set([a, b])].filter(k => k >= 0 && k < this.DataArray.length);
+            if (pa > pb) [pa, pb] = [pb, pa];
+            const out = [];
+            for (let p = pa; p <= pb; p++) { const e = this._f5Lista[p]; if (e && e.tipo === 'datos') out.push(e.indice); }
+            return out;
+        }
+        const ta = this._f6Trs[a], tb = this._f6Trs[b];
+        const tbody = this._f1TBodyPrincipal();
+        if (!ta || !tb || !tbody) return [];
+        const filas = Array.from(tbody.rows).filter(tr => !tr._f6Grupo);
+        let i = filas.indexOf(ta), j = filas.indexOf(tb);
+        if (i > j) [i, j] = [j, i];
+        return filas.slice(i, j + 1).filter(tr => !tr.classList.contains('hidde-row') || tr === ta || tr === tb).map(tr => this._f6IndiceDeTr(tr)).filter(k => k >= 0);
+    }
+
+    // ---------- foco y teclado ----------
+    _f6Visibles()
+    {
+        const tbody = this._f1TBodyPrincipal();
+        return tbody ? Array.from(tbody.rows).filter(tr => !tr.classList.contains('hidde-row')) : [];
+    }
+    // Foco en una fila de grupo (P24): un elemento enfocable dentro de su celda; CurrentRowIndex() = -1.
+    _f6EnfocarGrupo(tr)
+    {
+        if (!tr || !tr._f6Grupo) return false;
+        const pk = tr._f6Grupo.pathKey, tenia = !!this.EdiTable.GetInput();
+        if (!this._f6Soltar()) return false;   // F5+F6: separado para usarlo antes de colapsar en virtual
+        if (tenia && !tr.isConnected) tr = this._f6FilaDeGrupo(pk);
+        if (!tr) return false;
+        this._fireBlur = false;
+        if (this.CSS.RowSelected) tr.parentElement?.querySelectorAll('tr.' + this.CSS.RowSelected).forEach(r => r.classList.remove(this.CSS.RowSelected));
+        this.EdiTable.focusedTable = this._getCurren(true);
+        tr.querySelector('.et-group-label')?.focus();
+        this._trackSelection(tr);
+        this._f6TrasFoco(tr.cells[0]);
+        return true;
+    }
+    // Confirma el editor y quita el selector (lo que hace _f6EnfocarGrupo antes de enfocar). false si no se pudo confirmar.
+    _f6Soltar()
+    {
+        const input = this.EdiTable.GetInput();
+        if (input)
+        {
+            const t = (this.EdiTable.focusedTable ?? this);
+            this._f1ConfirmDesdeCelda = true;
+            let ok;
+            try { ok = t.ConfirmEdit(input.closest('td')); } finally { this._f1ConfirmDesdeCelda = false; }
+            if (!ok) return false;
+        }
+        const sel = this.EdiTable.GetSelector();
+        if (sel)
+        {
+            const td = sel.closest('td');
+            const c = this._getVisibleColumnIndex(td);
+            if (c >= 0) this._f6Col = c;
+            this.SetTdValue(td, sel.innerHTML, true);
+            if (this.EdiTable.focusedTable != null) this.LeaveCell(td);
+            sel.remove();
+        }
+        return true;
+    }
+    // Mueve el foco a la fila visible anterior o siguiente (de datos o de grupo).
+    _f6Mover(desde, paso, col)
+    {
+        if (this._f5Activo)   // F5+F6: por posiciones de la lista virtual (desplaza y dibuja)
+        {
+            const k = this._f6PosDe(desde);
+            if (k < 0) return false;
+            const q = k + paso;
+            if (q < 0) return true;
+            if (q >= this._f5Lista.length) { if (paso > 0 && this.AutoAddRow && !desde._f6Grupo) this.AddRow(); return true; }
+            this._f6IrA(this._f5IrA(q), col);
+            return true;
+        }
+        const vis = this._f6Visibles();
+        let k = vis.indexOf(desde);
+        if (k < 0) return false;
+        let destino = vis[k + paso];
+        if (!destino)
+        {
+            if (paso > 0 && this.AutoAddRow && !desde._f6Grupo) this.AddRow();
+            return true;
+        }
+        if (Math.abs(paso) > 1 && !destino) destino = vis[paso > 0 ? vis.length - 1 : 0];
+        this._f6IrA(destino, col);
+        return true;
+    }
+    _f6IrA(tr, col)
+    {
+        if (!tr) return;
+        if (tr._f6Grupo) { this._f6EnfocarGrupo(tr); return; }
+        const tds = Array.from(tr.querySelectorAll('td:not(.hidde-col):not(.et-sel-col)'));
+        const td = tds[Math.min(Math.max(0, col ?? this._f6Col), tds.length - 1)];
+        if (td) this.CellFocus(td);
+    }
+    // NavUp/NavDown con grupos (en el selector o en el editor).
+    _f6Nav(td, paso)
+    {
+        if (!this._f6Grupos.length || !td) return false;
+        const c = this._getVisibleColumnIndex(td);
+        if (c >= 0) this._f6Col = c;
+        return this._f6Mover(td.closest('tr'), paso, this._f6Col);
+    }
+    _f6NavTo(row, col)
+    {
+        if (!this._f6Grupos.length) return false;
+        const tr = this.GetTrByIndex(row);
+        if (!tr) return true;
+        if (tr.classList.contains('hidde-row'))
+        {
+            this._f6Modelo().forEach(e => { if (e.type === 'group' && e.indices.includes(row)) this._f6Colapsados.delete(e.pathKey); });
+            this._f6Visibilidad();
+        }
+        const td = tr.querySelectorAll('td:not(.hidde-col):not(.et-sel-col)')[col];
+        if (td) this.CellFocus(td);
+        return true;
+    }
+    // Teclas del selector de datos que con grupos se resuelven en el orden en que se ven.
+    _f6Tecla(e, selector)
+    {
+        if (!this._f6Grupos.length) return false;
+        const td = selector?.closest?.('td');
+        const tr = td?.closest('tr');
+        if (!tr) return false;
+        if (this._f5Activo) return this._f6TeclaV(e, td, tr);   // F5+F6
+        const vis = this._f6Visibles();
+        const col = Math.max(0, this._getVisibleColumnIndex(td));
+        let destino = null;
+        if (e.ctrlKey && e.key === 'Home') destino = vis[0];
+        else if (e.ctrlKey && e.key === 'End') destino = vis[vis.length - 1];
+        else if (!e.ctrlKey && (e.key === 'PageUp' || e.key === 'PageDown'))
+        {
+            const k = vis.indexOf(tr), p = (e.key === 'PageUp' ? -1 : 1) * (Number(this.PagOffSet) || 10);
+            destino = vis[Math.max(0, Math.min(vis.length - 1, k + p))];
+        }
+        else if (e.ctrlKey && e.key === 'Delete' && this.AutoDelRow)
+        {
+            e.preventDefault(); e.stopPropagation();
+            const k = vis.indexOf(tr);
+            const sig = vis.slice(k + 1).find(x => !x._f6Grupo) ?? vis.slice(0, k).reverse().find(x => !x._f6Grupo);
+            if (this.DeleteRow(this.CurrentRowIndex()) && sig) this._f6IrA(sig, col);
+            return true;
+        }
+        else return false;
+        e.preventDefault(); e.stopPropagation();
+        this._f6Col = col;
+        this._f6IrA(destino, col);
+        return true;
+    }
+    // Teclado en una fila de grupo: flechas recorren, Enter o Espacio expanden o colapsan (§11).
+    _f6TeclaGrupo(e, tr)
+    {
+        tr = (tr.isConnected ? tr : this._f6FilaDeGrupo(tr._f6Grupo.pathKey)) ?? tr;
+        const g = tr._f6Grupo;
+        const ctrl = (e.ctrlKey || e.metaKey);
+        let hecho = true;
+        switch (e.key)
+        {
+            case 'Enter': case ' ': case 'Spacebar':
+                this._f6Alternar(g.path); break;
+            case 'ArrowLeft':
+                if (g.expanded) this._f6Alternar(g.path, false); break;
+            case 'ArrowRight':
+                if (!g.expanded) this._f6Alternar(g.path, true); break;
+            case 'ArrowUp':
+                this._f6Mover(tr, -1, this._f6Col); break;
+            case 'ArrowDown': case 'Tab':
+                this._f6Mover(tr, 1, this._f6Col); break;
+            case 'Home': case 'End':
+            {
+                if (this._f5Activo) { if (ctrl) this._f6IrA(this._f5IrA(e.key === 'Home' ? 0 : this._f5Lista.length - 1), this._f6Col); break; }   // F5+F6
+                const vis = this._f6Visibles();
+                if (ctrl) this._f6IrA(e.key === 'Home' ? vis[0] : vis[vis.length - 1], this._f6Col);
+                break;
+            }
+            case 'PageUp': case 'PageDown':
+            {
+                if (this._f5Activo) { const k = this._f6PosDe(tr), d = (e.key === 'PageUp' ? -1 : 1) * (Number(this.PagOffSet) || 10); if (k >= 0) this._f6IrA(this._f5IrA(Math.max(0, Math.min(this._f5Lista.length - 1, k + d))), this._f6Col); break; }   // F5+F6
+                const vis = this._f6Visibles(), k = vis.indexOf(tr), p = (e.key === 'PageUp' ? -1 : 1) * (Number(this.PagOffSet) || 10);
+                this._f6IrA(vis[Math.max(0, Math.min(vis.length - 1, k + p))], this._f6Col);
+                break;
+            }
+            default:
+                hecho = false;
+                if (ctrl && (e.key ?? '').toLowerCase() === 'c' && this._f4Tecla?.(e)) return;
+        }
+        if (hecho) e.preventDefault();
+        e.stopPropagation();
+    }
+    // ---------- F5+F6: agrupación con virtual-rows (integración) ----------
+    // Con virtual-rows, F6 no reacomoda el tbody ni usa _f6Idx/_f6Trs: la lista de filas lógicas de F5
+    // (_f5Filas) sale de groupRows y trae solo las entradas visibles ({tipo:'grupo', g} y {tipo:'datos', indice});
+    // las de los grupos colapsados no están. El índice de las filas de datos es el de F5 (_f5Idx, de DataArray);
+    // las filas de grupo dan -1. Las filas nuevas (InsertRow/AddRow) quedan pendientes por objeto (_f6PendV)
+    // fuera de groupRows: al final o antes de la fila que tenía su índice, hasta que se confirman (§11).
+    _f6FilasV()
+    {
+        const c = this._f6Cache;
+        if (c) { this._f6Cache = null; return c; }
+        if (!this._f5Activo || !this._f6Grupos.length) return null;
+        const pend = this._f6PendIdx();
+        const out = [];
+        for (const e of this._f6Modelo(pend)) if (e.visible) out.push(e.type === 'group' ? { tipo: 'grupo', g: e } : { tipo: 'datos', indice: e.index });
+        if (pend) Array.from(pend).sort((a, b) => a[0] - b[0]).forEach(([i, info]) => {
+            const ai = (info.ancla != null ? pend.porObj.get(info.ancla) : undefined);
+            const k = (ai !== undefined ? out.findIndex(x => x.tipo === 'datos' && x.indice === ai) : -1);
+            const x = { tipo: 'datos', indice: i };
+            if (k < 0) out.push(x); else out.splice(k, 0, x);
+        });
+        return out;
+    }
+    // Pendientes por índice actual (quita las que ya no están en DataArray). null si no hay.
+    _f6PendIdx()
+    {
+        if (!this._f6PendV.size) return null;
+        const porObj = new Map();
+        this.DataArray.forEach((o, i) => { if (o != null && typeof o == 'object' && !porObj.has(o)) porObj.set(o, i); });
+        const m = new Map();
+        Array.from(this._f6PendV).forEach(([o, info]) => { const i = porObj.get(o); if (i === undefined) this._f6PendV.delete(o); else m.set(i, info); });
+        m.porObj = porObj;
+        return (m.size ? m : null);
+    }
+    _f6InsertadaV(obj, ancla)
+    {
+        if (!this._f6Grupos.length) return;
+        this._f6PendV.set(obj, { ancla: (ancla ?? null), tocado: false, api: false });
+    }
+    _f6AlRedibujarV()
+    {
+        this._f6Trs = []; this._f6Idx = new WeakMap(); this._f6Pend.clear(); this._f6PendApi.clear();
+        this._f6PendV.clear();
+    }
+    _f6TrasArmar()
+    {
+        if (!this._f6Grupos.length) { if (this._f6PosGrupo.size) this._f6PosGrupo = new Map(); return; }
+        const m = new Map();
+        this._f5Lista.forEach((e, p) => { if (e && e.tipo === 'grupo') m.set(e.g.pathKey, p); });
+        this._f6PosGrupo = m;
+    }
+    // F5 llama aquí para dibujar una entrada que no es de datos: la fila de grupo (sin índice de datos).
+    _f5DibujarEntrada(e, p)
+    {
+        if (!e || e.tipo !== 'grupo' || !e.g) return null;
+        const tr = this._f6FilaGrupo(e.g);
+        // Mismo paso que las filas de datos (los rellenos suponen un alto uniforme).
+        if (this._f5Paso > 0 && !this._table.classList.contains('et-vfija')) tr.style.height = Math.max(0, this._f5Paso - this._f5Espacio()) + 'px';
+        return tr;
+    }
+    // Después de _f5Rearmar: las filas de grupo dibujadas toman los datos nuevos de su grupo y el DOM queda en el
+    // orden de la lista (F5 no mueve los tr que conserva; con grupos el orden relativo puede cambiar).
+    _f6TrasRearmar()
+    {
+        const tbody = this._table?.tBodies[0];
+        if (!this._f5Activo || !tbody) return;
+        let cambio = false;
+        if (this._f6Grupos.length) Array.from(this._f5Trs).forEach(([p, tr]) => {
+            if (!tr._f6Grupo) return;
+            const e = this._f5Lista[p]?.g;
+            if (!e) return;
+            const nueva = this._f6FilaGrupo(e);
+            if (nueva._f6Firma === tr._f6Firma && nueva.cells.length === tr.cells.length && nueva.getAttribute('aria-expanded') === tr.getAttribute('aria-expanded')) { tr._f6Grupo = e; return; }
+            this._f6Reemplazar(tr, nueva);
+            cambio = true;
+        });
+        const pos = (tr) => { const p = this._f5PosTr.get(tr); return ((p !== undefined && this._f5Trs.get(p) === tr) ? p : undefined); };
+        const filas = Array.from(tbody.rows).filter(tr => !tr.classList.contains('et-spacer') && pos(tr) !== undefined);
+        let ordenado = true;
+        for (let j = 1; j < filas.length && ordenado; j++) if (pos(filas[j]) <= pos(filas[j - 1])) ordenado = false;
+        if (!ordenado)
+        {
+            // Se conserva la fila con el selector, el editor o el foco; las que quedan fuera de orden se quitan
+            // (se vuelven a dibujar en su lugar con el siguiente _f5Pintar).
+            const el = (this._shadow?.getElementById(this.EdiTable.Const.InputId) ?? this._shadow?.getElementById(this.EdiTable.Const.SelectorId) ?? this._shadow?.activeElement);
+            const fija = el?.closest?.('tr');
+            const fp = (fija ? pos(fija) : undefined);
+            let antes = true, ultimo = -1;
+            for (const tr of filas)
+            {
+                const p = pos(tr);
+                if (tr === fija) { antes = false; ultimo = p; continue; }
+                if ((fp !== undefined && (antes ? p > fp : p < fp)) || p <= ultimo) { this._f5Trs.delete(p); tr.remove(); continue; }
+                ultimo = p;
+            }
+            this._f5Sucio = true;
+        }
+        if (cambio) this._f3TrasDibujar?.();
+    }
+    _f6Reemplazar(tr, nueva)
+    {
+        const foco = tr.contains(this._shadow.activeElement);
+        if (tr.style.height && !nueva.style.height) nueva.style.height = tr.style.height;
+        tr.replaceWith(nueva);
+        if (this._f5Activo) { const p = this._f5PosTr.get(tr); if (p !== undefined && this._f5Trs.get(p) === tr) { this._f5Trs.set(p, nueva); this._f5PosTr.set(nueva, p); } }
+        if (foco) nueva.querySelector('.et-group-label')?.focus({ preventScroll: true });
+    }
+    // La fila de datos con el selector o el editor (en virtual), o null.
+    _f6TrActualV()
+    {
+        const el = this._shadow?.getElementById(this.EdiTable.Const.InputId) ?? this._shadow?.getElementById(this.EdiTable.Const.SelectorId);
+        const tr = el?.closest('tr');
+        return ((tr && this._f5Idx.has(tr)) ? tr : null);
+    }
+    _f6PosDe(tr)
+    {
+        const p = this._f5PosTr.get(tr);
+        return ((p !== undefined && this._f5Trs.get(p) === tr) ? p : -1);
+    }
+    _f6ExisteGrupo(k) { return this._f6PosGrupo.has(k) || this._f6Modelo().some(e => e.type === 'group' && e.pathKey === k); }
+    // Vuelve a armar la lista virtual con los grupos actuales. Si la fila actual queda dentro de un grupo colapsado:
+    // con expandirActual se expanden sus grupos (como _f6Dibujar); si no, el foco pasa al grupo visible que la contiene.
+    _f6RearmarV(o = {})
+    {
+        if (!this._f5Activo) return false;
+        const cur = this._f6TrActualV();
+        const ci = (cur ? (this._f5Idx.get(cur) ?? -1) : -1);
+        let lista = (this._f6Grupos.length ? this._f6FilasV() : null);
+        let destino = null;
+        if (lista && ci >= 0 && !lista.some(e => e.tipo === 'datos' && e.indice === ci))
+        {
+            if (o.expandirActual)
+            {
+                this._f6Modelo().forEach(e => { if (e.type === 'group' && e.indices.includes(ci)) this._f6Colapsados.delete(e.pathKey); });
+                lista = this._f6FilasV();
+            }
+            else
+            {
+                lista.forEach(e => { if (e.tipo === 'grupo' && e.g.indices.includes(ci)) destino = e.g.pathKey; });
+                if (!this._f6Soltar()) return false;
+            }
+        }
+        this._f6Cache = lista;
+        try { this._f5Rearmar(); } finally { this._f6Cache = null; }
+        this._f5Pintar();
+        if (destino != null) { const p = this._f6PosGrupo.get(destino); const tr = (p == null ? null : this._f5IrA(p)); if (tr) this._f6EnfocarGrupo(tr); }
+        this._f3TrasDibujar?.();
+        this._f2Programar?.();
+        return true;
+    }
+    _f6AlternarV(k, expandir)
+    {
+        if (!this._f6ExisteGrupo(k)) return false;
+        if (expandir === undefined) expandir = this._f6Colapsados.has(k);
+        if (this._f6Colapsados.has(k) === !expandir) return false;
+        const actG = this._shadow?.activeElement?.closest?.('tr.et-group-row');
+        if (expandir) this._f6Colapsados.delete(k); else this._f6Colapsados.add(k);
+        this._f6RearmarV();
+        // Si el foco estaba en un subgrupo que quedó oculto, pasa a la fila del grupo.
+        if (!expandir && actG && !actG.isConnected) { const p = this._f6PosGrupo.get(k); const tr = (p == null ? null : this._f5IrA(p)); if (tr) this._f6EnfocarGrupo(tr); }
+        this._f6Disparar('GroupToggled', { path: JSON.parse(k), expanded: !!expandir });
+        return true;
+    }
+    // GetTrByIndex/NavTo hacia una fila de un grupo colapsado: se expanden sus grupos (sin GroupToggled). Su posición.
+    _f6MostrarFilaV(row)
+    {
+        if (!this._f5Activo || !this._f6Grupos.length) return -1;
+        let cambio = false;
+        this._f6Modelo().forEach(e => { if (e.type === 'group' && this._f6Colapsados.has(e.pathKey) && e.indices.includes(row)) { this._f6Colapsados.delete(e.pathKey); cambio = true; } });
+        if (cambio) this._f6RearmarV();
+        return (this._f5Pos[row] ?? -1);
+    }
+    _f6SincronizarV()
+    {
+        const cur = this._f6TrActualV();
+        const curObj = (cur ? this.DataArray[this._f5Idx.get(cur)] : undefined);
+        const repintar = [];
+        Array.from(this._f6PendV).forEach(([o, info]) => {
+            if (!info.tocado) return;
+            if (o === curObj && !info.api) return;   // el usuario la sigue capturando
+            this._f6PendV.delete(o);
+            if (info.api) repintar.push(o);
+        });
+        this._f6RearmarV({ expandirActual: true });
+        repintar.forEach(o => {
+            const i = this.DataArray.indexOf(o), tr = (i >= 0 ? this._f5TrDibujado(i) : undefined);
+            if (!tr) return;
+            const sel = this.EdiTable.GetSelector();
+            const td = (sel && tr.contains(sel)) ? sel.closest('td') : null;
+            this.UpdateRow(i);
+            if (td && !td.contains(this.EdiTable.GetSelector())) this.CellFocus(td);
+        });
+    }
+    // Teclas del selector con grupos en virtual (Ctrl+Inicio/Fin, RePág/AvPág, Ctrl+Supr), por posiciones.
+    _f6TeclaV(e, td, tr)
+    {
+        const n = this._f5Lista.length, k = this._f6PosDe(tr);
+        if (k < 0) return false;
+        const col = Math.max(0, this._getVisibleColumnIndex(td));
+        let q = null;
+        if (e.ctrlKey && e.key === 'Home') q = 0;
+        else if (e.ctrlKey && e.key === 'End') q = n - 1;
+        else if (!e.ctrlKey && (e.key === 'PageUp' || e.key === 'PageDown')) q = Math.max(0, Math.min(n - 1, k + (e.key === 'PageUp' ? -1 : 1) * (Number(this.PagOffSet) || 10)));
+        else if (e.ctrlKey && e.key === 'Delete' && this.AutoDelRow)
+        {
+            e.preventDefault(); e.stopPropagation();
+            let s = -1;
+            for (let j = k + 1; j < n && s < 0; j++) if (this._f5Lista[j]?.tipo === 'datos') s = j;
+            for (let j = k - 1; j >= 0 && s < 0; j--) if (this._f5Lista[j]?.tipo === 'datos') s = j;
+            const obj = (s >= 0 ? this.DataArray[this._f5Lista[s].indice] : undefined);
+            if (this.DeleteRow(this.CurrentRowIndex()) && obj !== undefined) { const i = this.DataArray.indexOf(obj); if (i >= 0) this._f6IrA(this.GetTrByIndex(i), col); }
+            return true;
+        }
+        else return false;
+        e.preventDefault(); e.stopPropagation();
+        this._f6Col = col;
+        this._f6IrA(this._f5IrA(q), col);
+        return true;
+    }
+    // ===== F6: fin
 }
 
 customElements.define('edit-table', EditTable);

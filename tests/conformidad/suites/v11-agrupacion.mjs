@@ -126,7 +126,7 @@ t('16', 'con show-tree gana el árbol y hay un aviso en consola', ['§11-h'], as
 });
 t('17', 'AutoAddRow con agrupación: la fila nueva va al final de DataArray y aparece en su grupo al confirmarse', ['§11-i'], async (c) => {
   await c.abrir(pag());
-  await c.ev(() => { const t = __ct.t('t1'); t.GroupBy(['linea']); t.AddRow(); const i = t.DataArray.length - 1; t.UpdateDataMember(i, 'codigo', 'A6'); t.UpdateDataMember(i, 'linea', 'Eléctrico'); });
+  await c.ev(() => { const t = __ct.t('t1'); t.GroupBy(['linea']); const i = t.DataArray.length; t.AddRow(); /* AddRow solo crea la fila en el DOM; la entrada nace al editar (ver AJUSTES.md, sum-13) */ t.UpdateDataMember(i, 'codigo', 'A6'); t.UpdateDataMember(i, 'linea', 'Eléctrico'); });
   await c.cuadro();
   c.igual((await c.datos()).map(x => x.codigo).pop(), 'A6');
   const o = await orden(c);

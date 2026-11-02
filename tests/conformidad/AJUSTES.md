@@ -28,3 +28,13 @@ la spec o el comportamiento actual, no defectos del componente. Cada renglón: p
 | Prueba | Motivo | Cambio |
 |---|---|---|
 | `dis-*` que todavía usaban `RUTA` (entre ellas `dis-23` y `dis-26`) | Con `--paralelo` > 1, dos pruebas registraban páginas distintas en la misma ruta. `dis-26` reemplazaba la página de `dis-23` (una tabla sin `id`) justo cuando `dis-23` recargaba, así que el ancho no se restauraba (verificado: pasa 3 de 3 sola y falla en paralelo) | Cada prueba usa su propia ruta: `R('<id>')` |
+| `grp-17` (`v11-agrupacion.mjs`) | Suponía que `AddRow()` agrega una entrada a `DataArray` (mismo caso que `sum-13`). | El índice de la fila nueva se toma como `DataArray.length` antes de `AddRow()`. |
+
+## Integración F5+F6 (rama `integracion-f5-f6`, decisiones del coordinador, 2026-11-01)
+
+| Prueba | Motivo | Cambio |
+|---|---|---|
+| `vir-02`, `vir-04`, `vir-11` (`v10-rendimiento.mjs`) y `lim-06` (`v12-limites-y-r1.mjs`) | Desplazaban `#sc`, pero sin `control-styles` el que desplaza es el div interno del componente (`overflow:auto`); `#sc` no se mueve y no se dibujaba la zona pedida. | Las páginas declaran el `control-styles` real de V12, `div:has(table#t1){overflow:revert !important}`, así que el scroll vive en `#sc`, como en V12. |
+| `ren-06` (`v10-rendimiento.mjs`) | Exigía `tr._etData === DataArray[i]` en árbol, pero el banco (R1) congela que `onRowPaint` reciba una copia en el modo árbol. Manda el banco. | Acepta el mismo objeto o una copia equivalente en contenido (cada campo de `DataArray[i]` con el mismo valor). |
+| `ren-03` (`v10-rendimiento.mjs`) | `NavTo` < 16 ms con 5,000 filas sin virtualizar depende del recálculo de estilos de Chrome con todo el DOM dibujado (se midió 272 ms en el laboratorio). | La meta de 16 ms se exige solo con `virtual-rows`. Sin él, el tiempo queda como nota informativa en el informe. |
+| `vir-19` (nueva, `v10-rendimiento.mjs`) | Árbol + `virtual-rows`: se decidió mantener el árbol sin virtualizar. | Comprueba que con `show-tree` y `virtual-rows` se dibujan todas las filas, sin `tr.et-spacer`, y que hay un solo `console.warn` que menciona `virtual-rows`. |

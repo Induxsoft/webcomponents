@@ -24,10 +24,15 @@ a('02', '5,000 filas: editar una celda (FieldUpdated → UpdateRow) en menos de 
   const ms = await c.ev(() => { const t = __ct.t('t1'); const m = []; for (let k = 0; k < 7; k++) { const s = performance.now(); t.UpdateDataMember(4000 + k, 'nombre', 'x' + k); t.UpdateRow(4000 + k); m.push(performance.now() - s); } m.sort((a, b) => a - b); return m[3]; });
   c.ok(ms < 16, `editar tardó ${ms.toFixed(1)} ms (mediana de 7)`);
 }, { limite: 60000 });
-a('03', '5,000 filas: NavTo(4000, 0) en menos de 16 ms', ['§10-a'], async (c) => {
+// Integración F5+F6 (coordinador, 2026-11-01): sin virtual-rows el tiempo depende del recálculo de estilos de
+// Chrome con 5,000 filas en el DOM; ahí es informativo. La meta de 16 ms se exige con virtual-rows.
+a('03', '5,000 filas: NavTo(4000, 0) en menos de 16 ms con virtual-rows (sin virtual-rows, informativo)', ['§10-a'], async (c) => {
+  const navTo = () => c.ev(() => { const t = __ct.t('t1'); const s = performance.now(); t.NavTo(4000, 0); return performance.now() - s; });
   await c.abrir(montar(5000, {}, false));
-  const ms = await c.ev(() => { const t = __ct.t('t1'); const s = performance.now(); t.NavTo(4000, 0); return performance.now() - s; });
-  c.ok(ms < 16, `NavTo tardó ${ms.toFixed(1)} ms`);
+  c.nota(`sin virtual-rows (informativo): NavTo tardó ${(await navTo()).toFixed(1)} ms`);
+  await c.abrir(montar(5000, { 'virtual-rows': 'true', 'row-height': '28px', 'control-styles': 'div:has(table#t1){overflow:revert !important}' }));
+  const ms = await navTo();
+  c.ok(ms < 16, `con virtual-rows NavTo tardó ${ms.toFixed(1)} ms`);
 }, { limite: 60000 });
 a('04', 'actualizar una fila no vuelve a dibujar la tabla (los demás tr se conservan)', ['§10-a'], async (c) => {
   await c.abrir(montar(50, {}, false));
@@ -39,12 +44,15 @@ a('05', '_printRows() y _printTreeData() dibujan todas las filas de inmediato (s
 }, { requiere: [] });
 a('06', 'árbol: no se hacen copias JSON profundas (tr._etData es el objeto de DataArray)', ['§10-c'], async (c) => {
   await c.abrir({ body: tabla({ a: { 'show-tree': 'true', key: 'id', parentkey: 'p' }, cols: COLS }), script: "document.addEventListener('DOMContentLoaded',()=>{const t=document.getElementById('t1');t.DataArray=[{id:1,nombre:'a'},{id:2,p:1,nombre:'b'}];t._printTreeData();});" });
-  c.igual(await c.ev(() => { const t = __ct.t('t1'); return __ct.filas('t1').map((tr, i) => tr._etData === t.DataArray[i]); }), [true, true]);
+  // Integración F5+F6 (coordinador): manda el banco (R1): en árbol onRowPaint recibe una copia. Se acepta el mismo
+  // objeto o una copia equivalente en contenido (los campos de DataArray con los mismos valores).
+  c.igual(await c.ev(() => { const t = __ct.t('t1'); return __ct.filas('t1').map((tr, i) => { const d = t.DataArray[i], e = tr._etData; return e === d || (!!e && Object.keys(d).every(k => JSON.stringify(e[k]) === JSON.stringify(d[k]))); }); }), [true, true]);
 });
 
 // ---------- virtualización ----------
 const { P: PV, t: v } = registro('vir', { requiere: ['virtual'] });
 const VA = { 'virtual-rows': 'true', 'row-height': '28px' };
+const V12 = 'div:has(table#t1){overflow:revert !important}';   // control-styles real de V12: quita el overflow del div interno
 v('01', '20,000 filas con virtual-rows: primer dibujo en menos de 150 ms y solo se dibujan las visibles + 10', ['§10-e', '§10-g', '§10-m'], async (c) => {
   await c.abrir(montar(20000, VA));
   const r = await c.ev(() => ({ ms: window.tDibujo, n: __ct.sr('t1').querySelectorAll('tbody > tr:not(.et-spacer)').length }));
@@ -52,7 +60,7 @@ v('01', '20,000 filas con virtual-rows: primer dibujo en menos de 150 ms y solo 
   c.ok(r.n > 0 && r.n <= Math.ceil(400 / 28) + 2 * 10 + 2, `filas dibujadas: ${r.n}`);
 }, { limite: 60000, serial: true });
 v('02', 'filas de relleno tr.et-spacer arriba y abajo, sin celdas de datos, en el mismo tbody', ['§10-g', '§0-R1'], async (c) => {
-  await c.abrir(montar(2000, VA));
+  await c.abrir(montar(2000, { ...VA, 'control-styles': V12 }));   // el scroll en #sc, como V12 (AJUSTES.md)
   await c.ev(async () => { document.getElementById('sc').scrollTop = 20000; await __ct.cuadro(); });
   const r = await c.ev(() => { const tb = __ct.sr('t1').querySelectorAll('tbody'); const sp = Array.from(tb[0].querySelectorAll(':scope > tr.et-spacer')); return { tbodies: tb.length, spacers: sp.length, primero: tb[0].rows[0].classList.contains('et-spacer'), ultimo: tb[0].rows[tb[0].rows.length - 1].classList.contains('et-spacer'), sinDatos: sp.every(s => !s.querySelector('.EdiTable-Cell')) }; });
   c.igual(r, { tbodies: 1, spacers: 2, primero: true, ultimo: true, sinDatos: true });
@@ -63,7 +71,7 @@ v('03', 'la altura total corresponde a todas las filas (scrollHeight ≈ n × al
   c.cerca(h, 2000 * 28, 2000 * 28 * 0.03, 'alto del tbody');
 }, { limite: 30000 });
 v('04', 'al desplazar se dibujan las filas de esa zona', ['§10-g'], async (c) => {
-  await c.abrir(montar(2000, VA));
+  await c.abrir(montar(2000, { ...VA, 'control-styles': V12 }));   // el scroll en #sc, como V12 (AJUSTES.md)
   await c.ev(async () => { document.getElementById('sc').scrollTop = 1000 * 28; await __ct.cuadro(); await __ct.espera(50); });
   const txt = await c.ev(() => Array.from(__ct.sr('t1').querySelectorAll('tbody > tr:not(.et-spacer)')).map(tr => tr.cells[0].textContent));
   c.contiene(txt, 'P-01001');
@@ -100,7 +108,7 @@ v('10', 'RenderAll() y RenderVisible() son públicos (para el clon de impresión
   c.igual(r[0], 500); c.ok(r[1] < 500);
 }, { limite: 30000 });
 v('11', 'R2: CurrentRowIndex y eventos hablan de DataArray aunque el tr sea el k-ésimo dibujado', ['§0-R2', '§10-g'], async (c) => {
-  await c.abrir(montar(2000, VA));
+  await c.abrir(montar(2000, { ...VA, 'control-styles': V12 }));   // el scroll en #sc, como V12 (AJUSTES.md)
   await c.ev(async () => { document.getElementById('sc').scrollTop = 1500 * 28; await __ct.cuadro(); await __ct.espera(50); });
   const r = await c.ev(() => { const t = __ct.t('t1'); const tr = Array.from(__ct.sr('t1').querySelectorAll('tbody > tr:not(.et-spacer)')).find(x => x.cells[0].textContent === 'P-01505'); t.CellFocus(tr.cells[1]); return [t.CurrentRowIndex(), t.DataArray[t.CurrentRowIndex()].codigo]; });
   c.igual(r, [1504, 'P-01505']);
@@ -138,6 +146,13 @@ v('17', 'desplazamiento fluido: 30 cuadros de scroll con media < 16.7 ms por cua
   const ms = await c.ev(async () => { const sc = document.getElementById('sc'); const tiempos = []; let prev = performance.now(); for (let i = 0; i < 30; i++) { sc.scrollTop += 600; await new Promise(r => requestAnimationFrame(r)); const now = performance.now(); tiempos.push(now - prev); prev = now; } return tiempos.reduce((a, b) => a + b, 0) / tiempos.length; });
   c.ok(ms < 16.7 * 1.5, `media por cuadro ${ms.toFixed(1)} ms (headless: tolerancia 1.5×)`);
 }, { limite: 60000, serial: true });
+// Integración F5+F6 (coordinador, 2026-11-01): árbol + virtual-rows se mantiene sin virtualizar, con un aviso.
+v('19', 'show-tree + virtual-rows: el árbol se dibuja completo y se avisa una vez por consola', ['§10-e'], async (c) => {
+  await c.abrir({ body: `<div id="sc" style="height:300px;overflow-y:auto">${tabla({ a: { ...VA, 'show-tree': 'true', key: 'id', parentkey: 'p' }, cols: COLS })}</div>`, script: `document.addEventListener('DOMContentLoaded',()=>{const t=document.getElementById('t1');t.DataArray=${JSON.stringify(muchas(300).map((r, i) => ({ ...r, id: i + 1, p: (i % 10 ? i - (i % 10) + 1 : null) })))};t._printTreeData();t._printTreeData();});` });
+  const r = await c.ev(() => [__ct.sr('t1').querySelectorAll('tbody > tr.et-spacer').length, __ct.filas('t1').length]);
+  c.igual(r, [0, 300]);
+  c.igual(c.consola.filter(m => /virtual-rows/.test(m.texto ?? m.text ?? String(m))).length, 1);
+}, { limite: 30000 });
 v('18', 'sin virtual-rows todas las filas se dibujan (R1)', ['§10-e', '§0-R1'], async (c) => {
   await c.abrir(montar(500, {}));
   c.igual(await c.ev(() => __ct.filas('t1').length), 500);
