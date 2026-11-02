@@ -141,3 +141,33 @@ Convenciones de EdiTable 2: atributos en kebab-case y propiedades en Pascal (R5)
 `BeforeSearch` convive con `onBeforeSearch`, la propiedad de hoy, que se conserva.
 
 `Selected` y `Canceled` sustituyen a los `ik-select` e `ik-cancel` que proponía B2, para seguir la convención de EdiTable.
+
+## Tema para toda la página (propuesta, 2026-11-02)
+
+Objetivo: declarar el tema **una sola vez por página** y que lo tomen todos los web components de Induxsoft (EdiTable, InputKey y los que vengan), sin poner `theme` en cada uno.
+
+**Mecanismo propuesto:**
+1. **Atributo en `<html>`:** `<html data-et-theme="oscuro">`, y opcionalmente `data-et-density="compacta"` y `data-et-palette='{"accent":"#…"}'`.
+   - Cada componente sin `theme` propio lo hereda.
+   - Si el componente sí lo declara, su `theme` gana.
+   - Sin el atributo en `<html>`, todo se ve como hoy (R1).
+2. **Módulo común `induxsoft.theme.js`.** Va antes de los componentes; también puede ir incluido en ambos archivos, para no agregar otra etiqueta `<script>`.
+   - **El registro de temas pasa a un solo lugar.** Hoy vive en `EditTable.themes` y `EditTable.defineTheme`, que se conservan como alias. Con eso `defineTheme('v12', {...})` sirve para todos los componentes.
+   - **API:** `InduxsoftTheme.set('oscuro')`, `.get()`, `.define(nombre, paleta, {base})`, `.setPalette({...})`, `.setDensity('compacta')` y el evento `themechange`.
+   - **Un solo observador** sobre `<html>` avisa a todas las instancias vivas; ningún componente pone el suyo. Cambiar el tema no redibuja los datos: solo cambia clases y variables, como ya hace F8b.
+   - **`auto`** sigue `prefers-color-scheme`.
+   - **Persistencia opcional:** `InduxsoftTheme.set('oscuro', {remember:true})` lo guarda en `localStorage` por sitio.
+3. **iframes.** V12 abre sus pantallas en iframes. El módulo propaga el tema a los iframes del mismo origen y, dentro de un iframe, toma el de la ventana padre si la página no declara uno. Así se elige el tema en el shell de V12 y lo toman todas las pantallas abiertas.
+4. **Variables `--et-*` en `:root`.** Esto ya funciona hoy (F8b): un CSS del sitio que defina `--et-*` pinta todas las tablas y, con InputKey 2, también los buscadores. El atributo de `<html>` elige un tema completo; las variables ajustan colores sueltos encima.
+
+**Precedencia final, de menor a mayor:** respaldo interno → tema de la página (`<html data-et-theme>`) → `theme` del componente → variables `--et-*` externas → `palette` del componente.
+
+**Cómo se usaría en V12:**
+- El usuario elige su tema en su perfil.
+- La plantilla del sitio escribe `data-et-theme` en `<html>` desde el servidor (DKL), sin parpadeo al cargar.
+- Los temas propios de V12 se registran una vez con `InduxsoftTheme.define`.
+
+**Lo que requiere en el código:**
+- **EdiTable 2:** leer el tema de la página cuando no hay `theme` (un cambio pequeño en `_f8bTemaNombre`) y mover el registro al módulo.
+- **InputKey 2:** nace ya con ese comportamiento.
+- **Pruebas:** que sin `data-et-theme` todo quede igual, la precedencia, el cambio en caliente y los iframes.

@@ -122,7 +122,7 @@ input[type=checkbox]{ accent-color:var(--et-accent); width:15px; height:15px; }
 
 <header class="barra">
   <h1>InputKey 2 · maqueta</h1>
-  <label>Tema
+  <label>Tema de la página
     <select id="selTema">
       <option value="t-claro">claro</option>
       <option value="t-oscuro">oscuro</option>
@@ -332,7 +332,11 @@ function crearPanel(panel, { alElegir, alCerrar })
     else if (e.key === 'Enter') { e.preventDefault(); elegir(activa); }
     else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); cerrar(); alCerrar(); }
   }
-  return { abrir: (t, rec) => { pintar(t, rec); panel.querySelector('.ik-buscar input').focus(); }, cerrar, tecla, abierto: () => !panel.hidden };
+  return {
+    // enfocar=false: el panel se abre pero el foco y el cursor se quedan donde el usuario está tecleando.
+    abrir: (t, rec, enfocar = true) => { pintar(t, rec); if (enfocar) { const i = panel.querySelector('.ik-buscar input'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); } },
+    refrescar: (t) => pintar(t, false),
+    cerrar, tecla, abierto: () => !panel.hidden };
 }
 
 /* ---------- Campo con panel anclado ---------- */
@@ -345,8 +349,16 @@ function crearPanel(panel, { alElegir, alCerrar })
     alCerrar: () => { caja.setAttribute('aria-expanded', 'false'); clave.focus(); },
   });
   let t = 0;
-  clave.addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => { if (clave.value.trim().length >= 2) { panel.abrir(clave.value, false); caja.setAttribute('aria-expanded', 'true'); } }, 250); });
-  clave.addEventListener('keydown', e => { if (e.key === 'F4' || (e.altKey && e.key === 'ArrowDown')) { e.preventDefault(); panel.abrir(clave.value, true); caja.setAttribute('aria-expanded', 'true'); } });
+  // Búsqueda al teclear: el panel se abre/actualiza pero el foco se queda en el campo (no se mueve el cursor).
+  clave.addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => {
+    if (clave.value.trim().length >= 2) { panel.abrir(clave.value, false, false); caja.setAttribute('aria-expanded', 'true'); }
+    else if (panel.abierto()) { panel.cerrar(); caja.setAttribute('aria-expanded', 'false'); }
+  }, 250); });
+  clave.addEventListener('keydown', e => {
+    if (e.key === 'F4' || (e.altKey && e.key === 'ArrowDown')) { e.preventDefault(); panel.abrir(clave.value, true); caja.setAttribute('aria-expanded', 'true'); return; }
+    // Con el panel abierto, las flechas, Enter y Esc del campo manejan la lista sin salir del campo.
+    if (panel.abierto() && ['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Enter', 'Escape'].includes(e.key)) panel.tecla(e);
+  });
   raiz.querySelector('.abrir').onclick = () => { panel.abrir(clave.value, true); caja.setAttribute('aria-expanded', 'true'); };
   limpiar.onclick = () => { clave.value = ''; desc.textContent = 'Sin seleccionar'; desc.classList.add('vacio'); limpiar.hidden = true; clave.focus(); };
   document.addEventListener('mousedown', e => { if (!raiz.contains(e.target) && panel.abierto()) panel.cerrar(); });
