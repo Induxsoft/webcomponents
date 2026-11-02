@@ -71,6 +71,20 @@
 </section>
 
 <section>
+  <h2>Tema heredado de la página (data-et-theme, módulo común InduxsoftTheme)</h2>
+  <p class="nota">Estos InputKey no declaran <code>theme</code>: lo toman del contenedor con <code>data-et-theme</code> (el ancestro más cercano). Los botones llaman a <code>InduxsoftTheme.set(nombre, {on: contenedor})</code> y el cambio llega en caliente. <code>data-et-theme=""</code> corta la herencia: se ven como hoy.</p>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px" id="botonesZona">
+    <button class="accion" type="button" data-t="claro">claro</button><button class="accion" type="button" data-t="oscuro">oscuro</button>
+    <button class="accion" type="button" data-t="jade">jade</button><button class="accion" type="button" data-t="libro-mayor">libro-mayor</button>
+    <button class="accion" type="button" data-t="">sin tema ("")</button>
+  </div>
+  <div id="zona" class="tema" data-fondo="oscuro" data-et-theme="oscuro" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px">
+    <div class="campo"><span style="color:#9DA7B3">HEREDADO</span><input-key id="ikZona" popup="anchored" data-key="id" data-search="codigo" data-text="descripcion" data-source="/demo-productos?q=@search" columns='[{"field":"codigo","title":"Código","type":"code"},{"field":"descripcion","title":"Descripción"},{"field":"precio","title":"Precio","type":"money"}]' data-value='{"id":9,"codigo":"CAB-12-100","descripcion":"Cable THW calibre 12, rollo 100 m"}'></input-key></div>
+    <div class="campo"><span style="color:#9DA7B3">THEME="" PROPIO (CORTA LA HERENCIA)</span><input-key theme="" data-key="id" data-search="codigo" data-text="descripcion" data-source="/demo-productos?q=@search"></input-key></div>
+  </div>
+</section>
+
+<section>
   <h2>Oculto en una tabla (headless, popup anclado a la celda y tema heredado de la tabla, A2)</h2>
   <p class="nota">El InputKey no declara tema: toma el de la EdiTable que lo abre (<code>theme</code> de la tabla, a la derecha). Escribe un código en la columna Código y pulsa Enter: con una sola coincidencia exacta entra directo; si no, el panel se ancla a la celda (también con la columna fija y filas virtuales).</p>
   <label style="font-size:13px">Tema de la tabla
@@ -149,6 +163,7 @@ document.getElementById('temas').innerHTML = ['claro', 'oscuro', 'jade', 'libro-
 const todos = () => document.querySelectorAll('input-key.ik-demo, #ikTabla');
 document.getElementById('selDens').onchange = e => { todos().forEach(ik => ik.setAttribute('density', e.target.value)); document.getElementById('tbl').setAttribute('density', e.target.value); };
 document.getElementById('selPopup').onchange = e => { document.querySelectorAll('input-key.ik-demo').forEach(ik => ik.setAttribute('popup', e.target.value)); };
+document.getElementById('botonesZona').onclick = e => { const b = e.target.closest('button'); if (!b) return; const z = document.getElementById('zona'); InduxsoftTheme.set(b.dataset.t, { on: z }); z.dataset.fondo = b.dataset.t || 'claro'; };
 document.getElementById('selTabla').onchange = e => { document.getElementById('tbl').setAttribute('theme', e.target.value); };
 
 document.addEventListener('DOMContentLoaded', () => {
