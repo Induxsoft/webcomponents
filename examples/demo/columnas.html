@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Columnas y diseño · EdiTable 2</title>
+<link rel="stylesheet" href="assets/sitio.css">
+<script src="assets/sitio.js"></script>
+<script src="assets/tema-edittable.js"></script>
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="assets/datos.js"></script>
+</head>
+<body>
+<a class="saltar" href="#principal">Saltar al contenido</a>
+<div class="sitio">
+<nav id="sitio-nav"></nav>
+<div class="principal">
+<header class="barra-sup" id="sitio-barra"></header>
+<main id="principal" class="contenido" data-requiere="fixed chooser reorder layout">
+<header class="pag-enc">
+  <span class="ceja">Consulta · piloto de V12 «clientes»</span>
+  <h1>Cada usuario arma su vista, y la tabla la recuerda</h1>
+  <p class="bajada">Fije columnas a la izquierda, muéstrelas u ocúltelas desde el menú del encabezado, reordénelas arrastrando y cambie su ancho. El diseño se guarda solo en el navegador (IndexedDB) y también se puede leer y aplicar como objeto, para guardarlo en el servidor por usuario.</p>
+  <div class="chips" id="chips"></div>
+</header>
+
+<section class="demo" aria-label="Demostración">
+<div id="demo">
+  <div class="barra">
+    <span style="font-size:13px;color:var(--texto-2)">Vistas:</span>
+    <button type="button" class="btn" id="v-cobranza">Cobranza</button>
+    <button type="button" class="btn" id="v-ventas">Ventas</button>
+    <button type="button" class="btn" id="v-reset">Como se declaró</button>
+    <span class="sep"></span>
+    <button type="button" class="btn" id="olvidar">Olvidar lo guardado</button>
+  </div>
+  <div class="caja-tabla" style="max-height:440px;overflow:auto">
+    <edit-table id="clientes" column-chooser="true" column-reorder="true" design-key="demo/columnas/clientes" readonly="true" style="min-width:1200px">
+      <edit-thead><edit-tr>
+        <edit-th type="NoEditable" field="codigo" width="90px" fixed="left" chooser="false" reorder="false">Cliente</edit-th>
+        <edit-th type="NoEditable" field="nombre" width="280px" fixed="left">Nombre</edit-th>
+        <edit-th type="NoEditable" field="rfc" width="140px">RFC</edit-th>
+        <edit-th type="NoEditable" field="ciudad" width="140px">Ciudad</edit-th>
+        <edit-th type="NoEditable" field="region" width="100px">Región</edit-th>
+        <edit-th type="NoEditable" field="vendedor" width="130px">Vendedor</edit-th>
+        <edit-th type="NoEditable" field="telefono" width="120px">Teléfono</edit-th>
+        <edit-th type="NoEditable" field="dias" textalign="end" width="80px">Crédito</edit-th>
+        <edit-th type="NoEditable" field="limite" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="120px">Límite</edit-th>
+        <edit-th type="NoEditable" field="saldo" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="130px" summary="sum">Saldo</edit-th>
+      </edit-tr></edit-thead>
+    </edit-table>
+  </div>
+  <div class="barra" style="margin:14px 0 6px"><strong>getLayout()</strong><span class="sep"></span><span id="razon" class="chip neutro">—</span></div>
+  <pre class="salida" id="diseno" style="max-height:200px"></pre>
+</div>
+</section>
+
+<div id="codigo"></div>
+
+<div class="explica">
+  <div class="tarjeta prueba">
+    <h2>Pruebe</h2>
+    <ul>
+      <li>Clic derecho sobre un encabezado (o el botón de la esquina): oculte <strong>Teléfono</strong> y fije <strong>Saldo</strong>.</li>
+      <li>Arrastre <strong>Vendedor</strong> antes de <strong>RFC</strong>. Con el teclado: <kbd>Ctrl</kbd>+<kbd>Mayús</kbd>+<kbd>←</kbd>/<kbd>→</kbd> sobre el encabezado.</li>
+      <li>Recargue la página: el diseño sigue ahí. <strong>Olvidar lo guardado</strong> lo borra.</li>
+      <li>Desplace a la derecha: cliente y nombre se quedan fijos.</li>
+    </ul>
+  </div>
+  <div class="tarjeta">
+    <h2>Seguro por omisión</h2>
+    <ul>
+      <li>Sin <code>id</code> estable no se guarda nada; <code>design-key</code> da una llave propia (por ejemplo, una por usuario).</li>
+      <li>Solo se restaura lo que el usuario puede cambiar en esa tabla: el orden si hay <code>column-reorder</code>, la visibilidad si hay <code>column-chooser</code>.</li>
+      <li>Si cambian las columnas de la pantalla, el diseño guardado se descarta en lugar de mezclarse.</li>
+      <li><code>LayoutChanged</code> trae <code>{layout, reason}</code> para guardarlo donde quiera.</li>
+    </ul>
+  </div>
+</div>
+</main>
+</div>
+</div>
+<script data-demo>
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('clientes');
+  const $ = (id) => document.getElementById(id);
+  t.DataArray = Datos.clientes(60);
+  t._printRows();
+
+  const mostrar = (razon) => {
+    const L = t.getLayout();
+    $('razon').textContent = 'reason: ' + razon;
+    $('diseno').textContent = '{ v: ' + L.v + ', sort: ' + JSON.stringify(L.sort) + ',\n  columns: [\n' +
+      L.columns.map(c => '    ' + JSON.stringify(c)).join(',\n') + '\n  ] }';
+  };
+  t.addEventListener('LayoutChanged', (e) => mostrar(e.reason));
+
+  // Una vista es un diseño: qué columnas se ven, en qué orden y cuáles van fijas
+  const vista = (campos, fijas) => {
+    const L = t.getLayout();
+    L.columns.forEach((c) => {
+      const i = campos.indexOf(c.field);
+      c.hidden = i < 0;
+      c.order = i < 0 ? campos.length + L.columns.indexOf(c) : i;
+      c.fixed = fijas.includes(c.field);
+    });
+    t.setLayout(L);
+  };
+  $('v-cobranza').onclick = () => vista(['codigo', 'nombre', 'saldo', 'limite', 'dias', 'telefono', 'vendedor'], ['codigo', 'nombre']);
+  $('v-ventas').onclick = () => vista(['codigo', 'nombre', 'vendedor', 'region', 'ciudad', 'saldo'], ['codigo']);
+  $('v-reset').onclick = () => t.ResetLayout();
+  $('olvidar').onclick = () => { t.ForgetLayout(); mostrar('ForgetLayout'); };
+  mostrar('inicio');
+});
+</script>
+</body>
+</html>

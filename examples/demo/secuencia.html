@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Secuencia de captura · EdiTable 2</title>
+<link rel="stylesheet" href="assets/sitio.css">
+<script src="assets/sitio.js"></script>
+<script src="assets/tema-edittable.js"></script>
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="assets/datos.js"></script>
+</head>
+<body>
+<a class="saltar" href="#principal">Saltar al contenido</a>
+<div class="sitio">
+<nav id="sitio-nav"></nav>
+<div class="principal">
+<header class="barra-sup" id="sitio-barra"></header>
+<main id="principal" class="contenido" data-proximamente="capture">
+<header class="pag-enc">
+  <span class="ceja">Próximamente · F8</span>
+  <h1>Captura de mostrador: Enter, Enter, Enter, siguiente partida</h1>
+  <p class="bajada">Quien captura en mostrador no quiere recorrer columnas que no le tocan. Con una secuencia de captura, <kbd>Enter</kbd> salta solo por código, cantidad y precio, y al final de la fila abre la siguiente partida en el código.</p>
+</header>
+<div id="aviso" role="status"></div>
+
+<section class="demo" aria-label="Demostración">
+<div id="demo">
+  <div class="caja-tabla">
+    <edit-table id="mostrador" capture-sequence="codigo,cantidad,precio" auto-confirm="true">
+      <edit-thead><edit-tr>
+        <edit-th type="Text" field="codigo" width="120px">Código</edit-th>
+        <edit-th type="NoEditable" field="descripcion" minwidth="220px">Descripción</edit-th>
+        <edit-th type="NoEditable" field="existencia" textalign="end" width="100px">Existencia</edit-th>
+        <edit-th type="Number" field="cantidad" textalign="end" width="100px" default="1" calc="true" summary="sum">Cantidad</edit-th>
+        <edit-th type="NoEditable" field="unidad" width="80px">Unidad</edit-th>
+        <edit-th type="Number" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="120px" calc="true">Precio</edit-th>
+        <edit-th type="NoEditable" field="importe" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="130px" summary="sum">Importe</edit-th>
+      </edit-tr></edit-thead>
+    </edit-table>
+  </div>
+  <p class="bajada" style="font-size:13px;margin:10px 0 0">Códigos para probar: <code>P-00001</code> a <code>P-00200</code>.</p>
+</div>
+</section>
+
+<div id="codigo"></div>
+
+<div class="explica">
+  <div class="tarjeta">
+    <h2>API que usa esta página (propuesta para F8)</h2>
+    <ul>
+      <li>Bandera <code>'capture'</code>. Atributo <code>capture-sequence="campo1,campo2,…"</code> (propiedad <code>CaptureSequence</code>).</li>
+      <li><kbd>Enter</kbd> y <kbd>Tab</kbd> siguen la secuencia; las flechas siguen moviéndose a cualquier celda.</li>
+      <li>Al terminar la secuencia en la última fila se agrega una partida (<code>AutoAddRow</code>) y el foco va al primer campo.</li>
+    </ul>
+  </div>
+  <div class="tarjeta">
+    <h2>Mientras tanto</h2>
+    <ul>
+      <li>Sin la bandera, <kbd>Enter</kbd> avanza a la celda de la derecha, como siempre; el atributo se ignora.</li>
+      <li>El llenado al teclear el código y el cálculo del importe ya funcionan hoy.</li>
+    </ul>
+  </div>
+</div>
+</main>
+</div>
+</div>
+<script data-demo>
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('mostrador');
+  const catalogo = Datos.productos(200);
+  t.DataArray = [{ codigo: '', descripcion: '', existencia: '', cantidad: '1', unidad: '', precio: '', importe: '' }];
+  t._printRows();
+
+  t.addEventListener('fieldupdated', (e) => {
+    const r = t.DataArray[e.row];
+    if (e.field === 'codigo') {
+      const p = catalogo.find(x => x.codigo.toLowerCase() === String(r.codigo).trim().toLowerCase());
+      if (p) Object.assign(r, { codigo: p.codigo, descripcion: p.descripcion, existencia: p.existencia, unidad: p.unidad, precio: String(p.precio) });
+    }
+    r.importe = Math.round(Number(r.cantidad || 0) * Number(r.precio || 0) * 100) / 100;
+    t.UpdateRow(e.row);
+    if (t.RefreshSummaries) t.RefreshSummaries();
+  });
+  t.NavTo(0, 0);
+});
+</script>
+</body>
+</html>

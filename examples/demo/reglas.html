@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Formato condicional · EdiTable 2</title>
+<link rel="stylesheet" href="assets/sitio.css">
+<script src="assets/sitio.js"></script>
+<script src="assets/tema-edittable.js"></script>
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="assets/datos.js"></script>
+</head>
+<body>
+<a class="saltar" href="#principal">Saltar al contenido</a>
+<div class="sitio">
+<nav id="sitio-nav"></nav>
+<div class="principal">
+<header class="barra-sup" id="sitio-barra"></header>
+<main id="principal" class="contenido" data-proximamente="rules">
+<header class="pag-enc">
+  <span class="ceja">Próximamente · F8</span>
+  <h1>Cartera vencida que se lee de un vistazo</h1>
+  <p class="bajada">Reglas declarativas por columna: saldos negativos en rojo, clientes sobre su límite resaltados y antigüedad por colores, escritas en el HTML y sin una línea de JavaScript por pantalla. Las reglas se vuelven a evaluar al editar.</p>
+</header>
+<div id="aviso" role="status"></div>
+
+<section class="demo" aria-label="Demostración">
+<div id="demo">
+  <div class="caja-tabla">
+    <edit-table id="cartera"
+      control-styles=".neg{color:var(--error);font-weight:600} .excedido{background:var(--error-suave)} .vence-30{background:var(--aviso-suave)} .vence-60{background:var(--error-suave);color:var(--error);font-weight:600} .al-dia{color:var(--ok)}">
+      <edit-thead><edit-tr>
+        <edit-th type="NoEditable" field="codigo" width="90px">Cliente</edit-th>
+        <edit-th type="NoEditable" field="nombre" minwidth="240px">Nombre</edit-th>
+        <edit-th type="NoEditable" field="vendedor" width="130px">Vendedor</edit-th>
+        <edit-th type="Number" field="dias_vencido" textalign="end" width="110px"
+          rules='[{"when":"<=0","class":"al-dia"},{"when":">30","class":"vence-30"},{"when":">60","class":"vence-60"}]'>Días vencido</edit-th>
+        <edit-th type="NoEditable" field="limite" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="120px">Límite</edit-th>
+        <edit-th type="Number" field="saldo" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="130px"
+          rules='[{"when":"<0","class":"neg"},{"when":">{limite}","class":"excedido"}]'>Saldo</edit-th>
+      </edit-tr></edit-thead>
+    </edit-table>
+  </div>
+</div>
+</section>
+
+<div id="codigo"></div>
+
+<div class="explica">
+  <div class="tarjeta">
+    <h2>API que usa esta página (propuesta para F8)</h2>
+    <ul>
+      <li>Bandera <code>'rules'</code>. Atributo <code>rules</code> en <code>edit-th</code>: arreglo JSON de <code>{when, class}</code>, en orden; gana la última que aplica.</li>
+      <li><code>when</code> admite <code>&lt; &lt;= &gt; &gt;= = !=</code> contra un número, un texto o <code>{otro_campo}</code> de la misma fila.</li>
+      <li>Se aplica al dibujar y en <code>UpdateRow</code> (a diferencia de <code>onTdPaint</code>).</li>
+    </ul>
+  </div>
+  <div class="tarjeta">
+    <h2>Mientras tanto</h2>
+    <ul>
+      <li>Hoy lo mismo se hace con <code>CellClass = (fila, campo) =&gt; clase</code>. Sin la bandera, esta página usa ese camino con las mismas reglas, leídas del atributo.</li>
+    </ul>
+  </div>
+</div>
+</main>
+</div>
+</div>
+<script data-demo>
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('cartera');
+  t.DataArray = Datos.clientes(24).map((c, i) => ({ ...c, dias_vencido: String(c.saldo <= 0 ? 0 : [0, 12, 35, 48, 75, 95][i % 6]), saldo: String(c.saldo), limite: c.limite }));
+
+  if (!EditTable.features.includes('rules')) {
+    // Respaldo con lo que ya existe: CellClass evalúa las mismas reglas declaradas en el HTML
+    const reglas = Object.fromEntries(t.Columns.filter(c => c.rules).map(c => [c.field, JSON.parse(c.rules)]));
+    const cumple = (v, when, fila) => {
+      const m = /^(<=|>=|!=|<|>|=)\s*(.*)$/.exec(when); if (!m) return false;
+      const ref = m[2].replace(/^\{(.+)\}$/, (_, f) => fila[f]);
+      const a = Number(v), b = Number(ref);
+      return { '<': a < b, '<=': a <= b, '>': a > b, '>=': a >= b, '=': String(v) === ref, '!=': String(v) !== ref }[m[1]];
+    };
+    t.CellClass = (fila, campo) => (reglas[campo] || []).filter(r => cumple(fila[campo], r.when, fila)).map(r => r.class).pop() || '';
+  }
+  t._printRows();
+  t.addEventListener('fieldupdated', (e) => t.UpdateRow(e.row));
+});
+</script>
+</body>
+</html>

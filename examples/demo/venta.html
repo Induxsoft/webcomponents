@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Documento de venta · EdiTable 2</title>
+<link rel="stylesheet" href="assets/sitio.css">
+<script src="assets/sitio.js"></script>
+<script src="assets/tema-edittable.js"></script>
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="assets/datos.js"></script>
+</head>
+<body>
+<a class="saltar" href="#principal">Saltar al contenido</a>
+<div class="sitio">
+<nav id="sitio-nav"></nav>
+<div class="principal">
+<header class="barra-sup" id="sitio-barra"></header>
+<main id="principal" class="contenido" data-requiere="summary mask calc fixed layout">
+<header class="pag-enc">
+  <span class="ceja">Captura · piloto de V12 «ventas»</span>
+  <h1>Factura con partidas: se captura rápido y cuadra sola</h1>
+  <p class="bajada">Cantidad y precio aceptan operaciones como en una calculadora (<code>=12*3</code>, <code>=850-10%</code>), el descuento se captura como porcentaje con máscara, el pie suma importe e IVA y las columnas de código y descripción se quedan fijas al desplazar.</p>
+  <div class="chips" id="chips"></div>
+</header>
+
+<section class="demo" aria-label="Demostración">
+<div id="demo">
+  <div class="doc-enc">
+    <div><span>Cliente</span>C-0007 · Ferretería El Roble S.A. de C.V.</div>
+    <div><span>RFC</span>FER0912039A9</div>
+    <div><span>Uso del CFDI</span>G01 Adquisición de mercancías</div>
+    <div><span>Método · forma</span>PUE · 03 Transferencia</div>
+  </div>
+  <div class="caja-tabla">
+    <edit-table id="factura" style="min-width:1080px" design-key="demo/venta">
+      <edit-thead><edit-tr>
+        <edit-th type="Text" field="codigo" width="110px" fixed="left" button="true">Código</edit-th>
+        <edit-th type="NoEditable" field="descripcion" width="230px" fixed="left" summary="count" summary-label="{value} partidas">Descripción</edit-th>
+        <edit-th type="Number" field="cantidad" textalign="end" width="95px" calc="true" default="1">Cantidad</edit-th>
+        <edit-th type="NoEditable" field="unidad" width="70px">Unidad</edit-th>
+        <edit-th type="Number" field="precio" textalign="end" width="120px" calc="true" format="true" decs="2" prefix="$" thousandssep="true">Precio</edit-th>
+        <edit-th type="Number" field="descuento" textalign="end" width="90px" mask="percent" sufix=" %" default="0">Desc.</edit-th>
+        <edit-th type="Select" field="tasa" keyfield="tasa_iva" width="90px" options='{"16":"16 %","8":"8 %","0":"0 %"}'>IVA</edit-th>
+        <edit-th type="NoEditable" field="iva" textalign="end" width="110px" format="true" decs="2" prefix="$" thousandssep="true" summary="sum">Impuesto</edit-th>
+        <edit-th type="NoEditable" field="importe" textalign="end" width="130px" format="true" decs="2" prefix="$" thousandssep="true" summary="sum">Importe</edit-th>
+      </edit-tr></edit-thead>
+    </edit-table>
+  </div>
+  <div class="doc-pie">
+    <p class="notas-doc">Escriba un código (<code>P-00012</code>) o presione <kbd>F4</kbd>. En cantidad o precio pruebe <code>=6*4</code> o <code>=1200-15%</code>. El total se actualiza con cada celda.</p>
+    <div class="totales" aria-live="polite">
+      <div><span>Subtotal</span><b id="subtotal">$0.00</b></div>
+      <div><span>Descuentos</span><b id="descuentos">$0.00</b></div>
+      <div><span>IVA trasladado</span><b id="impuestos">$0.00</b></div>
+      <div class="gran"><span>Total</span><b id="total">$0.00</b></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<div id="codigo"></div>
+
+<div class="explica">
+  <div class="tarjeta prueba">
+    <h2>Pruebe</h2>
+    <ul>
+      <li>En <strong>Precio</strong> escriba <code>=1200-15%</code> y <kbd>Enter</kbd>: queda <code>1020</code>. Con <code>=5/0</code> la celda no se confirma.</li>
+      <li>En <strong>Desc.</strong> escriba <code>12.5</code>: se muestra con su formato y en el dato queda <code>"12.5"</code>.</li>
+      <li>Desplace la tabla a la derecha: código y descripción no se mueven.</li>
+      <li>Baje desde la última partida para agregar otra; el conteo y los totales del pie se recalculan.</li>
+    </ul>
+  </div>
+  <div class="tarjeta">
+    <h2>Lo que hay detrás</h2>
+    <ul>
+      <li><code>summary="sum"</code> y <code>summary="count"</code> dibujan el pie en un <code>tfoot</code> fijo; <code>getSummary(field)</code> lo lee.</li>
+      <li><code>calc="true"</code> evalúa la expresión sin <code>eval</code>; <code>mask="percent"</code> valida de 0 a 100.</li>
+      <li><code>fixed="left"</code> usa <code>position: sticky</code> dentro de la misma tabla.</li>
+      <li>Números como cadena canónica (<code>"1020"</code>): sin redondeos sorpresa para el timbrado.</li>
+    </ul>
+  </div>
+</div>
+</main>
+</div>
+</div>
+<script data-demo>
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('factura');
+  const catalogo = Datos.productos(500);
+  const dinero = (n) => '$' + Number(n || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const r2 = (n) => Math.round(n * 100) / 100;
+
+  // Importe e impuesto de una partida (cantidad, precio y descuento llegan como cadena canónica)
+  const calcular = (r) => {
+    const bruto = Number(r.cantidad || 0) * Number(r.precio || 0);
+    r.desc_importe = r2(bruto * Number(r.descuento || 0) / 100);
+    r.importe = r2(bruto - r.desc_importe);
+    r.iva = r2(r.importe * Number(r.tasa_iva || 0) / 100);
+    return r;
+  };
+  const partida = (p, cant, desc) => calcular({ codigo: p.codigo, descripcion: p.descripcion, cantidad: String(cant), unidad: p.unidad, precio: String(p.precio), descuento: String(desc), tasa: p.iva + ' %', tasa_iva: p.iva });
+
+  t.DataArray = [partida(catalogo[11], 24, 0), partida(catalogo[58], 6, 5), partida(catalogo[90], 2, 0), partida(catalogo[133], 10, 12.5)];
+  t._printRows();
+
+  const pintarTotales = () => {
+    const sub = t.getSummary ? t.getSummary('importe') : t.DataArray.reduce((a, r) => a + Number(r.importe || 0), 0);
+    const iva = t.getSummary ? t.getSummary('iva') : t.DataArray.reduce((a, r) => a + Number(r.iva || 0), 0);
+    const desc = t.DataArray.reduce((a, r) => a + Number(r.desc_importe || 0), 0);
+    document.getElementById('subtotal').textContent = dinero(sub + desc);
+    document.getElementById('descuentos').textContent = '−' + dinero(desc);
+    document.getElementById('impuestos').textContent = dinero(iva);
+    document.getElementById('total').textContent = dinero(sub + iva);
+  };
+
+  // Al teclear un código existente se llena la partida
+  t.addEventListener('fieldupdated', (e) => {
+    const r = t.DataArray[e.row];
+    if (!r) return;
+    if (e.field === 'codigo') {
+      const p = catalogo.find(x => x.codigo.toLowerCase() === String(r.codigo).trim().toLowerCase());
+      if (p) Object.assign(r, { codigo: p.codigo, descripcion: p.descripcion, unidad: p.unidad, precio: String(p.precio), tasa: p.iva + ' %', tasa_iva: p.iva });
+    }
+    calcular(r);
+    t.UpdateRow(e.row);
+    if (t.RefreshSummaries) t.RefreshSummaries();
+    pintarTotales();
+  });
+  t.addEventListener('rowadded', () => { const r = t.DataArray[t.DataArray.length - 1]; Object.assign(r, { tasa: '16 %', tasa_iva: '16' }); calcular(r); pintarTotales(); });
+  t.addEventListener('rowdeleted', pintarTotales);
+
+  // F4 o el botón de la celda: el primer producto que coincida (en la página 01 hay un buscador completo)
+  t.setInputKey('codigo', { searchText(texto) {
+    const i = t.CurrentRowIndex(), q = String(texto || '').toLowerCase();
+    const p = catalogo.find(x => (x.codigo + ' ' + x.descripcion).toLowerCase().includes(q)) || catalogo[0];
+    Object.assign(t.DataArray[i], { codigo: p.codigo, descripcion: p.descripcion, unidad: p.unidad, precio: String(p.precio), tasa: p.iva + ' %', tasa_iva: p.iva });
+    calcular(t.DataArray[i]); t.UpdateRow(i); if (t.RefreshSummaries) t.RefreshSummaries(); pintarTotales();
+  } });
+
+  t.addEventListener('MaskInvalid', (e) => { e.cancel = true; });
+  pintarTotales();
+  t.NavTo(0, 2);
+});
+</script>
+</body>
+</html>

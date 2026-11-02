@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Máscaras y locale · EdiTable 2</title>
+<link rel="stylesheet" href="assets/sitio.css">
+<script src="assets/sitio.js"></script>
+<script src="assets/tema-edittable.js"></script>
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="assets/datos.js"></script>
+</head>
+<body>
+<a class="saltar" href="#principal">Saltar al contenido</a>
+<div class="sitio">
+<nav id="sitio-nav"></nav>
+<div class="principal">
+<header class="barra-sup" id="sitio-barra"></header>
+<main id="principal" class="contenido" data-requiere="mask calc locale">
+<header class="pag-enc">
+  <span class="ceja">Captura · datos limpios desde la primera tecla</span>
+  <h1>Máscaras que validan RFC y CURP, y números en el formato de cada país</h1>
+  <p class="bajada">Arriba, un alta de clientes con máscaras: RFC y CURP con su dígito verificador, código postal, teléfono, correo y porcentaje. Abajo, la misma tabla en México y en España: cada una se lee y se captura con sus separadores, y el dato que llega a <code>DataArray</code> es siempre el mismo.</p>
+  <div class="chips" id="chips"></div>
+</header>
+
+<section class="demo" aria-label="Demostración">
+<div id="demo">
+  <h2>Alta de clientes</h2>
+  <div class="caja-tabla">
+    <edit-table id="clientes" style="min-width:1050px">
+      <edit-thead><edit-tr>
+        <edit-th type="Text" field="nombre" mask="upper" minwidth="200px">Razón social</edit-th>
+        <edit-th type="Text" field="rfc" mask="rfc" width="150px">RFC</edit-th>
+        <edit-th type="Text" field="curp" mask="curp" width="200px">CURP (contacto)</edit-th>
+        <edit-th type="Text" field="cp" mask="cp" width="80px">C.P.</edit-th>
+        <edit-th type="Text" field="tel" mask="tel" width="140px">Teléfono</edit-th>
+        <edit-th type="Text" field="correo" mask="email" minwidth="190px">Correo</edit-th>
+        <edit-th type="Text" field="cuenta" mask="999 999 99999999999 9" mask-keep="formatted" width="200px">CLABE</edit-th>
+        <edit-th type="Number" field="descuento" mask="percent" textalign="end" sufix=" %" width="90px">Desc.</edit-th>
+      </edit-tr></edit-thead>
+    </edit-table>
+  </div>
+  <ol class="bitacora" id="avisos-mascara" aria-live="polite" aria-label="Avisos de las máscaras"></ol>
+
+  <h2 style="margin-top:22px">El mismo dato, dos formatos</h2>
+  <div class="rejilla-2">
+    <section lang="es-MX" aria-label="México">
+      <h3>México · <code>locale="es-MX"</code></h3>
+      <div class="caja-tabla">
+        <edit-table id="mx" locale="es-MX">
+          <edit-thead><edit-tr>
+            <edit-th type="Text" field="concepto">Concepto</edit-th>
+            <edit-th type="Number" field="importe" textalign="end" format="true" decs="2" thousandssep="true" calc="true" summary="sum">Importe</edit-th>
+            <edit-th type="Date" field="fecha" date-display="locale" width="130px">Fecha</edit-th>
+          </edit-tr></edit-thead>
+        </edit-table>
+      </div>
+      <pre class="salida" id="dato-mx"></pre>
+    </section>
+    <section lang="es-ES" aria-label="España">
+      <h3>España · <code>locale="es-ES"</code></h3>
+      <div class="caja-tabla">
+        <edit-table id="es" locale="es-ES">
+          <edit-thead><edit-tr>
+            <edit-th type="Text" field="concepto">Concepto</edit-th>
+            <edit-th type="Number" field="importe" textalign="end" format="true" decs="2" thousandssep="true" calc="true" summary="sum">Importe</edit-th>
+            <edit-th type="Date" field="fecha" date-display="locale" width="130px">Fecha</edit-th>
+          </edit-tr></edit-thead>
+        </edit-table>
+      </div>
+      <pre class="salida" id="dato-es"></pre>
+    </section>
+  </div>
+</div>
+</section>
+
+<div id="codigo"></div>
+
+<div class="explica">
+  <div class="tarjeta prueba">
+    <h2>Pruebe</h2>
+    <ul>
+      <li>En <strong>RFC</strong> de la segunda fila escriba <code>EKU9003173C9</code> (válido) y luego <code>EKU9003173C8</code>: el dígito verificador no coincide y la celda no se confirma.</li>
+      <li>En <strong>Teléfono</strong> teclee solo dígitos: los paréntesis y el guion se ponen solos.</li>
+      <li>En México escriba <code>1,234.5</code>; en España, <code>1.234,5</code>. Las dos tablas guardan <code>"1234.5"</code>.</li>
+      <li>En España pruebe <code>=100,5*2</code>: la calculadora también usa la coma decimal.</li>
+    </ul>
+  </div>
+  <div class="tarjeta">
+    <h2>Reglas que conviene saber</h2>
+    <ul>
+      <li>Presets: <code>rfc</code>, <code>curp</code>, <code>cp</code>, <code>tel</code>, <code>email</code>, <code>percent</code>, <code>upper</code>, <code>lower</code>; o un patrón con <code>9</code>, <code>A</code>, <code>X</code>, <code>*</code>.</li>
+      <li><code>mask-keep="formatted"</code> guarda con los literales (la CLABE); por omisión se guarda sin ellos.</li>
+      <li>El idioma del navegador no decide nada: manda <code>locale</code>, o un <code>lang</code> con región.</li>
+      <li><code>MaskInvalid</code> trae <code>reason</code>: <code>incomplete</code>, <code>checksum</code>, <code>fecha</code>, <code>calc</code>…</li>
+    </ul>
+  </div>
+</div>
+</main>
+</div>
+</div>
+<script data-demo>
+document.addEventListener('DOMContentLoaded', () => {
+  // 1. Alta de clientes con máscaras
+  const c = document.getElementById('clientes');
+  c.DataArray = [
+    { nombre: 'FERRETERÍA EL ROBLE', rfc: 'FER0912039A9', curp: '', cp: '29000', tel: '9611234567', correo: 'compras@ejemplo.invalid', cuenta: '', descuento: '5' },
+    { nombre: '', rfc: '', curp: '', cp: '', tel: '', correo: '', cuenta: '', descuento: '' },
+  ];
+  c._printRows();
+  const avisos = document.getElementById('avisos-mascara');
+  c.addEventListener('MaskInvalid', (e) => {
+    e.cancel = true; // la celda sigue en edición hasta que el valor sea válido
+    const li = document.createElement('li');
+    li.innerHTML = '<time></time><b>MaskInvalid</b><span></span>';
+    li.children[0].textContent = new Date().toLocaleTimeString('es-MX');
+    li.children[2].textContent = `${e.field}: «${e.value}» → ${e.reason}`;
+    avisos.prepend(li);
+  });
+  c.NavTo(1, 1);
+
+  // 2. Mismo DataArray en es-MX y es-ES
+  const datos = () => [
+    { concepto: 'Venta de mostrador', importe: '1234.5', fecha: '2026-02-01' },
+    { concepto: 'Flete', importe: '980.10', fecha: '2026-02-15' },
+    { concepto: 'Instalación', importe: '15000', fecha: '2026-03-09' },
+  ];
+  for (const id of ['mx', 'es']) {
+    const t = document.getElementById(id), salida = document.getElementById('dato-' + id);
+    t.DataArray = datos(); t._printRows();
+    const mostrar = () => { salida.textContent = '// DataArray: importe y fecha\n' + t.DataArray.map(({ importe, fecha }) => JSON.stringify({ importe, fecha })).join('\n'); };
+    t.addEventListener('fieldupdated', () => { mostrar(); if (t.RefreshSummaries) t.RefreshSummaries(); });
+    mostrar();
+  }
+});
+</script>
+</body>
+</html>

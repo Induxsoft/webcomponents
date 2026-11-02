@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Explorador de CFDI · EdiTable 2</title>
+<link rel="stylesheet" href="assets/sitio.css">
+<script src="assets/sitio.js"></script>
+<script src="assets/tema-edittable.js"></script>
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="../../src/js/induxsoft.controls.excel.js"></script>
+<script src="assets/datos.js"></script>
+</head>
+<body>
+<a class="saltar" href="#principal">Saltar al contenido</a>
+<div class="sitio">
+<nav id="sitio-nav"></nav>
+<div class="principal">
+<header class="barra-sup" id="sitio-barra"></header>
+<main id="principal" class="contenido" data-requiere="multiselect summary clipboard export">
+<header class="pag-enc">
+  <span class="ceja">Consulta · comprobantes emitidos</span>
+  <h1>Seleccione facturas, vea cuánto suman y llévelas a Excel</h1>
+  <p class="bajada">Un explorador de CFDI con casillas: el pie suma solo lo seleccionado, <kbd>Ctrl</kbd>+<kbd>C</kbd> copia las filas listas para pegar en una hoja de cálculo y la exportación genera un XLSX real (números como números y fechas como fechas) sin bibliotecas externas.</p>
+  <div class="chips" id="chips"></div>
+</header>
+
+<section class="demo" aria-label="Demostración">
+<div id="demo">
+  <div class="barra">
+    <button type="button" class="btn" id="sel-ppd">Seleccionar PPD vigentes</button>
+    <button type="button" class="btn" id="sel-nada">Quitar selección</button>
+    <span class="sep"></span>
+    <button type="button" class="btn" id="copiar">Copiar</button>
+    <button type="button" class="btn" id="csv">CSV</button>
+    <button type="button" class="btn primario" id="xlsx">Excel de lo seleccionado</button>
+    <button type="button" class="btn" id="libro">Libro completo</button>
+  </div>
+  <div class="caja-tabla" style="max-height:470px;overflow-y:auto">
+    <edit-table id="cfdi" multi-select="checkbox" summary-scope="selected" readonly="true" style="min-width:960px">
+      <edit-thead><edit-tr>
+        <edit-th type="Badges" field="_estado" width="120px">Estado</edit-th>
+        <edit-th type="NoEditable" field="folio" width="90px" template="${DataRow.serie}-${DataRow.folio}" summary="count" summary-label="{value} CFDI">Folio</edit-th>
+        <edit-th type="NoEditable" field="fecha" format="relative" width="120px">Emisión</edit-th>
+        <edit-th type="NoEditable" field="rfc" width="140px">RFC receptor</edit-th>
+        <edit-th type="NoEditable" field="receptor" minwidth="180px">Receptor</edit-th>
+        <edit-th type="NoEditable" field="metodo" width="70px">Método</edit-th>
+        <edit-th type="NoEditable" field="uso" width="60px" class="no-print">Uso</edit-th>
+        <edit-th type="NoEditable" field="subtotal" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="120px" summary="sum">Subtotal</edit-th>
+        <edit-th type="NoEditable" field="iva" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="110px" summary="sum">IVA</edit-th>
+        <edit-th type="NoEditable" field="total" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="130px" summary="sum">Total</edit-th>
+      </edit-tr></edit-thead>
+    </edit-table>
+  </div>
+  <p id="resumen" class="bajada" style="font-size:14px;margin:10px 0 0" aria-live="polite"></p>
+  <pre class="salida tsv" id="salida" aria-label="Texto copiado"></pre>
+</div>
+</section>
+
+<div id="codigo"></div>
+
+<div class="explica">
+  <div class="tarjeta prueba">
+    <h2>Pruebe</h2>
+    <ul>
+      <li>Marque algunas casillas: el pie cambia a la suma de lo seleccionado (<code>summary-scope="selected"</code>).</li>
+      <li>Con la tabla enfocada, <kbd>Ctrl</kbd>+<kbd>C</kbd> copia; pegue en una hoja de cálculo.</li>
+      <li><strong>Excel de lo seleccionado</strong> descarga un XLSX con encabezado fijo, autofiltro y totales; <strong>Libro completo</strong> hace dos hojas.</li>
+      <li>La columna <strong>Uso</strong> lleva <code>class="no-print"</code>: no sale en la exportación.</li>
+    </ul>
+  </div>
+  <div class="tarjeta">
+    <h2>Piezas</h2>
+    <ul>
+      <li><code>multi-select="checkbox"</code> agrega una columna del sistema que no aparece en <code>Columns</code>; también existe <code>"row"</code> con <kbd>Ctrl</kbd>/<kbd>Mayús</kbd>+clic.</li>
+      <li><code>getSelectedRows()</code> devuelve índices de <code>DataArray</code>; la selección sobrevive a ordenar y agrupar.</li>
+      <li><code>InduxsoftExcel</code> es una biblioteca aparte: también exporta arreglos y tablas HTML normales.</li>
+    </ul>
+  </div>
+</div>
+</main>
+</div>
+</div>
+<script data-demo>
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('cfdi');
+  const $ = (id) => document.getElementById(id);
+  const dinero = (n) => '$' + Number(n || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const TIPO = { I: ['Ingreso', '#2f5bd3'], E: ['Egreso', '#9a6700'], P: ['Pago', '#6f42c1'] };
+
+  t.RowBadges = (r) => [
+    { id: 'tipo', text: TIPO[r.tipo][0], bg: TIPO[r.tipo][1], color: '#fff', tooltip: 'Tipo de comprobante ' + r.tipo },
+    r.estado === 'Cancelado' && { id: 'cancelado', text: 'Cancelado', bg: '#b42318', color: '#fff' },
+  ];
+  t.RowAccent = (r) => r.estado === 'Cancelado' ? '#b42318' : (r.metodo === 'PPD' ? '#e3b341' : null);
+  t.DataArray = Datos.cfdi(180);
+  t._printRows();
+
+  const resumir = () => {
+    const n = t.getSelectedRows().length;
+    $('resumen').textContent = n ? `${n} seleccionados · total ${dinero(t.getSummary('total'))}` : 'Sin selección: marque casillas o use Seleccionar PPD vigentes.';
+  };
+  t.addEventListener('SelectionChanged', resumir);
+
+  $('sel-ppd').onclick = () => t.SelectRows(t.DataArray.map((r, i) => (r.metodo === 'PPD' && r.estado === 'Vigente') ? i : -1).filter(i => i >= 0));
+  $('sel-nada').onclick = () => t.ClearSelection();
+
+  // Copiar: el mismo texto que pone Ctrl+C (separado por tabuladores)
+  t.addEventListener('BeforeCopy', (e) => { $('salida').textContent = e.text; });
+  $('copiar').onclick = () => { t.copySelection({ headers: true }); $('salida').textContent = t.getClipboardText({ headers: true }); };
+
+  $('csv').onclick = () => t.downloadCSV('cfdi.csv', { selectedOnly: t.getSelectedRows().length > 0 });
+  $('xlsx').onclick = () => InduxsoftExcel.download(InduxsoftExcel.fromEditTable(t, { sheetName: 'CFDI', selectedOnly: true, includeSummary: true }), 'cfdi-seleccionados.xlsx');
+  $('libro').onclick = () => {
+    const porMetodo = ['PUE', 'PPD'].map(m => ({ metodo: m, cfdi: t.DataArray.filter(r => r.metodo === m).length, total: t.DataArray.filter(r => r.metodo === m).reduce((a, r) => a + r.total, 0) }));
+    InduxsoftExcel.workbook([
+      { name: 'Comprobantes', source: t, opts: { includeSummary: true } },
+      { name: 'Por método', source: porMetodo },
+    ]).download('cfdi-libro.xlsx');
+  };
+  resumir();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Edición, tipos y búsqueda · EdiTable 2</title>
+<link rel="stylesheet" href="assets/sitio.css">
+<script src="assets/sitio.js"></script>
+<script src="assets/tema-edittable.js"></script>
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="assets/datos.js"></script>
+</head>
+<body>
+<a class="saltar" href="#principal">Saltar al contenido</a>
+<div class="sitio">
+<nav id="sitio-nav"></nav>
+<div class="principal">
+<header class="barra-sup" id="sitio-barra"></header>
+<main id="principal" class="contenido">
+<header class="pag-enc">
+  <span class="ceja">Captura · funciones de siempre</span>
+  <h1>Edición en tabla, como en una hoja de cálculo</h1>
+  <p class="bajada">Una orden de compra a proveedor: se teclea directo en la celda, cada columna tiene su tipo y su formato, el código se busca en el catálogo con <kbd>F4</kbd> y al bajar de la última fila aparece una nueva.</p>
+  <div class="chips"><span class="chip neutro">Text · Number · Select · Date · Check · Memo</span><span class="chip neutro">InputKey</span><span class="chip neutro">AutoAddRow</span><span class="chip neutro">sorTable</span></div>
+</header>
+
+<section class="demo" aria-label="Demostración">
+<div id="demo">
+  <div class="barra">
+    <strong>Orden de compra OC-2026-0418</strong><span class="sep"></span>
+    <button type="button" class="btn" id="agregar">Agregar partida</button>
+    <button type="button" class="btn" id="borrar">Borrar partida</button>
+  </div>
+  <div class="caja-tabla">
+    <edit-table id="compra" auto-confirm="true">
+      <edit-thead><edit-tr>
+        <edit-th type="Text" field="codigo" button="true" width="130px">Código</edit-th>
+        <edit-th type="NoEditable" field="descripcion" minwidth="200px">Descripción</edit-th>
+        <edit-th type="Select" field="unidad" keyfield="claveunidad" width="120px"
+          options='{"H87":"PZA","XBX":"CAJA","MTR":"MT","KGM":"KG","LTR":"LT","SET":"JGO"}'>Unidad</edit-th>
+        <edit-th type="Number" field="cantidad" textalign="end" default="1" width="100px">Cantidad</edit-th>
+        <edit-th type="Number" field="costo" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="120px">Costo</edit-th>
+        <edit-th type="Date" field="entrega" width="140px">Entrega</edit-th>
+        <edit-th type="Check" field="urgente" textalign="center" default="No" width="90px">Urgente</edit-th>
+        <edit-th type="Memo" field="nota" minwidth="120px">Nota</edit-th>
+      </edit-tr></edit-thead>
+    </edit-table>
+  </div>
+  <dialog id="buscador" aria-labelledby="buscador-tit" style="width:min(560px,92vw);border:1px solid var(--borde);border-radius:14px;background:var(--sup);color:var(--texto);padding:18px">
+    <h2 id="buscador-tit" style="margin-top:0">Buscar producto</h2>
+    <input id="q" class="campo" type="search" placeholder="Código, descripción o línea" style="width:100%" aria-controls="res">
+    <ul id="res" role="listbox" aria-label="Resultados" style="list-style:none;margin:10px 0;padding:0;max-height:300px;overflow:auto"></ul>
+    <p style="font-size:12px;color:var(--texto-3);margin:0">Flechas para elegir · Enter para aceptar · Esc para cerrar</p>
+  </dialog>
+</div>
+</section>
+
+<div id="codigo"></div>
+
+<div class="explica">
+  <div class="tarjeta prueba">
+    <h2>Pruebe</h2>
+    <ul>
+      <li>Escriba sobre <strong>Cantidad</strong>: la tecla inicia la edición; <kbd>Enter</kbd> confirma y pasa a la derecha.</li>
+      <li>En <strong>Código</strong> presione <kbd>F4</kbd> o el botón <strong>…</strong>: abre el buscador del catálogo. Si escribe un código exacto y confirma, se elige solo.</li>
+      <li>Cambie la <strong>Unidad</strong>: se ve el texto y en el dato queda la clave SAT (<code>claveunidad</code>, por <code>keyfield</code>).</li>
+      <li>Baje con <kbd>↓</kbd> desde la última fila: se agrega una partida nueva (<code>AutoAddRow</code>).</li>
+      <li>Clic en un encabezado para ordenar.</li>
+    </ul>
+  </div>
+  <div class="tarjeta">
+    <h2>Cómo se hace</h2>
+    <ul>
+      <li>Las columnas se declaran en HTML con <code>edit-th</code>: <code>type</code>, <code>format</code>, <code>decs</code>, <code>prefix</code>, <code>default</code>.</li>
+      <li><code>setInputKey(field, buscador)</code> conecta cualquier objeto con <code>searchText(texto, autoselect)</code>: el mismo contrato de <code>&lt;input-key&gt;</code>.</li>
+      <li>Todo esto existe desde la versión 1 y sigue igual en la 2.</li>
+    </ul>
+  </div>
+</div>
+</main>
+</div>
+</div>
+<script data-demo>
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('compra');
+  const catalogo = Datos.productos(300);
+  const unidad = { PZA: 'H87', CAJA: 'XBX', MT: 'MTR', KG: 'KGM', LT: 'LTR', JGO: 'SET' };
+  const partida = (p, cant) => ({ codigo: p.codigo, descripcion: p.descripcion, unidad: p.unidad, claveunidad: unidad[p.unidad],
+    cantidad: String(cant), costo: String(p.costo), entrega: '2026-11-' + String(10 + cant).padStart(2, '0'), urgente: cant > 5 ? 'Sí' : 'No', nota: '' });
+  t.DataArray = [partida(catalogo[3], 12), partida(catalogo[17], 4), partida(catalogo[42], 2)];
+  t._printRows();
+
+  // Buscador con el contrato de <input-key>: searchText(texto, autoselect)
+  const dlg = document.getElementById('buscador'), q = document.getElementById('q'), res = document.getElementById('res');
+  let fila = -1, lista = [], marcado = 0;
+  const pintar = () => {
+    const txt = q.value.trim().toLowerCase();
+    lista = catalogo.filter(p => (p.codigo + ' ' + p.descripcion + ' ' + p.linea).toLowerCase().includes(txt)).slice(0, 40);
+    marcado = Math.min(marcado, Math.max(0, lista.length - 1));
+    res.innerHTML = '';
+    lista.forEach((p, i) => {
+      const li = document.createElement('li');
+      li.role = 'option'; li.setAttribute('aria-selected', String(i === marcado));
+      li.style.cssText = 'padding:7px 10px;border-radius:8px;cursor:pointer;display:flex;gap:10px;' + (i === marcado ? 'background:var(--acento-suave)' : '');
+      li.innerHTML = '<code></code><span style="flex:1"></span><small style="color:var(--texto-3)"></small>';
+      li.children[0].textContent = p.codigo; li.children[1].textContent = p.descripcion; li.children[2].textContent = p.linea;
+      li.onclick = () => elegir(p);
+      res.appendChild(li);
+    });
+    res.children[marcado]?.scrollIntoView({ block: 'nearest' });
+  };
+  const elegir = (p) => {
+    Object.assign(t.DataArray[fila], { codigo: p.codigo, descripcion: p.descripcion, unidad: p.unidad, claveunidad: unidad[p.unidad], costo: String(p.costo) });
+    t.UpdateRow(fila);
+    if (dlg.open) dlg.close();
+    t.NavTo(fila, 3);
+  };
+  const buscador = {
+    searchText(texto, autoselect) {
+      fila = t.CurrentRowIndex();
+      const exacto = catalogo.find(p => p.codigo.toLowerCase() === String(texto || '').trim().toLowerCase());
+      if (autoselect && exacto) { elegir(exacto); return; }
+      q.value = texto || ''; marcado = 0; pintar();
+      dlg.showModal(); q.focus();
+    },
+  };
+  t.setInputKey('codigo', buscador);
+  q.oninput = () => { marcado = 0; pintar(); };
+  q.onkeydown = (e) => {
+    if (e.key === 'ArrowDown') { marcado = Math.min(lista.length - 1, marcado + 1); pintar(); e.preventDefault(); }
+    if (e.key === 'ArrowUp') { marcado = Math.max(0, marcado - 1); pintar(); e.preventDefault(); }
+    if (e.key === 'Enter' && lista[marcado]) { elegir(lista[marcado]); e.preventDefault(); }
+  };
+  dlg.addEventListener('close', () => t.NavTo(Math.max(0, fila), 0));
+
+  document.getElementById('agregar').onclick = () => { t.AddRow(); t.NavTo(t.DataArray.length - 1, 0); };
+  document.getElementById('borrar').onclick = () => { const i = t.CurrentRowIndex(); if (i >= 0) t.DeleteRow(i); };
+  t.NavTo(0, 3);
+});
+</script>
+</body>
+</html>

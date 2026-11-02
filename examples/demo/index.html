@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EdiTable 2 · La tabla editable de Induxsoft</title>
+<meta name="description" content="Demostración de EdiTable 2, el web component de tabla editable de Induxsoft: captura tipo hoja de cálculo, totales, máscaras, selección, exportar a Excel, columnas, agrupación y 20 000 filas.">
+<link rel="stylesheet" href="assets/sitio.css">
+<script src="assets/sitio.js"></script>
+<script src="assets/tema-edittable.js"></script>
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="assets/datos.js"></script>
+</head>
+<body>
+<a class="saltar" href="#principal">Saltar al contenido</a>
+<div class="sitio">
+<nav id="sitio-nav"></nav>
+<div class="principal">
+<header class="barra-sup" id="sitio-barra"></header>
+<main id="principal" class="contenido">
+
+<section class="hero" aria-labelledby="hero-tit">
+  <div>
+    <span class="ceja">Web component · sin dependencias · 100 % compatible con la versión 1</span>
+    <h1 id="hero-tit">La tabla editable para capturar, consultar y exportar como en escritorio, pero en la web</h1>
+    <p class="bajada">EdiTable 2 convierte un <code>&lt;edit-table&gt;</code> en una rejilla de captura con teclado, totales, máscaras fiscales, selección, Excel, columnas a la medida, agrupación y decenas de miles de filas. Un solo archivo JavaScript, sin frameworks y sin CDN.</p>
+    <div class="acciones">
+      <a class="btn primario" href="venta.html">Ver una factura en captura</a>
+      <a class="btn" href="catalogo.html">Probar 20 000 filas</a>
+      <a class="btn" href="compatibilidad.html">Código v1 sin cambios</a>
+    </div>
+    <div class="hero-cifras">
+      <div><b>1</b><span>archivo JS, sin dependencias</span></div>
+      <div><b id="n-funciones">12</b><span>funciones nuevas en 2.0</span></div>
+      <div><b>&lt; 150 ms</b><span>primer dibujo con 20 000 filas</span></div>
+      <div><b>794</b><span>pruebas de conformidad</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="demo" aria-label="Demostración rápida">
+<div id="demo">
+  <div class="barra">
+    <strong>Existencias por sucursal</strong>
+    <span class="sep"></span>
+    <span style="font-size:13px;color:var(--texto-2)" id="sel">Marque filas: el pie suma la selección</span>
+  </div>
+  <div class="caja-tabla" style="max-height:380px;overflow:auto">
+    <edit-table id="hero" multi-select="checkbox" summary-scope="selected" column-chooser="true" style="min-width:820px">
+      <edit-thead><edit-tr>
+        <edit-th type="NoEditable" field="codigo" width="100px" fixed="left">Código</edit-th>
+        <edit-th type="NoEditable" field="descripcion" minwidth="200px" summary="count" summary-label="{value} productos">Descripción</edit-th>
+        <edit-th type="Badges" field="_linea" width="120px">Línea</edit-th>
+        <edit-th type="Number" field="existencia" textalign="end" width="100px" calc="true" summary="sum">Existencia</edit-th>
+        <edit-th type="Number" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="110px" calc="true">Precio</edit-th>
+        <edit-th type="NoEditable" field="valor" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="130px" summary="sum">Valor</edit-th>
+      </edit-tr></edit-thead>
+    </edit-table>
+  </div>
+</div>
+</section>
+<div id="codigo"></div>
+
+<div class="seccion-tit"><h2>Lo que puede hacer</h2><p>Cada tarjeta lleva a una página con la demostración y su código.</p></div>
+<div class="mosaico" id="mosaico">
+  <a href="edicion.html" data-f=""><span class="ico">01</span><b>Edición tipo hoja de cálculo</b><span>Teclado, tipos, formatos, búsqueda con F4 y filas nuevas al bajar.</span></a>
+  <a href="venta.html" data-f="summary calc"><span class="ico">Σ</span><b>Totales y calculadora</b><span>Pie con suma, conteo y promedio; <code>=1200-15%</code> en la celda.</span></a>
+  <a href="mascaras.html" data-f="mask locale"><span class="ico">RFC</span><b>Máscaras y locale</b><span>RFC y CURP con dígito verificador; es-MX y es-ES con el mismo dato.</span></a>
+  <a href="eventos.html" data-f=""><span class="ico">ƒ</span><b>Eventos cancelables</b><span>Reglas de negocio en <code>Before*</code>, <code>IsDirty</code> y bitácora en vivo.</span></a>
+  <a href="catalogo.html" data-f="virtual"><span class="ico">20k</span><b>20 000 filas</b><span>Virtualización con tiempos medidos en su navegador.</span></a>
+  <a href="cfdi.html" data-f="multiselect clipboard export"><span class="ico">XLS</span><b>Selección, copiar y Excel</b><span>Casillas, Ctrl+C a la hoja de cálculo y XLSX real.</span></a>
+  <a href="agrupacion.html" data-f="group"><span class="ico">▤</span><b>Agrupación con subtotales</b><span>Arrastre encabezados al panel; varios niveles y teclado.</span></a>
+  <a href="columnas.html" data-f="fixed chooser reorder layout"><span class="ico">⇆</span><b>Columnas y diseño guardado</b><span>Fijas, visibles, en otro orden; se recuerda solo.</span></a>
+  <a href="arbol.html" data-f=""><span class="ico">⊢</span><b>Árbol</b><span>Catálogo de cuentas por niveles, arrastrar y sangrar.</span></a>
+  <a href="tarjetas.html" data-f=""><span class="ico">▭</span><b>Tarjetas en móvil</b><span>Badges, acento por fila y fechas relativas.</span></a>
+  <a href="impresion.html" data-f=""><span class="ico">⎙</span><b>Impresión</b><span>Columnas que no se imprimen y totales en el pie.</span></a>
+  <a href="compatibilidad.html" data-f=""><span class="ico">v1</span><b>Compatibilidad</b><span>Código de la versión 1 corriendo sin cambios.</span></a>
+  <a href="busqueda.html" data-f="search"><span class="ico">⌕</span><b>Búsqueda y filtro</b><span>Filtrar mientras se escribe, con totales de lo visible.</span></a>
+  <a href="validacion.html" data-f="rowvalidate"><span class="ico">✓</span><b>Validación de fila</b><span>Errores en la celda que corresponde.</span></a>
+  <a href="cambios.html" data-f="changes"><span class="ico">Δ</span><b>Cambios para guardar</b><span>Altas, cambios y bajas listos para CRUD-L.</span></a>
+  <a href="secuencia.html" data-f="capture"><span class="ico">↵</span><b>Secuencia de captura</b><span>Enter solo por los campos que importan.</span></a>
+  <a href="reglas.html" data-f="rules"><span class="ico">◐</span><b>Formato condicional</b><span>Reglas en el HTML, sin JavaScript por pantalla.</span></a>
+  <a href="temas.html" data-f="theme"><span class="ico">◑</span><b>Temas y paletas</b><span>Claro, oscuro, jade y libro mayor.</span></a>
+</div>
+
+<div class="seccion-tit"><h2>Por qué EdiTable</h2></div>
+<div class="ventajas">
+  <div class="tarjeta"><h2>Compatible hacia atrás</h2><p>Todo lo nuevo se enciende con un atributo. Sin él, la versión 2 genera el mismo DOM y los mismos eventos que la 1: los sitios que ya la usan se actualizan sin tocar su código.</p></div>
+  <div class="tarjeta"><h2>Hecha para capturar</h2><p>Teclado primero, como en escritorio: <kbd>Enter</kbd>, flechas, <kbd>F4</kbd> para buscar, operaciones en la celda y máscaras con las reglas fiscales mexicanas.</p></div>
+  <div class="tarjeta"><h2>Web y móvil de verdad</h2><p>La misma lista se vuelve tarjetas con badges y acentos en pantallas angostas. Eso no lo trae una rejilla de escritorio.</p></div>
+</div>
+
+</main>
+</div>
+</div>
+<script data-demo>
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('hero');
+  const COLOR = { 'Ferretería': '#2f5bd3', 'Eléctrico': '#9a6700', 'Plomería': '#0d7a6f', 'Pintura': '#b42318', 'Jardín': '#1a7f37', 'Oficina': '#6f42c1' };
+  t.RowBadges = (r) => [{ id: 'linea', text: r.linea, bg: COLOR[r.linea], color: '#fff' }];
+  t.DataArray = Datos.productos(30).map(p => ({ ...p, existencia: String(p.existencia), precio: String(p.precio), valor: Math.round(p.existencia * p.precio * 100) / 100 }));
+  t._printRows();
+
+  t.addEventListener('fieldupdated', (e) => {
+    const r = t.DataArray[e.row];
+    r.valor = Math.round(Number(r.existencia) * Number(r.precio) * 100) / 100;
+    t.UpdateRow(e.row);
+    t.RefreshSummaries();
+  });
+  t.addEventListener('SelectionChanged', (e) => {
+    document.getElementById('sel').textContent = e.selected.length ? e.selected.length + ' seleccionados' : 'Marque filas: el pie suma la selección';
+  });
+  t.SelectRows([0, 2, 3, 7]);
+});
+</script>
+<script>
+/* Fuera de la demostración: estado de cada función según EditTable.features */
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('#mosaico a').forEach((a) => {
+    const fs = (a.dataset.f || '').split(' ').filter(Boolean);
+    const e = document.createElement('span');
+    const listo = fs.every(f => Sitio.tiene(f));
+    const v1 = !fs.length;
+    e.className = 'chip estado' + (v1 ? ' neutro' : (listo ? '' : ' falta'));
+    e.textContent = v1 ? 'desde la versión 1' : (listo ? '✓ disponible' : 'próximamente en 2.0');
+    a.appendChild(e);
+  });
+  document.getElementById('n-funciones').textContent = String(Math.max(12, Sitio.features().length));
+});
+</script>
+</body>
+</html>

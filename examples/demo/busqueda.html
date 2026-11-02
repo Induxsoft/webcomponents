@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Búsqueda y filtro · EdiTable 2</title>
+<link rel="stylesheet" href="assets/sitio.css">
+<script src="assets/sitio.js"></script>
+<script src="assets/tema-edittable.js"></script>
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="assets/datos.js"></script>
+</head>
+<body>
+<a class="saltar" href="#principal">Saltar al contenido</a>
+<div class="sitio">
+<nav id="sitio-nav"></nav>
+<div class="principal">
+<header class="barra-sup" id="sitio-barra"></header>
+<main id="principal" class="contenido" data-proximamente="search">
+<header class="pag-enc">
+  <span class="ceja">Próximamente · F8</span>
+  <h1>Buscar y filtrar dentro de la tabla, sin ir al servidor</h1>
+  <p class="bajada">Una caja de búsqueda que filtra mientras se escribe en todas las columnas visibles, y filtros por columna desde código. Los totales del pie siguen a lo que se ve y la selección se conserva.</p>
+</header>
+<div id="aviso" role="status"></div>
+
+<section class="demo" aria-label="Demostración">
+<div id="demo">
+  <div class="barra">
+    <input type="search" id="q" class="campo" placeholder="Buscar por nombre, RFC o ciudad" style="flex:1 1 260px" aria-label="Buscar clientes">
+    <label>Región
+      <select id="region"><option value="">Todas</option><option>Sur</option><option>Sureste</option><option>Centro</option><option>Norte</option><option>Occidente</option></select>
+    </label>
+    <label><input type="checkbox" id="con-saldo"> Solo con saldo</label>
+    <button type="button" class="btn" id="limpiar">Limpiar</button>
+  </div>
+  <div class="caja-tabla" style="height:420px;overflow-y:auto">
+    <edit-table id="clientes" search="true" summary-scope="visible" virtual-rows="true" row-height="34px" readonly="true">
+      <edit-thead><edit-tr>
+        <edit-th type="NoEditable" field="codigo" width="90px">Cliente</edit-th>
+        <edit-th type="NoEditable" field="nombre" minwidth="240px" summary="count" summary-label="{value} clientes">Nombre</edit-th>
+        <edit-th type="NoEditable" field="rfc" width="140px">RFC</edit-th>
+        <edit-th type="NoEditable" field="ciudad" width="140px">Ciudad</edit-th>
+        <edit-th type="NoEditable" field="region" width="100px">Región</edit-th>
+        <edit-th type="NoEditable" field="saldo" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="130px" summary="sum">Saldo</edit-th>
+      </edit-tr></edit-thead>
+    </edit-table>
+  </div>
+  <p class="bajada" id="cuantos" style="font-size:13px;margin:10px 0 0" aria-live="polite"></p>
+</div>
+</section>
+
+<div id="codigo"></div>
+
+<div class="explica">
+  <div class="tarjeta">
+    <h2>API que usa esta página (propuesta para F8)</h2>
+    <ul>
+      <li>Atributo <code>search="true"</code> y bandera <code>'search'</code> en <code>EditTable.features</code>.</li>
+      <li><code>Search(texto)</code> busca en las columnas visibles; <code>SetFilter(field, fn)</code> y <code>ClearFilters()</code> filtran por columna.</li>
+      <li>Evento <code>FilterChanged</code> con <code>{text, visible}</code>; <code>summary-scope="visible"</code> suma lo filtrado.</li>
+    </ul>
+  </div>
+  <div class="tarjeta">
+    <h2>Mientras tanto</h2>
+    <ul>
+      <li>Sin la bandera, la página no llama a nada nuevo: la caja queda deshabilitada y la tabla funciona como hoy.</li>
+      <li>Si F8 usa otros nombres, solo cambia el bloque de JavaScript de abajo.</li>
+    </ul>
+  </div>
+</div>
+</main>
+</div>
+</div>
+<script data-demo>
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('clientes');
+  const $ = (id) => document.getElementById(id);
+  t.DataArray = Datos.clientes(2000);
+  t._printRows();
+
+  const listo = EditTable.features.includes('search');
+  const contar = (n) => { $('cuantos').textContent = n.toLocaleString('es-MX') + ' de ' + t.DataArray.length.toLocaleString('es-MX') + ' clientes'; };
+  contar(t.DataArray.length);
+  if (!listo) {
+    ['q', 'region', 'con-saldo', 'limpiar'].forEach(id => { $(id).disabled = true; });
+    $('q').placeholder = 'La búsqueda llega con EdiTable 2.0 (F8)';
+    return;
+  }
+
+  t.addEventListener('FilterChanged', (e) => contar(e.visible));
+  $('q').oninput = () => t.Search($('q').value);
+  $('region').onchange = () => t.SetFilter('region', $('region').value ? (v) => v === $('region').value : null);
+  $('con-saldo').onchange = () => t.SetFilter('saldo', $('con-saldo').checked ? (v) => Number(v) > 0 : null);
+  $('limpiar').onclick = () => { $('q').value = ''; $('region').value = ''; $('con-saldo').checked = false; t.Search(''); t.ClearFilters(); };
+});
+</script>
+</body>
+</html>
