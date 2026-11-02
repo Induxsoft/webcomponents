@@ -182,3 +182,16 @@ Objetivo: declarar el tema **una sola vez por página** y que lo tomen todos los
 - Ejemplo: `<body data-et-theme="claro">` con un panel lateral `<aside data-et-theme="oscuro">`. Las tablas y buscadores del panel salen oscuros y el resto claros.
 - **Precedencia:** respaldo interno → ancestro más cercano con `data-et-theme` → `theme` del componente → variables `--et-*` → `palette` del componente.
 - `InduxsoftTheme.set('oscuro')` sin destino pone el atributo en `<html>`. Con destino (`InduxsoftTheme.set('oscuro', {on: elemento})`) lo pone en ese elemento.
+
+### Ancho de la parte editable (código) frente a la descripción (2026-11-02)
+
+| Atributo | Propiedad | Valores (omisión) | Qué hace |
+|---|---|---|---|
+| `key-min-chars` | `KeyMinChars` | número (`15`) | Caracteres visibles mínimos del código. Nunca se hace más angosto. |
+| `key-max-chars` | `KeyMaxChars` | número (`32`) | Hasta dónde crece el código con su contenido. Pasado ese ancho, el texto se desplaza dentro del campo. |
+
+- **Cómo se ajusta.** El código usa fuente monoespaciada, así que `1ch` equivale exactamente a un carácter. El ancho es `max(mínimo, min(máximo, largo del texto))` caracteres. El resto del ancho es de la descripción, que se corta con «…» si no cabe.
+- **Implementación.** CSS `field-sizing: content` con `min-width`/`max-width` en `ch` (Chrome y Edge 123+, el Chromium del Enterprise Browser). Para navegadores sin ese soporte, un respaldo en JS que ajusta el ancho al teclear.
+- **Pantallas angostas.** Si el ancho total no alcanza para el mínimo del código más una descripción legible (unos 12 caracteres), la descripción baja a un segundo renglón, bajo el código.
+- **Variables CSS.** Los mismos valores se pueden fijar con `--ik-key-min` y `--ik-key-max`, por ejemplo desde el tema de V12 o por pantalla.
+- **Sin `theme`.** El control conserva la rejilla de hoy (40 % / 60 %), así que estos atributos solo aplican con la apariencia nueva.

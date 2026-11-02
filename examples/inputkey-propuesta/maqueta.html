@@ -38,7 +38,11 @@ kbd{ font-family:var(--et-mono); font-size:11px; padding:1px 5px; border:1px sol
 .ik{ position:relative; }
 .ik-caja{ display:flex; align-items:stretch; height:var(--ik-h); background:var(--et-input-bg); border:1px solid var(--et-input-border); border-radius:var(--et-radius); overflow:hidden; transition:border-color .12s, box-shadow .12s; }
 .ik-caja:focus-within{ border-color:var(--et-accent); box-shadow:0 0 0 3px var(--et-focus-ring); }
-.ik-clave{ width:9.5em; flex:0 0 auto; border:0; outline:0; padding:var(--ik-pad); background:transparent; color:var(--et-fg); font-family:var(--et-mono); font-size:inherit; }
+.ik{ --ik-key-min:15; --ik-key-max:32; }
+/* Ancho del código: se ajusta al contenido, con mínimo y máximo en caracteres (key-min-chars / key-max-chars).
+   La fuente es monoespaciada, así que 1ch = 1 carácter exacto. field-sizing:content en Chrome/Edge 123+; JS de respaldo abajo. */
+.ik-clave{ field-sizing:content; box-sizing:content-box; min-width:calc(var(--ik-key-min) * 1ch); max-width:calc(var(--ik-key-max) * 1ch); width:calc(var(--ik-key-min) * 1ch); flex:0 1 auto; border:0; outline:0; padding:var(--ik-pad); background:transparent; color:var(--et-fg); font-family:var(--et-mono); font-size:inherit; }
+@supports (field-sizing: content){ .ik-clave{ width:auto; } }
 .ik-sep{ width:1px; background:var(--et-border); margin:6px 0; }
 .ik-desc{ flex:1 1 auto; min-width:0; padding:var(--ik-pad); display:flex; align-items:center; color:var(--et-fg); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .ik-desc.vacio{ color:var(--et-muted-fg); font-style:italic; }
@@ -179,6 +183,19 @@ input[type=checkbox]{ accent-color:var(--et-accent); width:15px; height:15px; }
 </section>
 
 <section class="tarjeta">
+  <h2>Ancho del código (key-min-chars / key-max-chars)</h2>
+  <p class="nota">El código se ajusta a lo que contiene: nunca baja de <b>15 caracteres visibles</b> (<code>key-min-chars</code>, por omisión 15) ni pasa de 32 (<code>key-max-chars</code>); lo demás es descripción. Teclea en cualquiera para verlo crecer.</p>
+  <div class="fila" style="flex-direction:column;gap:12px">
+    <div class="campo-demo" style="width:100%;flex:none"><span class="etq">CÓDIGO CORTO (queda en el mínimo de 15)</span>
+      <div class="ik"><div class="ik-caja"><input class="ik-clave" value="A1"><span class="ik-sep"></span><span class="ik-desc">Artículo de muestra</span><span class="ik-btn principal"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M11.74 10.33a6 6 0 1 0-1.41 1.41l3.85 3.85a1 1 0 0 0 1.41-1.41l-3.85-3.85ZM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0Z"/></svg></span></div></div></div>
+    <div class="campo-demo" style="width:100%;flex:none"><span class="etq">CÓDIGO LARGO (crece hasta 32)</span>
+      <div class="ik"><div class="ik-caja"><input class="ik-clave" value="7501000000017-LOTE-2026-11"><span class="ik-sep"></span><span class="ik-desc">Brocha de cerda 2" (lote noviembre)</span><span class="ik-btn principal"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M11.74 10.33a6 6 0 1 0-1.41 1.41l3.85 3.85a1 1 0 0 0 1.41-1.41l-3.85-3.85ZM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0Z"/></svg></span></div></div></div>
+    <div class="campo-demo" style="width:100%;flex:none"><span class="etq">key-min-chars="6" (claves cortas, p. ej. sucursales)</span>
+      <div class="ik" style="--ik-key-min:6"><div class="ik-caja"><input class="ik-clave" value="SUC01"><span class="ik-sep"></span><span class="ik-desc">Sucursal Centro</span><span class="ik-btn principal"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M11.74 10.33a6 6 0 1 0-1.41 1.41l3.85 3.85a1 1 0 0 0 1.41-1.41l-3.85-3.85ZM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0Z"/></svg></span></div></div></div>
+  </div>
+</section>
+
+<section class="tarjeta">
   <h2>Estados (A4)</h2>
   <p class="nota">Con valor, buscando, no encontrado en modo estricto (mensaje en línea, sin <code>alert()</code>) y deshabilitado.</p>
   <div class="fila">
@@ -276,6 +293,14 @@ function buscar(q, linea)
   return PRODUCTOS.filter(p => (!linea || p.linea === linea) && terms.every(t => plegar(p.codigo + ' ' + p.descripcion + ' ' + p.codbar).includes(t)));
 }
 const RECIENTES = [];
+
+/* ---------- Respaldo del ancho automático del código (navegadores sin field-sizing:content) ---------- */
+if (!CSS.supports('field-sizing', 'content'))
+{
+  const ajustar = inp => { const cs = getComputedStyle(inp.closest('.ik')); const min = +cs.getPropertyValue('--ik-key-min') || 15, max = +cs.getPropertyValue('--ik-key-max') || 32;
+    inp.style.width = Math.max(min, Math.min(max, inp.value.length + 1)) + 'ch'; };
+  document.querySelectorAll('.ik-clave').forEach(i => { ajustar(i); i.addEventListener('input', () => ajustar(i)); });
+}
 
 /* ---------- Tema y densidad ---------- */
 const temas = ['t-claro', 't-oscuro', 't-jade', 't-libro'], dens = ['d-compacta', 'd-normal', 'd-comoda'];
