@@ -322,6 +322,16 @@ window.__filasA = function () { return Array.from(document.getElementById('ika')
         const f = await ev(page, () => __filasA());
         ok(JSON.stringify(f) === '["Cancelar","Copiar","Enviar por correo"]', 'filtra por «ar»: ' + JSON.stringify(f));
       } },
+      { id: 'ik8-comodin', titulo: 'IK-8: con tema, escribir en el menú abierto con «%» reemplaza el comodín (antes buscaba «%texto»)', pagina: { ...pagina, bodyAttrs: ' data-et-theme="claro"' }, fn: async (page, ok) => {
+        await abrirA(page);
+        ok((await ev(page, () => __filasA())).length === 4, 'abre con las 4');
+        await page.keyboard.type('ar'); await esperar(page, 400);
+        const v = await ev(page, () => document.getElementById('ika').shadowRoot.querySelector('#search_section_container2 input').value);
+        ok(v === 'ar', 'el buscador dice «ar»: ' + JSON.stringify(v));
+        await page.keyboard.press('Enter'); await esperar(page, 200);
+        const f = await ev(page, () => __filasA());
+        ok(JSON.stringify(f) === '["Cancelar","Copiar","Enviar por correo"]', 'Enter filtra por «ar»: ' + JSON.stringify(f));
+      } },
     ];
   })(),
   // ===== IK-7: componentes insertados después de cargar la página

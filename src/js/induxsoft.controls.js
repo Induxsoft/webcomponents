@@ -2921,6 +2921,9 @@ class InputKey extends HTMLElement
     _ik2AlBuscador()
     {
         const b = this.input_search_container2;
+        // IK-8 (2026-11-02): el comodín «%» con que se abre la lista completa (V12: searchText("%") del menú de acciones)
+        // no se conserva al escribir: antes se buscaba «%texto» y no había resultados.
+        if (b.value === '%') b.value = '';
         b.focus();
         const n = b.value.length; try { b.setSelectionRange(n, n); } catch { }
     }
