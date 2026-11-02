@@ -1,0 +1,7 @@
+:host { --et-t-cell-pad-y: 1px; --et-t-cell-pad-x: 4px; --et-t-header-pad-y: 2px; --et-t-header-pad-x: 6px; --et-t-row-height: 1.15rem; --et-t-input-pad-y: 0; --et-t-input-pad-x: 0.35rem; }
+
+            /* (0,0,2): pierde con tbody tr:hover (0,1,2), la fila seleccionada (!important) y la marcada (0,1,2) */
+            tbody > tr:where(:nth-child(even of tr:not(.et-spacer, .hidde-row, .et-group-row))) { background-color: var(--et-row-alt-bg, var(--et-t-row-alt-bg, #F7F7F7)); }
+            /* (0,2,4): gana a la celda fija (0,2,2) y pierde con su hover (0,3,3) */
+            table.et-has-fixed tbody > tr:where(:nth-child(even of tr:not(.et-spacer, .hidde-row, .et-group-row))) > td.et-fixed { background-color: var(--et-row-alt-bg, var(--et-t-row-alt-bg, #F7F7F7)); }
+        
