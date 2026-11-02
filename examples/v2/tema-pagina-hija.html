@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<title>Pantalla en un iframe · tema de la página</title>
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<style>html, body { margin: 0; padding: 6px; font: 13px system-ui, sans-serif; background: transparent; } p { margin: 0 0 6px; }</style>
+</head>
+<body>
+<!-- Página que se abre dentro de tema-pagina.html. No declara tema: toma el de su <iframe> en la ventana padre (mismo origen). -->
+<p id="estado">Sin tema declarado en esta página.</p>
+<edit-table id="h1" style="width:100%">
+<edit-thead><edit-tr>
+<edit-th type="Text" field="codigo" width="80px">Código</edit-th>
+<edit-th type="Text" field="nombre" minwidth="160px">Cliente</edit-th>
+<edit-th type="Number" field="saldo" width="110px" format="true" decs="2" prefix="$" thousandssep="true">Saldo</edit-th>
+</edit-tr></edit-thead>
+</edit-table>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('h1');
+  t.DataArray = DatosDemo.clientes(4); t._printRows();
+  const pintar = () => { const r = InduxsoftTheme.resolve(t); document.getElementById('estado').textContent = `Tema: "${r.theme || '(ninguno)'}" (origen: ${r.source || '—'}).`; };
+  document.addEventListener('themechange', pintar);
+  pintar();
+});
+</script>
+</body>
+</html>

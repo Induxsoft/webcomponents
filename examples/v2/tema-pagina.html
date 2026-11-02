@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es-MX" data-et-theme="claro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tema de la página · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+<style>
+  .tp-controles { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: end; margin: 0 0 10px; }
+  .tp-controles label { display: flex; flex-direction: column; gap: 3px; font-size: 13px; }
+  .tp-zonas { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+  .tp-zona { padding: 10px; border: 1px dashed #9AA3AE; border-radius: 6px; min-width: 0; }
+  .tp-zona h3 { margin: 0 0 6px; font-size: 13px; font-weight: 600; }
+  .tp-zona code { font-size: 12px; }
+  .tp-oscura { background: #15181C; color: #E6EDF3; }
+  iframe.tp-marco { width: 100%; height: 230px; border: 1px solid #9AA3AE; border-radius: 6px; background: transparent; }
+  @media (max-width: 760px) { .tp-zonas { grid-template-columns: minmax(0, 1fr); } }
+</style>
+</head>
+<body>
+<!-- data-et-theme / data-et-density / data-et-palette en cualquier ancestro: las tablas sin theme propio toman el del más cercano.
+     <html data-et-theme="claro"> elige el de toda la página; el panel lateral es oscuro; una zona corta la herencia con "".
+     El iframe (mismo origen) hereda el tema de su <iframe> en esta página y se actualiza al cambiarlo. -->
+<div id="contenido">
+<div class="tp-controles">
+  <label>Tema de la página (&lt;html&gt;) <select id="tema">
+    <option value="">(ninguno: aspecto actual)</option>
+    <option value="claro" selected>claro</option><option value="oscuro">oscuro</option>
+    <option value="jade">jade</option><option value="libro-mayor">libro-mayor</option>
+    <option value="auto">auto (prefers-color-scheme)</option>
+  </select></label>
+  <label>Densidad de la página <select id="densidad"><option value="">(ninguna)</option><option value="compacta">compacta</option><option value="normal">normal</option><option value="comoda">cómoda</option></select></label>
+  <label>Tema del iframe (su &lt;div&gt;) <select id="tema-marco"><option value="">(hereda de la página)</option><option value="oscuro">oscuro</option><option value="jade">jade</option><option value="libro-mayor">libro-mayor</option></select></label>
+  <label><span><input type="checkbox" id="recordar"> recordar el tema (localStorage)</span></label>
+</div>
+<div class="demo-barra" id="barra"></div>
+<div class="tp-zonas">
+  <section class="tp-zona"><h3>Hereda de &lt;html&gt;</h3>
+    <div class="demo-caja" style="max-height:230px"><edit-table id="t1" style="width:100%"></edit-table></div></section>
+  <aside class="tp-zona tp-oscura" data-et-theme="oscuro"><h3>Panel <code>data-et-theme="oscuro"</code></h3>
+    <div class="demo-caja" style="max-height:230px"><edit-table id="t2" style="width:100%"></edit-table></div></aside>
+  <section class="tp-zona" data-et-theme="libro-mayor" data-et-density="compacta" data-et-palette='{"header-bg":"#0F3D6E","header-fg":"#FFFFFF"}'>
+    <h3>Zona <code>libro-mayor</code>, compacta y con <code>data-et-palette</code></h3>
+    <div class="demo-caja" style="max-height:230px"><edit-table id="t3" style="width:100%"></edit-table></div></section>
+  <section class="tp-zona" data-et-theme=""><h3>Corte <code>data-et-theme=""</code>: aspecto actual</h3>
+    <div class="demo-caja" style="max-height:230px"><edit-table id="t4" style="width:100%"></edit-table></div></section>
+  <section class="tp-zona"><h3>Tabla con <code>theme="jade"</code> propio (gana al de la página)</h3>
+    <div class="demo-caja" style="max-height:230px"><edit-table id="t5" style="width:100%" theme="jade"></edit-table></div></section>
+  <section class="tp-zona" id="zona-marco"><h3>iframe del mismo origen (hereda de su &lt;iframe&gt;)</h3>
+    <iframe class="tp-marco" id="marco" src="tema-pagina-hija.html" title="Pantalla en un iframe"></iframe></section>
+</div>
+</div>
+<script>
+Demo.pagina({"titulo": "Tema de la página", "tipo": "v2", "bajada": "data-et-theme, data-et-density y data-et-palette en <html> o en cualquier contenedor: las tablas sin theme propio toman los del ancestro más cercano, también dentro de un iframe del mismo origen. InduxsoftTheme.set() los cambia en caliente."});
+Demo.requiere(["page-theme"]);
+const COLS = `<edit-thead><edit-tr>
+<edit-th type="Text" field="codigo" width="80px">Código</edit-th>
+<edit-th type="Text" field="nombre" minwidth="160px">Cliente</edit-th>
+<edit-th type="Number" field="saldo" width="110px" format="true" decs="2" prefix="$" thousandssep="true">Saldo</edit-th>
+</edit-tr></edit-thead>`;
+for (const id of ['t1', 't2', 't3', 't4', 't5']) document.getElementById(id).innerHTML = COLS;
+document.addEventListener('DOMContentLoaded', () => {
+  for (const id of ['t1', 't2', 't3', 't4', 't5']) { const t = document.getElementById(id); t.DataArray = DatosDemo.clientes(6); t._printRows(); }
+  const IT = window.InduxsoftTheme;
+  const recordar = document.getElementById('recordar');
+  const tema = document.getElementById('tema');
+  tema.onchange = () => IT.set(tema.value || null, recordar.checked ? { remember: true } : undefined);
+  recordar.onchange = () => IT.set(tema.value || null, { remember: recordar.checked });
+  document.getElementById('densidad').onchange = (e) => IT.setDensity(e.target.value || null);
+  document.getElementById('tema-marco').onchange = (e) => IT.set(e.target.value || null, { on: document.getElementById('zona-marco') });
+  document.addEventListener('themechange', (e) => Demo.log(`themechange (${e.detail.reason}) → <html> resuelve "${IT.get()}"`, 'tema'));
+  Demo.boton('barra', 'InduxsoftTheme.resolve(t1) (consola)', () => console.log(IT.resolve(document.getElementById('t1'))));
+  Demo.boton('barra', 'define("v12-azul") y usarlo', () => { IT.define('v12-azul', { 'header-bg': '#0F3D6E', 'header-fg': '#FFFFFF', 'sel-bg': '#0F3D6E', accent: '#0F3D6E' }); IT.set('v12-azul'); });
+});
+</script>
+</body>
+</html>

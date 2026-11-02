@@ -39,6 +39,9 @@ Herramientas (y `tests/VERSIONES.md`, el resultado de correr el banco con las ve
   los escenarios de V12 (`tests/fixtures/v12/extraido.mjs`).
 - `node tests/tools/mutaciones.mjs`: pruebas de mutación del propio banco (ver abajo).
 - `node tests/tools/catalogo.mjs`: regenera `tests/CATALOGO.md`.
+- `node tests/tools/embed-theme.mjs [--check]`: copia `src/js/induxsoft.theme.js` (módulo común de temas,
+  `InduxsoftTheme`) entre los marcadores `/* <induxsoft-theme v=…> */` de `induxsoft.controls.editable.js` e
+  `induxsoft.controls.js`, y falla si alguna copia es distinta (`--check` solo verifica; lo prueba también `tpg-18`).
 - `node tests/tools/versiones.mjs --actual <salida>/actual`: separa, en una corrida con otra versión del componente,
   las diferencias que solo se deben a agregados (CSS nuevo, propiedades que no existen) de las de comportamiento.
 - `node tests/inputkey/run.mjs [--src <induxsoft.controls.js>] [--filtro <id>] [--verbose]`: pruebas unitarias con
