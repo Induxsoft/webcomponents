@@ -31,8 +31,12 @@ a('03', '5,000 filas: NavTo(4000, 0) en menos de 16 ms con virtual-rows (sin vir
   await c.abrir(montar(5000, {}, false));
   c.nota(`sin virtual-rows (informativo): NavTo tardó ${(await navTo()).toFixed(1)} ms`);
   await c.abrir(montar(5000, { 'virtual-rows': 'true', 'row-height': '28px', 'control-styles': 'div:has(table#t1){overflow:revert !important}' }));
-  const ms = await navTo();
-  c.ok(ms < 16, `con virtual-rows NavTo tardó ${ms.toFixed(1)} ms`);
+  // Mediana de 5 saltos (4000 y regreso a 0): una sola medición en headless con 2 CPU varía de 13 a 25 ms (ver AJUSTES.md).
+  const v = [];
+  for (let k = 0; k < 5; k++) { v.push(await navTo()); await c.ev(() => __ct.t('t1').NavTo(0, 0)); }
+  v.sort((x, y) => x - y);
+  const ms = v[2];
+  c.ok(ms < 16, `con virtual-rows NavTo tardó ${ms.toFixed(1)} ms (mediana de 5: ${v.map(x => x.toFixed(1)).join(', ')})`);
 }, { limite: 60000 });
 a('04', 'actualizar una fila no vuelve a dibujar la tabla (los demás tr se conservan)', ['§10-a'], async (c) => {
   await c.abrir(montar(50, {}, false));
