@@ -5,6 +5,9 @@
  * página.
  */
 
+/* <induxsoft-theme v=0> */
+/* </induxsoft-theme> */
+
 class EditSelect extends HTMLElement
 {
     attributes = null;
@@ -250,6 +253,11 @@ class InputKey extends HTMLElement
         {
             this.CreateShadow();
         });
+        this._ik2Conectado();   // InputKey 2
+    }
+    disconnectedCallback()
+    {
+        this._ik2Desconectado();   // InputKey 2
     }
     shadow=null;
     CreateShadow()
@@ -317,7 +325,7 @@ class InputKey extends HTMLElement
         // header section
         const title_header_container2 = this.createFullElement('p', {id:'title_container2', class:'text-secondary grow-1'});
         const close_header_container2 = this.createFullElement('button', {id:'close_header_container2', class:"border-0 induxsoft-buttons p-2 d-flex align-items-center justify-content-center hover-red"});
-        title_header_container2.textContent = (this.getAttribute('box-title-text') ?? 'Seleccione un Registro');
+        title_header_container2.textContent = (this.getAttribute('box-title-text') ?? this._ik2T('title'));
         close_header_container2.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#333" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/></svg>`;
         header_section_container2.appendChild(title_header_container2);
         header_section_container2.appendChild(close_header_container2);
@@ -325,8 +333,8 @@ class InputKey extends HTMLElement
         // search section
         const button_search_container2 = this.createFullElement('button', {type:'button',class:'p-2 induxsoft-buttons'});
         this.input_search_container2 = this.createFullElement('input', {type:'text', class:'grow-1 induxsoft-form-control'});
-        button_search_container2.textContent = 'Buscar';
-        this.input_search_container2.setAttribute('placeholder', (this.getAttribute('box-placeholder-text') ?? 'Buscar...'));
+        button_search_container2.textContent = this._ik2T('search');
+        this.input_search_container2.setAttribute('placeholder', (this.getAttribute('box-placeholder-text') ?? this._ik2T('searchPlaceholder')));
         search_section_container2.appendChild(this.input_search_container2);
         search_section_container2.appendChild(button_search_container2);
 
@@ -342,8 +350,8 @@ class InputKey extends HTMLElement
         // footer section
         this.accept_footer_container2 = this.createFullElement('button', {type:'button',class:'induxsoft-buttons'});
         const close2_footer_container2 = this.createFullElement('button', {id:'close2_container2', type:'button', class:'induxsoft-buttons'});
-        this.accept_footer_container2.textContent = 'Aceptar';
-        close2_footer_container2.textContent = 'Cancelar';
+        this.accept_footer_container2.textContent = this._ik2T('accept');
+        close2_footer_container2.textContent = this._ik2T('cancel');
         footer_section_container2.appendChild(this.accept_footer_container2);
         footer_section_container2.appendChild(close2_footer_container2);
 
@@ -363,8 +371,8 @@ class InputKey extends HTMLElement
         // header section
         const title_header_container3 = this.createFullElement('p', {id:'title_container2', class:'text-secondary grow-1'});
         const close_header_container3 = this.createFullElement('button', {id:'close_header_container2', class:"border-0 p-1 hover-red"});
-        title_header_container3.textContent = (this.getAttribute('box-title-text') ?? 'Agregar registro');
-        close_header_container3.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#FFF" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/></svg>`;
+        title_header_container3.textContent = (this.getAttribute('box-title-text') ?? this._ik2T('addTitle'));
+        close_header_container3.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#333" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/></svg>`;
         header_section_container3.appendChild(title_header_container3);
         header_section_container3.appendChild(close_header_container3);
 
@@ -382,8 +390,8 @@ class InputKey extends HTMLElement
         // header section
         const title_header_container4 = this.createFullElement('p', {id:'title_container4', class:'text-secondary grow-1'});
         const close_header_container4 = this.createFullElement('button', {id:'close_header_container4', class:"border-0 p-1 hover-red"});
-        title_header_container4.textContent = (this.getAttribute('box-title-text') ?? 'Editar registro');
-        close_header_container4.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#FFF" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/></svg>`;
+        title_header_container4.textContent = (this.getAttribute('box-title-text') ?? this._ik2T('editTitle'));
+        close_header_container4.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#333" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/></svg>`;
         header_section_container4.appendChild(title_header_container4);
         header_section_container4.appendChild(close_header_container4);
 
@@ -410,13 +418,16 @@ class InputKey extends HTMLElement
         this.accept_footer_container2.addEventListener('click', () => {
             if (!this.record_selected || Object.entries(this.record_selected).length <= 0)
             {
-                alert("Debe seleccionar un registro para continuar");
+                this._ik2Avisar(this._ik2T('mustSelect'), 'ventana');   // con tema: en línea; sin tema: alert
                 return;
             }
+            const o2 = this.#opener;   // InputKey 2: con tema, el foco vuelve al que abrió
             this.#opener = null;
             this.setValue(this.record_selected);
-            this.container2.classList.add('hide-element');
+            this._ik2Elegido(this.accept_data);   // InputKey 2: Selected y pick()
+            this._ik2Ocultar();                   // antes: this.container2.classList.add('hide-element')
             InputKey._ikSyncListeners();   // IK-1
+            this._ik2DevolverFoco(o2);
         });
         this.input_search_container.addEventListener('click', () => {
             this.input_search_container.select();
@@ -454,9 +465,11 @@ class InputKey extends HTMLElement
             this.searchButton(this.container2);
         });
         this.input_search_container2.addEventListener('keyup', (e) => {
+            if (this._ik2Lista) return;   // InputKey 2: con tema el buscador de la ventana usa keydown
             if (e.key === 'Enter')
                 this.searchButton(this.container2);
         });
+
         // IK-1: Esc lo atiende InputKey._ikOnWindowKey (keydown en captura de window, que lo consume). Esto queda por si
         // el keyup llegara de todos modos.
         search_container2.addEventListener('keyup', (e) => {
@@ -469,6 +482,7 @@ class InputKey extends HTMLElement
             const iframe_container3 = this.createFullElement('iframe', {width:'100%', height:'100%', title:'Add element', src:url});
             iframe_section_container3.innerHTML = '';
             iframe_section_container3.appendChild(iframe_container3);
+            this._ik2Cargando(iframe_section_container3, iframe_container3);   // InputKey 2 (A8)
             container3.classList.remove('hide-element');
         });
         close_header_container3.addEventListener('click', () => {
@@ -478,13 +492,14 @@ class InputKey extends HTMLElement
             e.stopPropagation();
             if (!this.getAttribute('value'))
             {
-                alert('Debe seleccionar un registro para continuar.');
+                this._ik2Avisar(this._ik2T('mustSelectEdit'), 'campo');
                 return;
             }
             let url = this.prepareUrl((this.getAttribute('edit-url')??''));
             const iframe_container4 = this.createFullElement('iframe', {width:'100%', height:'100%', title:'Edit element', src:url});
             iframe_section_container4.innerHTML = '';
             iframe_section_container4.appendChild(iframe_container4);
+            this._ik2Cargando(iframe_section_container4, iframe_container4);   // InputKey 2 (A8)
             container4.classList.remove('hide-element');
         });
         button_clear_container.addEventListener('click', () => {
@@ -578,6 +593,8 @@ class InputKey extends HTMLElement
         this.shadow.appendChild(container4);
         
         if (this._parseBool((this.getAttribute('hidden-input')??''), true)) this.after(this.inputv);
+        this._ik2Botones = { searchBtn: button_search_container, addBtn: button_add_container, editBtn: button_edit_container, clearBtn: button_clear_container, x3: close_header_container3, title3: title_header_container3 };
+        this._ik2Iniciar();   // InputKey 2: tema, panel anclado, headless (sin atributos nuevos no hace nada)
 
         if (this.hasAttribute('data-value'))
         {
@@ -590,7 +607,7 @@ class InputKey extends HTMLElement
                 }
                 
             }catch{
-                alert('El valor del atributo "data-value" tiene un formato JSON inválido');
+                this._ik2Avisar('El valor del atributo "data-value" tiene un formato JSON inválido', 'campo');
             }
         }
     }
@@ -613,6 +630,9 @@ class InputKey extends HTMLElement
      */
     printTableData()
     {
+        if (this._ik2Lista) return this._ik2PintarLista();   // InputKey 2 (A6): ventana con tema
+        const cj = this._ik2Columnas();                       // InputKey 2 (B8): columns en JSON
+        if (cj) return this._ik2PintarLegado(cj);
         this.body_tables_container2.innerHTML = ``;
         this.head_tables_container2.innerHTML = ``;
 
@@ -706,8 +726,14 @@ class InputKey extends HTMLElement
         if (this.#abort) { try { this.#abort.abort(); } catch {} this.#abort = null; }
         this.#Requesting = false;
         let url = this.getAttribute('data-source');
+        // InputKey 2 (B2): BeforeSearch puede cambiar el texto o cancelar la búsqueda (la promesa no se resuelve).
+        const bs = this._ik2AntesDeBuscar((search ?? '').toString());
+        if (bs === null) return new Promise(() => {});
+        search = bs;
+        this._ik2Error = null;
         this.#lastSearch = (search ?? '').toString();   // IK-3
-        search=search.toLowerCase();                     // IK-4: se conserva el envío en minúsculas (compatibilidad)
+        // IK-4: se conserva el envío en minúsculas (compatibilidad). InputKey 2 (B16): search-case="keep" lo manda tal cual.
+        if (!this._ik2Conservar()) search=search.toLowerCase();
         return new Promise(resolve => {
             if (url && search.trim() != "")
             {
@@ -721,32 +747,54 @@ class InputKey extends HTMLElement
                 this.#abort = ctrl;
                 this.#Requesting = true;
                 const vigente = () => (seq === this.#searchSeq);
+                // InputKey 2 (B15): tiempo máximo (request-timeout; con tema, 30 s por omisión; sin tema, solo si se pide).
+                const tmax = ctrl ? this._ik2Timeout() : 0;
+                let vencida = false;
+                const reloj = tmax > 0 ? setTimeout(() => { vencida = true; try { ctrl.abort(); } catch { } }, tmax) : null;
+                this._ik2Buscando(true);
                 this.request(surl, (dataSuccess) => {
                     if (!vigente()) return;   // IK-5: respuesta vieja
+                    if (reloj) clearTimeout(reloj);
                     this.#abort = null;
+                    this._ik2Buscando(false);
                     this.data = this.setObjectListMinus(dataSuccess);
                     this.findValue(id);
+                    this._ik2Disparar('SearchCompleted', { text: this.#lastSearch, count: (this.data ?? []).length });
                     resolve();
                     this.#Requesting = false;
                 }, (dataFail) => {
                     if (!vigente()) return;   // IK-5: también la cancelada por AbortController
+                    if (reloj) clearTimeout(reloj);
                     this.#abort = null;
-                    resolve();
-                    alert("Ocurrió un error al invocar el servicio.\n\n" + dataFail);
+                    this._ik2Buscando(false);
+                    const msg = vencida ? this._ik2T('timeout') : dataFail;
+                    this._ik2Disparar('SearchError', { text: this.#lastSearch, error: msg, timeout: vencida });
+                    if (this._ik2Lista || this._ik2PopupTema()) { this._ik2Error = { text: this.#lastSearch, message: String(msg ?? '') }; resolve(); }
+                    else
+                    {
+                        resolve();
+                        alert(this._ik2T('serviceError') + "\n\n" + msg);
+                    }
                     this.#Requesting = false;
                 }, ctrl ? ctrl.signal : undefined);
             }
             else if(this.hasAttribute('data-source-array') && this.getAttribute('data-source-array').trim() != '')
             {
                 try{ this.data = this.setObjectListMinus(JSON.parse(this.getAttribute('data-source-array'))); }
-                catch{ alert('El valor del atributo "data-source-array" tiene un formato JSON inválido'); }
+                catch{
+                    const m = 'El valor del atributo "data-source-array" tiene un formato JSON inválido';
+                    if (this._ik2PopupTema()) { this._ik2Error = { text: this.#lastSearch, message: m }; console.warn('InputKey: ' + m); }
+                    else alert(m);
+                }
                 if (id && this.data){
                     this.data = this.data.filter(data => (data[(this.getAttribute('data-key')??'').toLowerCase()] === id.toLowerCase()));
                 }
                 else if (search && this.data){
-                    this.data = this.data.filter(data => (data[(this.getAttribute('data-search')??'').toLowerCase()].includes(search.toLowerCase()) || search=='%'));
+                    const cs = this._ik2Conservar();   // InputKey 2 (B16)
+                    this.data = this.data.filter(data => (cs ? String(data[(this.getAttribute('data-search')??'').toLowerCase()] ?? '').includes(search) : data[(this.getAttribute('data-search')??'').toLowerCase()].includes(search.toLowerCase())) || search=='%');
                 }
                 this.findValue(id);
+                this._ik2Disparar('SearchCompleted', { text: this.#lastSearch, count: (this.data ?? []).length });
                 resolve();
             }
             else
@@ -841,6 +889,7 @@ class InputKey extends HTMLElement
             this.setAttribute('value', this.accept_data[(this.getAttribute('data-key')??'').toLowerCase()]??'');
             this.inputv.setAttribute('value', this.accept_data[(this.getAttribute('data-key')??'').toLowerCase()]??'');
         }
+        this._ik2AlPintarValor();   // InputKey 2: estado vacío / con valor, validez y ancho del código
     }
     /**
      * Limpia la información del objeto seleccionado y los controles del componente.
@@ -863,11 +912,25 @@ class InputKey extends HTMLElement
         // campos de _ikAutoselectFields(). Antes se comparaba contra la llave del registro aceptado la vez anterior
         // (key-value): un código nuevo abría la lista y una coincidencia parcial del mismo registro entraba sola.
         const unico = (this.data && this.data.length == 1) ? this.data[0] : null;
-        if (autoselect && this._parseBool(this.getAttribute('autoselect'), true) && unico && this._ikExactMatch(unico, this.#lastSearch))
+        // InputKey 2 (B13): autoselect="exact" también elige entre varios resultados si UNO solo es exacto.
+        const asel = this._ik2ModoAutoselect();
+        let elegido = (autoselect && asel && unico && this._ikExactMatch(unico, this.#lastSearch)) ? unico : null;
+        if (!elegido && autoselect && asel === 'exact' && this.data && this.data.length > 1)
         {
-            this.record_selected = unico;
+            const ex = this.data.filter(r => this._ikExactMatch(r, this.#lastSearch));
+            if (ex.length === 1) elegido = ex[0];
+        }
+        if (elegido)
+        {
+            this.record_selected = elegido;
             this.#opener = null;
             this.setValue(this.record_selected);
+            this._ik2Elegido(this.accept_data);   // InputKey 2
+        }
+        else if (this._ik2EstrictoSinResultados(autoselect))
+        {
+            // InputKey 2 (B10): strict con tema y sin resultados: no abre la ventana vacía; el campo queda inválido.
+            this.#opener = null;
         }
         else
         {
@@ -875,8 +938,9 @@ class InputKey extends HTMLElement
             // quita al confirmar), se toma lo que tiene el foco ahora, justo antes de abrir la ventana.
             if (this.container2.classList.contains('hide-element') && (!this.#opener || !this.#opener.isConnected))
                 this.#opener = InputKey._ikDeepActive();
+            this._ik2PrepararVentana(this.#opener);   // InputKey 2: tema de la ventana (A2) y modo (A5)
             this.printTableData();
-            this.container2.classList.remove('hide-element');
+            this._ik2Mostrar();                       // antes: this.container2.classList.remove('hide-element')
             InputKey._ikSyncListeners();   // IK-1
             if(!this.data || this.data.length <= 0)
             {
@@ -896,7 +960,7 @@ class InputKey extends HTMLElement
     searchButton(container2)
     {
         if (this.input_search_container2.value.trim() == ""){
-            alert("Debe especificar el texto a buscar para continuar");
+            this._ik2Avisar(this._ik2T('mustType'), 'ventana');
             this.input_search_container2.focus();
             return;
         }
@@ -929,7 +993,23 @@ class InputKey extends HTMLElement
             case 'change':
                 this.change_event = func;
                 break;
+            // InputKey 2 (B2): eventos nuevos, como casos explícitos. Cualquier otro nombre se sigue descartando.
+            case 'Selected':
+            case 'Canceled':
+            case 'BeforeSearch':
+            case 'SearchCompleted':
+            case 'SearchError':
+            case 'Opened':
+            case 'Closed':
+                this._ik2Oyentes(ename).add(func);
+                break;
         }
+    }
+    /** InputKey 2: quita un oyente de los eventos nuevos. Para los demás nombres hace lo de siempre (el nativo). */
+    removeEventListener(ename, func, opts)
+    {
+        if (InputKey._ik2Eventos.includes(ename)) { this._ik2Oyentes(ename).delete(func); return; }
+        super.removeEventListener(ename, func, opts);
     }
     /**
      * Procesa la URL proporcionada para remplazar las claves que contenga con los valores del control.
@@ -1034,11 +1114,14 @@ class InputKey extends HTMLElement
     {
         if (!this.container2 || !this.container2.classList.contains('hide-element')) return;
         this.#opener = InputKey._ikDeepActive();
+        this._ik2Celda = this._ik2CeldaDe(this.#opener) ?? InputKey._ik2CeldaReciente();   // InputKey 2 (A5): celda que abrió la búsqueda
     }
     /** IK-1 e IK-2: cierra la ventana sin selección (Esc, «Cancelar» o la X): no dispara change_event. */
     _ikCancel()
     {
-        this.container2.classList.add('hide-element');
+        const texto2 = this.input_search_container2 ? this.input_search_container2.value : '';
+        if (this.IsOpen) this._ik2Disparar('Canceled', { text: texto2 });   // InputKey 2 (B2): antes de Closed, como Selected
+        this._ik2Ocultar();   // antes: this.container2.classList.add('hide-element')
         InputKey._ikSyncListeners();
         // Los controles vuelven a mostrar el registro aceptado, sin evento. Sin registro aceptado solo se borra el texto
         // buscado (los atributos value quedan como estaban).
@@ -1053,6 +1136,7 @@ class InputKey extends HTMLElement
         {
             try { o.focus({ preventScroll: true }); } catch { }
         }
+        this._ik2Resolver(null);   // InputKey 2: pick() → null
     }
     /** Elemento con el foco, entrando a los shadow (abiertos, el de EdiTable por _shadow y el de InputKey por shadow). */
     static _ikDeepActive()
@@ -1150,6 +1234,1180 @@ class InputKey extends HTMLElement
         const externalBtn = this.createFullElement('button', { type:'button', style:"display:none !important;", id:button.id });
         this.after(externalBtn);
         button.onclick = e => externalBtn.click();
+    }
+    // =====================================================================================================
+    // ===== InputKey 2 (2026-11-02). Todo se activa con atributos nuevos; sin ellos, el control es el de hoy.
+    //  - Apariencia (A1-A4, A6, A8-A11): solo con tema, del atributo `theme` o heredado por `data-et-theme`
+    //    mediante el módulo común window.InduxsoftTheme; la ventana también toma el tema de la EdiTable que la abre (A2).
+    //  - Funcional: headless, open/close/pick/load (B1), eventos (B2), popup="modal|anchored|auto" (A5), teclado con
+    //    keydown (B7, con tema), columns en JSON (B8), strict y validez (B10), request-timeout y «Reintentar» (B15),
+    //    search-case (B16), autoselect="exact" (B13).
+    //  - Pendiente (no implementado): live-search, page-size, cache-seconds, recent-items, DataSource como función,
+    //    alta y edición que devuelven el registro, multi-select, columna lookup de EdiTable (B3-B6, B9, B11-B14).
+    // =====================================================================================================
+    static version = '2.0.0-alpha.1';
+    static features = ['theme', 'palette', 'density', 'popup', 'headless', 'pick', 'events', 'columns-json', 'strict', 'request-timeout', 'search-case', 'autoselect-exact', 'key-chars'];
+    static _ik2Eventos = ['Selected', 'Canceled', 'BeforeSearch', 'SearchCompleted', 'SearchError', 'Opened', 'Closed'];
+    static _ik2Atributos = ['theme', 'palette', 'density', 'popup', 'headless', 'key-min-chars', 'key-max-chars', 'texts', 'strict', 'disabled', 'required'];
+
+    /** A11: textos de la interfaz. Se pueden traducir aquí (global) o por control con el atributo texts (JSON). */
+    static texts = {
+        title: 'Seleccione un Registro', search: 'Buscar', searchPlaceholder: 'Buscar...', noData: 'Sin registros',
+        accept: 'Aceptar', cancel: 'Cancelar', add: 'Agregar', edit: 'Editar', clear: 'Limpiar', close: 'Cerrar',
+        addTitle: 'Agregar registro', editTitle: 'Editar registro',
+        mustSelect: 'Debe seleccionar un registro para continuar', mustSelectEdit: 'Debe seleccionar un registro para continuar.',
+        mustType: 'Debe especificar el texto a buscar para continuar', serviceError: 'Ocurrió un error al invocar el servicio.',
+        keyPlaceholder: 'Código', keyLabel: 'Código', descLabel: 'Descripción', noValue: 'Sin seleccionar',
+        results: '{n} resultados', oneResult: '1 resultado', noMatches: 'Sin coincidencias para «{text}»', typeToSearch: 'Escribe para buscar',
+        create: 'Crear «{text}»', retry: 'Reintentar', timeout: 'La búsqueda tardó demasiado y se canceló.',
+        notFound: 'No existe un registro con «{text}».', required: 'Este campo es obligatorio.', loading: 'Cargando…', searching: 'Buscando…',
+        listLabel: 'Resultados de la búsqueda'
+    };
+
+    // ---- Copia mínima de los temas de EdiTable 2 (F8b, src/js/induxsoft.controls.editable.js _f8bExplicitos), solo
+    // con las variables que usa InputKey. Se usa si no está el módulo común ni EditTable. 'mono' es propia de InputKey.
+    static _ik2TemasBase = {
+        claro: { 'color-scheme': 'light', font: 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+            bg: '#FFFFFF', fg: '#1F2328', 'muted-fg': '#59636E', 'header-bg': '#F3F5F8', 'header-fg': '#1F2328', 'header-border': '#D0D7DE', 'header-weight': '600',
+            border: '#E1E5EA', 'row-alt-bg': '#F8FAFC', 'hover-bg': '#EDF2F8', 'sel-bg': '#2F66CC', 'sel-fg': '#FFFFFF', accent: '#2F66CC', 'focus-ring': '#2F66CC',
+            'input-bg': '#FFFFFF', 'input-fg': '#1F2328', 'input-border': '#8C959F', 'input-disabled-bg': '#EEF1F4',
+            'mark-bg': '#FFF1A8', 'mark-fg': '#1F2328', error: '#C62828', 'error-bg': '#FDECEC', warn: '#8A5A00', ok: '#1A7F37', radius: '4px', 'num-font': 'inherit' },
+        oscuro: { 'color-scheme': 'dark', font: 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+            bg: '#15181C', fg: '#E6EDF3', 'muted-fg': '#9DA7B3', 'header-bg': '#1F242B', 'header-fg': '#E6EDF3', 'header-border': '#3A424C', 'header-weight': '600',
+            border: '#2C333B', 'row-alt-bg': '#1A1E23', 'hover-bg': '#242B33', 'sel-bg': '#2C5AA8', 'sel-fg': '#FFFFFF', accent: '#6CA8FF', 'focus-ring': '#8CC2FF',
+            'input-bg': '#0D1117', 'input-fg': '#E6EDF3', 'input-border': '#5A6572', 'input-disabled-bg': '#1F242B',
+            'mark-bg': '#6B5800', 'mark-fg': '#FFF6CC', error: '#FF8A80', 'error-bg': '#3D1F1F', warn: '#E3B341', ok: '#5FD07A', radius: '4px', 'num-font': 'inherit' },
+        jade: { 'color-scheme': 'light', font: '"Segoe UI", system-ui, -apple-system, Roboto, sans-serif',
+            bg: '#FFFFFF', fg: '#1A202C', 'muted-fg': '#5A6577', 'header-bg': '#F4F6F9', 'header-fg': '#4A5568', 'header-border': '#E2E8F0', 'header-weight': '600',
+            'header-transform': 'uppercase', 'header-spacing': '.04em',
+            border: '#E2E8F0', 'row-alt-bg': '#F8FAFB', 'hover-bg': '#EEF9F2', 'sel-bg': '#D1FAE5', 'sel-fg': '#064E3B', accent: '#0F7A41', 'focus-ring': '#128C4A',
+            'input-bg': '#FFFFFF', 'input-fg': '#1A202C', 'input-border': '#A0AEC0', 'input-disabled-bg': '#F4F6F9',
+            'mark-bg': '#FDE68A', 'mark-fg': '#1A202C', error: '#C53030', 'error-bg': '#FFF5F5', warn: '#B45309', ok: '#0F7A41', radius: '8px', 'num-font': 'inherit' },
+        'libro-mayor': { 'color-scheme': 'light', font: '"IBM Plex Sans", system-ui, sans-serif', 'num-font': '"IBM Plex Mono", ui-monospace, monospace',
+            mono: '"IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace',
+            bg: '#FFFFFF', fg: '#1B1F24', 'muted-fg': '#5B6470', 'header-bg': '#F3F4F6', 'header-fg': '#4E5661', 'header-border': '#D9DDE3', 'header-weight': '600',
+            'header-transform': 'uppercase', 'header-spacing': '.04em',
+            border: '#E3E6EA', 'row-alt-bg': '#F8F9FA', 'hover-bg': '#EEF1F5', 'sel-bg': '#1D4F91', 'sel-fg': '#FFFFFF', accent: '#1D4F91', 'focus-ring': '#1D4F91',
+            'input-bg': '#FFFFFF', 'input-fg': '#1B1F24', 'input-border': '#9AA3AE', 'input-disabled-bg': '#F3F4F6',
+            'mark-bg': '#FBEBD0', 'mark-fg': '#4A3200', error: '#A13A14', 'error-bg': '#FBE9E3', warn: '#6E4700', ok: '#1E6B3A', radius: '0' }
+    };
+    static _ik2Alias = { light: 'claro', dark: 'oscuro', 'libro mayor': 'libro-mayor', libromayor: 'libro-mayor' };
+    // A9: densidad (alto del campo, relleno, alto de fila de la lista, tamaño de letra).
+    static _ik2Densidades = {
+        compacta: { h: '28px', pad: '3px 8px', row: '26px', fs: '13px' },
+        normal: { h: '34px', pad: '6px 10px', row: '32px', fs: '14px' },
+        comoda: { h: '42px', pad: '9px 12px', row: '40px', fs: '15px' }
+    };
+    static _ik2DensidadAlias = { 'cómoda': 'comoda', compact: 'compacta', comfortable: 'comoda', compacto: 'compacta', comodo: 'comoda' };
+    static _ik2Iconos = {
+        buscar: '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M11.74 10.33a6 6 0 1 0-1.41 1.41l3.85 3.85a1 1 0 0 0 1.41-1.41l-3.85-3.85ZM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0Z"/></svg>',
+        vacio: '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M11.74 10.33a6 6 0 1 0-1.41 1.41l3.85 3.85a1 1 0 0 0 1.41-1.41l-3.85-3.85ZM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0Z"/></svg>',
+        aviso: '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M8.98 1.56a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>'
+    };
+
+    // ---- Estado de InputKey 2 (prefijo _ik2: no choca con nada de hoy)
+    _ik2Ini = false;          // _ik2Iniciar ya corrió
+    _ik2Campo = false;        // el campo (#container) lleva la apariencia nueva
+    _ik2Lista = false;        // la ventana (#container2) lleva la apariencia nueva (incluye A2)
+    _ik2Ev = null;            // oyentes de los eventos nuevos
+    _ik2Pick = null;          // resolver de pick() pendiente
+    _ik2Ancla = null;         // anchor pedido en open()/pick()
+    _ik2Celda = null;         // td que abrió la búsqueda (EdiTable)
+    _ik2TablaOrigen = null;   // edit-table que abrió la búsqueda (A2)
+    _ik2Modo = 'modal';       // modo de la ventana abierta: modal, anchored, sheet
+    _ik2Error = null;         // {text, message} del último error (B15, con tema)
+    _ik2Estilo = null;        // <style data-ik="2">
+    _ik2Mo = null;            // MutationObserver de los atributos nuevos
+    _ik2Sub = null;           // callback registrado en InduxsoftTheme.subscribe
+    _ik2TemaProp = undefined; // Theme por propiedad (gana al atributo)
+    _ik2PaletaProp = undefined;
+    _ik2DensProp = undefined;
+    _ik2Activa = -1;          // fila activa de la lista con tema
+    _ik2Reubicar = null;      // listener de scroll/resize con el panel anclado
+    _ik2Icono = null;         // innerHTML original del botón «…»
+    _ik2Invalido = '';        // mensaje de validez propio (strict, required)
+
+    // ---- Textos (A11)
+    _ik2T(k)
+    {
+        if (this._ik2TextosCache === undefined)
+        {
+            this._ik2TextosCache = null;
+            const t = this.getAttribute('texts');
+            if (t) { try { const o = JSON.parse(t); if (o && typeof o === 'object') this._ik2TextosCache = o; } catch { console.warn('InputKey: el atributo texts no es un JSON válido; se ignora.'); } }
+        }
+        const v = (this._ik2TextosCache && this._ik2TextosCache[k] != null) ? this._ik2TextosCache[k] : InputKey.texts[k];
+        return v == null ? '' : String(v);
+    }
+    get Texts() { return Object.assign({}, InputKey.texts, this._ik2TextosCache ?? {}); }
+    set Texts(v) { if (v == null) this.removeAttribute('texts'); else this.setAttribute('texts', typeof v === 'string' ? v : JSON.stringify(v)); }
+
+    // ---- Propiedades (Pascal, como EdiTable)
+    get Theme() { return this._ik2TemaPropio() || (this._ik2Estado().theme ?? ''); }
+    set Theme(v) { this._ik2TemaProp = (v === undefined ? undefined : v == null ? '' : String(v)); this._ik2Aplicar(); }
+    get Palette() { const p = this._ik2PaletaPropia(); return p ? { ...p } : null; }
+    set Palette(v) { this._ik2PaletaProp = (v === undefined ? undefined : v == null ? null : InputKey._ik2LimpiarPaleta(v, 'Palette')); this._ik2Aplicar(); }
+    SetPalette(obj, opciones = {})
+    {
+        const nueva = (obj == null ? null : InputKey._ik2LimpiarPaleta(obj, 'SetPalette'));
+        this._ik2PaletaProp = (opciones?.merge && nueva) ? { ...(this._ik2PaletaPropia() ?? {}), ...nueva } : nueva;
+        this._ik2Aplicar();
+        return this.Palette;
+    }
+    get Density() { return this._ik2Estado().density || 'normal'; }
+    set Density(v) { this._ik2DensProp = (v === undefined ? undefined : String(v ?? '')); this._ik2Aplicar(); }
+    get Popup() { const v = (this.getAttribute('popup') ?? '').trim().toLowerCase(); return (v === 'anchored' || v === 'auto') ? v : 'modal'; }
+    set Popup(v) { if (v == null || v === '') this.removeAttribute('popup'); else this.setAttribute('popup', String(v)); }
+    get Headless() { return this._ik2Bool(this.getAttribute('headless')); }
+    set Headless(v) { if (v == null) this.removeAttribute('headless'); else this.setAttribute('headless', String(!!v && String(v) !== 'false')); }
+    get KeyMinChars() { return this._ik2Num('key-min-chars', 15, 1); }
+    set KeyMinChars(v) { if (v == null) this.removeAttribute('key-min-chars'); else this.setAttribute('key-min-chars', String(v)); }
+    get KeyMaxChars() { return Math.max(this.KeyMinChars, this._ik2Num('key-max-chars', 32, 1)); }
+    set KeyMaxChars(v) { if (v == null) this.removeAttribute('key-max-chars'); else this.setAttribute('key-max-chars', String(v)); }
+    get Strict() { return this._ik2Bool(this.getAttribute('strict')); }
+    set Strict(v) { if (v == null) this.removeAttribute('strict'); else this.setAttribute('strict', String(!!v && String(v) !== 'false')); }
+    get TabAccepts() { return this._ik2Bool(this.getAttribute('tab-accepts')); }
+    set TabAccepts(v) { if (v == null) this.removeAttribute('tab-accepts'); else this.setAttribute('tab-accepts', String(!!v && String(v) !== 'false')); }
+    get Autoselect() { const m = this._ik2ModoAutoselect(); return m === 'exact' ? 'exact' : !!m; }
+    set Autoselect(v) { if (v == null) this.removeAttribute('autoselect'); else this.setAttribute('autoselect', String(v)); }
+    get AutoselectFields() { return (this.getAttribute('autoselect-fields') ?? '').split(',').map(s => s.trim()).filter(Boolean); }
+    set AutoselectFields(v) { if (v == null) this.removeAttribute('autoselect-fields'); else this.setAttribute('autoselect-fields', Array.isArray(v) ? v.join(',') : String(v)); }
+    get RequestTimeout() { return this._ik2Timeout(); }
+    set RequestTimeout(v) { if (v == null) this.removeAttribute('request-timeout'); else this.setAttribute('request-timeout', String(v)); }
+    get SearchCase() { return this._ik2Conservar() ? 'keep' : 'lower'; }
+    set SearchCase(v) { if (v == null) this.removeAttribute('search-case'); else this.setAttribute('search-case', String(v)); }
+    /** true si la ventana o el panel de resultados está abierto. */
+    get IsOpen() { return !!(this.container2 && !this.container2.classList.contains('hide-element')); }
+
+    _ik2Bool(v) { const s = String(v ?? '').trim().toLowerCase(); return s !== '' && s !== 'false' && s !== '0' && s !== 'no'; }
+    _ik2Num(attr, def, min) { const n = parseInt(this.getAttribute(attr) ?? '', 10); return Number.isFinite(n) && n >= min ? n : def; }
+    _ik2Conservar() { return (this.getAttribute('search-case') ?? '').trim().toLowerCase() === 'keep'; }
+    /** IK-3 y B13: false (nunca), true (un solo resultado exacto, como hoy) o 'exact' (también entre varios). */
+    _ik2ModoAutoselect()
+    {
+        const v = this.getAttribute('autoselect');
+        if (v != null && v.toString().trim().toLowerCase() === 'exact') return 'exact';
+        return this._parseBool(v, true);
+    }
+    /** B15: ms de request-timeout; con tema 30000 por omisión; sin tema y sin atributo, 0 (sin límite, como hoy). */
+    _ik2Timeout()
+    {
+        const a = this.getAttribute('request-timeout');
+        if (a != null && a.trim() !== '') { const n = Number(a); return Number.isFinite(n) && n > 0 ? n : 0; }
+        return (this._ik2Campo || this._ik2Lista || this._ik2PopupTema()) ? 30000 : 0;
+    }
+
+    // ---- Tema: resolución (A1, A2). Precedencia: respaldo < tema (propio, o heredado por el módulo, o de la tabla
+    // que abre la ventana) < variables --et-* externas < palette.
+    static _ik2Nombre(v)
+    {
+        const s = String(v ?? '').trim().toLowerCase();
+        if (!s || s === 'none' || s === 'ninguno' || s === 'false') return '';
+        return InputKey._ik2Alias[s] ?? s;
+    }
+    static _ik2Modulo() { const m = (typeof window !== 'undefined') ? window.InduxsoftTheme : null; return (m && typeof m.resolve === 'function') ? m : null; }
+    /** Paleta de un tema por nombre: módulo común, EditTable (incluye defineTheme) o la copia mínima de aquí. */
+    static _ik2Paleta(nombre)
+    {
+        const n = InputKey._ik2Nombre(nombre);
+        if (!n || n === 'auto') return null;
+        const m = InputKey._ik2Modulo();
+        try { const t = m && m.themes ? m.themes[n] : null; if (t && typeof t === 'object') return InputKey._ik2SinPrefijo(t); } catch { }
+        try { const E = (typeof EditTable === 'function') ? EditTable : null; const t = E && E.themes ? E.themes[n] : null; if (t && typeof t === 'object') return InputKey._ik2SinPrefijo(t); } catch { }
+        return InputKey._ik2TemasBase[n] ?? null;
+    }
+    static _ik2SinPrefijo(o) { const r = {}; for (const [k, v] of Object.entries(o)) r[String(k).replace(/^--et-/, '')] = v; return r; }
+    static _ik2LimpiarPaleta(p, donde)
+    {
+        if (typeof p === 'string') { try { p = p.trim() ? JSON.parse(p) : {}; } catch { console.warn(`InputKey: ${donde}: JSON inválido; se ignora.`); return {}; } }
+        if (!p || typeof p !== 'object' || Array.isArray(p)) return {};
+        const r = {};
+        for (let [k, v] of Object.entries(p))
+        {
+            k = String(k).trim().replace(/^--et-/, '').replace(/[A-Z]/g, c => '-' + c.toLowerCase());
+            if (!/^[a-z0-9][a-z0-9-]*$/.test(k) || (typeof v !== 'string' && typeof v !== 'number') || /[;{}<>]/.test(String(v)) || String(v).trim() === '')
+            { console.warn(`InputKey: ${donde}: se ignora ${JSON.stringify(k)}.`); continue; }
+            r[k] = String(v).trim();
+        }
+        return r;
+    }
+    _ik2TemaPropio()
+    {
+        const v = this._ik2TemaProp !== undefined ? this._ik2TemaProp : this.getAttribute('theme');
+        const n = InputKey._ik2Nombre(v);
+        if (n && n !== 'auto' && !InputKey._ik2Paleta(n)) { if (this._ik2Avisado !== n) { this._ik2Avisado = n; console.warn('InputKey: tema desconocido: ' + n); } return ''; }
+        return n;
+    }
+    _ik2PaletaPropia()
+    {
+        if (this._ik2PaletaProp !== undefined) return this._ik2PaletaProp && Object.keys(this._ik2PaletaProp).length ? this._ik2PaletaProp : null;
+        const a = this.getAttribute('palette');
+        if (a == null) return null;
+        const p = InputKey._ik2LimpiarPaleta(a, 'palette');
+        return Object.keys(p).length ? p : null;
+    }
+    static _ik2Densidad(v)
+    {
+        const s = String(v ?? '').trim().toLowerCase();
+        const d = InputKey._ik2DensidadAlias[s] ?? s;
+        return InputKey._ik2Densidades[d] ? d : '';
+    }
+    /** Tema del campo: propio o heredado (módulo). {theme, palette, density, origen} */
+    _ik2Estado()
+    {
+        let theme = this._ik2TemaPropio(), palette = this._ik2PaletaPropia(), density = '';
+        density = InputKey._ik2Densidad(this._ik2DensProp !== undefined ? this._ik2DensProp : this.getAttribute('density'));
+        let origen = theme ? 'propio' : '';
+        const m = InputKey._ik2Modulo();
+        if (m)
+        {
+            let r = null;
+            try { r = m.resolve(this); } catch (e) { console.warn('InputKey: InduxsoftTheme.resolve falló', e); }
+            if (r && typeof r === 'object')
+            {
+                if (!theme && r.theme) { const n = InputKey._ik2Nombre(r.theme); if (n === 'auto' || InputKey._ik2Paleta(n)) { theme = n; origen = 'pagina'; } }
+                if (!palette && r.palette && typeof r.palette === 'object' && Object.keys(r.palette).length) palette = InputKey._ik2LimpiarPaleta(r.palette, 'InduxsoftTheme.palette');
+                if (!density && r.density) density = InputKey._ik2Densidad(r.density);
+            }
+        }
+        return { theme, palette, density, origen };
+    }
+    /** Edit-table que contiene al elemento (cruzando shadows), o null. */
+    static _ik2TablaDe(el)
+    {
+        for (let n = el, i = 0; n && i < 40; i++)
+        {
+            if (n.nodeType === 1 && n.localName === 'edit-table') return n;
+            n = n.parentNode || (n.nodeType === 11 ? n.host : null);
+        }
+        return null;
+    }
+    /** A2: tema de la ventana. Si el InputKey no tiene tema (propio ni heredado), toma el de la tabla que lo abrió. */
+    _ik2ResolverPopup(opener)
+    {
+        const e = this._ik2Estado();
+        if (e.theme) return e;
+        const t = InputKey._ik2TablaDe(opener ?? null);
+        if (!t) return e;
+        let th = ''; try { th = InputKey._ik2Nombre(t.Theme); } catch { }
+        if (!th || (th !== 'auto' && !InputKey._ik2Paleta(th))) return e;
+        let pal = e.palette, den = e.density;
+        try { if (!pal && t.Palette) pal = InputKey._ik2LimpiarPaleta(t.Palette, 'EditTable.Palette'); } catch { }
+        try { if (!den && t.Density && t.Density !== 'normal') den = InputKey._ik2Densidad(t.Density); } catch { }
+        return { theme: th, palette: pal, density: den, origen: 'tabla', tabla: t };
+    }
+    _ik2PopupTema() { return !!this._ik2ResolverPopup(this.#opener).theme; }
+
+    // ---- Ciclo de vida
+    _ik2Conectado()
+    {
+        // Hoy un input-key insertado después de DOMContentLoaded no se construye nunca. Se conserva así; solo se
+        // construye tarde si declara un atributo de InputKey 2 (theme, popup o headless), que ninguna pantalla usa hoy.
+        if (this.shadow) { this._ik2Suscribir(); this._ik2Aplicar(); return; }
+        if (document.readyState !== 'loading' && (this.hasAttribute('theme') || this.hasAttribute('popup') || this.hasAttribute('headless')))
+            queueMicrotask(() => { if (!this.shadow && this.isConnected) this.CreateShadow(); });
+    }
+    _ik2Desconectado()
+    {
+        const m = InputKey._ik2Modulo();
+        if (m && this._ik2Sub && typeof m.unsubscribe === 'function') { try { m.unsubscribe(this, this._ik2Sub); } catch { } }
+        this._ik2Sub = null;
+        this._ik2QuitarReubicar();
+    }
+    _ik2Suscribir()
+    {
+        const m = InputKey._ik2Modulo();
+        if (!m || this._ik2Sub || typeof m.subscribe !== 'function') return;
+        this._ik2Sub = () => this._ik2Aplicar();
+        try { m.subscribe(this, this._ik2Sub); } catch (e) { this._ik2Sub = null; }
+    }
+    /** Construye el control si aún no existe (open, pick y load lo usan). */
+    _ik2Asegurar() { if (!this.shadow || !this.container2) this.CreateShadow(); }
+    _ik2Iniciar()
+    {
+        this._ik2Ini = true;
+        this._ik2Icono = null;
+        this._ik2Estilo = null;
+        this._ik2TextosCache = undefined;
+        const s = this.shadow;
+        this._ik2El = {
+            container: s.getElementById('container'), desc: s.getElementById('input_description_container'),
+            panel: s.getElementById('search_container2'), header2: s.getElementById('header_section_container2'),
+            close2: s.getElementById('close_header_container2'), searchSec: s.getElementById('search_section_container2'),
+            tablesSec: s.getElementById('tables_section_container2'), cancel2: s.getElementById('close2_container2'),
+            c3: s.getElementById('container3'), c4: s.getElementById('container4'),
+            title4: s.getElementById('title_container4'), x4: s.getElementById('close_header_container4'),
+            ...this._ik2Botones
+        };
+        this._ik2El.footer = this._ik2El.panel ? this._ik2El.panel.lastElementChild : null;
+        this._ik2El.search2Btn = this._ik2El.searchSec ? this._ik2El.searchSec.querySelector('button') : null;
+        this._ik2Oidos = {};
+        if (!this._ik2Mo)
+        {
+            this._ik2Mo = new MutationObserver((ms) => {
+                if (ms.some(m => m.attributeName === 'texts')) this._ik2TextosCache = undefined;
+                this._ik2Aplicar();
+            });
+            this._ik2Mo.observe(this, { attributes: true, attributeFilter: InputKey._ik2Atributos });
+        }
+        this._ik2Suscribir();
+        this._ik2Aplicar();
+    }
+
+    // ---- Aplicar tema y modo (en caliente: clases, atributos ARIA y el <style data-ik="2">; no redibuja datos).
+    _ik2Aplicar()
+    {
+        if (!this._ik2Ini || !this.shadow) return;
+        const e = this._ik2Estado();
+        const campo = !!e.theme;
+        // Con la ventana abierta se conserva su tema (puede venir de la tabla, A2); cerrada sigue al del campo.
+        const pe = this._ik2PopEstado ?? e;   // _ik2PopEstado existe de _ik2PrepararVentana a _ik2Ocultar
+        const lista = !!pe.theme;
+        this._ik2Campo = campo;
+        this._ik2Lista = lista;
+        this._ik2Escuchar(campo, lista, this.Popup !== 'modal');
+        this._ik2PintarCampo(campo);
+        for (const el of [this.container2, this._ik2El.c3, this._ik2El.c4]) if (el) el.classList.toggle('ik2', lista);
+        if (this._ik2El.title3) this._ik2El.title3.textContent = lista ? this._ik2T('addTitle') : (this.getAttribute('box-title-text') ?? this._ik2T('addTitle'));
+        if (this._ik2El.title4) this._ik2El.title4.textContent = lista ? this._ik2T('editTitle') : (this.getAttribute('box-title-text') ?? this._ik2T('editTitle'));
+        this._ik2PintarVentanaFija(lista);
+        const css = this._ik2Css(campo ? e : null, lista ? pe : null);
+        if (!css) { if (this._ik2Estilo) { this._ik2Estilo.remove(); this._ik2Estilo = null; } }
+        else
+        {
+            if (!this._ik2Estilo || !this._ik2Estilo.isConnected)
+            {
+                this._ik2Estilo = document.createElement('style');
+                this._ik2Estilo.setAttribute('data-ik', '2');
+                this.shadow.prepend(this._ik2Estilo);   // antes de la hoja de hoy: control-styles le gana en empates
+            }
+            if (this._ik2Estilo.textContent !== css) this._ik2Estilo.textContent = css;
+        }
+        this._ik2AlPintarValor();
+        if (campo) { this._ik2AnchoVisto = 0; this._ik2Angosto(); }
+    }
+    _ik2PopEstadoActual() { return this._ik2PopEstado ?? this._ik2Estado(); }
+    /** Listeners de InputKey 2: se ponen solo cuando hacen falta (sin atributos nuevos no se agrega ninguno). */
+    _ik2Escuchar(campo, lista, popup)
+    {
+        const o = this._ik2Oidos;
+        if (campo && !o.campo)
+        {
+            o.campo = true;
+            // Pantallas angostas: si no caben el código mínimo, ~12 caracteres de descripción y los botones, la
+            // descripción baja a un segundo renglón (los botones se quedan junto al código).
+            if (typeof ResizeObserver === 'function') new ResizeObserver(() => this._ik2Angosto()).observe(this._ik2El.container);
+            this.input_search_container.addEventListener('keydown', (e) => this._ik2TeclaCampo(e));   // B7
+            this.input_search_container.addEventListener('input', () => this._ik2AlTeclearCampo());
+        }
+        if (lista && !o.lista) { o.lista = true; this.input_search_container2.addEventListener('keydown', (e) => this._ik2TeclaBuscador(e)); }
+        if (popup && !o.popup)
+        {
+            o.popup = true;
+            InputKey._ik2VigilarCeldas();
+            // Panel anclado u hoja: clic fuera del panel (sobre el fondo) cierra sin selección.
+            this.container2.addEventListener('mousedown', (e) => { if (e.target === this.container2 && this._ik2Modo !== 'modal' && this.IsOpen) { e.preventDefault(); this._ikCancel(); } });
+        }
+    }
+
+    /** Campo con tema (A3, A4, A10) o como hoy. */
+    _ik2PintarCampo(on)
+    {
+        const E = this._ik2El, c = E.container;
+        if (!c) return;
+        c.classList.toggle('ik2', on);
+        const i = this.input_search_container, d = this.input_description_container;
+        if (on)
+        {
+            if (this._ik2Icono === null) this._ik2Icono = E.searchBtn.innerHTML;
+            E.searchBtn.innerHTML = InputKey._ik2Iconos.buscar;
+            i.setAttribute('role', 'combobox'); i.setAttribute('aria-autocomplete', 'list'); i.setAttribute('aria-haspopup', 'grid');
+            i.setAttribute('aria-controls', 'table_tables_container2'); i.setAttribute('aria-expanded', String(this.IsOpen));
+            i.setAttribute('aria-label', this._ik2T('keyLabel')); i.setAttribute('placeholder', this._ik2T('keyPlaceholder')); i.setAttribute('autocomplete', 'off');
+            d.setAttribute('aria-label', this._ik2T('descLabel')); d.setAttribute('placeholder', this._ik2T('noValue')); d.tabIndex = -1;
+            E.searchBtn.setAttribute('aria-label', this._ik2T('search')); E.clearBtn.setAttribute('aria-label', this._ik2T('clear'));
+            E.addBtn.setAttribute('aria-label', this._ik2T('add')); E.editBtn.setAttribute('aria-label', this._ik2T('edit'));
+            if (!this.hasAttribute('aria-describedby')) i.setAttribute('aria-describedby', 'ik2_msg');
+        }
+        else if (this._ik2Icono !== null)
+        {
+            E.searchBtn.innerHTML = this._ik2Icono; this._ik2Icono = null;
+            ['role', 'aria-autocomplete', 'aria-haspopup', 'aria-controls', 'aria-expanded', 'aria-label', 'placeholder', 'autocomplete', 'aria-describedby'].forEach(a => i.removeAttribute(a));
+            ['aria-label', 'placeholder', 'tabindex'].forEach(a => d.removeAttribute(a));
+            [E.searchBtn, E.clearBtn, E.addBtn, E.editBtn].forEach(b => b.removeAttribute('aria-label'));
+            c.classList.remove('ik2-vacio', 'ik2-invalido', 'ik2-requerido', 'ik2-buscando');
+            const m = this.shadow.getElementById('ik2_msg'); if (m) m.remove();
+        }
+    }
+    /** Partes fijas de la ventana con tema: contador (aria-live) y línea de estado del pie. Sin tema no existen. */
+    _ik2PintarVentanaFija(on)
+    {
+        const E = this._ik2El, s = this.shadow;
+        let cuenta = s.getElementById('ik2_cuenta'), estado = s.getElementById('ik2_estado');
+        if (on)
+        {
+            if (!cuenta && E.searchSec) { cuenta = this.createFullElement('span', { id: 'ik2_cuenta', 'aria-live': 'polite' }); E.searchSec.appendChild(cuenta); }
+            if (!estado && E.footer) { estado = this.createFullElement('span', { id: 'ik2_estado', role: 'status', 'aria-live': 'polite' }); E.footer.prepend(estado); }
+            this.table_tables_container2.setAttribute('role', 'grid');
+            this.table_tables_container2.setAttribute('aria-label', this._ik2T('listLabel'));
+            this.input_search_container2.setAttribute('aria-controls', 'table_tables_container2');
+            if (E.close2) E.close2.setAttribute('aria-label', this._ik2T('close'));
+            if (E.x3) E.x3.setAttribute('aria-label', this._ik2T('close'));
+            if (E.x4) E.x4.setAttribute('aria-label', this._ik2T('close'));
+            this.container2.setAttribute('role', 'dialog');
+            if (E.panel) E.panel.setAttribute('aria-labelledby', 'title_container2');
+        }
+        else
+        {
+            if (cuenta) cuenta.remove();
+            if (estado) estado.remove();
+            if (this.table_tables_container2.hasAttribute('role'))
+            {
+                ['role', 'aria-label'].forEach(a => this.table_tables_container2.removeAttribute(a));
+                ['aria-controls', 'aria-activedescendant'].forEach(a => this.input_search_container2.removeAttribute(a));
+                [E.close2, E.x3, E.x4].forEach(b => b && b.removeAttribute('aria-label'));
+                this.container2.removeAttribute('role');
+                if (E.panel) E.panel.removeAttribute('aria-labelledby');
+            }
+        }
+    }
+
+    // ---- CSS (A1-A11). Variables: var(--et-x, var(--et-t-x, respaldo)), como EdiTable F8b. Solo existe con algo activo.
+    static _ik2V(n, fb) { return `var(--et-${n}, var(--et-t-${n}${fb != null ? ', ' + fb : ''}))`; }
+    _ik2Vars(e)
+    {
+        const vars = (o) => Object.entries(o).filter(([k]) => k !== 'color-scheme').map(([k, v]) => `--et-t-${k}: ${v};`).join(' ') + (o['color-scheme'] ? ` --ik2-cs: ${o['color-scheme']};` : '');
+        let s = '';
+        if (e.theme === 'auto') s += `:host { ${vars(InputKey._ik2Paleta('claro'))} }\n@media (prefers-color-scheme: dark) { :host { ${vars(InputKey._ik2Paleta('oscuro'))} } }\n`;
+        else if (e.theme) s += `:host { ${vars(InputKey._ik2Paleta(e.theme) ?? {})} }\n`;
+        const d = InputKey._ik2Densidades[e.density || 'normal'];
+        s += `:host { --ik-t-h: ${d.h}; --ik-t-pad: ${d.pad}; --ik-t-row: ${d.row}; --ik-t-fs: ${d.fs}; }\n`;
+        if (e.palette) s += `:host { ${Object.entries(e.palette).map(([k, v]) => `--et-${k}: ${v} !important;`).join(' ')} }\n`;
+        return s;
+    }
+    _ik2Css(campo, lista)
+    {
+        const headless = this.Headless, popup = this.Popup !== 'modal';
+        if (!campo && !lista && !headless && !popup) return '';
+        let s = '/* InputKey 2 */\n';
+        if (campo || lista) s += this._ik2Vars(campo ?? lista);
+        if (lista && campo && (lista.theme !== campo.theme || lista.density !== campo.density || lista.palette !== campo.palette))
+            s += this._ik2Vars(lista).replace(/:host \{/g, '#container2, #container3, #container4 {');
+        if (campo) s += InputKey._ik2CssCampo(this.KeyMinChars, this.KeyMaxChars);
+        if (lista) s += InputKey._ik2CssLista();
+        if (popup) s += InputKey._ik2CssAnclado();
+        if (headless) s += '#container{ display: none !important; }\n';
+        return s;
+    }
+    static _ik2CssCampo(kmin, kmax)
+    {
+        const V = InputKey._ik2V;
+        const mono = `var(--et-mono, var(--et-t-mono, ui-monospace, "Cascadia Mono", Consolas, monospace))`;
+        const H = 'var(--ik-h, var(--ik-t-h))', PAD = 'var(--ik-pad, var(--ik-t-pad))', FS = 'var(--ik-fs, var(--ik-t-fs))';
+        return `
+#container.ik2{ display:flex; flex-wrap:wrap; align-items:stretch; min-height:${H}; background:${V('input-bg', '#fff')}; color:${V('input-fg', '#1F2328')}; border:1px solid ${V('input-border', '#8C959F')}; border-radius:${V('radius', '4px')}; overflow:hidden; font-family:${V('font', 'system-ui, sans-serif')}; font-size:${FS}; color-scheme:var(--ik2-cs, normal); transition:border-color .12s, box-shadow .12s; }
+#container.ik2:focus-within{ border-color:${V('accent', '#2F66CC')}; box-shadow:0 0 0 3px color-mix(in srgb, ${V('focus-ring', '#2F66CC')} 30%, transparent); }
+#container.ik2 #search_container, #container.ik2 #description_container{ display:contents; }
+#container.ik2 #input_search_container{ --ik2-kmin: var(--ik-key-min, ${kmin}); --ik2-kmax: var(--ik-key-max, ${kmax}); order:1; field-sizing:content; box-sizing:content-box; min-width:calc(var(--ik2-kmin) * 1ch); max-width:calc(var(--ik2-kmax) * 1ch); width:calc(var(--ik2-kmin) * 1ch); flex:0 1 auto; border:0; outline:0; padding:${PAD} !important; background:transparent; color:inherit; font-family:${mono}; font-size:inherit; line-height:1.4; }
+@supports (field-sizing: content){ #container.ik2 #input_search_container{ width:auto; } }
+#container.ik2 #input_search_container::placeholder, #container.ik2 #input_description_container::placeholder{ color:${V('muted-fg', '#59636E')}; font-style:italic; opacity:1; }
+#container.ik2 #input_description_container{ order:2; flex:1 1 0; min-width:0; border:0; outline:0; border-left:1px solid ${V('border', '#E1E5EA')}; background:transparent !important; padding:${PAD} !important; color:inherit; font-size:inherit; line-height:1.4; text-overflow:ellipsis; white-space:nowrap; cursor:default; }
+#container.ik2 .induxsoft-buttons{ order:3; flex:0 0 auto; min-width:calc(${H} - 2px); border:0; outline:0; background:transparent; color:${V('muted-fg', '#59636E')}; display:grid; place-items:center; padding:0 6px; cursor:pointer; font-size:inherit; }
+#container.ik2 .induxsoft-buttons:hover{ background:${V('hover-bg', '#EDF2F8')}; color:${V('fg', '#1F2328')}; }
+#container.ik2 .induxsoft-buttons:focus-visible{ outline:2px solid ${V('accent', '#2F66CC')}; outline-offset:-2px; }
+#container.ik2 .induxsoft-buttons svg{ width:14px; height:14px; }
+#container.ik2 #button_search_container{ order:9; color:${V('accent', '#2F66CC')}; border-left:1px solid ${V('border', '#E1E5EA')}; }
+#container.ik2.ik2-vacio #button_clear_container{ display:none; }
+#container.ik2.ik2-angosto #input_search_container{ flex:1 1 0; min-width:0; width:auto; }
+#container.ik2.ik2-angosto #input_description_container{ order:20; flex:1 1 100%; border-left:0; border-top:1px solid ${V('border', '#E1E5EA')}; }
+#container.ik2.disable-element{ background:${V('input-disabled-bg', '#EEF1F4')}; opacity:.6 !important; }
+#container.ik2.ik2-requerido.ik2-vacio{ box-shadow:inset 3px 0 0 ${V('warn', '#8A5A00')}; }
+#container.ik2.ik2-invalido{ border-color:${V('error', '#C62828')}; box-shadow:0 0 0 3px color-mix(in srgb, ${V('error', '#C62828')} 18%, transparent); }
+#container.ik2.ik2-buscando #button_search_container svg{ display:none; }
+#container.ik2.ik2-buscando #button_search_container::after, #container2.ik2.ik2-buscando #ik2_cuenta::before{ content:""; width:14px; height:14px; border:2px solid ${V('border', '#E1E5EA')}; border-top-color:${V('accent', '#2F66CC')}; border-radius:50%; animation:ik2-giro .7s linear infinite; display:inline-block; vertical-align:middle; }
+@keyframes ik2-giro{ to{ transform:rotate(360deg); } }
+#ik2_msg{ display:flex; gap:6px; align-items:center; margin-top:4px; font-size:12px; color:${V('error', '#C62828')}; font-family:${V('font', 'system-ui, sans-serif')}; }
+#ik2_msg:empty{ display:none; }
+`;
+    }
+    static _ik2CssLista()
+    {
+        const V = InputKey._ik2V;
+        const ROW = 'var(--ik-row, var(--ik-t-row))', FS = 'var(--ik-fs, var(--ik-t-fs))';
+        const mono = `var(--et-mono, var(--et-t-mono, ui-monospace, "Cascadia Mono", Consolas, monospace))`;
+        const btn = `border:1px solid ${V('input-border', '#8C959F')}; outline:0; background:${V('bg', '#fff')}; color:${V('fg', '#1F2328')}; border-radius:${V('radius', '4px')}; padding:5px 12px; font-size:inherit; line-height:1.3; cursor:pointer;`;
+        return `
+.ik2{ color-scheme:var(--ik2-cs, normal); }
+#container2.ik2, #container3.ik2, #container4.ik2{ background:rgba(15,20,25,.45); font-family:${V('font', 'system-ui, sans-serif')}; font-size:${FS}; color:${V('fg', '#1F2328')}; padding:16px; }
+#container2.ik2 #search_container2, #container3.ik2 .modal-container, #container4.ik2 .modal-container{ width:min(46rem, 100%); height:min(32rem, 92vh); background:${V('bg', '#fff')} !important; color:${V('fg', '#1F2328')}; border:1px solid ${V('border', '#E1E5EA')}; border-radius:calc(${V('radius', '4px')} + 4px); box-shadow:0 24px 60px rgba(0,0,0,.3), 0 2px 6px rgba(0,0,0,.08); overflow:hidden; }
+#container3.ik2 .modal-container, #container4.ik2 .modal-container{ width:min(60rem, 100%); height:min(40rem, 92vh); }
+.ik2 .modal-section{ border-bottom:1px solid ${V('border', '#E1E5EA')}; }
+.ik2 .modal-section-header{ padding:10px 14px; gap:10px; }
+.ik2 .modal-section-header p{ color:${V('fg', '#1F2328')}; font-weight:600; font-size:15px; }
+.ik2 .modal-section-header button{ width:30px; height:30px; display:grid; place-items:center; border:0; outline:0; padding:0; background:transparent; color:${V('fg', '#1F2328')}; border-radius:${V('radius', '4px')}; cursor:pointer; }
+.ik2 .modal-section-header button svg{ fill:currentColor; }
+.ik2 .modal-section-header button:hover{ background:${V('error-bg', '#FDECEC')}; color:${V('error', '#C62828')}; }
+.ik2 .modal-section-header button:focus-visible{ outline:2px solid ${V('focus-ring', '#2F66CC')}; outline-offset:-2px; }
+#container2.ik2 #search_section_container2{ padding:8px 10px; gap:8px; }
+#container2.ik2 #search_section_container2 input{ ${btn} cursor:text; background:${V('input-bg', '#fff')}; color:${V('input-fg', '#1F2328')}; padding:6px 10px !important; }
+#container2.ik2 #search_section_container2 input:focus{ border-color:${V('accent', '#2F66CC')}; box-shadow:0 0 0 3px color-mix(in srgb, ${V('focus-ring', '#2F66CC')} 30%, transparent); }
+#container2.ik2 #search_section_container2 button{ ${btn} }
+#ik2_cuenta{ font-size:12px; color:${V('muted-fg', '#59636E')}; white-space:nowrap; display:flex; gap:6px; align-items:center; }
+#container2.ik2 #tables_section_container2{ border-bottom:0; min-height:0; }
+#container2.ik2 #table_tables_container2{ border-collapse:separate; border-spacing:0; }
+#container2.ik2 th, #container2.ik2 td{ border:0; outline:0; }
+#container2.ik2 th{ position:sticky; top:0; z-index:1; background:${V('header-bg', '#F3F5F8')}; color:${V('header-fg', '#1F2328')}; font-weight:${V('header-weight', '600')}; font-size:12px; text-transform:${V('header-transform', 'none')}; letter-spacing:${V('header-spacing', 'normal')}; padding:6px 10px !important; border-bottom:1px solid ${V('header-border', '#D0D7DE')}; white-space:nowrap; }
+#container2.ik2 td{ padding:0 10px !important; height:${ROW}; border-bottom:1px solid color-mix(in srgb, ${V('border', '#E1E5EA')} 60%, transparent); white-space:nowrap; }
+#container2.ik2 tbody tr{ cursor:pointer; background:transparent; color:inherit; }
+#container2.ik2 tbody tr:focus{ outline:none; }
+#container2.ik2 tbody tr:nth-child(even) > td{ background:${V('row-alt-bg', '#F8FAFC')}; }
+#container2.ik2 tbody tr.row_table:hover > td{ background:${V('hover-bg', '#EDF2F8')}; color:${V('fg', '#1F2328')}; }
+#container2.ik2 tbody tr.row_selected, #container2.ik2 tbody tr.row_selected:hover{ background:transparent !important; }
+#container2.ik2 tbody tr.row_selected > td{ background:${V('sel-bg', '#2F66CC')} !important; color:${V('sel-fg', '#fff')} !important; }
+#container2.ik2 tbody tr.row_selected:focus-visible > td:first-child{ box-shadow:inset 3px 0 0 ${V('focus-ring', '#2F66CC')}; }
+#container2.ik2 mark{ background:${V('mark-bg', '#FFF1A8')}; color:${V('mark-fg', '#1F2328')}; border-radius:2px; padding:0 1px; }
+#container2.ik2 tr.row_selected mark{ background:transparent; color:inherit; text-decoration:underline; text-underline-offset:2px; }
+#container2.ik2 .ik2-num{ text-align:end; font-variant-numeric:tabular-nums; font-family:${V('num-font', 'inherit')}; }
+#container2.ik2 .ik2-cod{ font-family:${mono}; }
+#container2.ik2 td.ik2-aviso{ height:auto; padding:22px 16px !important; text-align:center; color:${V('muted-fg', '#59636E')}; white-space:normal; cursor:default; background:transparent !important; }
+#container2.ik2 td.ik2-aviso .ik2-aviso-in{ display:grid; gap:10px; justify-items:center; }
+#container2.ik2 td.ik2-aviso svg{ opacity:.6; }
+#container2.ik2 td.ik2-aviso.ik2-error{ color:${V('error', '#C62828')}; }
+#container2.ik2 td.ik2-aviso button{ ${btn} }
+#container2.ik2 #search_container2 > .modal-section:last-child{ background:${V('header-bg', '#F3F5F8')} !important; border-top:1px solid ${V('border', '#E1E5EA')}; border-bottom:0; padding:7px 10px; gap:8px; }
+#container2.ik2 #search_container2 > .modal-section:last-child button{ ${btn} }
+#container2.ik2 #search_container2 > .modal-section:last-child button:first-of-type{ background:${V('accent', '#2F66CC')}; border-color:${V('accent', '#2F66CC')}; color:${V('sel-fg', '#fff')}; }
+.ik2 button:focus-visible{ outline:2px solid ${V('focus-ring', '#2F66CC')}; outline-offset:1px; }
+#ik2_estado{ margin-right:auto; font-size:12px; color:${V('muted-fg', '#59636E')}; display:flex; gap:6px; align-items:center; }
+#ik2_estado.ik2-error{ color:${V('error', '#C62828')}; }
+.ik2 .modal-section.ik2-cargando{ position:relative; }
+.ik2 .modal-section.ik2-cargando::after{ content:attr(data-ik2-cargando); position:absolute; inset:0; display:grid; place-items:center; background:${V('bg', '#fff')}; color:${V('muted-fg', '#59636E')}; font-size:13px; }
+.ik2 iframe{ border:0; display:block; }
+`;
+    }
+    static _ik2CssAnclado()
+    {
+        return `
+#container2.ik2-anclado, #container2.ik2-hoja{ background:transparent; padding:0; }
+#container2.ik2-anclado{ display:block; }
+#container2.ik2-anclado #search_container2{ position:fixed; width:max-content; min-width:var(--ik2-ancho, 20rem); max-width:min(720px, calc(100vw - 16px)); height:auto; max-height:var(--ik2-alto, 420px); }
+#container2.ik2-anclado #header_section_container2{ display:none; }
+#container2.ik2-anclado #tables_section_container2{ flex:1 1 auto; min-height:0; }
+#container2.ik2-hoja{ align-items:flex-end; background:rgba(15,20,25,.45); }
+#container2.ik2-hoja #search_container2{ width:100%; height:auto; max-height:88vh; border-radius:14px 14px 0 0; }
+`;
+    }
+
+    // ---- Eventos (B2). Se llama a los oyentes registrados con addEventListener y además se despacha un CustomEvent
+    // (bubbles, composed) para quien escuche en un ancestro.
+    _ik2Oyentes(n) { if (!this._ik2Ev) this._ik2Ev = {}; return (this._ik2Ev[n] ??= new Set()); }
+    _ik2Disparar(nombre, detalle, cancelable = false)
+    {
+        const lst = this._ik2Ev?.[nombre];
+        const ev = new CustomEvent(nombre, { detail: detalle, bubbles: true, composed: true, cancelable });
+        if (lst) for (const f of Array.from(lst)) { try { f.call(this, ev); } catch (e) { console.error(e); } }
+        try { this.dispatchEvent(ev); } catch { }
+        return ev;
+    }
+    /** B2: BeforeSearch. Devuelve el texto (quizá cambiado) o null si se canceló. */
+    _ik2AntesDeBuscar(texto)
+    {
+        const ev = this._ik2Disparar('BeforeSearch', { text: texto, cancel: false }, true);
+        if (!ev) return texto;
+        if (ev.defaultPrevented || ev.detail.cancel) { this._ik2Resolver(null); return null; }
+        return (ev.detail.text ?? '').toString();
+    }
+    _ik2Resolver(r) { const f = this._ik2Pick; this._ik2Pick = null; if (f) f(r); }
+    _ik2Elegido(rec)
+    {
+        const r = rec ? { ...rec } : null;
+        this._ik2Invalido = '';
+        this._ik2Disparar('Selected', { record: r });
+        this._ik2Resolver(r);
+    }
+
+    // ---- Ventana: preparar, mostrar, ocultar, anclar (A2, A5)
+    _ik2PrepararVentana(opener)
+    {
+        if (!this._ik2Ini || this.IsOpen) return;
+        const pe = this._ik2ResolverPopup(opener);
+        this._ik2PopEstado = pe;
+        this._ik2TablaOrigen = pe.tabla ?? InputKey._ik2TablaDe(opener ?? null);
+        // Modo: modal (hoy), anchored o auto (anclado en pantalla ancha; hoja inferior en pantallas angostas).
+        const p = this.Popup;
+        let modo = 'modal';
+        if (p === 'anchored') modo = 'anchored';
+        else if (p === 'auto') modo = (window.matchMedia && window.matchMedia('(max-width: 640px)').matches) ? 'sheet' : 'anchored';
+        if (modo === 'anchored' && !this._ik2RectAncla()) modo = (p === 'auto') ? 'modal' : 'modal';
+        this._ik2Modo = modo;
+        this._ik2Aplicar();
+    }
+    _ik2Mostrar()
+    {
+        const abria = this.container2.classList.contains('hide-element');
+        this.container2.classList.toggle('ik2-anclado', this._ik2Modo === 'anchored');
+        this.container2.classList.toggle('ik2-hoja', this._ik2Modo === 'sheet');
+        this.container2.classList.remove('hide-element');
+        if (this._ik2Campo) this.input_search_container.setAttribute('aria-expanded', 'true');
+        if (this._ik2Modo === 'anchored') { this._ik2Posicionar(); this._ik2PonerReubicar(); }
+        if (abria) this._ik2Disparar('Opened', { popup: this._ik2Modo });
+    }
+    _ik2Ocultar()
+    {
+        const abierta = !this.container2.classList.contains('hide-element');
+        this.container2.classList.add('hide-element');
+        if (!this._ik2Ini) return;
+        this._ik2QuitarReubicar();
+        this.container2.classList.remove('ik2-anclado', 'ik2-hoja');
+        if (this._ik2El.panel) ['left', 'top', 'max-height', '--ik2-ancho', '--ik2-alto'].forEach(p => this._ik2El.panel.style.removeProperty(p));
+        const modo = this._ik2Modo;
+        this._ik2Modo = 'modal';
+        this._ik2Ancla = null;
+        this._ik2PopEstado = null;
+        this._ik2Activa = -1;
+        const est = this.shadow.getElementById('ik2_estado'); if (est) { est.textContent = ''; est.classList.remove('ik2-error'); }
+        if (this._ik2Campo) this.input_search_container.setAttribute('aria-expanded', 'false');
+        this._ik2Aplicar();   // la ventana vuelve al tema del campo (A2 era solo mientras estaba abierta)
+        if (abierta) this._ik2Disparar('Closed', { popup: modo });
+    }
+    /** Con tema, al aceptar: si el foco se perdió (quedó en body o dentro de la ventana), vuelve al que abrió. */
+    _ik2DevolverFoco(o)
+    {
+        if (!this._ik2Lista && !this._ik2Campo) return;
+        if (this._ik2EnterAceptado) { this._ik2EnterAceptado = false; InputKey._ik2TragarKeyup(this._ik2TeclaAceptar || 'Enter'); }
+        queueMicrotask(() => {
+            const a = InputKey._ikDeepActive();
+            const perdido = !a || (a.getRootNode && a.getRootNode() === this.shadow && this.container2.contains(a));
+            if (perdido && o && o.isConnected && typeof o.focus === 'function') { try { o.focus({ preventScroll: true }); } catch { } }
+        });
+    }
+    /**
+     * A5: EdiTable confirma la celda con Enter DESPUÉS de mover el foco a la celda siguiente y quitar el editor, así
+     * que al llegar searchText ya no se sabe qué celda abrió la búsqueda. Con algún InputKey con popup anclado, un
+     * listener en la captura de window (corre antes que EdiTable) recuerda la celda que tenía el foco en cada keydown
+     * o pointerdown. Sin popup="anchored|auto" en la página no se pone.
+     */
+    static _ik2VigilarCeldas()
+    {
+        if (InputKey._ik2Vigila) return;
+        InputKey._ik2Vigila = true;
+        const rec = (e) => {
+            const a = e.type === 'pointerdown' ? (e.composedPath ? e.composedPath()[0] : e.target) : InputKey._ikDeepActive();
+            const td = a && a.closest ? a.closest('td') : null;
+            if (td && InputKey._ik2TablaDe(td)) InputKey._ik2UltimaCelda = { td, tabla: td.closest('table'), fila: td.parentElement ? td.parentElement.sectionRowIndex : -1, col: td.cellIndex, t: Date.now() };
+        };
+        window.addEventListener('keydown', rec, true);
+        window.addEventListener('pointerdown', rec, true);
+    }
+    static _ik2CeldaReciente()
+    {
+        const c = InputKey._ik2UltimaCelda;
+        return (c && Date.now() - c.t < 2000) ? c : null;
+    }
+    /** td de EdiTable (u otra tabla) que contiene al elemento; se recuerda tabla, fila y columna por si se redibuja. */
+    _ik2CeldaDe(el)
+    {
+        const td = el && el.closest ? el.closest('td') : null;
+        if (!td) return null;
+        const tr = td.parentElement, tabla = td.closest('table');
+        return { td, tabla, fila: tr ? tr.sectionRowIndex : -1, col: td.cellIndex };
+    }
+    _ik2ElementoAncla()
+    {
+        const a = this._ik2Ancla;
+        if (a && a.isConnected) return a;
+        const c = this._ik2Celda;
+        if (c)
+        {
+            if (c.td.isConnected) return c.td;
+            if (c.tabla && c.tabla.isConnected && c.fila >= 0) { const td = c.tabla.tBodies[0]?.rows[c.fila]?.cells[c.col]; if (td) return td; }
+        }
+        const cont = this._ik2El.container;
+        if (cont && cont.getClientRects().length) return cont;
+        return null;
+    }
+    _ik2RectAncla()
+    {
+        const el = this._ik2ElementoAncla();
+        if (el) { const r = el.getBoundingClientRect(); if (r.width > 0 || r.height > 0) { this._ik2UltimoRect = r; return r; } }
+        return (this._ik2Ancla || this._ik2Celda) ? (this._ik2UltimoRect ?? null) : null;
+    }
+    _ik2Posicionar()
+    {
+        const p = this._ik2El.panel;
+        const a = this._ik2RectAncla();
+        if (!p || !a) return;
+        const vw = document.documentElement.clientWidth || window.innerWidth, vh = window.innerHeight;
+        p.style.setProperty('--ik2-ancho', Math.max(Math.round(a.width), 240) + 'px');
+        const abajo = vh - a.bottom - 8, arriba = a.top - 8;
+        p.style.setProperty('--ik2-alto', '420px');
+        let r = p.getBoundingClientRect();
+        const h = Math.min(r.height, 420);
+        let top;
+        if (h <= abajo || abajo >= arriba) { const m = Math.max(140, Math.min(420, abajo - 4)); p.style.setProperty('--ik2-alto', m + 'px'); top = a.bottom + 4; }
+        else { const m = Math.max(140, Math.min(420, arriba - 4)); p.style.setProperty('--ik2-alto', m + 'px'); r = p.getBoundingClientRect(); top = a.top - 4 - Math.min(r.height, m); }
+        r = p.getBoundingClientRect();
+        const left = Math.max(8, Math.min(a.left, vw - r.width - 8));
+        p.style.left = Math.round(left) + 'px';
+        p.style.top = Math.round(Math.max(4, top)) + 'px';
+    }
+    _ik2PonerReubicar()
+    {
+        if (this._ik2Reubicar) return;
+        let pend = false;
+        this._ik2Reubicar = () => { if (pend) return; pend = true; requestAnimationFrame(() => { pend = false; if (this.IsOpen && this._ik2Modo === 'anchored') this._ik2Posicionar(); }); };
+        window.addEventListener('scroll', this._ik2Reubicar, true);
+        window.addEventListener('resize', this._ik2Reubicar);
+    }
+    _ik2QuitarReubicar()
+    {
+        if (!this._ik2Reubicar) return;
+        window.removeEventListener('scroll', this._ik2Reubicar, true);
+        window.removeEventListener('resize', this._ik2Reubicar);
+        this._ik2Reubicar = null;
+    }
+    /** Traga el keyup de la tecla que aceptó con keydown, para que no llegue al elemento que recibe el foco. */
+    static _ik2TragarKeyup(tecla)
+    {
+        const f = (e) => { if (e.key !== tecla) return; e.preventDefault(); e.stopImmediatePropagation(); quitar(); };
+        const quitar = () => { window.removeEventListener('keyup', f, true); clearTimeout(t); };
+        const t = setTimeout(quitar, 1500);
+        window.addEventListener('keyup', f, true);
+    }
+
+    // ---- Mensajes en línea (A4, B15). Sin tema se conservan los alert de hoy.
+    _ik2Avisar(msg, donde)
+    {
+        if (donde === 'ventana' && this._ik2Lista)
+        {
+            const e = this.shadow.getElementById('ik2_estado');
+            if (e) { e.classList.add('ik2-error'); e.innerHTML = InputKey._ik2Iconos.aviso; e.append(document.createTextNode(msg)); return; }
+        }
+        if (donde === 'campo' && this._ik2Campo) { this._ik2MensajeCampo(msg); console.warn('InputKey: ' + msg); return; }
+        alert(msg);
+    }
+    _ik2MensajeCampo(msg)
+    {
+        let m = this.shadow.getElementById('ik2_msg');
+        if (!msg) { if (m) m.textContent = ''; return; }
+        if (!m) { m = this.createFullElement('div', { id: 'ik2_msg', role: 'alert' }); this._ik2El.container.after(m); }
+        m.innerHTML = InputKey._ik2Iconos.aviso;
+        m.append(document.createTextNode(msg));
+    }
+    _ik2Buscando(b)
+    {
+        if (!this._ik2Ini) return;
+        if (this._ik2Campo) this._ik2El.container.classList.toggle('ik2-buscando', b);
+        if (this._ik2Lista) { this.container2.classList.toggle('ik2-buscando', b); this.table_tables_container2.setAttribute('aria-busy', String(b)); }
+    }
+    _ik2Cargando(seccion, iframe)
+    {
+        if (!this._ik2Lista) return;
+        seccion.classList.add('ik2-cargando');
+        seccion.setAttribute('data-ik2-cargando', this._ik2T('loading'));
+        iframe.addEventListener('load', () => seccion.classList.remove('ik2-cargando'), { once: true });
+    }
+
+    // ---- Estado del campo después de pintar el valor (A4, B10) y ancho del código (respaldo sin field-sizing)
+    _ik2AlPintarValor()
+    {
+        if (!this._ik2Ini || !this._ik2Campo) { this._ik2Validez(); return; }
+        const c = this._ik2El.container;
+        const vacio = !this.accept_data || Object.keys(this.accept_data).length === 0;
+        c.classList.toggle('ik2-vacio', vacio && !this.input_search_container.value);
+        c.classList.toggle('ik2-requerido', (this.getAttribute('required') ?? 'false') === 'true');
+        this._ik2Validez();
+        this._ik2AjustarAncho();
+    }
+    _ik2Angosto()
+    {
+        const c = this._ik2El.container;
+        if (!this._ik2Campo || !c.isConnected) return;
+        const w = c.clientWidth;
+        if (!w || w === this._ik2AnchoVisto) return;   // solo cambios de ancho (el alto cambia al bajar la descripción)
+        this._ik2AnchoVisto = w;
+        const i = this.input_search_container, cs = getComputedStyle(i);
+        const cv = InputKey._ik2Canvas ??= document.createElement('canvas').getContext('2d');
+        cv.font = cs.fontSize + ' ' + cs.fontFamily;
+        const ch = cv.measureText('0').width || 8;
+        const pad = (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0);
+        const botones = Array.from(c.querySelectorAll('.induxsoft-buttons')).reduce((t, b) => t + (b.offsetWidth || 0), 0);
+        const necesita = this.KeyMinChars * ch + pad + 12 * ch + pad + botones;
+        c.classList.toggle('ik2-angosto', w < necesita);
+    }
+    _ik2AlTeclearCampo()
+    {
+        if (!this._ik2Campo) return;
+        if (this._ik2Invalido) { this._ik2Invalido = ''; this._ik2Validez(); }
+        this._ik2AjustarAncho();
+    }
+    static _ik2FieldSizing = (typeof CSS !== 'undefined' && CSS.supports) ? CSS.supports('field-sizing', 'content') : false;
+    _ik2AjustarAncho()
+    {
+        if (InputKey._ik2FieldSizing || !this._ik2Campo) return;
+        const i = this.input_search_container, cs = getComputedStyle(this);
+        const min = Number(cs.getPropertyValue('--ik-key-min')) || this.KeyMinChars, max = Number(cs.getPropertyValue('--ik-key-max')) || this.KeyMaxChars;
+        i.style.width = Math.max(min, Math.min(max, i.value.length + 1)) + 'ch';
+    }
+
+    // ---- Validez (B10). ElementInternals no es viable: con formAssociated, el input-key con name entra a
+    // form.elements junto con su inputv (mismo name) y form.elements[name] pasa a ser un RadioNodeList cuyo .value es
+    // '' (verificado en Chrome 153). Se delega en inputv, que es el control que ya participa en el formulario.
+    _ik2Validez()
+    {
+        if (!this.inputv) return '';
+        let msg = this._ik2Invalido || '';
+        if (!msg && this.Strict)
+        {
+            const t = (this.input_search_container?.value ?? '').trim();
+            const ds = (this.getAttribute('data-search') ?? '').toLowerCase();
+            const ok = this.accept_data && Object.keys(this.accept_data).length > 0 && String(this.accept_data[ds] ?? '').trim().toLowerCase() === t.toLowerCase();
+            if (t && !ok) msg = this._ik2T('notFound').replace('{text}', t);
+        }
+        if (this.Strict || this._ik2Validado || msg) { this.inputv.setCustomValidity(msg); this._ik2Validado = true; }
+        if (this._ik2Campo)
+        {
+            this._ik2El.container.classList.toggle('ik2-invalido', !!msg);
+            this._ik2MensajeCampo(msg);
+            this.input_search_container.setAttribute('aria-invalid', String(!!msg));
+        }
+        return msg;
+    }
+    _ik2EstrictoSinResultados(autoselect)
+    {
+        if (!autoselect || !this.Strict || !this._ik2Campo || (this.data && this.data.length > 0)) return false;
+        const t = (this.input_search_container.value ?? '').trim();
+        if (!t) return false;
+        this._ik2Invalido = this._ik2T('notFound').replace('{text}', t);
+        this.accept_data = null;
+        this.input_description_container.value = '';
+        this._ik2Validez();
+        this._ik2Resolver(null);
+        return true;
+    }
+    get validity() { this._ik2Validez(); return this.inputv ? this.inputv.validity : undefined; }
+    get validationMessage() { this._ik2Validez(); return this.inputv ? this.inputv.validationMessage : ''; }
+    get willValidate() { return this.inputv ? this.inputv.willValidate : false; }
+    setCustomValidity(msg) { this._ik2Invalido = String(msg ?? ''); this._ik2Validez(); }
+    checkValidity() { this._ik2Validez(); return this.inputv ? this.inputv.checkValidity() : true; }
+    reportValidity()
+    {
+        this._ik2Validez();
+        if (!this.inputv) return true;
+        const ok = this.inputv.checkValidity();
+        if (ok) return true;
+        if (this._ik2Campo)
+        {
+            const m = this.inputv.validity.valueMissing && !this.inputv.validationMessage ? this._ik2T('required') : (this.inputv.validity.valueMissing ? this._ik2T('required') : this.inputv.validationMessage);
+            this._ik2El.container.classList.add('ik2-invalido');
+            this._ik2MensajeCampo(m);
+            try { this.input_search_container.focus(); } catch { }
+            return false;
+        }
+        if (this.inputv.isConnected) return this.inputv.reportValidity();
+        return false;
+    }
+
+    // ---- API (B1)
+    /** Abre la ventana o el panel con ese texto. opciones: {anchor, autoselect=false}. */
+    open(texto = '', opciones = {})
+    {
+        this._ik2Asegurar();
+        if (opciones && opciones.anchor) { this._ik2Ancla = opciones.anchor; this._ik2Celda = null; }
+        this.searchText(texto == null ? '' : String(texto), !!(opciones && opciones.autoselect));
+    }
+    /** Cierra sin seleccionar (como Esc o Cancelar). */
+    close() { if (this.IsOpen) this._ikCancel(); }
+    /**
+     * Abre, espera y resuelve con el registro elegido, o null si se cancela. Con texto, una coincidencia exacta única
+     * entra sin abrir la lista (IK-3), salvo {autoselect:false}. Se siguen disparando change_event y Selected.
+     */
+    pick(texto = '', opciones = {})
+    {
+        this._ik2Asegurar();
+        this._ik2Resolver(null);
+        return new Promise(res => {
+            this._ik2Pick = res;
+            const auto = (opciones && 'autoselect' in opciones) ? !!opciones.autoselect : String(texto ?? '').trim() !== '';
+            this.open(texto, { anchor: opciones?.anchor, autoselect: auto });
+        });
+    }
+    /**
+     * Busca el registro por data-key y lo muestra (sin change_event, salvo {notify:true}). Resuelve con el registro o
+     * null. Con data-source, la URL recibe la llave en @search: el servicio debe aceptar la búsqueda por llave.
+     */
+    async load(llave, opciones = {})
+    {
+        this._ik2Asegurar();
+        const k = String(llave ?? '').trim();
+        const dk = (this.getAttribute('data-key') ?? '').toLowerCase();
+        if (!k) return null;
+        let lista = null;
+        const arr = this.getAttribute('data-source-array');
+        if (!this.getAttribute('data-source') && arr && arr.trim() !== '')
+        {
+            try { lista = this.setObjectListMinus(JSON.parse(arr)); } catch { lista = []; }
+        }
+        else { await this.setDataSource(k, k); lista = this.data ?? []; }
+        const rec = (lista ?? []).find(r => String(r[dk] ?? '').toLowerCase() === k.toLowerCase()) ?? null;
+        if (!rec) return null;
+        if (opciones && opciones.notify) this.setValue(rec);
+        else { this.accept_data = rec; this.record_selected = rec; this._ikPaintValue(); }
+        return { ...this.accept_data };
+    }
+
+    // ---- Columnas en JSON (B8): [{"field","title","type":"text|code|number|money|date","align","width","hidden","decimals","currency"}]
+    _ik2Columnas()
+    {
+        const c = (this.columns ?? '').trim();
+        if (!c.startsWith('[')) return null;
+        if (this._ik2ColsTxt === c) return this._ik2Cols;
+        let a = null;
+        try { a = JSON.parse(c); } catch { console.warn('InputKey: columns no es un JSON válido; se usan todos los campos.'); }
+        const cols = Array.isArray(a) ? a.filter(x => x && (typeof x === 'string' || x.field)).map(x => typeof x === 'string' ? { field: x } : x)
+            .map(x => ({ field: String(x.field).trim().toLowerCase(), title: x.title ?? String(x.field), type: String(x.type ?? 'text').toLowerCase(), align: x.align, width: x.width, hidden: !!x.hidden, decimals: x.decimals, currency: x.currency })) : [];
+        this._ik2ColsTxt = c;
+        this._ik2Cols = cols;
+        return cols;
+    }
+    /** Columnas efectivas: JSON, o la lista de hoy (columns + colcaptions), o todas las del primer registro. */
+    _ik2ColumnasEfectivas()
+    {
+        const cj = this._ik2Columnas();
+        if (cj) return cj.filter(c => !c.hidden);
+        const r0 = (this.data && this.data[0]) ? this.data[0] : {};
+        const titles = (this.colcaptions ? this.colcaptions.split(',') : Object.keys(r0));
+        const fields = (this.columns ? this.columns.split(',') : Object.keys(r0));
+        while (fields.length > titles.length && fields.length <= Object.keys(r0).length) titles[titles.length] = fields[titles.length];
+        while (titles.length > fields.length && titles.length <= Object.keys(r0).length) fields[fields.length] = Object.keys(r0)[fields.length];
+        const ds = (this.getAttribute('data-search') ?? '').toLowerCase();
+        return fields.map((f, i) => {
+            const field = f.trim();
+            const v = r0[field];
+            const num = typeof v === 'number';
+            return { field, title: (titles[i] ?? field).trim(), type: field.toLowerCase() === ds ? 'code' : (num ? 'number-auto' : 'text') };
+        });
+    }
+    _ik2Formato(v, col)
+    {
+        if (v === undefined || v === null) return '';
+        const loc = this.getAttribute('locale') || 'es-MX';
+        const n = Number(v);
+        try
+        {
+            if (col.type === 'money' && v !== '' && Number.isFinite(n)) return new Intl.NumberFormat(loc, { style: 'currency', currency: col.currency || 'MXN', minimumFractionDigits: col.decimals ?? 2, maximumFractionDigits: col.decimals ?? 2 }).format(n);
+            if (col.type === 'number' && v !== '' && Number.isFinite(n)) return new Intl.NumberFormat(loc, col.decimals != null ? { minimumFractionDigits: col.decimals, maximumFractionDigits: col.decimals } : {}).format(n);
+            if (col.type === 'date' && v !== '') { const d = new Date(v); if (!isNaN(d)) return d.toLocaleDateString(loc); }
+        }
+        catch { }
+        return String(v);
+    }
+    _ik2Alinear(col) { return col.align ?? ((col.type === 'money' || col.type === 'number' || col.type === 'number-auto') ? 'end' : null); }
+    /** B8 sin tema: la tabla de hoy (mismas clases y eventos) con las columnas, el formato, la alineación y el ancho del JSON. */
+    _ik2PintarLegado(cols)
+    {
+        this.body_tables_container2.innerHTML = ``;
+        this.head_tables_container2.innerHTML = ``;
+        if (!this.data || this.data.length <= 0)
+        {
+            this.body_tables_container2.innerHTML = `<p class="p-3 text-secondary">${(this.getAttribute('box-nodata-text') ?? this._ik2T('noData'))}</p>`;
+            return;
+        }
+        const vis = cols.filter(c => !c.hidden);
+        const tr = this.createFullElement('tr', { id: 'tr_tables_container2' });
+        vis.forEach(c => { const t = this.createFullElement('th', { class: 'fw-500 border-1 p-2 ps-3 pe-3' }); t.textContent = c.title; if (c.width) t.style.width = c.width; const al = this._ik2Alinear(c); if (al) t.style.textAlign = al; tr.appendChild(t); });
+        this.head_tables_container2.appendChild(tr);
+        const dk = (this.getAttribute('data-key') ?? '').toLowerCase();
+        this.data.forEach(dt => {
+            const row = this.createFullElement('tr', { class: 'row_table', value: `${dt[dk]}`, tabindex: `0` });
+            this._ik2EventosFilaLegado(row);
+            vis.forEach(c => { const cell = this.createFullElement('td', { class: 'border-1 p-1 ps-2 pe-2' }); cell.textContent = this._ik2Formato(dt[c.field], c); const al = this._ik2Alinear(c); if (al) cell.style.textAlign = al; row.appendChild(cell); });
+            this.body_tables_container2.appendChild(row);
+        });
+        return this.body_tables_container2;
+    }
+    /** Los mismos listeners que pone printTableData a cada fila (clic, doble clic, keyup y focus). */
+    _ik2EventosFilaLegado(row)
+    {
+        row.addEventListener('click', (e) => { e.stopPropagation(); const tr = e.target.closest('tr'); this.findValue(tr.getAttribute('value')); tr.parentNode.childNodes.forEach(ch => ch.classList.remove('row_selected')); tr.classList.add('row_selected'); });
+        row.addEventListener('dblclick', () => { this.accept_footer_container2.click(); });
+        row.addEventListener('keyup', (e) => {
+            switch (e.key)
+            {
+                case 'ArrowRight': case 'ArrowDown': if (e.target.nextElementSibling) e.target.nextElementSibling.focus(); else if (this.body_tables_container2.firstChild) this.body_tables_container2.firstChild.focus(); break;
+                case 'ArrowLeft': case 'ArrowUp': if (e.target.previousElementSibling) e.target.previousElementSibling.focus(); else if (this.body_tables_container2.lastChild) this.body_tables_container2.lastChild.focus(); break;
+                case 'Enter': this.accept_footer_container2.click(); break;
+            }
+        });
+        row.addEventListener('focus', (e) => { e.stopPropagation(); this.findValue(e.target.getAttribute('value')); e.target.parentNode.childNodes.forEach(ch => ch.classList.remove('row_selected')); e.target.classList.add('row_selected'); });
+    }
+    static _ik2Plegar(s) { return String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase(); }
+    /** A6: resalta (mark) las apariciones del texto buscado, sin distinguir mayúsculas ni acentos. */
+    static _ik2Resaltar(celda, texto, q)
+    {
+        const t = String(texto ?? '');
+        const terms = q ? InputKey._ik2Plegar(q).split(/\s+/).filter(x => x && x !== '%') : [];
+        if (!terms.length) { celda.textContent = t; return; }
+        const p = InputKey._ik2Plegar(t);
+        if (p.length !== t.length) { celda.textContent = t; return; }
+        const marca = new Array(t.length).fill(false);
+        terms.forEach(term => { let i = p.indexOf(term); while (i >= 0) { for (let k = i; k < i + term.length; k++) marca[k] = true; i = p.indexOf(term, i + 1); } });
+        let i = 0;
+        while (i < t.length)
+        {
+            let j = i; while (j < t.length && marca[j] === marca[i]) j++;
+            const s = t.slice(i, j);
+            if (marca[i]) { const m = document.createElement('mark'); m.textContent = s; celda.appendChild(m); } else celda.appendChild(document.createTextNode(s));
+            i = j;
+        }
+    }
+    /** A6: lista con tema. Mismas filas (tr.row_table con value y tabindex) que hoy; teclado con keydown (B7). */
+    _ik2PintarLista()
+    {
+        const tb = this.body_tables_container2, th = this.head_tables_container2;
+        tb.innerHTML = ''; th.innerHTML = '';
+        this._ik2Activa = -1;
+        const cuenta = this.shadow.getElementById('ik2_cuenta');
+        const q = (this.input_search_container2.value || this.#lastSearch || '').trim();
+        const err = this._ik2Error;
+        const fila = (html, cls) => {
+            const tr = this.createFullElement('tr', { class: 'ik2-aviso-fila' });
+            const td = this.createFullElement('td', { class: 'ik2-aviso' + (cls ? ' ' + cls : ''), colspan: '99' });
+            const div = this.createFullElement('div', { class: 'ik2-aviso-in' }, html);
+            td.appendChild(div); tr.appendChild(td); tb.appendChild(tr);
+            return div;
+        };
+        if (err)
+        {
+            if (cuenta) cuenta.textContent = '';
+            const d = fila(InputKey._ik2Iconos.aviso, 'ik2-error');
+            const p = document.createElement('div'); p.textContent = this._ik2T('serviceError') + (err.message ? ' ' + err.message : ''); d.appendChild(p);
+            const b = this.createFullElement('button', { type: 'button', id: 'ik2_reintentar' }); b.textContent = this._ik2T('retry');
+            b.addEventListener('click', () => this._ik2Reintentar());
+            d.appendChild(b);
+            return tb;
+        }
+        if (!this.data || this.data.length <= 0)
+        {
+            if (cuenta) cuenta.textContent = q ? this._ik2T('results').replace('{n}', '0') : '';
+            const d = fila(InputKey._ik2Iconos.vacio);
+            const p = document.createElement('div');
+            p.textContent = q ? (this.getAttribute('box-nodata-text') ?? this._ik2T('noMatches').replace('{text}', q)) : this._ik2T('typeToSearch');
+            d.appendChild(p);
+            if (q && this.getAttribute('add-url'))
+            {
+                const b = this.createFullElement('button', { type: 'button', id: 'ik2_crear' }); b.textContent = '+ ' + this._ik2T('create').replace('{text}', q);
+                b.addEventListener('click', () => { this.input_search_container.value = q; const ab = this._ik2El.addBtn; this._ikCancel(); ab.click(); });
+                d.appendChild(b);
+            }
+            return tb;
+        }
+        const cols = this._ik2ColumnasEfectivas();
+        const trh = this.createFullElement('tr', { id: 'tr_tables_container2', role: 'row' });
+        cols.forEach(c => { const t = this.createFullElement('th', { role: 'columnheader', scope: 'col' }); t.textContent = c.title; if (c.width) t.style.width = c.width; const al = this._ik2Alinear(c); if (al) t.style.textAlign = al; if (c.type === 'money' || c.type === 'number' || c.type === 'number-auto') t.classList.add('ik2-num'); trh.appendChild(t); });
+        th.appendChild(trh);
+        const dk = (this.getAttribute('data-key') ?? '').toLowerCase();
+        this.data.forEach((dt, i) => {
+            const tr = this.createFullElement('tr', { class: 'row_table', value: `${dt[dk]}`, tabindex: '-1', role: 'row', id: 'ik2_r' + i, 'aria-selected': 'false', 'data-i': String(i) });
+            cols.forEach(c => {
+                const td = this.createFullElement('td', { role: 'gridcell' });
+                const num = c.type === 'money' || c.type === 'number' || (c.type === 'number-auto' && typeof dt[c.field] === 'number');
+                if (num) td.classList.add('ik2-num');
+                if (c.type === 'code') td.classList.add('ik2-cod');
+                const al = this._ik2Alinear(c); if (al && c.align) td.style.textAlign = al;
+                const txt = this._ik2Formato(dt[c.field], c);
+                if (num) td.textContent = txt; else InputKey._ik2Resaltar(td, txt, q);
+                tr.appendChild(td);
+            });
+            tr.addEventListener('mousedown', (e) => { if (e.button === 0) e.preventDefault(); });
+            tr.addEventListener('click', (e) => { e.stopPropagation(); this._ik2Activar(i, true); });
+            tr.addEventListener('dblclick', () => { this._ik2Activar(i, true); this.accept_footer_container2.click(); });
+            tr.addEventListener('focus', () => this._ik2Activar(i, false));
+            tr.addEventListener('keydown', (e) => this._ik2TeclaFila(e, i));
+            tb.appendChild(tr);
+        });
+        if (cuenta) cuenta.textContent = this.data.length === 1 ? this._ik2T('oneResult') : this._ik2T('results').replace('{n}', String(this.data.length));
+        return tb;
+    }
+    _ik2Filas() { return Array.from(this.body_tables_container2.querySelectorAll('tr.row_table')); }
+    /** Marca la fila activa (row_selected, aria-selected, aria-activedescendant) y la vuelve el registro elegido. */
+    _ik2Activar(i, enfocar)
+    {
+        const filas = this._ik2Filas();
+        if (!filas.length) return;
+        i = Math.max(0, Math.min(filas.length - 1, i));
+        const tr = filas[i];
+        if (this._ik2Activa !== i || !tr.classList.contains('row_selected'))
+        {
+            filas.forEach(f => { f.classList.remove('row_selected'); f.setAttribute('aria-selected', 'false'); f.tabIndex = -1; });
+            tr.classList.add('row_selected'); tr.setAttribute('aria-selected', 'true'); tr.tabIndex = 0;
+            this.findValue(tr.getAttribute('value'));
+            this._ik2Activa = i;
+            this.input_search_container2.setAttribute('aria-activedescendant', tr.id);
+        }
+        if (enfocar && this.shadow.activeElement !== tr) tr.focus({ preventScroll: true });
+        tr.scrollIntoView({ block: 'nearest' });
+    }
+    _ik2FilasPorPagina()
+    {
+        const sec = this._ik2El.tablesSec, f = this._ik2Filas()[0];
+        if (!sec || !f) return 8;
+        const h = f.getBoundingClientRect().height || 30;
+        return Math.max(1, Math.floor((sec.clientHeight - 30) / h) - 1);
+    }
+    /** B7: teclado de la lista con tema (keydown: la tecla sostenida repite). */
+    _ik2TeclaFila(e, i)
+    {
+        if (e.altKey || e.ctrlKey || e.metaKey) return;
+        const n = this._ik2Filas().length;
+        const ir = (k) => { e.preventDefault(); this._ik2Activar(k, true); };
+        switch (e.key)
+        {
+            case 'ArrowDown': return ir(Math.min(n - 1, i + 1));
+            case 'ArrowUp': if (i === 0) { e.preventDefault(); this._ik2AlBuscador(); return; } return ir(i - 1);
+            case 'PageDown': return ir(Math.min(n - 1, i + this._ik2FilasPorPagina()));
+            case 'PageUp': return ir(Math.max(0, i - this._ik2FilasPorPagina()));
+            case 'Home': return ir(0);
+            case 'End': return ir(n - 1);
+            case 'Enter':
+                e.preventDefault(); this._ik2Activar(i, false);
+                this._ik2EnterAceptado = true; this._ik2TeclaAceptar = 'Enter';
+                this.accept_footer_container2.click();
+                this._ik2EnterAceptado = false;
+                return;
+            case 'Tab':
+                if (this.TabAccepts && !e.shiftKey) { e.preventDefault(); this._ik2Activar(i, false); this._ik2EnterAceptado = true; this._ik2TeclaAceptar = 'Tab'; this.accept_footer_container2.click(); this._ik2EnterAceptado = false; }
+                return;
+            case 'Backspace':
+                this._ik2AlBuscador(); return;   // borra en el buscador (la acción por omisión ocurre ya en él)
+        }
+        // Un carácter imprimible vuelve al buscador de la ventana conservando lo escrito.
+        if (e.key && e.key.length === 1) this._ik2AlBuscador();
+    }
+    _ik2AlBuscador()
+    {
+        const b = this.input_search_container2;
+        b.focus();
+        const n = b.value.length; try { b.setSelectionRange(n, n); } catch { }
+    }
+    /** B7: buscador de la ventana con tema. Enter busca; ↓ baja a la lista. */
+    _ik2TeclaBuscador(e)
+    {
+        if (!this._ik2Lista) return;
+        if (e.key === 'Enter') { e.preventDefault(); this.searchButton(this.container2); return; }
+        if ((e.key === 'ArrowDown' || e.key === 'PageDown') && this._ik2Filas().length) { e.preventDefault(); this._ik2Activar(this._ik2Activa >= 0 ? this._ik2Activa : 0, true); }
+    }
+    /** B7: en el campo con tema, F4 o Alt+↓ abre la lista. (Enter sigue en keyup, como hoy.) */
+    _ik2TeclaCampo(e)
+    {
+        if (!this._ik2Campo) return;
+        if (e.key === 'F4' || (e.altKey && e.key === 'ArrowDown')) { e.preventDefault(); this._search(false); }
+    }
+    _ik2Reintentar()
+    {
+        const t = this.input_search_container2.value || this.#lastSearch || '';
+        this._ik2Error = null;
+        this.setDataSource(this.input_search_container2.getAttribute('key-value') || '', t).then(() => this.search(this.container2, false));
     }
 }
 

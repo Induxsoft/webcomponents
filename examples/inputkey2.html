@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>InputKey 2 · ejemplo</title>
+<!--
+  Ejemplo de InputKey 2 (src/js/induxsoft.controls.js). Datos ficticios, sin servidor: los buscadores usan
+  data-source-array o un fetch simulado en la página (/demo-productos?q=…), con 150 ms de retraso.
+  Sin atributos nuevos el control se ve y se comporta como siempre (la primera tarjeta lo compara).
+-->
+<script src="../src/js/induxsoft.controls.js"></script>
+<script src="../src/js/induxsoft.controls.editable.js"></script>
+<style>
+  body{ margin:0; font-family:system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-size:14px; background:#EEF1F5; color:#1F2328; }
+  body.oscuro{ background:#0E1116; color:#E6EDF3; }
+  header{ position:sticky; top:0; z-index:5; display:flex; flex-wrap:wrap; gap:14px; align-items:center; padding:10px 20px; background:#fff; border-bottom:1px solid #D0D7DE; }
+  body.oscuro header{ background:#15181C; border-color:#2C333B; }
+  header h1{ font-size:16px; margin:0 10px 0 0; }
+  main{ max-width:1180px; margin:0 auto; padding:20px; display:grid; gap:20px; }
+  section{ background:#fff; border:1px solid #D0D7DE; border-radius:8px; padding:16px 18px 20px; }
+  body.oscuro section{ background:#15181C; border-color:#2C333B; }
+  section h2{ font-size:15px; margin:0 0 4px; }
+  section p.nota{ margin:0 0 14px; color:#59636E; font-size:13px; line-height:1.5; }
+  body.oscuro section p.nota{ color:#9DA7B3; }
+  .rejilla{ display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:16px 20px; }
+  .campo{ display:grid; gap:6px; }
+  .campo > span{ font-size:12px; font-weight:600; color:#59636E; letter-spacing:.02em; }
+  .tema{ padding:14px; border-radius:8px; }
+  .tema[data-fondo="oscuro"]{ background:#0E1116; }
+  .tema[data-fondo="jade"]{ background:#EFEAE2; }
+  .tema[data-fondo="libro-mayor"]{ background:#E9E3D6; }
+  .tema[data-fondo="claro"]{ background:#EEF1F5; }
+  .tema > b{ display:block; font-size:12px; margin-bottom:8px; color:#59636E; text-transform:uppercase; letter-spacing:.06em; }
+  .tema[data-fondo="oscuro"] > b{ color:#9DA7B3; }
+  .tema .campo + .campo{ margin-top:12px; }
+  #bitacora{ font-family:ui-monospace, Consolas, monospace; font-size:12px; max-height:160px; overflow:auto; background:#F6F8FA; border:1px solid #D0D7DE; border-radius:6px; padding:8px; white-space:pre-wrap; margin:10px 0 0; }
+  body.oscuro #bitacora{ background:#0D1117; border-color:#2C333B; }
+  button.accion{ font:inherit; padding:5px 12px; border-radius:6px; border:1px solid #8C959F; background:#fff; cursor:pointer; }
+  code{ font-size:12px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>InputKey 2</h1>
+  <label>Densidad
+    <select id="selDens"><option value="compacta">compacta</option><option value="normal" selected>normal</option><option value="comoda">cómoda</option></select>
+  </label>
+  <label>Popup <select id="selPopup"><option value="modal">modal (hoy)</option><option value="anchored" selected>anchored</option><option value="auto">auto</option></select></label>
+  <span style="font-size:12px;color:#59636E">Escribe <b>bro</b>, <b>tor</b>, <b>cab</b> o <b>7501</b> y Enter. F4 o Alt+↓ abre la lista; ↑↓ RePág AvPág Inicio Fin; Enter elige; Esc cierra.</span>
+</header>
+<main>
+
+<section>
+  <h2>Sin tema (como hoy) y con tema</h2>
+  <p class="nota">El primero no declara atributos nuevos: se ve y se comporta exactamente como el InputKey de siempre (salvo la X de agregar y editar, que ahora se ve). El segundo lleva <code>theme="claro"</code>.</p>
+  <div class="rejilla">
+    <div class="campo"><span>SIN TEMA</span>
+      <input-key id="ikHoy" data-key="id" data-search="codigo" data-text="descripcion" data-source="/demo-productos?q=@search" columns="codigo,descripcion,precio" colcaptions="Código,Descripción,Precio" add-url="about:blank" data-value='{"id":2,"codigo":"PRB-0010","descripcion":"Brocha de pelo natural 2\""}'></input-key>
+    </div>
+    <div class="campo"><span>THEME="CLARO"</span>
+      <input-key class="ik-demo" id="ikClaro" theme="claro" data-key="id" data-search="codigo" data-text="descripcion" data-source="/demo-productos?q=@search" add-url="about:blank" edit-url="about:blank" columns='[{"field":"codigo","title":"Código","type":"code"},{"field":"descripcion","title":"Descripción"},{"field":"linea","title":"Línea"},{"field":"existencia","title":"Exist.","type":"number"},{"field":"precio","title":"Precio","type":"money"},{"field":"codbar","hidden":true}]' data-value='{"id":2,"codigo":"PRB-0010","descripcion":"Brocha de pelo natural 2\""}'></input-key>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Los cuatro temas (A1) y estados (A4)</h2>
+  <p class="nota">Cada columna declara su <code>theme</code>. Con valor, vacío (con <code>required</code>), <code>strict</code> (escribe un código que no exista y sal del campo) y deshabilitado. El ancho del código va de <code>key-min-chars</code> (15) a <code>key-max-chars</code> (32).</p>
+  <div class="rejilla" id="temas"></div>
+</section>
+
+<section>
+  <h2>Oculto en una tabla (headless, popup anclado a la celda y tema heredado de la tabla, A2)</h2>
+  <p class="nota">El InputKey no declara tema: toma el de la EdiTable que lo abre (<code>theme</code> de la tabla, a la derecha). Escribe un código en la columna Código y pulsa Enter: con una sola coincidencia exacta entra directo; si no, el panel se ancla a la celda (también con la columna fija y filas virtuales).</p>
+  <label style="font-size:13px">Tema de la tabla
+    <select id="selTabla"><option>claro</option><option>oscuro</option><option>jade</option><option>libro-mayor</option></select>
+  </label>
+  <div style="margin-top:10px">
+    <edit-table id="tbl" theme="claro" virtual-rows="true" style="width:100%;height:260px" data='[{"codigo":"","descripcion":"","cantidad":"","precio":""}]'>
+      <edit-thead><edit-tr>
+        <edit-th field="codigo" type="Text" fixed="left" button="true">Código</edit-th>
+        <edit-th field="descripcion" type="Text" button="true" min-width="280px">Descripción</edit-th>
+        <edit-th field="cantidad" type="Number" decs="2" textalign="end">Cantidad</edit-th>
+        <edit-th field="precio" type="Number" decs="2" format="true" thousandssep="true" textalign="end">Precio</edit-th>
+      </edit-tr></edit-thead>
+    </edit-table>
+  </div>
+  <input-key id="ikTabla" headless="true" popup="anchored" hidden-input="false" data-key="id" data-search="codigo" data-text="descripcion" data-source="/demo-productos?q=@search" columns='[{"field":"codigo","title":"Código","type":"code"},{"field":"descripcion","title":"Descripción"},{"field":"precio","title":"Precio","type":"money"}]' autoselect="exact"></input-key>
+</section>
+
+<section>
+  <h2>API: pick(), open(), close(), load() y eventos (B1, B2)</h2>
+  <p class="nota"><code>await ik.pick(texto, {anchor})</code> resuelve con el registro o <code>null</code>. Los eventos <code>Selected</code>, <code>Canceled</code>, <code>BeforeSearch</code>, <code>SearchCompleted</code>, <code>SearchError</code>, <code>Opened</code> y <code>Closed</code> se registran con <code>addEventListener</code>.</p>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+    <button class="accion" id="btnPick" type="button">pick('bro')</button>
+    <button class="accion" id="btnLoad" type="button">load(14)</button>
+    <button class="accion" id="btnError" type="button">buscar con error de red (B15)</button>
+    <button class="accion" id="btnLento" type="button">buscar lento (request-timeout=800)</button>
+  </div>
+  <div class="campo" style="max-width:520px;margin-top:12px"><span>CON EVENTOS</span>
+    <input-key class="ik-demo" id="ikApi" theme="claro" request-timeout="800" data-key="id" data-search="codigo" data-text="descripcion" data-source="/demo-productos?q=@search" columns='[{"field":"codigo","title":"Código","type":"code"},{"field":"descripcion","title":"Descripción"},{"field":"precio","title":"Precio","type":"money"}]'></input-key>
+  </div>
+  <pre id="bitacora"></pre>
+</section>
+
+</main>
+<script>
+'use strict';
+// ---------- Datos ficticios y servidor simulado ----------
+const BASE = [
+  ['BRO-0002','Brocha de cerda 2"','Pintura','7501000000017',38.5], ['PRB-0010','Brocha de pelo natural 2"','Pintura','7501000000024',62.33],
+  ['BRO-0004','Brocha de cerda 4"','Pintura','7501000000031',71.9], ['ROD-0009','Rodillo de felpa 9"','Pintura','7501000000048',95],
+  ['TOR-1/4-08','Tornillo hexagonal 1/4 × 1" galvanizado','Ferretería','7501000000055',2.15], ['TOR-1/4-16','Tornillo hexagonal 1/4 × 2" galvanizado','Ferretería','7501000000062',3.4],
+  ['TUE-1/4','Tuerca hexagonal 1/4 galvanizada','Ferretería','7501000000079',0.95], ['ROL-1/4','Rondana plana 1/4','Ferretería','7501000000086',0.6],
+  ['CAB-12-100','Cable THW calibre 12, rollo 100 m','Eléctrico','7501000000093',1489], ['CAB-14-100','Cable THW calibre 14, rollo 100 m','Eléctrico','7501000000109',1099],
+  ['APA-SEN','Apagador sencillo blanco','Eléctrico','7501000000116',34.9], ['CON-DUP','Contacto dúplex polarizado','Eléctrico','7501000000123',41.5],
+  ['VAL-PVC-1/2','Válvula de esfera PVC 1/2"','Plomería','7501000000130',58], ['VAL-PVC-3/4','Válvula de esfera PVC 3/4"','Plomería','7501000000147',74.5],
+  ['TUB-CPVC-1/2','Tubo CPVC 1/2" × 6 m','Plomería','7501000000154',189], ['COD-PVC-1/2','Codo PVC 90° 1/2"','Plomería','7501000000161',6.8],
+  ['7501000000017-LOTE-2026-11','Brocha de cerda 2" (lote noviembre)','Pintura','',39]
+];
+window.PRODUCTOS = BASE.map(([codigo, descripcion, linea, codbar, precio], i) => ({ id: i + 1, codigo, descripcion, linea, codbar, precio, existencia: (i * 37) % 160 }));
+window.__falla = false; window.__lento = 0;
+const fetchReal = window.fetch;
+window.fetch = function (url, opts) {
+  const u = new URL(url, location.href);
+  if (!u.pathname.endsWith('/demo-productos')) return fetchReal(url, opts);
+  const q = (u.searchParams.get('q') || '').toLowerCase();
+  const r = PRODUCTOS.filter(p => q === '%' || p.codbar === q || String(p.id) === q || p.codigo.toLowerCase().includes(q) || p.descripcion.toLowerCase().includes(q));
+  return new Promise((res, rej) => {
+    const t = setTimeout(() => { if (window.__falla) rej(new Error('red ficticia sin conexión')); else res({ ok: true, json: () => Promise.resolve(JSON.parse(JSON.stringify(r))) }); }, 150 + window.__lento);
+    if (opts && opts.signal) opts.signal.addEventListener('abort', () => { clearTimeout(t); rej(new DOMException('abortada', 'AbortError')); });
+  });
+};
+
+// ---------- Cuatro temas ----------
+const COLS = '[{"field":"codigo","title":"Código","type":"code"},{"field":"descripcion","title":"Descripción"},{"field":"existencia","title":"Exist.","type":"number"},{"field":"precio","title":"Precio","type":"money"}]';
+const comun = `data-key="id" data-search="codigo" data-text="descripcion" data-source="/demo-productos?q=@search" columns='${COLS}'`;
+document.getElementById('temas').innerHTML = ['claro', 'oscuro', 'jade', 'libro-mayor'].map(t => `
+  <div class="tema" data-fondo="${t}"><b>${t}</b>
+    <div class="campo"><span>CON VALOR</span><input-key class="ik-demo" theme="${t}" ${comun} edit-url="about:blank" data-value='{"id":5,"codigo":"TOR-1/4-08","descripcion":"Tornillo hexagonal 1/4 × 1\\" galvanizado"}'></input-key></div>
+    <div class="campo"><span>VACÍO, REQUIRED</span><input-key class="ik-demo" theme="${t}" ${comun} required="true" add-url="about:blank"></input-key></div>
+    <div class="campo"><span>STRICT</span><input-key class="ik-demo" theme="${t}" ${comun} strict="true"></input-key></div>
+    <div class="campo"><span>CÓDIGO LARGO</span><input-key class="ik-demo" theme="${t}" ${comun} data-value='{"id":17,"codigo":"7501000000017-LOTE-2026-11","descripcion":"Brocha de cerda 2\\" (lote noviembre)"}'></input-key></div>
+    <div class="campo"><span>DESHABILITADO</span><input-key class="ik-demo" theme="${t}" ${comun} disabled="true" data-value='{"id":11,"codigo":"APA-SEN","descripcion":"Apagador sencillo blanco"}'></input-key></div>
+  </div>`).join('');
+
+// ---------- Controles de la página ----------
+const todos = () => document.querySelectorAll('input-key.ik-demo, #ikTabla');
+document.getElementById('selDens').onchange = e => { todos().forEach(ik => ik.setAttribute('density', e.target.value)); document.getElementById('tbl').setAttribute('density', e.target.value); };
+document.getElementById('selPopup').onchange = e => { document.querySelectorAll('input-key.ik-demo').forEach(ik => ik.setAttribute('popup', e.target.value)); };
+document.getElementById('selTabla').onchange = e => { document.getElementById('tbl').setAttribute('theme', e.target.value); };
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('input-key.ik-demo').forEach(ik => ik.setAttribute('popup', 'anchored'));
+  // Tabla con el InputKey oculto (como la venta de V12)
+  const tbl = document.getElementById('tbl'), ik = document.getElementById('ikTabla');
+  tbl.setInputKey('codigo', ik);
+  tbl.setInputKey('descripcion', ik);
+  ik.change_event = (p) => {
+    if (!p) return;
+    const i = tbl.CurrentRowIndex() < 0 ? 0 : tbl.CurrentRowIndex();
+    tbl.DataArray[i] = { codigo: p.codigo, descripcion: p.descripcion, cantidad: 1, precio: p.precio };
+    if (i === tbl.DataArray.length - 1) tbl.AddRow();
+    tbl._printRows();
+    tbl.NavTo(i, 2);
+  };
+  // Eventos
+  const log = (t) => { const b = document.getElementById('bitacora'); b.textContent = t + '\n' + b.textContent; };
+  const api = document.getElementById('ikApi');
+  ['Selected', 'Canceled', 'BeforeSearch', 'SearchCompleted', 'SearchError', 'Opened', 'Closed'].forEach(n => api.addEventListener(n, e => log(n + ' ' + JSON.stringify(e.detail))));
+  api.addEventListener('change', d => log('change ' + (d ? d.codigo : null)));
+  document.getElementById('btnPick').onclick = async (e) => { const r = await api.pick('bro', { anchor: e.currentTarget }); log('pick → ' + (r ? r.codigo : 'null')); };
+  document.getElementById('btnLoad').onclick = async () => { const r = await api.load(14); log('load(14) → ' + (r ? r.codigo : 'null')); };
+  document.getElementById('btnError').onclick = () => { window.__falla = true; api.open('tor'); setTimeout(() => { window.__falla = false; }, 400); };
+  document.getElementById('btnLento').onclick = () => { window.__lento = 2000; api.open('cab'); setTimeout(() => { window.__lento = 0; }, 1200); };
+});
+</script>
+</body>
+</html>

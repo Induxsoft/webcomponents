@@ -20,6 +20,12 @@ const REPO = path.resolve(AQUI, '../..');
 const argv = process.argv.slice(2);
 const opt = (n, d) => { const i = argv.indexOf(n); return i >= 0 ? argv[i + 1] : d; };
 const SRC = path.resolve(opt('--src', path.join(REPO, 'src/js/induxsoft.controls.js')));
+const EDITABLE = path.join(REPO, 'src/js/induxsoft.controls.editable.js');
+// Copia de InputKey ANTES de InputKey 2 (main 35834a4, ya con IK-1 a IK-5) para la prueba de identidad sin tema.
+// La X de agregar y editar se normaliza (#FFF -> #333): es la única diferencia intencional sin atributos nuevos.
+const BASE_REF = opt('--base', '35834a4');
+let BASE_JS = null;
+try { BASE_JS = (await import('node:child_process')).execSync(`git -C ${JSON.stringify(REPO)} show ${BASE_REF}:src/js/induxsoft.controls.js`, { encoding: 'utf8', maxBuffer: 1 << 26 }).replaceAll('fill="#FFF" class="bi bi-x-lg"', 'fill="#333" class="bi bi-x-lg"'); } catch { }
 const FILTRO = opt('--filtro', null);
 const VERBOSE = argv.includes('--verbose');
 
@@ -33,7 +39,7 @@ const CATALOGO = [
   { id: 5, clave: 'X-100', nombre: 'Pieza de demostración', codbar: '' },
 ];
 
-function html(attrs = '') {
+function html(attrs = '', o = {}) {
   return `<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>InputKey</title>
 <script>
 // Servidor simulado: /buscar?q=<texto> busca en clave y nombre (LIKE, sin mayúsculas) o igual en codbar.
@@ -55,10 +61,14 @@ window.fetch = function (url, opts) {
   document.addEventListener(t, function (e) { if (e.key === 'Escape') window.__esc.push('document:' + t + ':burbuja'); });
 });
 </script>
+${o.antes ?? ''}
 <script src="/controls.js"></script>
-</head><body>
+${o.editable ? '<script src="/editable.js"></script>' : ''}
+${o.head ?? ''}
+</head><body${o.bodyAttrs ?? ''}>
 <button id="abrir" type="button">abrir</button>
 <input-key id="ik" name="ik" data-key="id" data-search="clave" data-text="nombre" data-source="/buscar?q=@search" columns="clave,nombre,codbar" colcaptions="Clave,Nombre,Código de barras" ${attrs}></input-key>
+${o.body ?? ''}
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   var ik = document.getElementById('ik');
@@ -287,6 +297,7 @@ const PRUEBAS = [
     await esperar(page, 100);
     ok(dialogos.length === 1 && dialogos[0].includes('Ocurrió un error al invocar el servicio'), JSON.stringify(dialogos));
   } },
+  ...(await import('./ik2.mjs')).default({ esperar, buscar, ev, clicShadow, sinDoc }),
 ];
 
 // ---------- ejecución ----------
@@ -295,29 +306,36 @@ async function main() {
   const browser = await chromium.launch();
   let fallas = 0, total = 0;
   const lista = PRUEBAS.filter(p => !FILTRO || p.id.includes(FILTRO));
-  for (const p of lista) {
-    const ctx = await browser.newContext();
+  // Abre una página de prueba. controles: JS de InputKey (por omisión el de --src; la prueba de identidad usa la base).
+  const abrir = async (ctx, p, controles, consola, dialogos) => {
     const page = await ctx.newPage();
     // Abre los shadow (solo pruebas) para poder leer el interior del componente.
     await page.addInitScript(() => { const o = Element.prototype.attachShadow; Element.prototype.attachShadow = function (i) { return o.call(this, Object.assign({}, i, { mode: 'open' })); }; });
-    const consola = [], dialogos = [];
     page.on('pageerror', e => consola.push('pageerror: ' + e.message));
     page.on('console', m => { if (m.type() === 'error') consola.push('console: ' + m.text()); });
     page.on('dialog', async d => { dialogos.push(d.message()); try { await d.accept(); } catch { } });
     await page.route('http://ik.test/**', (route) => {
       const u = new URL(route.request().url());
-      if (u.pathname === '/') return route.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: html(p.attrs) });
-      if (u.pathname === '/controls.js') return route.fulfill({ status: 200, contentType: 'text/javascript', body: fs.readFileSync(SRC) });
+      if (u.pathname === '/') return route.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: html(p.attrs, p.pagina ?? {}) });
+      if (u.pathname === '/editable.js') return route.fulfill({ status: 200, contentType: 'text/javascript', body: fs.readFileSync(EDITABLE) });
+      if (u.pathname === '/controls.js') return route.fulfill({ status: 200, contentType: 'text/javascript', body: controles ?? fs.readFileSync(SRC) });
       return route.fulfill({ status: 404, body: '' });
     });
     await page.route(/^(?!http:\/\/ik\.test\/).*/, r => r.abort());
+    await page.goto('http://ik.test/');
+    await page.waitForFunction(() => !!document.getElementById('ik').shadowRoot);
+    return page;
+  };
+  for (const p of lista) {
+    const ctx = await browser.newContext();
+    const consola = [], dialogos = [];
+    let page = null;
     const fallos = [];
     const ok = (cond, msg) => { if (!cond) fallos.push(msg); else if (VERBOSE) console.log('      ok ' + msg); };
     total++;
     try {
-      await page.goto('http://ik.test/');
-      await page.waitForFunction(() => !!document.getElementById('ik').shadowRoot);
-      await p.fn(page, ok, dialogos);
+      page = await abrir(ctx, p, null, consola, dialogos);
+      await p.fn(page, ok, dialogos, { base: async () => { if (!BASE_JS) throw new Error('sin la copia base (git show ' + BASE_REF + ')'); return abrir(ctx, p, BASE_JS, consola, dialogos); } });
     } catch (e) { fallos.push('excepción: ' + e.message.split('\n')[0]); }
     if (consola.length) fallos.push('errores de consola: ' + JSON.stringify(consola));
     if (fallos.length) { fallas++; console.log('FALLA  ' + p.id + ' · ' + p.titulo); fallos.forEach(f => console.log('       - ' + f)); }
