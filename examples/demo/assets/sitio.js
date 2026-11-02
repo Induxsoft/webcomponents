@@ -7,6 +7,10 @@
  *   data-requiere="summary mask"        en <main>: funciones de EditTable.features que usa la página
  *   data-proximamente="search"          en <main>: función de 2.0 aún no integrada (aviso «Próximamente en 2.0»)
  *
+ * Tema: el selector claro/oscuro de la barra cambia el atributo theme="claro|oscuro" (F8b) de cada <edit-table>
+ * de la página. Las tablas que traen su propio theme o data-tema="propio" no se tocan. El atributo se pone
+ * DESPUÉS de tomar el HTML para el visor, así que el código que se ve no lo incluye.
+ *
  * El HTML se toma ANTES de que EdiTable se inicialice (el componente vacía su contenido al iniciar):
  * este archivo se carga en <head>, así que su DOMContentLoaded corre antes que el de cada <edit-table>.
  * Por eso el código que se ve es exactamente el que corre la página.
@@ -31,7 +35,7 @@
       ['impresion.html', 'Impresión', '11'],
     ]],
     ['Compatibilidad', [['compatibilidad.html', 'Código v1 sin cambios', '12']]],
-    ['Próximamente', [
+    ['Nuevo en 2.0', [
       ['busqueda.html', 'Búsqueda y filtro', '13', 'search'],
       ['validacion.html', 'Validación de fila', '14', 'rowvalidate'],
       ['cambios.html', 'Cambios para guardar', '15', 'changes'],
@@ -50,6 +54,20 @@
   const features = () => { try { return (typeof EditTable !== 'undefined' && Array.isArray(EditTable.features)) ? EditTable.features : []; } catch (e) { return []; } };
   const version = () => { try { return (typeof EditTable !== 'undefined' && EditTable.version) ? String(EditTable.version) : '1.x'; } catch (e) { return '1.x'; } };
   const tiene = (f) => features().includes(f);
+
+  // ---------- Tema de las tablas: atributo theme de F8b ----------
+  // Marca las tablas que sigue el sitio (sin theme propio ni data-tema="propio") y les pone el tema actual.
+  // Sin la función 'theme' el atributo se ignora y la tabla se ve como en la versión 1.
+  function temaTablas(raiz) {
+    const t = document.documentElement.getAttribute('data-tema') === 'oscuro' ? 'oscuro' : 'claro';
+    (raiz || document).querySelectorAll('edit-table').forEach((el) => {
+      if (!el.hasAttribute('data-tema-sitio')) {
+        if (el.getAttribute('data-tema') === 'propio' || el.hasAttribute('theme')) return;
+        el.setAttribute('data-tema-sitio', '');
+      }
+      if (el.getAttribute('theme') !== t) el.setAttribute('theme', t);
+    });
+  }
 
   // ---------- Resaltado de sintaxis mínimo ----------
   const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -104,7 +122,7 @@
     for (const [grupo, items] of PAGINAS) {
       h += '<div class="nav-grupo">' + grupo + '</div><ul>';
       for (const [url, titulo, num, f] of items) {
-        const marca = f ? (tiene(f) ? '<span class="nav-pronto listo" title="Disponible en esta versión">ya</span>' : '<span class="nav-pronto" title="Llega con F8">2.0</span>') : '';
+        const marca = f ? (tiene(f) ? '<span class="nav-pronto listo" title="Nuevo en 2.0, disponible en esta versión">2.0</span>' : '<span class="nav-pronto" title="Esta versión no la declara">2.0</span>') : '';
         h += '<li><a href="' + url + '"' + (url === actual ? ' aria-current="page"' : '') + '><span class="nav-num">' + num + '</span><span>' + titulo + '</span>' + marca + '</a></li>';
       }
       h += '</ul>';
@@ -131,6 +149,7 @@
       document.documentElement.setAttribute('data-tema', o ? 'oscuro' : 'claro');
       try { localStorage.setItem(LLAVE_TEMA, o ? 'oscuro' : 'claro'); } catch (e) { /* nada */ }
       pintar();
+      temaTablas();
       document.dispatchEvent(new CustomEvent('sitio-tema', { detail: { tema: o ? 'oscuro' : 'claro' } }));
     };
     pintar();
@@ -202,7 +221,7 @@
     cp.onclick = () => { const p = paneles.find(([, pre]) => !pre.hidden); if (p) copiar(p[1]._texto, cp); };
     tabs.appendChild(cp);
     const nota = document.createElement('div'); nota.className = 'nota-cod';
-    nota.innerHTML = 'Carga <code>induxsoft.controls.editable.js</code>' + (/InduxsoftExcel/.test(js) ? ' y <code>induxsoft.controls.excel.js</code>' : '') + '. Los datos de ejemplo salen de <code>assets/datos.js</code> (<code>Datos.*</code>). El sitio aplica su tema a las tablas con <code>control-styles</code> (<code>assets/tema-edittable.js</code>).';
+    nota.innerHTML = 'Carga <code>induxsoft.controls.editable.js</code>' + (/InduxsoftExcel/.test(js) ? ' y <code>induxsoft.controls.excel.js</code>' : '') + '. Los datos de ejemplo salen de <code>assets/datos.js</code> (<code>Datos.*</code>). El selector claro/oscuro del sitio pone <code>theme="claro"</code> u <code>theme="oscuro"</code> en las tablas (<code>assets/sitio.js</code>); no aparece arriba porque se agrega después de tomar el código.';
     d.appendChild(nota);
     c.appendChild(d);
   }
@@ -214,10 +233,11 @@
     const s = document.querySelector('script[data-demo]');
     const js = s ? sangria(s.textContent) : '';
     if (window.TemaEdiTable) TemaEdiTable.aplicar();
+    temaTablas();
     nav(); barra();
     const main = document.querySelector('main') || document.body;
     chips(main); proximamente(main); visor(html, js);
   });
 
-  window.Sitio = { features, version, tiene, PAGINAS, resaltarJS, resaltarHTML };
+  window.Sitio = { features, version, tiene, PAGINAS, resaltarJS, resaltarHTML, temaTablas };
 })();

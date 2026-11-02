@@ -16,49 +16,70 @@
 <nav id="sitio-nav"></nav>
 <div class="principal">
 <header class="barra-sup" id="sitio-barra"></header>
-<main id="principal" class="contenido" data-proximamente="capture">
+<main id="principal" class="contenido" data-requiere="capture calc summary">
 <header class="pag-enc">
-  <span class="ceja">Próximamente · F8</span>
-  <h1>Captura de mostrador: Enter, Enter, Enter, siguiente partida</h1>
-  <p class="bajada">Quien captura en mostrador no quiere recorrer columnas que no le tocan. Con una secuencia de captura, <kbd>Enter</kbd> salta solo por código, cantidad y precio, y al final de la fila abre la siguiente partida en el código.</p>
+  <span class="ceja">Nuevo en 2.0 · captura de mostrador, como en R5</span>
+  <h1>Enter, Enter, Enter: siguiente partida</h1>
+  <p class="bajada">Quien captura en mostrador no quiere recorrer columnas que no le tocan. Con la secuencia de captura, <kbd>Enter</kbd> y <kbd>Tab</kbd> pasan solo por código, cantidad y precio; al terminar la fila abren la siguiente partida en el código, como la <code>eQGridXBar</code> de R5. Y el lector de códigos puede teclear tan rápido como quiera: no se pierde ningún carácter.</p>
+  <div class="chips" id="chips"></div>
 </header>
-<div id="aviso" role="status"></div>
 
 <section class="demo" aria-label="Demostración">
 <div id="demo">
+  <div class="barra">
+    <label><kbd>Enter</kbd> hace
+      <select id="modo">
+        <option value="next-cell" selected>next-cell: siguiente campo</option>
+        <option value="next-row">next-row: siguiente partida</option>
+        <option value="down">down: baja en la columna</option>
+        <option value="current">current: como en la v1</option>
+      </select>
+    </label>
+    <span class="sep"></span>
+    <span class="chip neutro" id="orden">—</span>
+  </div>
   <div class="caja-tabla">
-    <edit-table id="mostrador" capture-sequence="codigo,cantidad,precio" auto-confirm="true">
+    <edit-table id="mostrador" enter-mode="next-cell" skip-readonly="true" style="min-width:820px">
       <edit-thead><edit-tr>
-        <edit-th type="Text" field="codigo" width="120px">Código</edit-th>
-        <edit-th type="NoEditable" field="descripcion" minwidth="220px">Descripción</edit-th>
-        <edit-th type="NoEditable" field="existencia" textalign="end" width="100px">Existencia</edit-th>
-        <edit-th type="Number" field="cantidad" textalign="end" width="100px" default="1" calc="true" summary="sum">Cantidad</edit-th>
-        <edit-th type="NoEditable" field="unidad" width="80px">Unidad</edit-th>
-        <edit-th type="Number" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="120px" calc="true">Precio</edit-th>
-        <edit-th type="NoEditable" field="importe" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="130px" summary="sum">Importe</edit-th>
+        <edit-th type="Text" field="codigo" width="120px" tab-order="1">Código</edit-th>
+        <edit-th type="NoEditable" field="descripcion" minwidth="170px" summary="count" summary-label="{value} partidas">Descripción</edit-th>
+        <edit-th type="NoEditable" field="existencia" textalign="end" width="95px">Existencia</edit-th>
+        <edit-th type="Number" field="cantidad" textalign="end" width="95px" calc="true" tab-order="2" summary="sum">Cantidad</edit-th>
+        <edit-th type="NoEditable" field="unidad" width="70px">Unidad</edit-th>
+        <edit-th type="Number" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="115px" calc="true" tab-order="3">Precio</edit-th>
+        <edit-th type="Number" field="descuento" textalign="end" width="85px" sufix=" %" tab-skip="true">Desc.</edit-th>
+        <edit-th type="Number" field="importe" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="125px" readonly="true" summary="sum">Importe</edit-th>
       </edit-tr></edit-thead>
     </edit-table>
   </div>
-  <p class="bajada" style="font-size:13px;margin:10px 0 0">Códigos para probar: <code>P-00001</code> a <code>P-00200</code>.</p>
+  <div class="rejilla-2" style="margin-top:12px">
+    <div class="metrica"><b id="lector">—</b><span>último código recibido: teclas y tiempo entre la primera y la última</span></div>
+    <div class="metrica"><b id="foco">—</b><span>celda actual</span></div>
+  </div>
+  <p class="bajada" style="font-size:13px;margin:10px 0 0">Códigos para probar: <code>P-00001</code> a <code>P-00200</code>. Con un lector de códigos de barras, o pegue <code>P-00042</code> y <kbd>Enter</kbd> tan rápido como pueda.</p>
 </div>
 </section>
 
 <div id="codigo"></div>
 
 <div class="explica">
-  <div class="tarjeta">
-    <h2>API que usa esta página (propuesta para F8)</h2>
+  <div class="tarjeta prueba">
+    <h2>Pruebe</h2>
     <ul>
-      <li>Bandera <code>'capture'</code>. Atributo <code>capture-sequence="campo1,campo2,…"</code> (propiedad <code>CaptureSequence</code>).</li>
-      <li><kbd>Enter</kbd> y <kbd>Tab</kbd> siguen la secuencia; las flechas siguen moviéndose a cualquier celda.</li>
-      <li>Al terminar la secuencia en la última fila se agrega una partida (<code>AutoAddRow</code>) y el foco va al primer campo.</li>
+      <li>Escriba <strong>P-00007</strong> <kbd>Enter</kbd>, <strong>3</strong> <kbd>Enter</kbd>, <kbd>Enter</kbd>: la partida queda y el cursor espera el siguiente código.</li>
+      <li><strong>Desc.</strong> lleva <code>tab-skip</code>: <kbd>Tab</kbd> y <kbd>Enter</kbd> no pasan por ahí, pero se puede llegar con flechas o con el ratón.</li>
+      <li>Descripción, existencia, unidad e importe son de solo lectura y <code>skip-readonly</code> los salta.</li>
+      <li>Al terminar una fila vacía no se agrega otra: no se encadenan partidas en blanco.</li>
+      <li>Cambie el modo de <kbd>Enter</kbd>: <code>down</code> baja en la misma columna, útil para capturar solo cantidades.</li>
     </ul>
   </div>
   <div class="tarjeta">
-    <h2>Mientras tanto</h2>
+    <h2>API que usa esta página</h2>
     <ul>
-      <li>Sin la bandera, <kbd>Enter</kbd> avanza a la celda de la derecha, como siempre; el atributo se ignora.</li>
-      <li>El llenado al teclear el código y el cálculo del importe ya funcionan hoy.</li>
+      <li>En <code>edit-th</code>: <code>tab-order="n"</code> fija el orden; <code>tab-skip="true"</code> saca la columna de la secuencia.</li>
+      <li>En la tabla: <code>skip-readonly="true"</code> y <code>enter-mode="next-cell|next-row|down|current"</code> (propiedad <code>EnterMode</code>); <kbd>Mayús</kbd> invierte el sentido.</li>
+      <li><code>getCaptureOrder()</code> devuelve los campos en orden de captura.</li>
+      <li>Las teclas que llegan antes de que exista el editor se acumulan, así que <code>=1200</code>+<kbd>Enter</kbd> o un lector de códigos no pierden nada.</li>
     </ul>
   </div>
 </div>
@@ -68,20 +89,42 @@
 <script data-demo>
 document.addEventListener('DOMContentLoaded', () => {
   const t = document.getElementById('mostrador');
-  const catalogo = Datos.productos(200);
-  t.DataArray = [{ codigo: '', descripcion: '', existencia: '', cantidad: '1', unidad: '', precio: '', importe: '' }];
+  const $ = (id) => document.getElementById(id);
+  const catalogo = new Map(Datos.productos(200).map(p => [p.codigo, p]));
+  t.DataArray = [{}];
   t._printRows();
 
-  t.addEventListener('fieldupdated', (e) => {
+  t.addEventListener('FieldUpdated', (e) => {
     const r = t.DataArray[e.row];
+    if (!r) return;
     if (e.field === 'codigo') {
-      const p = catalogo.find(x => x.codigo.toLowerCase() === String(r.codigo).trim().toLowerCase());
-      if (p) Object.assign(r, { codigo: p.codigo, descripcion: p.descripcion, existencia: p.existencia, unidad: p.unidad, precio: String(p.precio) });
+      const p = catalogo.get(String(r.codigo || '').trim().toUpperCase());
+      // la cantidad nace en 1 al elegir el producto (con default="1" la fila vacía ya tendría datos y Tab agregaría otra)
+      if (p) Object.assign(r, { codigo: p.codigo, descripcion: p.descripcion, existencia: p.existencia, unidad: p.unidad, precio: String(p.precio), cantidad: r.cantidad || '1' });
     }
-    r.importe = Math.round(Number(r.cantidad || 0) * Number(r.precio || 0) * 100) / 100;
+    const bruto = Number(r.cantidad || 0) * Number(r.precio || 0);
+    r.importe = String(Math.round(bruto * (1 - Number(r.descuento || 0) / 100) * 100) / 100);
     t.UpdateRow(e.row);
-    if (t.RefreshSummaries) t.RefreshSummaries();
+    t.RefreshSummaries();
   });
+
+  const orden = () => { $('orden').textContent = 'getCaptureOrder(): ' + t.getCaptureOrder().join(' → '); };
+  $('modo').onchange = () => { t.EnterMode = $('modo').value; orden(); };
+  t.addEventListener('EnterCell', () => setTimeout(() => { $('foco').textContent = 'Partida ' + (t.CurrentRowIndex() + 1) + ' · ' + ((t.Columns[t.CurrentColIndex()] || {}).title || '—'); }));
+
+  // Lector de códigos: mide cuánto tardan en llegar las teclas de un código (el componente no pierde ninguna)
+  let teclas = [];
+  document.addEventListener('keydown', (e) => {
+    if (!e.composedPath().includes(t)) return;
+    if (e.key.length === 1) teclas.push(performance.now());
+    else if (e.key === 'Enter' && teclas.length > 3) {
+      const ms = teclas[teclas.length - 1] - teclas[0];
+      $('lector').textContent = teclas.length + ' teclas en ' + Math.round(ms) + ' ms' + (ms / teclas.length < 15 ? ' · velocidad de lector' : '');
+      teclas = [];
+    } else teclas = [];
+  }, true);
+
+  orden();
   t.NavTo(0, 0);
 });
 </script>

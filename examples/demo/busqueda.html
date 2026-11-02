@@ -16,56 +16,73 @@
 <nav id="sitio-nav"></nav>
 <div class="principal">
 <header class="barra-sup" id="sitio-barra"></header>
-<main id="principal" class="contenido" data-proximamente="search">
+<main id="principal" class="contenido" data-requiere="search virtual group summary export">
 <header class="pag-enc">
-  <span class="ceja">Próximamente · F8</span>
-  <h1>Buscar y filtrar dentro de la tabla, sin ir al servidor</h1>
-  <p class="bajada">Una caja de búsqueda que filtra mientras se escribe en todas las columnas visibles, y filtros por columna desde código. Los totales del pie siguen a lo que se ve y la selección se conserva.</p>
+  <span class="ceja">Nuevo en 2.0 · consulta de catálogo</span>
+  <h1>20 000 productos: escriba dos letras y ya está</h1>
+  <p class="bajada">La barra de búsqueda filtra mientras se escribe, en todas las columnas y sin importar acentos ni mayúsculas, y resalta lo encontrado sin tocar el contenido de la celda. Los filtros por campo se combinan con la búsqueda, y el pie y los grupos cuentan solo lo que queda.</p>
+  <div class="chips" id="chips"></div>
 </header>
-<div id="aviso" role="status"></div>
 
 <section class="demo" aria-label="Demostración">
 <div id="demo">
   <div class="barra">
-    <input type="search" id="q" class="campo" placeholder="Buscar por nombre, RFC o ciudad" style="flex:1 1 260px" aria-label="Buscar clientes">
-    <label>Región
-      <select id="region"><option value="">Todas</option><option>Sur</option><option>Sureste</option><option>Centro</option><option>Norte</option><option>Occidente</option></select>
-    </label>
-    <label><input type="checkbox" id="con-saldo"> Solo con saldo</label>
-    <button type="button" class="btn" id="limpiar">Limpiar</button>
+    <label>Línea <select id="f-linea"><option value="">Todas</option></select></label>
+    <label>Precio de <input type="text" id="f-min" class="campo" inputmode="decimal" placeholder="0" style="width:80px"></label>
+    <label>a <input type="text" id="f-max" class="campo" inputmode="decimal" placeholder="sin límite" style="width:96px"></label>
+    <label><input type="checkbox" id="f-bajo"> Bajo mínimo</label>
+    <button type="button" class="btn" id="limpiar">Quitar filtros</button>
+    <span class="sep"></span>
+    <button type="button" class="btn" id="agrupar" aria-pressed="true">Agrupar por línea</button>
+    <button type="button" class="btn" id="incremental" aria-pressed="false">Búsqueda incremental (F3)</button>
+    <button type="button" class="btn" id="csv">CSV de lo filtrado</button>
   </div>
-  <div class="caja-tabla" style="height:420px;overflow-y:auto">
-    <edit-table id="clientes" search="true" summary-scope="visible" virtual-rows="true" row-height="34px" readonly="true">
+  <div class="caja-tabla">
+    <edit-table id="catalogo" search-bar="true" search-placeholder="Buscar en 20 000 productos: «cable 12», «llave pvc», «tijera»…"
+      virtual-rows="true" row-height="34px" group-panel="true" readonly="true"
+      control-styles=":host div:has(> table){overflow:auto !important;max-height:440px !important}">
       <edit-thead><edit-tr>
-        <edit-th type="NoEditable" field="codigo" width="90px">Cliente</edit-th>
-        <edit-th type="NoEditable" field="nombre" minwidth="240px" summary="count" summary-label="{value} clientes">Nombre</edit-th>
-        <edit-th type="NoEditable" field="rfc" width="140px">RFC</edit-th>
-        <edit-th type="NoEditable" field="ciudad" width="140px">Ciudad</edit-th>
-        <edit-th type="NoEditable" field="region" width="100px">Región</edit-th>
-        <edit-th type="NoEditable" field="saldo" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="130px" summary="sum">Saldo</edit-th>
+        <edit-th type="NoEditable" field="codigo" width="100px">Código</edit-th>
+        <edit-th type="NoEditable" field="descripcion" minwidth="170px" summary="count" summary-label="{value} productos">Descripción</edit-th>
+        <edit-th type="NoEditable" field="linea" width="110px">Línea</edit-th>
+        <edit-th type="NoEditable" field="marca" width="110px">Marca</edit-th>
+        <edit-th type="Number" field="existencia" textalign="end" width="100px" summary="sum">Existencia</edit-th>
+        <edit-th type="Number" field="minimo" textalign="end" width="80px">Mínimo</edit-th>
+        <edit-th type="Number" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="110px">Precio</edit-th>
+        <edit-th type="Number" field="valor" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="140px" summary="sum">Valor</edit-th>
       </edit-tr></edit-thead>
     </edit-table>
   </div>
-  <p class="bajada" id="cuantos" style="font-size:13px;margin:10px 0 0" aria-live="polite"></p>
+  <div class="metricas" aria-live="polite">
+    <div class="metrica"><b id="m-filas">—</b><span>filas que pasan (<code>getFilteredIndices</code>)</span></div>
+    <div class="metrica"><b id="m-busq">—</b><span>coincidencias de la búsqueda</span></div>
+    <div class="metrica"><b id="m-ms">—</b><span>tiempo del último filtro</span></div>
+    <div class="metrica"><b id="m-filtro">—</b><span>filtro por campo</span></div>
+  </div>
+  <pre class="salida tsv" id="salida"></pre>
 </div>
 </section>
 
 <div id="codigo"></div>
 
 <div class="explica">
-  <div class="tarjeta">
-    <h2>API que usa esta página (propuesta para F8)</h2>
+  <div class="tarjeta prueba">
+    <h2>Pruebe</h2>
     <ul>
-      <li>Atributo <code>search="true"</code> y bandera <code>'search'</code> en <code>EditTable.features</code>.</li>
-      <li><code>Search(texto)</code> busca en las columnas visibles; <code>SetFilter(field, fn)</code> y <code>ClearFilters()</code> filtran por columna.</li>
-      <li>Evento <code>FilterChanged</code> con <code>{text, visible}</code>; <code>summary-scope="visible"</code> suma lo filtrado.</li>
+      <li>Escriba <strong>cable aislante</strong>: deben aparecer las dos palabras, en cualquier columna. <strong>valvula</strong> encuentra «Válvula».</li>
+      <li><kbd>Enter</kbd> o <kbd>F3</kbd> en la barra van a la siguiente coincidencia; <kbd>Mayús</kbd>+<kbd>F3</kbd>, a la anterior. <kbd>Esc</kbd> limpia; <kbd>Ctrl</kbd>+<kbd>F</kbd> en la tabla vuelve a la barra.</li>
+      <li>Elija <strong>Plomería</strong> y marque <strong>Bajo mínimo</strong>: los grupos, sus conteos y el pie se recalculan.</li>
+      <li>Active la <strong>búsqueda incremental</strong>: ya no oculta filas, salta a la primera coincidencia desde la celda actual.</li>
     </ul>
   </div>
   <div class="tarjeta">
-    <h2>Mientras tanto</h2>
+    <h2>API que usa esta página</h2>
     <ul>
-      <li>Sin la bandera, la página no llama a nada nuevo: la caja queda deshabilitada y la tabla funciona como hoy.</li>
-      <li>Si F8 usa otros nombres, solo cambia el bloque de JavaScript de abajo.</li>
+      <li><code>search-bar="true"</code> y <code>search-placeholder</code>; propiedad <code>SearchFilter</code> (<code>false</code> = incremental).</li>
+      <li><code>Filter([{field, op, value, value2}])</code> con <code>eq</code>, <code>between</code>; un predicado <code>(fila, i) =&gt; bool</code> para comparar dos campos; <code>ClearFilter()</code>, <code>ClearSearch()</code>.</li>
+      <li><code>getFilteredIndices()</code>; eventos <code>SearchChanged</code> <code>{text, rows}</code> y <code>FilterChanged</code> <code>{filter, rows}</code>.</li>
+      <li>Con un filtro activo, el pie suma solo lo visible; <code>exportCSV({visibleOnly:true})</code>.</li>
+      <li>El filtro nunca toca <code>DataArray</code>: los índices siguen siendo los mismos.</li>
     </ul>
   </div>
 </div>
@@ -74,25 +91,58 @@
 </div>
 <script data-demo>
 document.addEventListener('DOMContentLoaded', () => {
-  const t = document.getElementById('clientes');
+  const t = document.getElementById('catalogo');
   const $ = (id) => document.getElementById(id);
-  t.DataArray = Datos.clientes(2000);
+  const n = (x) => x.toLocaleString('es-MX');
+  t.DataArray = Datos.productos(20000).map(p => ({ ...p, valor: Math.round(p.existencia * p.precio * 100) / 100 }));
   t._printRows();
+  t.GroupBy(['linea']);
 
-  const listo = EditTable.features.includes('search');
-  const contar = (n) => { $('cuantos').textContent = n.toLocaleString('es-MX') + ' de ' + t.DataArray.length.toLocaleString('es-MX') + ' clientes'; };
-  contar(t.DataArray.length);
-  if (!listo) {
-    ['q', 'region', 'con-saldo', 'limpiar'].forEach(id => { $(id).disabled = true; });
-    $('q').placeholder = 'La búsqueda llega con EdiTable 2.0 (F8)';
-    return;
-  }
+  // Contadores: lo que pasa el filtro y lo que encontró la búsqueda
+  const pintar = () => { $('m-filas').textContent = n(t.getFilteredIndices().length) + ' de ' + n(t.DataArray.length); };
+  let texto = '';
+  t.addEventListener('SearchChanged', (e) => { texto = e.text; $('m-busq').textContent = e.text ? n(e.rows) : '—'; pintar(); });
+  t.addEventListener('FilterChanged', (e) => { $('m-filtro').textContent = e.filter ? n(e.rows) + ' filas' : 'ninguno'; pintar(); });
 
-  t.addEventListener('FilterChanged', (e) => contar(e.visible));
-  $('q').oninput = () => t.Search($('q').value);
-  $('region').onchange = () => t.SetFilter('region', $('region').value ? (v) => v === $('region').value : null);
-  $('con-saldo').onchange = () => t.SetFilter('saldo', $('con-saldo').checked ? (v) => Number(v) > 0 : null);
-  $('limpiar').onclick = () => { $('q').value = ''; $('region').value = ''; $('con-saldo').checked = false; t.Search(''); t.ClearFilters(); };
+  // Filtros por campo: condiciones declarativas; "bajo mínimo" compara dos campos, así que es un predicado
+  Datos.LINEAS.forEach(l => $('f-linea').add(new Option(l, l)));
+  const filtrar = () => {
+    const c = [];
+    if ($('f-linea').value) c.push({ field: 'linea', op: 'eq', value: $('f-linea').value });
+    const min = $('f-min').value.trim(), max = $('f-max').value.trim();
+    if (min && max) c.push({ field: 'precio', op: 'between', value: Number(min), value2: Number(max) });
+    else if (min) c.push({ field: 'precio', op: 'ge', value: Number(min) });
+    else if (max) c.push({ field: 'precio', op: 'le', value: Number(max) });
+    const t0 = performance.now();
+    if ($('f-bajo').checked) {
+      const OP = { eq: (a, x) => a === x.value, ge: (a, x) => a >= x.value, le: (a, x) => a <= x.value, between: (a, x) => a >= x.value && a <= x.value2 };
+      t.Filter((d) => d.existencia < d.minimo && c.every(x => OP[x.op](d[x.field], x)));
+    } else if (c.length) t.Filter(c);
+    else t.ClearFilter();
+    $('m-ms').textContent = Math.round(performance.now() - t0) + ' ms';
+  };
+  ['f-linea', 'f-bajo'].forEach(id => { $(id).onchange = filtrar; });
+  ['f-min', 'f-max'].forEach(id => { $(id).oninput = filtrar; });
+  $('limpiar').onclick = () => { $('f-linea').value = ''; $('f-min').value = ''; $('f-max').value = ''; $('f-bajo').checked = false; filtrar(); };
+
+  $('agrupar').onclick = (e) => {
+    const on = e.currentTarget.getAttribute('aria-pressed') !== 'true';
+    e.currentTarget.setAttribute('aria-pressed', String(on));
+    if (on) t.GroupBy(['linea']); else t.Ungroup();
+  };
+  // Incremental: la barra ya no oculta filas; Enter y F3 saltan entre coincidencias
+  $('incremental').onclick = (e) => {
+    const on = e.currentTarget.getAttribute('aria-pressed') !== 'true';
+    e.currentTarget.setAttribute('aria-pressed', String(on));
+    t.SearchFilter = !on;
+    t.Search(texto, { filter: !on });   // el mismo texto, en el modo nuevo
+  };
+  $('csv').onclick = () => {
+    const csv = String(t.exportCSV({ visibleOnly: true }) || '').trim().split('\n');
+    $('salida').textContent = (csv.length - 1) + ' filas exportadas con visibleOnly. Primeras líneas:\n' + csv.slice(0, 6).join('\n');
+  };
+  pintar();
+  $('m-filtro').textContent = 'ninguno';
 });
 </script>
 </body>

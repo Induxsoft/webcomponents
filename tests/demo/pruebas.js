@@ -156,12 +156,14 @@ module.exports.columnas = async (page) => {
   await page.reload(); await page.waitForTimeout(800);
   const tras = await ev(() => ({ vis: document.getElementById('clientes').IsColumnVisible('telefono'), orden: document.getElementById('clientes').Columns.map(c => c.field).join(',') }));
   if (tras.vis) throw new Error('no se restauró de IndexedDB');
+  const rest = await ev(() => ({ listo: document.getElementById('listo').textContent, ev: document.getElementById('eventos').textContent, ready: document.getElementById('clientes').LayoutReady instanceof Promise }));
+  if (!/^true/.test(rest.listo) || !/reason: restore/.test(rest.ev) || !rest.ready) throw new Error('whenLayoutReady / restore: ' + JSON.stringify(rest));
   await ev(() => document.getElementById('v-cobranza').click()); await page.waitForTimeout(200);
   const cob = await ev(() => document.getElementById('clientes').getVisibleColumns().map(c => c.field || c).join(','));
   await ev(() => document.getElementById('olvidar').click());
   await ev(() => document.getElementById('v-reset').click());
   await ev(() => document.querySelector('.caja-tabla').scrollLeft = 250);
-  return `ok: menú ${menu}; orden tras teclado ${orden}; tras recargar ${JSON.stringify(tras)}; vista cobranza ${cob}`;
+  return `ok: menú ${menu}; orden tras teclado ${orden}; tras recargar ${JSON.stringify(tras)}, whenLayoutReady «${rest.listo}», LayoutChanged restore; vista cobranza ${cob}`;
 };
 module.exports.arbol = async (page) => {
   const ev = (f) => page.evaluate(f);
@@ -219,47 +221,209 @@ module.exports.index = async (page) => {
   const ev = (f) => page.evaluate(f);
   const r = await ev(() => ({ sel: document.getElementById('hero').getSelectedRows().length, pie: document.getElementById('hero').getSummary('valor'), tiles: document.querySelectorAll('#mosaico .estado').length, nav: document.querySelectorAll('#sitio-nav a').length }));
   // tema oscuro con el botón
+  const th0 = await ev(() => document.getElementById('hero').getAttribute('theme'));
   await ev(() => document.getElementById('btn-tema').click());
   const tema = await ev(() => document.documentElement.getAttribute('data-tema'));
+  const th1 = await ev(() => document.getElementById('hero').getAttribute('theme') + '/' + document.getElementById('hero').Theme);
   await ev(() => document.getElementById('btn-tema').click());
+  const otro = th0 === 'oscuro' ? 'claro' : 'oscuro';
+  if (!['claro', 'oscuro'].includes(th0) || th1 !== otro + '/' + otro) throw new Error('el botón del sitio no cambió theme de la tabla: ' + th0 + ' → ' + th1);
   // visor de código
   await ev(() => document.querySelector('details.codigo').open = true);
   const cod = await ev(() => ({ html: document.getElementById('cod-html').textContent.length, js: document.getElementById('cod-javascript').textContent.length, igualJS: document.getElementById('cod-javascript').textContent.trim() === document.querySelector('script[data-demo]').textContent.trim() }));
   await ev(() => document.querySelector('details.codigo').open = false);
   if (!r.sel || !cod.igualJS || !tema) throw new Error(JSON.stringify({ r, cod, tema }));
-  return `ok: ${r.sel} seleccionadas, pie valor ${r.pie}, ${r.tiles} tarjetas, ${r.nav} enlaces; tema → ${tema}; visor HTML ${cod.html} c, JS idéntico al que corre: ${cod.igualJS}`;
+  const pend = await ev(() => [...document.querySelectorAll('#mosaico .estado')].filter(e => /próximamente/.test(e.textContent)).map(e => e.parentNode.getAttribute('href')));
+  if (pend.length) throw new Error('tarjetas sin disponible: ' + pend.join(','));
+  const navPend = await ev(() => document.querySelectorAll('#sitio-nav .nav-pronto:not(.listo)').length);
+  if (navPend) throw new Error(navPend + ' páginas marcadas como pendientes en el menú');
+  return `ok: ${r.sel} seleccionadas, pie valor ${r.pie}, ${r.tiles} tarjetas, ${r.nav} enlaces; tema → ${tema} (theme de la tabla ${th0} → ${th1}); visor HTML ${cod.html} c, JS idéntico al que corre: ${cod.igualJS}`;
 };
 module.exports.busqueda = async (page) => {
-  const a = await aviso(page); const d = await page.evaluate(() => ({ dis: document.getElementById('q').disabled, n: document.getElementById('clientes').DataArray.length }));
-  return `ok: aviso «${a.slice(0, 40)}…», caja deshabilitada ${d.dis}, ${d.n} clientes`;
+  const ev = (f, a) => page.evaluate(f, a);
+  const estado = () => ev(() => { const t = document.getElementById('catalogo'); return { vis: t.getFilteredIndices().length, n: t.DataArray.length, cuenta: t.getSummary('descripcion'), grupos: t._shadow.querySelectorAll('tr.et-group-row').length, filas: document.getElementById('m-filas').textContent, busq: document.getElementById('m-busq').textContent }; });
+  const a = await estado();
+  ok(a.n === 20000 && a.vis === 20000, 'carga: ' + JSON.stringify(a));
+  // Barra: escribir con acentos distintos («valvula» encuentra «Válvula»)
+  await ev(() => document.getElementById('catalogo')._shadow.querySelector('.et-search-input').focus());
+  await page.keyboard.type('valvula pvc', { delay: 20 }); await page.waitForTimeout(600);
+  const b = await estado();
+  ok(b.vis > 0 && b.vis < 20000, 'búsqueda no filtró: ' + JSON.stringify(b));
+  const desc = await ev(() => { const t = document.getElementById('catalogo'); return t.getFilteredIndices().slice(0, 50).map(i => t.DataArray[i].descripcion); });
+  ok(desc.every(d => /válvula/i.test(d) && /pvc/i.test(d)), 'coincidencias incorrectas: ' + desc.slice(0, 3));
+  ok(Number(String(b.cuenta).replace(/\D/g, '')) === b.vis || b.cuenta == b.vis, 'el pie no sigue al filtro: ' + b.cuenta + ' vs ' + b.vis);
+  // Enter en la barra: va a la coincidencia y el foco vuelve a la barra
+  await page.keyboard.press('Enter'); await page.waitForTimeout(150);
+  const cur = await ev(() => { const t = document.getElementById('catalogo'); return { fila: t.CurrentRowIndex(), foco: t._shadow.activeElement && t._shadow.activeElement.className }; });
+  ok(cur.fila >= 0 && /et-search-input/.test(cur.foco), 'Enter en la barra: ' + JSON.stringify(cur));
+  // Filtro por campo encima de la búsqueda: Plomería + bajo mínimo
+  await page.keyboard.press('Escape'); await page.waitForTimeout(300);
+  await ev(() => { const s = document.getElementById('f-linea'); s.value = 'Plomería'; s.onchange(); });
+  const c = await estado();
+  await ev(() => { const s = document.getElementById('f-bajo'); s.checked = true; s.onchange(); });
+  const d = await estado();
+  const todos = await ev(() => { const t = document.getElementById('catalogo'); return t.getFilteredIndices().every(i => t.DataArray[i].linea === 'Plomería' && t.DataArray[i].existencia < t.DataArray[i].minimo); });
+  ok(c.vis > d.vis && d.vis > 0 && todos && d.grupos === 1, 'filtros por campo: ' + JSON.stringify({ c, d, todos }));
+  await ev(() => document.getElementById('csv').click());
+  const csv = await ev(() => document.getElementById('salida').textContent.split('\n')[0]);
+  ok(csv.startsWith(String(d.vis) + ' filas'), 'CSV visibleOnly: ' + csv + ' vs ' + d.vis);
+  // Incremental: no oculta y F3 avanza
+  await ev(() => document.getElementById('limpiar').click());
+  await ev(() => document.getElementById('incremental').click());
+  await ev(() => document.getElementById('catalogo')._shadow.querySelector('.et-search-input').focus());
+  await page.keyboard.press('Control+A'); await page.keyboard.type('tijera', { delay: 20 }); await page.waitForTimeout(500);
+  const i1 = await ev(() => ({ fila: document.getElementById('catalogo').CurrentRowIndex(), vis: document.getElementById('catalogo').getFilteredIndices().length }));
+  await page.keyboard.press('F3'); await page.waitForTimeout(150);
+  const i2 = await ev(() => document.getElementById('catalogo').CurrentRowIndex());
+  ok(i1.vis === 20000 && i1.fila >= 0 && i2 > i1.fila, 'incremental: ' + JSON.stringify({ i1, i2 }));
+  // Para la captura: de vuelta a filtrar, con resaltado y grupos
+  await ev(() => document.getElementById('incremental').click());
+  await ev(() => document.getElementById('catalogo')._shadow.querySelector('.et-search-input').focus());
+  await page.keyboard.press('Control+A'); await page.keyboard.type('cable 12', { delay: 10 }); await page.waitForTimeout(500);
+  await ev(() => window.scrollTo(0, 0));
+  return `ok: «valvula pvc» → ${b.vis} filas (pie ${b.cuenta}); Plomería ${c.vis} → bajo mínimo ${d.vis} (${d.grupos} grupo); CSV ${csv.split(' ')[0]} filas; incremental fila ${i1.fila} → F3 ${i2}`;
 };
 module.exports.validacion = async (page) => {
-  await page.evaluate(() => document.getElementById('guardar').click());
-  const r = await page.evaluate(() => document.getElementById('resultado').textContent);
-  if (!/errores/.test(r)) throw new Error('no validó: ' + r);
-  return `ok: aviso «${(await aviso(page)).slice(0, 30)}…», guardar → «${r}»`;
+  const ev = (f) => page.evaluate(f);
+  const est = () => ev(() => { const t = document.getElementById('compra'); return { fila: t.CurrentRowIndex(), errores: t.getErrors(), marcadas: t._shadow.querySelectorAll('td.et-cell-error[aria-invalid="true"]').length }; });
+  await ev(() => document.getElementById('compra').NavTo(1, 2));
+  await page.keyboard.press('ArrowDown'); await page.waitForTimeout(150);
+  const a = await est();
+  ok(a.fila === 1 && a.errores.some(e => e.index === 1 && e.field === 'cantidad') && a.marcadas === 1, 'BeforeRowLeave no detuvo: ' + JSON.stringify(a));
+  // BeforeUpdateCell con e.error: -5 se queda en edición
+  await page.keyboard.type('-5', { delay: 25 }); await page.keyboard.press('Enter'); await page.waitForTimeout(150);
+  const b = await ev(() => { const t = document.getElementById('compra'); return { dato: t.DataArray[1].cantidad, msg: (t.getErrors().find(e => e.index === 1) || {}).message, editando: !!t._shadow.querySelector('#__table_input') }; });
+  ok(b.dato === '0' && /negativas/.test(b.msg || '') && b.editando, 'e.error: ' + JSON.stringify(b));
+  await page.keyboard.press('Escape'); await page.waitForTimeout(80);
+  await page.keyboard.type('6', { delay: 25 }); await page.keyboard.press('Enter'); await page.waitForTimeout(100);
+  await page.keyboard.press('ArrowDown'); await page.waitForTimeout(150);
+  const c = await est();
+  ok(c.fila === 2 && !c.errores.some(e => e.index === 1), 'corregida no avanzó: ' + JSON.stringify(c));
+  await ev(() => document.getElementById('guardar').click());
+  const d = await ev(() => ({ errores: document.getElementById('compra').getErrors().map(e => e.index + ':' + e.field), lista: document.querySelectorAll('#errores li').length, res: document.getElementById('resultado').textContent }));
+  ok(d.errores.join() === '3:codigo,4:costo' && d.lista === 2, 'validar todo: ' + JSON.stringify(d));
+  await ev(() => document.querySelector('#errores li:last-child a').click()); await page.waitForTimeout(150);
+  const e = await est();
+  ok(e.fila === 4, 'la lista no llevó a la celda: ' + e.fila);
+  await ev(() => window.scrollTo(0, 0));
+  return `ok: ↓ con cantidad 0 → se queda en la fila ${a.fila + 1} (${a.marcadas} celda marcada); -5 → «${b.msg.slice(0, 30)}…» sigue editando; corregida → fila ${c.fila + 1}; guardar → ${d.errores.join(', ')}; clic en la lista → fila ${e.fila + 1}`;
 };
 module.exports.cambios = async (page) => {
-  await page.evaluate(() => document.getElementById('precios').NavTo(0, 3));
+  const ev = (f) => page.evaluate(f);
+  const n = () => ev(() => ['n-altas', 'n-cambios', 'n-bajas'].map(id => document.getElementById(id).textContent).join('/'));
+  ok(await n() === '0/0/0', 'arranca con cambios: ' + await n());
+  // cambio de precio, y volver al valor original lo quita
+  await ev(() => document.getElementById('precios').NavTo(0, 4));
+  const orig = await ev(() => document.getElementById('precios').DataArray[0].precio);
   await page.keyboard.type('999', { delay: 25 }); await page.keyboard.press('Enter'); await page.waitForTimeout(100);
-  await page.evaluate(() => document.getElementById('ver').click());
-  const r = await page.evaluate(() => document.getElementById('envio').textContent);
-  if (!/999/.test(r)) throw new Error('no mostró el cambio: ' + r.slice(0, 200));
-  return `ok: envío muestra la fila modificada (${r.split('\n')[0]})`;
+  const a = await n(); const j = await ev(() => document.getElementById('envio').textContent);
+  ok(a === '0/1/0' && /"precio": "999"/.test(j) && !/"costo"/.test(j), 'cambio: ' + a + ' ' + j.slice(0, 200));
+  await ev(() => document.getElementById('precios').NavTo(0, 4));
+  await page.keyboard.type(orig, { delay: 15 }); await page.keyboard.press('Enter'); await page.waitForTimeout(100);
+  const a2 = await n();
+  ok(a2 === '0/0/0', 'volver al original no lo quitó: ' + a2);
+  // alta: nace al escribir; baja con el botón
+  await ev(() => document.getElementById('alta').click()); await page.waitForTimeout(100);
+  await page.keyboard.type('N-0001', { delay: 20 }); await page.keyboard.press('Enter'); await page.waitForTimeout(100);
+  const b = await n();
+  await ev(() => { document.getElementById('precios').NavTo(2, 1); document.getElementById('baja').click(); });
+  await ev(() => document.getElementById('subir').click());
+  const c = await n(); const env = await ev(() => document.getElementById('envio').textContent);
+  const nuevo = await ev(() => { const t = document.getElementById('precios'); return t.isNew(t.DataArray.length - 1); });
+  ok(b === '1/0/0' && /^1\/\d+\/1$/.test(c) && Number(c.split('/')[1]) > 1 && /N-0001/.test(env) && nuevo, 'alta/baja: ' + b + ' → ' + c + ' isNew ' + nuevo);
+  await ev(() => document.getElementById('guardar').click());
+  const d = await n(); const g = await ev(() => document.getElementById('envio').textContent);
+  ok(d === '0/0/0' && /Enviado/.test(g), 'AcceptChanges: ' + d);
+  // para la captura: un par de cambios visibles
+  await ev(() => document.getElementById('subir').click());
+  await ev(() => document.getElementById('alta').click()); await page.keyboard.type('N-0002', { delay: 15 }); await page.keyboard.press('Enter'); await page.waitForTimeout(100);
+  await ev(() => window.scrollTo(0, 0));
+  return `ok: precio 999 → 0/1/0 y al regresar ${a2}; alta ${b}; baja + 5 % Pintura → ${c}; ${g.replace('// ', '').slice(0, 30)} → ${d}`;
 };
 module.exports.secuencia = async (page) => {
-  await page.evaluate(() => document.getElementById('mostrador').NavTo(0, 0));
+  const ev = (f) => page.evaluate(f);
+  const pos = () => ev(() => { const t = document.getElementById('mostrador'); return t.CurrentRowIndex() + ':' + (t.Columns[t.CurrentColIndex()] || {}).field; });
+  const orden = await ev(() => document.getElementById('mostrador').getCaptureOrder().join(','));
+  ok(orden === 'codigo,cantidad,precio', 'getCaptureOrder: ' + orden);
   await page.keyboard.type('P-00007', { delay: 25 }); await page.keyboard.press('Enter'); await page.waitForTimeout(150);
-  const r = await page.evaluate(() => document.getElementById('mostrador').DataArray[0]);
-  if (!r.descripcion) throw new Error('no llenó la partida');
-  return `ok: P-00007 → ${r.descripcion}, importe ${r.importe}`;
+  const p1 = await pos();
+  await page.keyboard.type('3', { delay: 25 }); await page.keyboard.press('Enter'); await page.waitForTimeout(150);
+  const p2 = await pos();
+  await page.keyboard.press('Enter'); await page.waitForTimeout(200);
+  const p3 = await pos();
+  const r0 = await ev(() => document.getElementById('mostrador').DataArray[0]);
+  ok(p1 === '0:cantidad' && p2 === '0:precio' && p3 === '1:codigo' && r0.descripcion && r0.importe === String(Math.round(3 * Number(r0.precio) * 100) / 100), 'secuencia: ' + [p1, p2, p3].join(' → ') + ' ' + JSON.stringify(r0));
+  // Lector de códigos: sin retraso entre teclas
+  await page.keyboard.type('P-00042', { delay: 0 }); await page.keyboard.press('Enter'); await page.waitForTimeout(200);
+  const r1 = await ev(() => document.getElementById('mostrador').DataArray[1]);
+  const lector = await ev(() => document.getElementById('lector').textContent);
+  ok(r1 && r1.codigo === 'P-00042' && r1.descripcion, 'el lector perdió caracteres: ' + JSON.stringify(r1));
+  await page.keyboard.press('Enter'); await page.keyboard.press('Enter'); await page.waitForTimeout(200);
+  // Tab en la fila nueva vacía: no agrega otra
+  const n0 = await ev(() => document.getElementById('mostrador').DataArray.length);
+  await page.keyboard.press('Tab'); await page.keyboard.press('Tab'); await page.keyboard.press('Tab'); await page.waitForTimeout(200);
+  const n1 = await ev(() => document.getElementById('mostrador').DataArray.length);
+  const p4 = await pos();
+  ok(n1 === n0, 'encadenó filas vacías: ' + n0 + ' → ' + n1);
+  // modo down
+  await ev(() => { const s = document.getElementById('modo'); s.value = 'down'; s.onchange(); document.getElementById('mostrador').NavTo(0, 3); });
+  await page.keyboard.press('Enter'); await page.waitForTimeout(150);
+  const p5 = await pos();
+  ok(p5 === '1:cantidad', 'enter-mode down: ' + p5);
+  await ev(() => { const s = document.getElementById('modo'); s.value = 'next-cell'; s.onchange(); document.getElementById('mostrador').NavTo(2, 0); });
+  return `ok: orden ${orden}; P-00007⏎ 3⏎ ⏎ → ${[p1, p2, p3].join(' → ')}; lector «${lector}» → ${r1.descripcion}; Tab en fila vacía: ${n0}→${n1} filas (${p4}); down → ${p5}`;
 };
 module.exports.reglas = async (page) => {
-  const n = await page.evaluate(() => ['neg', 'excedido', 'vence-30', 'vence-60', 'al-dia'].map(c => c + ':' + document.getElementById('cartera')._shadow.querySelectorAll('td.' + c).length).join(' '));
-  if (!/vence-60:[1-9]/.test(n)) throw new Error('reglas sin aplicar: ' + n);
-  return `ok: respaldo con CellClass → ${n}`;
+  const ev = (f) => page.evaluate(f);
+  const cuenta = () => ev(() => { const s = document.getElementById('inventario')._shadow; const q = (x) => s.querySelectorAll(x).length;
+    return { ok: q('td[data-cell="existencia"].et-ok:not(.et-warn)'), bajo: q('td[data-cell="existencia"].et-err'), exceso: q('td[data-cell="existencia"].et-warn'), neg: q('td.et-neg'), vencido: q('td[data-et-icon="⛔"]'), porVencer: q('td[data-et-icon="⏳"]'), tachadas: q('tr.et-strike'), filaIcono: q('tr[data-et-icon]') }; });
+  let a = await cuenta();
+  if (!a.ok && !a.bajo) { // por si la celda no lleva data-cell: contar por columna
+    a = await ev(() => { const t = document.getElementById('inventario'), s = t._shadow, k = t.Columns.findIndex(c => c.field === 'existencia'); const tds = [...s.querySelectorAll('tbody tr')].map(tr => tr.querySelectorAll('td')[k]).filter(Boolean); const q = (x) => s.querySelectorAll(x).length;
+      return { ok: tds.filter(td => td.classList.contains('et-ok') && !td.classList.contains('et-warn')).length, bajo: tds.filter(td => td.classList.contains('et-err')).length, exceso: tds.filter(td => td.classList.contains('et-warn')).length, neg: q('td.et-neg'), vencido: q('td[data-et-icon="⛔"]'), porVencer: q('td[data-et-icon="⏳"]'), tachadas: q('tr.et-strike'), filaIcono: q('tr[data-et-icon]') }; });
+  }
+  ok(a.ok && a.bajo && a.exceso && a.neg && a.vencido && a.porVencer && a.tachadas && a.filaIcono, 'reglas sin aplicar: ' + JSON.stringify(a));
+  // editar: una existencia sobrada pasa a bajo mínimo, y negativa gana el icono de fila
+  const i = await ev(() => document.getElementById('inventario').DataArray.findIndex(r => r.dif_max > 0));
+  await ev(`document.getElementById('inventario').NavTo(${i}, 2)`);
+  await page.keyboard.type('1', { delay: 25 }); await page.keyboard.press('Enter'); await page.waitForTimeout(150);
+  const b = await ev(`(() => { const t = document.getElementById('inventario'); const tr = t.GetTrByIndex(${i}); const td = tr.querySelectorAll('td')[t.Columns.findIndex(c => c.field === 'existencia') + (tr.querySelector('.et-sel-col') ? 1 : 0)]; return { cls: td.className, icono: td.getAttribute('data-et-icon') }; })()`);
+  ok(/et-err/.test(b.cls) && !/et-warn/.test(b.cls) && b.icono === '▼', 'al editar no se reaplicó: ' + JSON.stringify(b));
+  await ev(`document.getElementById('inventario').NavTo(0, 2)`);
+  await ev(() => window.scrollTo(0, 0));
+  return `ok: verdes ${a.ok}, bajo mínimo ${a.bajo}, sobre máximo ${a.exceso}, negativos ${a.neg} (${a.filaIcono} filas ⚠), vencidos ${a.vencido}, por vencer ${a.porVencer}, inactivas ${a.tachadas}; fila ${i + 1} con 1 → ${b.icono}`;
 };
 module.exports.temas = async (page) => {
-  const n = await page.evaluate(() => ['t-claro', 't-oscuro', 't-jade', 't-libro'].map(id => document.getElementById(id).DataArray.length).join(','));
-  return `ok: 4 tablas con datos (${n}), aviso «${(await aviso(page)).slice(0, 30)}…»`;
+  const ev = (f) => page.evaluate(f);
+  const fondo = (id, sel) => ev(`getComputedStyle(document.getElementById('${id}')._shadow.querySelector('${sel}')).backgroundColor`);
+  const cab = {};
+  for (const id of ['t-claro', 't-oscuro', 't-jade', 't-libro', 'lab']) cab[id] = await fondo(id, 'thead');
+  ok(new Set(Object.values(cab)).size === 5, 'encabezados iguales: ' + JSON.stringify(cab));
+  ok(cab.lab === 'rgb(15, 61, 110)', 'defineTheme v12 no se aplicó: ' + cab.lab);
+  const n = await ev(() => ['t-claro', 't-oscuro', 't-jade', 't-libro'].map(id => document.getElementById(id).DataArray.length).join(','));
+  // cambiar de tema en caliente: sin redibujar (el mismo tr) y conservando la selección
+  const antes = await ev(() => { const t = document.getElementById('lab'); window.__tr = t.GetTrByIndex(0); return t.getSelectedRows().length; });
+  await ev(() => { const s = document.getElementById('tema'); s.value = 'oscuro'; s.onchange({ target: s }); });
+  const os = await fondo('lab', 'thead');
+  const tras = await ev(() => { const t = document.getElementById('lab'); return { mismo: window.__tr === t.GetTrByIndex(0), sel: t.getSelectedRows().length, th: t.Theme }; });
+  ok(os === 'rgb(31, 36, 43)' && tras.mismo && tras.sel === antes && tras.th === 'oscuro', 'en caliente: ' + os + ' ' + JSON.stringify(tras));
+  // paleta encima del tema
+  await ev(() => { const i = document.querySelector('#colores input[data-clave="header-bg"]'); i.value = '#7a4b1f'; i.oninput(); });
+  const pal = await fondo('lab', 'thead');
+  ok(pal === 'rgb(122, 75, 31)', 'SetPalette no ganó: ' + pal);
+  await ev(() => document.getElementById('sin-paleta').click());
+  const sin = await fondo('lab', 'thead');
+  ok(sin === os, 'SetPalette(null) no la quitó: ' + sin);
+  await ev(() => { const d = document.getElementById('densidad'); d.value = 'compacta'; d.onchange({ target: d }); });
+  const alto = await ev(() => document.getElementById('lab').GetTrByIndex(2).getBoundingClientRect().height);
+  await ev(() => { const s = document.getElementById('tema'); s.value = 'v12'; s.onchange({ target: s }); const d = document.getElementById('densidad'); d.value = 'normal'; d.onchange({ target: d }); });
+  const alto2 = await ev(() => document.getElementById('lab').GetTrByIndex(2).getBoundingClientRect().height);
+  ok(alto < alto2, 'densidad: ' + alto + ' vs ' + alto2);
+  // el botón del sitio no toca las tablas con theme propio
+  await ev(() => document.getElementById('btn-tema').click());
+  const propio = await ev(() => document.getElementById('t-jade').getAttribute('theme'));
+  await ev(() => document.getElementById('btn-tema').click());
+  ok(propio === 'jade', 'el sitio cambió una tabla con theme propio: ' + propio);
+  await ev(() => window.scrollTo(0, 0));
+  return `ok: 4 muestras (${n}) con encabezados distintos; v12 ${cab.lab}; oscuro en caliente ${os} (mismo tr: ${tras.mismo}, ${tras.sel} seleccionadas); palette ${pal} → null ${sin}; fila compacta ${alto} px vs normal ${alto2} px`;
 };

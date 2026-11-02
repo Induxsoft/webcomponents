@@ -16,28 +16,44 @@
 <nav id="sitio-nav"></nav>
 <div class="principal">
 <header class="barra-sup" id="sitio-barra"></header>
-<main id="principal" class="contenido" data-proximamente="rules">
+<main id="principal" class="contenido" data-requiere="rules theme">
 <header class="pag-enc">
-  <span class="ceja">Próximamente · F8</span>
-  <h1>Cartera vencida que se lee de un vistazo</h1>
-  <p class="bajada">Reglas declarativas por columna: saldos negativos en rojo, clientes sobre su límite resaltados y antigüedad por colores, escritas en el HTML y sin una línea de JavaScript por pantalla. Las reglas se vuelven a evaluar al editar.</p>
+  <span class="ceja">Nuevo en 2.0 · semáforo de inventario</span>
+  <h1>El inventario se lee de un vistazo, y las reglas van en el HTML</h1>
+  <p class="bajada">Verde si la existencia está entre el mínimo y el máximo, rojo si está bajo el mínimo, ámbar si sobra; negativos marcados, lotes vencidos o por vencer y productos inactivos tachados. Todo son reglas JSON en los atributos <code>rules</code> y <code>row-rules</code>: sin <code>onTdPaint</code>, sin <code>eval</code> y con los colores del tema.</p>
+  <div class="chips" id="chips"></div>
 </header>
-<div id="aviso" role="status"></div>
 
 <section class="demo" aria-label="Demostración">
 <div id="demo">
-  <div class="caja-tabla">
-    <edit-table id="cartera"
-      control-styles=".neg{color:var(--error);font-weight:600} .excedido{background:var(--error-suave)} .vence-30{background:var(--aviso-suave)} .vence-60{background:var(--error-suave);color:var(--error);font-weight:600} .al-dia{color:var(--ok)}">
+  <div class="barra" style="font-size:13px;color:var(--texto-2);gap:16px">
+    <span><b style="color:var(--ok)">●</b> entre mínimo y máximo</span>
+    <span><b style="color:var(--error)">▼</b> bajo el mínimo</span>
+    <span><b style="color:var(--aviso)">▲</b> sobre el máximo</span>
+    <span>⚠ existencia negativa</span>
+    <span>⛔ lote vencido · ⏳ vence en 30 días</span>
+    <span><s>inactivo</s></span>
+  </div>
+  <div class="caja-tabla" style="max-height:470px;overflow:auto">
+    <edit-table id="inventario" style="min-width:900px"
+      row-rules='[{"field":"activo","op":"eq","value":"No","class":"et-muted et-strike"},
+                  {"field":"existencia","op":"lt","value":0,"icon":"⚠"}]'>
       <edit-thead><edit-tr>
-        <edit-th type="NoEditable" field="codigo" width="90px">Cliente</edit-th>
-        <edit-th type="NoEditable" field="nombre" minwidth="240px">Nombre</edit-th>
-        <edit-th type="NoEditable" field="vendedor" width="130px">Vendedor</edit-th>
-        <edit-th type="Number" field="dias_vencido" textalign="end" width="110px"
-          rules='[{"when":"<=0","class":"al-dia"},{"when":">30","class":"vence-30"},{"when":">60","class":"vence-60"}]'>Días vencido</edit-th>
-        <edit-th type="NoEditable" field="limite" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="120px">Límite</edit-th>
-        <edit-th type="Number" field="saldo" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="130px"
-          rules='[{"when":"<0","class":"neg"},{"when":">{limite}","class":"excedido"}]'>Saldo</edit-th>
+        <edit-th type="NoEditable" field="codigo" width="100px">Código</edit-th>
+        <edit-th type="NoEditable" field="descripcion" minwidth="190px">Descripción</edit-th>
+        <edit-th type="Number" field="existencia" textalign="end" width="110px"
+          rules='[{"field":"dif_min","op":"ge","value":0,"class":"et-ok","icon":"●"},
+                  {"field":"dif_min","op":"lt","value":0,"class":"et-err et-bold","icon":"▼"},
+                  {"field":"dif_max","op":"gt","value":0,"class":"et-warn","icon":"▲"},
+                  {"op":"lt","value":0,"class":"et-neg et-bold"}]'>Existencia</edit-th>
+        <edit-th type="NoEditable" field="minimo" textalign="end" width="80px">Mínimo</edit-th>
+        <edit-th type="NoEditable" field="maximo" textalign="end" width="80px">Máximo</edit-th>
+        <edit-th type="Date" field="caducidad" width="130px"
+          rules='[{"op":"lt","value":"2026-10-31","class":"et-err et-bold","icon":"⛔"},
+                  {"op":"between","value":"2026-10-31","value2":"2026-11-30","class":"et-warn","icon":"⏳"}]'>Caducidad</edit-th>
+        <edit-th type="NoEditable" field="margen" textalign="end" width="90px" sufix=" %"
+          rules='[{"op":"lt","value":15,"class":"et-warn"},{"op":"lt","value":0,"class":"et-neg"},{"op":"ge","value":30,"class":"et-ok","style":{"fontWeight":"700"}}]'>Margen</edit-th>
+        <edit-th type="Select" field="activo" width="80px" options='{"Sí":"Sí","No":"No"}'>Activo</edit-th>
       </edit-tr></edit-thead>
     </edit-table>
   </div>
@@ -47,18 +63,22 @@
 <div id="codigo"></div>
 
 <div class="explica">
-  <div class="tarjeta">
-    <h2>API que usa esta página (propuesta para F8)</h2>
+  <div class="tarjeta prueba">
+    <h2>Pruebe</h2>
     <ul>
-      <li>Bandera <code>'rules'</code>. Atributo <code>rules</code> en <code>edit-th</code>: arreglo JSON de <code>{when, class}</code>, en orden; gana la última que aplica.</li>
-      <li><code>when</code> admite <code>&lt; &lt;= &gt; &gt;= = !=</code> contra un número, un texto o <code>{otro_campo}</code> de la misma fila.</li>
-      <li>Se aplica al dibujar y en <code>UpdateRow</code> (a diferencia de <code>onTdPaint</code>).</li>
+      <li>Cambie una existencia a menos del mínimo: la celda pasa a rojo con ▼ al confirmar. Póngala negativa y la fila gana ⚠.</li>
+      <li>Cambie una caducidad a una fecha pasada: aparece ⛔ sin ninguna línea de código.</li>
+      <li>Ponga <strong>Activo</strong> en <strong>No</strong>: la fila se tacha.</li>
+      <li>Cambie a tema oscuro arriba: los colores de las reglas son variables del tema (<code>--et-ok</code>, <code>--et-warn</code>, <code>--et-error</code>).</li>
     </ul>
   </div>
   <div class="tarjeta">
-    <h2>Mientras tanto</h2>
+    <h2>API que usa esta página</h2>
     <ul>
-      <li>Hoy lo mismo se hace con <code>CellClass = (fila, campo) =&gt; clase</code>. Sin la bandera, esta página usa ese camino con las mismas reglas, leídas del atributo.</li>
+      <li><code>rules</code> en <code>edit-th</code> y <code>row-rules</code> en la tabla: <code>[{field?, op, value, value2?, class?, style?, icon?}]</code>. Se aplican todas las que se cumplen.</li>
+      <li>Operadores <code>lt le gt ge eq ne between in contains empty notempty</code>; números exactos y fechas ISO como texto.</li>
+      <li>Clases incluidas <code>et-ok et-warn et-err et-neg et-bold et-muted et-strike</code>; <code>icon</code> no cambia el contenido de la celda.</li>
+      <li>Una regla compara contra un valor fijo. Para «existencia &lt; mínimo» la consulta trae la diferencia (<code>dif_min</code>, <code>dif_max</code>) y la regla de la columna la lee con <code>field</code>; aquí, como no hay servidor, el JS la recalcula al editar.</li>
     </ul>
   </div>
 </div>
@@ -67,22 +87,17 @@
 </div>
 <script data-demo>
 document.addEventListener('DOMContentLoaded', () => {
-  const t = document.getElementById('cartera');
-  t.DataArray = Datos.clientes(24).map((c, i) => ({ ...c, dias_vencido: String(c.saldo <= 0 ? 0 : [0, 12, 35, 48, 75, 95][i % 6]), saldo: String(c.saldo), limite: c.limite }));
-
-  if (!EditTable.features.includes('rules')) {
-    // Respaldo con lo que ya existe: CellClass evalúa las mismas reglas declaradas en el HTML
-    const reglas = Object.fromEntries(t.Columns.filter(c => c.rules).map(c => [c.field, JSON.parse(c.rules)]));
-    const cumple = (v, when, fila) => {
-      const m = /^(<=|>=|!=|<|>|=)\s*(.*)$/.exec(when); if (!m) return false;
-      const ref = m[2].replace(/^\{(.+)\}$/, (_, f) => fila[f]);
-      const a = Number(v), b = Number(ref);
-      return { '<': a < b, '<=': a <= b, '>': a > b, '>=': a >= b, '=': String(v) === ref, '!=': String(v) !== ref }[m[1]];
-    };
-    t.CellClass = (fila, campo) => (reglas[campo] || []).filter(r => cumple(fila[campo], r.when, fila)).map(r => r.class).pop() || '';
-  }
+  const t = document.getElementById('inventario');
+  // Lo que traería la consulta del servidor, con las diferencias contra mínimo y máximo ya calculadas
+  const dif = (r) => Object.assign(r, { dif_min: Number(r.existencia) - r.minimo, dif_max: Number(r.existencia) - r.maximo });
+  const CAD = ['2026-10-12', '2026-11-09', '2027-02-15', '2026-11-24', '2027-06-30', '', '2026-09-30', '2027-01-20'];
+  t.DataArray = Datos.productos(36).map((p, i) => dif({
+    codigo: p.codigo, descripcion: p.descripcion, minimo: p.minimo * 3, maximo: p.minimo * 12,
+    existencia: String(i % 11 === 4 ? -(i % 7 + 2) : p.existencia), caducidad: CAD[i % CAD.length],
+    margen: Math.round(((p.precio - p.costo) / p.precio * 100 - (i % 9 === 2 ? 30 : 0)) * 10) / 10, activo: p.activo ? 'Sí' : 'No',
+  }));
   t._printRows();
-  t.addEventListener('fieldupdated', (e) => t.UpdateRow(e.row));
+  t.addEventListener('FieldUpdated', (e) => { if (e.field === 'existencia') { dif(t.DataArray[e.row]); t.UpdateRow(e.row); } });
 });
 </script>
 </body>

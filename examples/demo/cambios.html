@@ -16,54 +16,65 @@
 <nav id="sitio-nav"></nav>
 <div class="principal">
 <header class="barra-sup" id="sitio-barra"></header>
-<main id="principal" class="contenido" data-proximamente="changes">
+<main id="principal" class="contenido" data-requiere="changes calc">
 <header class="pag-enc">
-  <span class="ceja">Próximamente · F8</span>
+  <span class="ceja">Nuevo en 2.0 · lista de precios</span>
   <h1>Mandar al servidor solo lo que cambió</h1>
-  <p class="bajada">Se editan precios, se agregan y se borran productos; al guardar, <code>getChanges()</code> entrega tres listas —altas, cambios y bajas— listas para el guardado de CRUD-L o de V12, sin reenviar el catálogo completo.</p>
+  <p class="bajada">Edite precios, agregue y borre productos: <code>getChanges()</code> lleva la cuenta en vivo de las altas, los cambios (con el valor original) y las bajas. Abajo está el JSON exacto que se enviaría al guardado de CRUD-L o de V12, sin reenviar el catálogo completo.</p>
+  <div class="chips" id="chips"></div>
 </header>
-<div id="aviso" role="status"></div>
 
 <section class="demo" aria-label="Demostración">
 <div id="demo">
   <div class="barra">
     <button type="button" class="btn" id="alta">Agregar producto</button>
     <button type="button" class="btn" id="baja">Borrar el actual</button>
+    <button type="button" class="btn" id="subir">Subir 5 % la línea Pintura</button>
     <span class="sep"></span>
-    <button type="button" class="btn primario" id="ver">Ver lo que se enviaría</button>
-    <button type="button" class="btn" id="aceptar">Guardado: aceptar cambios</button>
+    <button type="button" class="btn" id="deshacer">Descartar cambios</button>
+    <button type="button" class="btn primario" id="guardar">Guardar</button>
   </div>
-  <div class="caja-tabla">
-    <edit-table id="precios" key="sys_pk">
+  <div class="caja-tabla" style="max-height:380px;overflow:auto">
+    <edit-table id="precios" style="min-width:760px">
       <edit-thead><edit-tr>
         <edit-th type="Text" field="codigo" width="110px">Código</edit-th>
-        <edit-th type="Text" field="descripcion" minwidth="240px">Descripción</edit-th>
-        <edit-th type="Number" field="costo" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="120px">Costo</edit-th>
-        <edit-th type="Number" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="120px" calc="true">Precio</edit-th>
-        <edit-th type="Check" field="activo" textalign="center" width="90px">Activo</edit-th>
+        <edit-th type="Text" field="descripcion" minwidth="220px">Descripción</edit-th>
+        <edit-th type="Text" field="linea" width="110px">Línea</edit-th>
+        <edit-th type="Number" field="costo" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="110px" calc="true">Costo</edit-th>
+        <edit-th type="Number" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="110px" calc="true">Precio</edit-th>
+        <edit-th type="Check" field="activo" textalign="center" width="80px" default="Sí">Activo</edit-th>
       </edit-tr></edit-thead>
     </edit-table>
   </div>
-  <pre class="salida" id="envio" aria-live="polite"></pre>
+  <div class="metricas" aria-live="polite">
+    <div class="metrica"><b id="n-altas" style="color:var(--ok)">0</b><span>altas (<code>added</code>)</span></div>
+    <div class="metrica"><b id="n-cambios" style="color:var(--aviso)">0</b><span>cambios (<code>modified</code>)</span></div>
+    <div class="metrica"><b id="n-bajas" style="color:var(--error)">0</b><span>bajas (<code>deleted</code>)</span></div>
+    <div class="metrica"><b id="n-bytes">0 B</b><span>tamaño del envío (vs. <span id="n-todo">—</span> el catálogo)</span></div>
+  </div>
+  <pre class="salida" id="envio" aria-live="polite" style="max-height:320px"></pre>
 </div>
 </section>
 
 <div id="codigo"></div>
 
 <div class="explica">
-  <div class="tarjeta">
-    <h2>API que usa esta página (propuesta para F8)</h2>
+  <div class="tarjeta prueba">
+    <h2>Pruebe</h2>
     <ul>
-      <li>Bandera <code>'changes'</code>. <code>getChanges()</code> devuelve <code>{added, modified, deleted}</code>: filas nuevas, filas cambiadas (con su llave) y filas borradas.</li>
-      <li><code>AcceptChanges()</code> toma el estado actual como nuevo punto de partida (como <code>backup()</code>, pero también olvida altas y bajas).</li>
-      <li>La llave de cada fila es el atributo <code>key</code> de la tabla.</li>
+      <li>Cambie un precio: aparece en <strong>cambios</strong> con solo el campo cambiado. Regréselo a su valor y desaparece.</li>
+      <li><strong>Agregar producto</strong> y escriba un código: la alta nace cuando la fila tiene datos.</li>
+      <li>Borre una fila con el botón o con <kbd>Ctrl</kbd>+<kbd>Supr</kbd>: va a <strong>bajas</strong> con su llave. Una alta que se borra no se envía.</li>
+      <li><strong>Guardar</strong> simula el envío y llama a <code>AcceptChanges()</code>: el estado actual pasa a ser la base.</li>
     </ul>
   </div>
   <div class="tarjeta">
-    <h2>Mientras tanto</h2>
+    <h2>API que usa esta página</h2>
     <ul>
-      <li>Hoy existe <code>IsDirty</code> y <code>getIsDirty(i)</code> por fila, pero no se sabe qué filas son nuevas ni cuáles se borraron.</li>
-      <li>Sin la bandera, la página muestra lo que hoy se puede saber: las filas modificadas según <code>getIsDirty</code>.</li>
+      <li><code>getChanges()</code> → <code>{added:[{index,data}], modified:[{index,data,original}], deleted:[{data}]}</code>.</li>
+      <li><code>isNew(i)</code> para pintar la fila; <code>AcceptChanges()</code> después de guardar.</li>
+      <li>La base se toma al primer cambio: si nadie edita, no cuesta nada. No toca <code>IsDirty</code> ni <code>backup()</code>.</li>
+      <li>Lo que se cambie directo en <code>DataArray[i].x = …</code> no se ve: use <code>UpdateDataMember</code>, como el botón de 5 %.</li>
     </ul>
   </div>
 </div>
@@ -74,25 +85,52 @@
 document.addEventListener('DOMContentLoaded', () => {
   const t = document.getElementById('precios');
   const $ = (id) => document.getElementById(id);
-  t.DataArray = Datos.productos(8).map(p => ({ sys_pk: p.sys_pk, codigo: p.codigo, descripcion: p.descripcion, costo: String(p.costo), precio: String(p.precio), activo: p.activo ? 'Sí' : 'No' }));
+  t.DataArray = Datos.productos(40).map(p => ({ sys_pk: p.sys_pk, codigo: p.codigo, descripcion: p.descripcion, linea: p.linea, costo: String(p.costo), precio: String(p.precio), activo: p.activo ? 'Sí' : 'No' }));
   t._printRows();
-  t.backup();
+  const peso = (o) => new Blob([JSON.stringify(o)]).size;
+  $('n-todo').textContent = (peso(t.DataArray) / 1024).toFixed(1) + ' KB';
 
-  let siguiente = 9001;
-  $('alta').onclick = () => { t.AddRow(); const i = t.DataArray.length - 1; Object.assign(t.DataArray[i], { sys_pk: siguiente++, codigo: 'P-NUEVO', activo: 'Sí' }); t.UpdateRow(i); t.NavTo(i, 1); };
-  $('baja').onclick = () => { const i = t.CurrentRowIndex(); if (i >= 0) t.DeleteRow(i); };
+  // Acento por fila: verde las altas, ámbar las modificadas
+  let modificadas = new Set();
+  t.RowAccent = (r, i) => t.isNew(i) ? 'var(--ok)' : (modificadas.has(r) ? 'var(--aviso)' : null);
 
-  $('ver').onclick = () => {
-    if (EditTable.features.includes('changes')) {
-      const c = t.getChanges();
-      $('envio').textContent = 'POST /api/productos/guardar\n' + JSON.stringify({ added: c.added, modified: c.modified, deleted: c.deleted.map(r => r.sys_pk) }, null, 1);
-    } else {
-      const modificadas = t.DataArray.filter((r, i) => { try { return t.getIsDirty(i); } catch (e) { return false; } });
-      $('envio').textContent = '// Sin getChanges(): solo se sabe qué filas difieren del respaldo (getIsDirty)\n' + JSON.stringify(modificadas, null, 1);
-    }
+  // Lo que se enviaría: altas completas, de los cambios solo los campos que cambiaron, de las bajas la llave
+  const envio = () => {
+    const c = t.getChanges();
+    modificadas = new Set(c.modified.map(m => m.data));
+    const solo = (m) => Object.fromEntries(Object.keys(m.data).filter(k => String(m.data[k]) !== String(m.original[k])).map(k => [k, m.data[k]]));
+    const cuerpo = {
+      altas: c.added.map(a => a.data),
+      cambios: c.modified.map(m => ({ sys_pk: m.data.sys_pk, ...solo(m) })),
+      bajas: c.deleted.map(d => d.data.sys_pk).filter(Boolean),
+    };
+    $('n-altas').textContent = cuerpo.altas.length; $('n-cambios').textContent = cuerpo.cambios.length; $('n-bajas').textContent = cuerpo.bajas.length;
+    const vacio = !cuerpo.altas.length && !cuerpo.cambios.length && !cuerpo.bajas.length;
+    $('n-bytes').textContent = vacio ? '0 B' : peso(cuerpo) + ' B';
+    $('envio').textContent = vacio ? '// Sin cambios: no hay nada que enviar.' : 'POST /api/productos/guardar\n' + JSON.stringify(cuerpo, null, 2);
+    t.RefreshDecorations();
+    return cuerpo;
   };
-  $('aceptar').onclick = () => { if (t.AcceptChanges) t.AcceptChanges(); else t.backup(); $('envio').textContent = '// Cambios aceptados: el estado actual es el nuevo punto de partida.'; };
-  t.NavTo(0, 3);
+  t.addEventListener('FieldUpdated', envio);
+  t.addEventListener('RowDeleted', envio);
+
+  $('alta').onclick = () => { t.AddRow(); t.NavTo(t.DataArray.length - 1, 0); };
+  $('baja').onclick = () => { const i = t.CurrentRowIndex(); if (i >= 0) { t.DeleteRow(i); envio(); } };
+  $('subir').onclick = () => {
+    t.DataArray.forEach((r, i) => { if (r.linea === 'Pintura') { t.UpdateDataMember(i, 'precio', String(Math.round(Number(r.precio) * 105) / 100)); t.UpdateRow(i); } });
+    envio();
+  };
+  $('deshacer').onclick = () => { t.restore(); envio(); };
+  $('guardar').onclick = () => {
+    const c = envio();
+    const n = c.altas.length + c.cambios.length + c.bajas.length;
+    t.AcceptChanges(); t.backup();       // el servidor respondió bien: lo actual es la nueva base
+    envio();
+    $('envio').textContent = '// Enviado: ' + n + ' operaciones. AcceptChanges(): la base es el estado actual.';
+  };
+  t.backup();                            // para «Descartar cambios»
+  envio();
+  t.NavTo(0, 4);
 });
 </script>
 </body>

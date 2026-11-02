@@ -16,56 +16,63 @@
 <nav id="sitio-nav"></nav>
 <div class="principal">
 <header class="barra-sup" id="sitio-barra"></header>
-<main id="principal" class="contenido" data-proximamente="rowvalidate">
+<main id="principal" class="contenido" data-requiere="rowvalidate summary calc">
 <header class="pag-enc">
-  <span class="ceja">Próximamente · F8</span>
-  <h1>Póliza contable que no deja salir de una fila incompleta</h1>
-  <p class="bajada">Una función valida la fila completa al salir de ella. Los errores se marcan en la celda que corresponde, con su mensaje, y la póliza no se guarda mientras haya alguno o no cuadre.</p>
+  <span class="ceja">Nuevo en 2.0 · captura de compras</span>
+  <h1>Una orden de compra que no deja salir de una partida mal capturada</h1>
+  <p class="bajada">Al cambiar de partida se valida la fila completa: si algo falla, el foco se queda y cada error se marca en su celda, con el mensaje como ayuda. Antes de guardar se valida toda la orden y la lista de errores lleva directo a cada celda.</p>
+  <div class="chips" id="chips"></div>
 </header>
-<div id="aviso" role="status"></div>
 
 <section class="demo" aria-label="Demostración">
 <div id="demo">
   <div class="doc-enc">
-    <div><span>Póliza</span>Diario 2026-10 / 418</div>
-    <div><span>Fecha</span>31/10/2026</div>
-    <div><span>Concepto</span>Cobros y gastos de la semana</div>
-    <div><span>Estado</span><b id="cuadre">—</b></div>
+    <div><span>Orden de compra</span>OC-2026-0418</div>
+    <div><span>Proveedor</span>Distribuidora Horizonte S.A. de C.V.</div>
+    <div><span>Almacén</span>Matriz · Tuxtla</div>
+    <div><span>Estado</span><b id="estado">Borrador</b></div>
   </div>
   <div class="caja-tabla">
-    <edit-table id="poliza" control-styles="td.et-cell-error{box-shadow:inset 0 -2px 0 var(--error);background:var(--error-suave)}">
+    <edit-table id="compra" style="min-width:860px">
       <edit-thead><edit-tr>
-        <edit-th type="Text" field="cuenta" width="110px" mask="999-99">Cuenta</edit-th>
-        <edit-th type="NoEditable" field="nombre" minwidth="220px">Nombre</edit-th>
-        <edit-th type="Text" field="concepto" minwidth="200px">Concepto</edit-th>
-        <edit-th type="Number" field="cargo" textalign="end" format="true" decs="2" thousandssep="true" width="130px" calc="true" summary="sum">Cargo</edit-th>
-        <edit-th type="Number" field="abono" textalign="end" format="true" decs="2" thousandssep="true" width="130px" calc="true" summary="sum">Abono</edit-th>
+        <edit-th type="Text" field="codigo" width="110px">Código</edit-th>
+        <edit-th type="NoEditable" field="descripcion" minwidth="220px" summary="count" summary-label="{value} partidas">Descripción</edit-th>
+        <edit-th type="Number" field="cantidad" textalign="end" width="100px" calc="true">Cantidad</edit-th>
+        <edit-th type="NoEditable" field="unidad" width="70px">Unidad</edit-th>
+        <edit-th type="Number" field="costo" textalign="end" width="120px" calc="true" format="true" decs="2" prefix="$" thousandssep="true">Costo</edit-th>
+        <edit-th type="NoEditable" field="precio" textalign="end" width="110px" format="true" decs="2" prefix="$" thousandssep="true">Precio venta</edit-th>
+        <edit-th type="NoEditable" field="importe" textalign="end" width="130px" format="true" decs="2" prefix="$" thousandssep="true" summary="sum">Importe</edit-th>
       </edit-tr></edit-thead>
     </edit-table>
   </div>
   <div class="barra" style="margin-top:12px">
-    <button type="button" class="btn primario" id="guardar">Guardar póliza</button>
+    <button type="button" class="btn primario" id="guardar">Validar y guardar</button>
+    <button type="button" class="btn" id="limpiar">Quitar marcas</button>
     <span id="resultado" style="font-size:13px;color:var(--texto-2)" aria-live="polite"></span>
   </div>
+  <ul class="bitacora" id="errores" aria-label="Errores de la orden"></ul>
 </div>
 </section>
 
 <div id="codigo"></div>
 
 <div class="explica">
-  <div class="tarjeta">
-    <h2>API que usa esta página (propuesta para F8)</h2>
+  <div class="tarjeta prueba">
+    <h2>Pruebe</h2>
     <ul>
-      <li>Bandera <code>'rowvalidate'</code>. Propiedad <code>RowValidate = (fila, i) =&gt; ({campo: 'mensaje'})</code>; objeto vacío si la fila es válida.</li>
-      <li>Al salir de una fila con errores: evento <code>RowInvalid</code> con <code>{row, errors, cancel}</code>; con <code>cancel</code> el foco se queda.</li>
-      <li>Celdas con error: clase <code>et-cell-error</code> y el mensaje como tooltip. <code>ValidateAll()</code> devuelve <code>[{row, errors}]</code>.</li>
+      <li>En la partida 2 ponga cantidad <strong>0</strong> y baje con <kbd>↓</kbd>: no lo deja y la celda queda en rojo.</li>
+      <li>Escriba <strong>-5</strong> en una cantidad: el error aparece sin salir de la celda (<code>BeforeUpdateCell</code>).</li>
+      <li>Un costo mayor que el precio de venta, o un código que no existe (<strong>P-99999</strong>), también se marcan.</li>
+      <li><strong>Validar y guardar</strong> revisa todas las partidas; haga clic en un error de la lista para ir a esa celda.</li>
     </ul>
   </div>
   <div class="tarjeta">
-    <h2>Mientras tanto</h2>
+    <h2>API que usa esta página</h2>
     <ul>
-      <li>El botón Guardar valida con la misma función, recorriendo las filas a mano.</li>
-      <li>La máscara de cuenta, el cálculo y los totales ya funcionan hoy.</li>
+      <li>Evento <code>BeforeRowLeave</code> <code>{index, data, toIndex, cancel, errors}</code>: la edición ya viene confirmada en <code>data</code>; con <code>e.errors = {campo: 'mensaje'}</code> se marcan las celdas y no se sale de la fila.</li>
+      <li><code>BeforeUpdateCell</code> con <code>e.error = 'mensaje'</code>: la celda sigue en edición y queda marcada.</li>
+      <li><code>SetCellError(i, campo, msj)</code>, <code>ClearCellError(i?, campo?)</code> y <code>getErrors()</code> → <code>[{index, field, message}]</code>.</li>
+      <li>La celda lleva <code>et-cell-error</code> y <code>aria-invalid</code>; el color sale del tema (<code>--et-error</code>).</li>
     </ul>
   </div>
 </div>
@@ -74,48 +81,73 @@
 </div>
 <script data-demo>
 document.addEventListener('DOMContentLoaded', () => {
-  const t = document.getElementById('poliza');
+  const t = document.getElementById('compra');
   const $ = (id) => document.getElementById(id);
-  const catalogo = Object.fromEntries(Datos.cuentas().map(c => [c.cuenta, c.nombre]));
-  t.DataArray = Datos.poliza().map(r => ({ ...r, cargo: r.cargo ? String(r.cargo) : '', abono: r.abono ? String(r.abono) : '' }));
-  t.DataArray.push({ cuenta: '105-01', nombre: catalogo['105-01'], concepto: '', cargo: '500', abono: '500' }); // fila con errores
+  const catalogo = new Map(Datos.productos(300).map(p => [p.codigo, p]));
+  const dinero = (n) => '$' + Number(n || 0).toLocaleString('es-MX', { minimumFractionDigits: 2 });
+  const partida = (codigo, cantidad, costo) => {
+    const p = catalogo.get(codigo) || {};
+    return { codigo, descripcion: p.descripcion || '', unidad: p.unidad || '', precio: p.precio || '', cantidad: String(cantidad), costo: String(costo), importe: Math.round(cantidad * costo * 100) / 100 };
+  };
+  t.DataArray = [partida('P-00012', 24, 610), partida('P-00059', 0, 180.5), partida('P-00091', 10, 95), partida('P-99999', 3, 40), partida('P-00134', 2, 2100), partida('P-00150', 12, 88)];
   t._printRows();
 
-  // Una sola función de validación, la use el componente (F8) o el botón Guardar
+  // Una sola función de validación para la fila: la usan BeforeRowLeave y el botón Guardar
+  const vacia = (r) => !r || (!String(r.codigo || '').trim() && !Number(r.cantidad) && !Number(r.costo));
   const validar = (r) => {
     const e = {};
-    if (!r.cuenta) e.cuenta = 'Cuenta requerida';
-    else if (!catalogo[r.cuenta]) e.cuenta = 'La cuenta no existe en el catálogo';
-    if (!String(r.concepto || '').trim()) e.concepto = 'Escriba el concepto';
-    const c = Number(r.cargo || 0), a = Number(r.abono || 0);
-    if (c && a) e.abono = 'Una partida lleva cargo o abono, no los dos';
-    if (!c && !a) e.cargo = 'Capture un importe';
+    const p = catalogo.get(String(r.codigo || '').trim().toUpperCase());
+    if (!String(r.codigo || '').trim()) e.codigo = 'Capture el código del producto';
+    else if (!p) e.codigo = 'El código ' + r.codigo + ' no está en el catálogo';
+    const cant = Number(r.cantidad);
+    if (!(cant > 0)) e.cantidad = 'La cantidad debe ser mayor que cero';
+    else if (r.unidad === 'PZA' && !Number.isInteger(cant)) e.cantidad = 'Las piezas se compran enteras';
+    const costo = Number(r.costo);
+    if (!(costo > 0)) e.costo = 'Capture el costo';
+    else if (p && costo > p.precio) e.costo = 'El costo (' + dinero(costo) + ') supera el precio de venta (' + dinero(p.precio) + ')';
     return e;
   };
-  const cuadre = () => {
-    const c = t.DataArray.reduce((s, r) => s + Number(r.cargo || 0), 0), a = t.DataArray.reduce((s, r) => s + Number(r.abono || 0), 0);
-    $('cuadre').textContent = Math.abs(c - a) < 0.005 ? 'Cuadrada' : 'Diferencia ' + (c - a).toLocaleString('es-MX', { minimumFractionDigits: 2 });
-    return Math.abs(c - a) < 0.005;
-  };
-  t.addEventListener('fieldupdated', (e) => {
+
+  t.addEventListener('BeforeRowLeave', (e) => {
+    if (vacia(e.data)) return;               // una partida nueva sin datos no detiene a nadie
+    const errores = validar(e.data);
+    if (Object.keys(errores).length) { e.errors = errores; $('resultado').textContent = 'Partida ' + (e.index + 1) + ': ' + Object.values(errores).join(' · '); }
+    else { t.ClearCellError(e.index); $('resultado').textContent = ''; }
+  });
+  t.addEventListener('BeforeUpdateCell', (e) => {
+    if (e.coldef.field === 'cantidad' && Number(e.text) < 0) e.error = 'No se compran cantidades negativas; para devolver use una nota de crédito';
+  });
+  t.addEventListener('FieldUpdated', (e) => {
     const r = t.DataArray[e.row];
-    if (e.field === 'cuenta') { r.nombre = catalogo[r.cuenta] || ''; t.UpdateRow(e.row); }
-    if (t.RefreshSummaries) t.RefreshSummaries();
-    cuadre();
+    if (!r) return;
+    if (e.field === 'codigo') {
+      const p = catalogo.get(String(r.codigo).trim().toUpperCase());
+      Object.assign(r, p ? { codigo: p.codigo, descripcion: p.descripcion, unidad: p.unidad, precio: p.precio, costo: r.costo || String(p.costo) } : { descripcion: '', unidad: '', precio: '' });
+    }
+    r.importe = Math.round(Number(r.cantidad || 0) * Number(r.costo || 0) * 100) / 100;
+    t.UpdateRow(e.row);
+    t.RefreshSummaries();
   });
 
-  if (EditTable.features.includes('rowvalidate')) {
-    t.RowValidate = validar;
-    t.addEventListener('RowInvalid', (e) => { e.cancel = true; $('resultado').textContent = 'Fila ' + (e.row + 1) + ': ' + Object.values(e.errors).join(' · '); });
-  }
-
+  // Validar todo antes de guardar: marca cada celda y arma la lista con getErrors()
+  const titulo = (f) => t.Columns.find(c => c.field === f).title;
   $('guardar').onclick = () => {
-    const errores = t.ValidateAll ? t.ValidateAll() : t.DataArray.map((r, row) => ({ row, errors: validar(r) })).filter(x => Object.keys(x.errors).length);
-    if (errores.length) { $('resultado').textContent = (errores.length === 1 ? '1 fila' : errores.length + ' filas') + ' con errores. Primera: fila ' + (errores[0].row + 1) + ', ' + Object.values(errores[0].errors)[0] + '.'; t.NavTo(errores[0].row, 0); return; }
-    if (!cuadre()) { $('resultado').textContent = 'La póliza no cuadra.'; return; }
-    $('resultado').textContent = 'Póliza lista para guardar.';
+    t.ClearCellError();
+    t.DataArray.forEach((r, i) => { if (!vacia(r)) Object.entries(validar(r)).forEach(([f, m]) => t.SetCellError(i, f, m)); });
+    const errores = t.getErrors();
+    $('errores').innerHTML = '';
+    errores.forEach(({ index, field, message }) => {
+      const li = document.createElement('li');
+      const b = document.createElement('a'); b.href = '#'; b.textContent = 'Partida ' + (index + 1) + ' · ' + titulo(field);
+      b.onclick = (ev) => { ev.preventDefault(); t.NavTo(index, t.Columns.findIndex(c => c.field === field)); };
+      const s = document.createElement('span'); s.textContent = message;
+      li.append(b, s); $('errores').appendChild(li);
+    });
+    $('estado').textContent = errores.length ? 'Con errores' : 'Guardada';
+    $('resultado').textContent = errores.length ? errores.length + ' errores en ' + new Set(errores.map(x => x.index)).size + ' partidas: no se guardó.' : 'Orden validada: ' + dinero(t.getSummary('importe')) + ' lista para enviarse al proveedor.';
   };
-  cuadre();
+  $('limpiar').onclick = () => { t.ClearCellError(); $('errores').innerHTML = ''; $('resultado').textContent = ''; $('estado').textContent = 'Borrador'; };
+  t.NavTo(0, 2);
 });
 </script>
 </body>

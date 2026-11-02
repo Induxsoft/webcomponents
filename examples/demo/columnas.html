@@ -50,7 +50,8 @@
       </edit-tr></edit-thead>
     </edit-table>
   </div>
-  <div class="barra" style="margin:14px 0 6px"><strong>getLayout()</strong><span class="sep"></span><span id="razon" class="chip neutro">—</span></div>
+  <div class="barra" style="margin:14px 0 6px"><strong>whenLayoutReady()</strong><span id="listo" class="chip neutro">esperando…</span><span class="sep"></span><span id="razon" class="chip neutro">—</span></div>
+  <ul class="bitacora" id="eventos" aria-label="Eventos LayoutChanged" style="max-height:130px"></ul>
   <pre class="salida" id="diseno" style="max-height:200px"></pre>
 </div>
 </section>
@@ -63,7 +64,7 @@
     <ul>
       <li>Clic derecho sobre un encabezado (o el botón de la esquina): oculte <strong>Teléfono</strong> y fije <strong>Saldo</strong>.</li>
       <li>Arrastre <strong>Vendedor</strong> antes de <strong>RFC</strong>. Con el teclado: <kbd>Ctrl</kbd>+<kbd>Mayús</kbd>+<kbd>←</kbd>/<kbd>→</kbd> sobre el encabezado.</li>
-      <li>Recargue la página: el diseño sigue ahí. <strong>Olvidar lo guardado</strong> lo borra.</li>
+      <li>Recargue la página: el diseño sigue ahí y la bitácora muestra <code>LayoutChanged</code> con <code>reason: restore</code>. <strong>Olvidar lo guardado</strong> lo borra.</li>
       <li>Desplace a la derecha: cliente y nombre se quedan fijos.</li>
     </ul>
   </div>
@@ -73,7 +74,8 @@
       <li>Sin <code>id</code> estable no se guarda nada; <code>design-key</code> da una llave propia (por ejemplo, una por usuario).</li>
       <li>Solo se restaura lo que el usuario puede cambiar en esa tabla: el orden si hay <code>column-reorder</code>, la visibilidad si hay <code>column-chooser</code>.</li>
       <li>Si cambian las columnas de la pantalla, el diseño guardado se descarta en lugar de mezclarse.</li>
-      <li><code>LayoutChanged</code> trae <code>{layout, reason}</code> para guardarlo donde quiera.</li>
+      <li><code>LayoutChanged</code> trae <code>{layout, reason}</code> para guardarlo donde quiera; al restaurar llega con <code>reason:'restore'</code>.</li>
+      <li><code>whenLayoutReady()</code> (o la propiedad <code>LayoutReady</code>) se resuelve con <code>true</code> si se restauró algo: úselo antes de leer <code>getLayout()</code> o de aplicar una vista del servidor.</li>
     </ul>
   </div>
 </div>
@@ -93,7 +95,15 @@ document.addEventListener('DOMContentLoaded', () => {
     $('diseno').textContent = '{ v: ' + L.v + ', sort: ' + JSON.stringify(L.sort) + ',\n  columns: [\n' +
       L.columns.map(c => '    ' + JSON.stringify(c)).join(',\n') + '\n  ] }';
   };
-  t.addEventListener('LayoutChanged', (e) => mostrar(e.reason));
+  // LayoutChanged trae {layout, reason}; al abrir la página con un diseño guardado llega con reason:'restore'
+  t.addEventListener('LayoutChanged', (e) => {
+    mostrar(e.reason);
+    const li = document.createElement('li');
+    li.innerHTML = '<time></time><b>LayoutChanged</b><span></span>';
+    li.querySelector('time').textContent = new Date().toLocaleTimeString('es-MX');
+    li.querySelector('span').textContent = 'reason: ' + e.reason + (e.reason === 'restore' ? ' (diseño de IndexedDB aplicado; no se vuelve a guardar)' : '');
+    $('eventos').prepend(li);
+  });
 
   // Una vista es un diseño: qué columnas se ven, en qué orden y cuáles van fijas
   const vista = (campos, fijas) => {
@@ -110,7 +120,11 @@ document.addEventListener('DOMContentLoaded', () => {
   $('v-ventas').onclick = () => vista(['codigo', 'nombre', 'vendedor', 'region', 'ciudad', 'saldo'], ['codigo']);
   $('v-reset').onclick = () => t.ResetLayout();
   $('olvidar').onclick = () => { t.ForgetLayout(); mostrar('ForgetLayout'); };
-  mostrar('inicio');
+  // La restauración desde IndexedDB es asíncrona: whenLayoutReady() avisa cuándo terminó y si aplicó algo
+  t.whenLayoutReady().then((restaurado) => {
+    $('listo').textContent = restaurado ? 'true: se restauró el diseño guardado' : 'false: no había diseño guardado';
+    if (!restaurado) mostrar('declarado');
+  });
 });
 </script>
 </body>

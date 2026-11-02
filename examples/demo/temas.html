@@ -9,6 +9,16 @@
 <script src="assets/tema-edittable.js"></script>
 <script src="../../src/js/induxsoft.controls.editable.js"></script>
 <script src="assets/datos.js"></script>
+<style>
+  .muestra { margin: 0; min-width: 0; }
+  .muestra figcaption { font-size: 13px; color: var(--texto-2); margin-bottom: 6px; }
+  .lab { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px 14px; margin-bottom: 12px; }
+  .lab label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--texto-2); }
+  .lab select { font: inherit; font-size: 13px; padding: 6px 8px; border-radius: 8px; border: 1px solid var(--borde); background: var(--sup); color: var(--texto); }
+  .colores { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+  .colores label { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--texto-2); }
+  .colores input[type="color"] { width: 34px; height: 26px; padding: 0; border: 1px solid var(--borde); border-radius: 6px; background: none; }
+</style>
 </head>
 <body>
 <a class="saltar" href="#principal">Saltar al contenido</a>
@@ -16,81 +26,100 @@
 <nav id="sitio-nav"></nav>
 <div class="principal">
 <header class="barra-sup" id="sitio-barra"></header>
-<main id="principal" class="contenido" data-proximamente="theme">
+<main id="principal" class="contenido" data-requiere="theme multiselect summary">
 <header class="pag-enc">
-  <span class="ceja">Próximamente · F8</span>
-  <h1>Cuatro temas de fábrica y una paleta a la medida</h1>
-  <p class="bajada">Hoy cada aplicación arma su tema con <code>control-styles</code> (este sitio lo hace con <code>assets/tema-edittable.js</code>). En 2.0 basta con un atributo: <code>theme="claro|oscuro|jade|libro-mayor"</code>, y <code>palette</code> para cambiar colores puntuales sin reescribir CSS.</p>
+  <span class="ceja">Nuevo en 2.0 · apariencia</span>
+  <h1>Cuatro temas de fábrica, el suyo propio y una paleta en vivo</h1>
+  <p class="bajada">Un atributo, <code>theme</code>, y la tabla se viste completa: encabezado, selección, celda activa, editores, casillas, totales, negativos, filas alternadas y foco visible, con contraste AA medido. <code>palette</code> cambia colores puntuales encima de cualquier tema y <code>EditTable.defineTheme</code> registra los de su aplicación. Todo cambia en caliente, sin volver a dibujar la tabla.</p>
+  <div class="chips" id="chips"></div>
 </header>
-<div id="aviso" role="status"></div>
 
 <section class="demo" aria-label="Demostración">
 <div id="demo">
   <div class="rejilla-2">
-    <figure style="margin:0">
-      <figcaption><code>theme="claro"</code></figcaption>
-      <edit-table id="t-claro" theme="claro" data-tema="propio" readonly="true">
-        <edit-thead><edit-tr>
-          <edit-th type="NoEditable" field="codigo" width="90px">Código</edit-th>
-          <edit-th type="NoEditable" field="descripcion">Descripción</edit-th>
-          <edit-th type="NoEditable" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" summary="sum">Precio</edit-th>
-        </edit-tr></edit-thead>
-      </edit-table>
-    </figure>
-    <figure style="margin:0">
-      <figcaption><code>theme="oscuro"</code></figcaption>
-      <edit-table id="t-oscuro" theme="oscuro" data-tema="propio" readonly="true">
-        <edit-thead><edit-tr>
-          <edit-th type="NoEditable" field="codigo" width="90px">Código</edit-th>
-          <edit-th type="NoEditable" field="descripcion">Descripción</edit-th>
-          <edit-th type="NoEditable" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" summary="sum">Precio</edit-th>
-        </edit-tr></edit-thead>
-      </edit-table>
-    </figure>
-    <figure style="margin:0">
-      <figcaption><code>theme="jade"</code></figcaption>
-      <edit-table id="t-jade" theme="jade" data-tema="propio" readonly="true">
-        <edit-thead><edit-tr>
-          <edit-th type="NoEditable" field="codigo" width="90px">Código</edit-th>
-          <edit-th type="NoEditable" field="descripcion">Descripción</edit-th>
-          <edit-th type="NoEditable" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" summary="sum">Precio</edit-th>
-        </edit-tr></edit-thead>
-      </edit-table>
-    </figure>
-    <figure style="margin:0">
-      <figcaption><code>theme="libro-mayor"</code> con <code>palette</code></figcaption>
-      <edit-table id="t-libro" theme="libro-mayor" palette='{"accent":"#7a4b1f","header":"#f3ead8"}' data-tema="propio" readonly="true">
-        <edit-thead><edit-tr>
-          <edit-th type="NoEditable" field="codigo" width="90px">Código</edit-th>
-          <edit-th type="NoEditable" field="descripcion">Descripción</edit-th>
-          <edit-th type="NoEditable" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" summary="sum">Precio</edit-th>
-        </edit-tr></edit-thead>
-      </edit-table>
-    </figure>
+    <figure class="muestra"><figcaption><code>theme="claro"</code></figcaption>
+      <edit-table id="t-claro" class="muestra-t" theme="claro" data-tema="propio" readonly="true">
+      <edit-thead><edit-tr>
+        <edit-th type="Text" field="codigo" width="80px">Cliente</edit-th>
+        <edit-th type="Text" field="nombre">Nombre</edit-th>
+        <edit-th type="Number" field="saldo" textalign="end" width="120px" format="true" decs="2" prefix="$" thousandssep="true" summary="sum">Saldo</edit-th>
+      </edit-tr></edit-thead>
+      </edit-table></figure>
+    <figure class="muestra"><figcaption><code>theme="oscuro"</code></figcaption>
+      <edit-table id="t-oscuro" class="muestra-t" theme="oscuro" data-tema="propio" readonly="true">
+      <edit-thead><edit-tr>
+        <edit-th type="Text" field="codigo" width="80px">Cliente</edit-th>
+        <edit-th type="Text" field="nombre">Nombre</edit-th>
+        <edit-th type="Number" field="saldo" textalign="end" width="120px" format="true" decs="2" prefix="$" thousandssep="true" summary="sum">Saldo</edit-th>
+      </edit-tr></edit-thead>
+      </edit-table></figure>
+    <figure class="muestra"><figcaption><code>theme="jade"</code> (bandeja de agentes)</figcaption>
+      <edit-table id="t-jade" class="muestra-t" theme="jade" data-tema="propio" readonly="true">
+      <edit-thead><edit-tr>
+        <edit-th type="Text" field="codigo" width="80px">Cliente</edit-th>
+        <edit-th type="Text" field="nombre">Nombre</edit-th>
+        <edit-th type="Number" field="saldo" textalign="end" width="120px" format="true" decs="2" prefix="$" thousandssep="true" summary="sum">Saldo</edit-th>
+      </edit-tr></edit-thead>
+      </edit-table></figure>
+    <figure class="muestra"><figcaption><code>theme="libro-mayor"</code> (Cuenta Maestra)</figcaption>
+      <edit-table id="t-libro" class="muestra-t" theme="libro-mayor" data-tema="propio" readonly="true">
+      <edit-thead><edit-tr>
+        <edit-th type="Text" field="codigo" width="80px">Cliente</edit-th>
+        <edit-th type="Text" field="nombre">Nombre</edit-th>
+        <edit-th type="Number" field="saldo" textalign="end" width="120px" format="true" decs="2" prefix="$" thousandssep="true" summary="sum">Saldo</edit-th>
+      </edit-tr></edit-thead>
+      </edit-table></figure>
   </div>
-  <div class="barra" style="margin-top:14px">
-    <label for="acento">Acento de la cuarta tabla</label>
-    <input type="color" id="acento" value="#7a4b1f">
+
+  <h2 style="margin:22px 0 10px">Laboratorio</h2>
+  <div class="lab">
+    <label><span>Tema (<code>Theme</code>)</span>
+      <select id="tema">
+        <option value="claro">claro</option><option value="oscuro">oscuro</option><option value="jade">jade</option>
+        <option value="libro-mayor">libro-mayor</option><option value="auto">auto (sigue al sistema)</option>
+        <option value="v12" selected>v12 (defineTheme)</option><option value="">sin tema (como la v1)</option>
+      </select></label>
+    <label><span>Densidad (<code>Density</code>)</span>
+      <select id="densidad"><option value="compacta">compacta</option><option value="normal" selected>normal</option><option value="comoda">cómoda</option></select></label>
+    <label><span>Filas alternadas (<code>Striped</code>)</span>
+      <select id="rayas"><option value="">por omisión (sí con tema)</option><option value="true">sí</option><option value="false">no</option></select></label>
   </div>
+  <div class="colores" id="colores"></div>
+  <div class="caja-tabla">
+    <edit-table id="lab" theme="v12" data-tema="propio" multi-select="checkbox" style="min-width:760px">
+      <edit-thead><edit-tr>
+        <edit-th type="Text" field="codigo" width="90px">Cliente</edit-th>
+        <edit-th type="Text" field="nombre" minwidth="230px" summary="count" summary-label="{value} clientes">Nombre</edit-th>
+        <edit-th type="Text" field="ciudad" width="140px">Ciudad</edit-th>
+        <edit-th type="Badges" field="_estado" width="100px">Estado</edit-th>
+        <edit-th type="Number" field="saldo" textalign="end" format="true" decs="2" prefix="$" thousandssep="true" width="130px" summary="sum">Saldo</edit-th>
+        <edit-th type="Date" field="alta" width="130px">Alta</edit-th>
+      </edit-tr></edit-thead>
+    </edit-table>
+  </div>
+  <pre class="salida" id="paleta"></pre>
 </div>
 </section>
 
 <div id="codigo"></div>
 
 <div class="explica">
-  <div class="tarjeta">
-    <h2>API que usa esta página (propuesta para F8)</h2>
+  <div class="tarjeta prueba">
+    <h2>Pruebe</h2>
     <ul>
-      <li>Bandera <code>'theme'</code>. Atributo <code>theme</code> (propiedad <code>Theme</code>) con <code>claro</code>, <code>oscuro</code>, <code>jade</code> o <code>libro-mayor</code>; observado, así que cambiarlo después de cargar se aplica.</li>
-      <li>Atributo <code>palette</code>: JSON con colores puntuales (<code>accent</code>, <code>header</code>…) que se vuelven variables <code>--et-*</code>.</li>
-      <li>Sin <code>theme</code>, el componente se ve como hoy (regla R1); <code>control-styles</code> sigue ganando.</li>
+      <li>Cambie el tema del laboratorio: no se redibuja nada, solo cambian las variables. La selección y la fila marcada se conservan.</li>
+      <li>Mueva un color: <code>SetPalette({…}, {merge:true})</code> lo pone encima del tema que esté.</li>
+      <li><strong>auto</strong> sigue a <code>prefers-color-scheme</code>; el botón del sitio, arriba, cambia <code>theme</code> de las tablas de las demás páginas.</li>
+      <li>Navegue con el teclado: la celda activa lleva su propio contorno, distinto de la fila seleccionada.</li>
     </ul>
   </div>
   <div class="tarjeta">
-    <h2>Mientras tanto</h2>
+    <h2>API que usa esta página</h2>
     <ul>
-      <li>Sin la bandera, los atributos se ignoran y las cuatro tablas se ven con el estilo de la versión actual.</li>
-      <li>Estas tablas llevan <code>data-tema="propio"</code> para que el sitio no les ponga su tema.</li>
+      <li>Atributos <code>theme</code>, <code>palette</code>, <code>striped</code> y <code>density</code>, observados; propiedades <code>Theme</code>, <code>Palette</code>, <code>Striped</code>, <code>Density</code>.</li>
+      <li><code>SetPalette(obj, {merge})</code>; <code>null</code> la quita. <code>EditTable.themes</code> lista los temas resueltos.</li>
+      <li><code>EditTable.defineTheme(nombre, paleta, {base})</code>: lo que no se da sale de <code>base</code>.</li>
+      <li>Precedencia: tema &lt; variables <code>--et-*</code> del sitio &lt; <code>palette</code>. Sin <code>theme</code>, la tabla se ve exactamente como en la v1.</li>
     </ul>
   </div>
 </div>
@@ -98,16 +127,48 @@
 </div>
 </div>
 <script data-demo>
+// Un tema propio, registrado antes de que las tablas se inicialicen: lo que no se da sale de «claro»
+EditTable.defineTheme('v12', {
+  'header-bg': '#0F3D6E', 'header-fg': '#FFFFFF', 'header-border': '#0B2E54',
+  'sel-bg': '#1F5FA8', 'accent': '#1F5FA8', 'focus-ring': '#1F5FA8', 'active-cell': '#0F3D6E',
+  'row-alt-bg': '#F2F6FB', 'hover-bg': '#E6EEF8', 'radius': '2px', 'header-weight': '700',
+}, { base: 'claro' });
+
 document.addEventListener('DOMContentLoaded', () => {
-  const datos = Datos.productos(5).map(p => ({ codigo: p.codigo, descripcion: p.descripcion, precio: p.precio }));
-  ['t-claro', 't-oscuro', 't-jade', 't-libro'].forEach((id) => {
-    const t = document.getElementById(id);
-    t.DataArray = datos.map(r => ({ ...r }));
-    t._printRows();
-  });
-  document.getElementById('acento').oninput = (e) => {
-    document.getElementById('t-libro').setAttribute('palette', JSON.stringify({ accent: e.target.value, header: '#f3ead8' }));
+  const $ = (id) => document.getElementById(id);
+  // Las cuatro muestras: mismos datos, con un saldo negativo para ver et-neg
+  const muestra = Datos.clientes(6).map(c => ({ codigo: c.codigo, nombre: c.nombre, saldo: c.saldo }));
+  muestra[2].saldo = -1842.5;
+  document.querySelectorAll('.muestra-t').forEach((t) => { t.DataArray = muestra.map(r => ({ ...r })); t._printRows(); t.NavTo(1, 1); });
+
+  // Laboratorio
+  const t = $('lab');
+  t.RowBadges = (r) => [r.saldo < 0 ? { id: 'mora', text: 'Mora', bg: '#A13A14', color: '#fff' } : { id: 'al-dia', text: 'Al día', bg: '#1E6B3A', color: '#fff' }];
+  t.DataArray = Datos.clientes(14).map(c => ({ codigo: c.codigo, nombre: c.nombre, ciudad: c.ciudad, saldo: c.saldo, alta: c.alta }));
+  t._printRows();
+  t.SelectRows([1, 4]);
+  t.NavTo(3, 1);
+
+  const mostrar = () => {
+    const p = t.Palette;
+    $('paleta').textContent = 'Theme: ' + JSON.stringify(t.Theme) + ' · Density: ' + JSON.stringify(t.Density) + ' · Striped: ' + JSON.stringify(t.Striped) +
+      '\nPalette: ' + (p ? JSON.stringify(p) : 'null') + '\nTemas registrados: ' + Object.keys(EditTable.themes).join(', ');
   };
+  $('tema').onchange = (e) => { t.Theme = e.target.value; mostrar(); };
+  $('densidad').onchange = (e) => { t.Density = e.target.value; mostrar(); };
+  $('rayas').onchange = (e) => { t.Striped = e.target.value === '' ? null : e.target.value === 'true'; mostrar(); };
+
+  // Paleta en vivo: cada color es una clave de palette, encima del tema que esté
+  for (const [k, txt, v] of [['header-bg', 'encabezado', '#0F3D6E'], ['sel-bg', 'selección', '#1F5FA8'], ['row-alt-bg', 'fila alterna', '#F2F6FB'], ['neg-fg', 'negativos', '#C62828']]) {
+    const l = document.createElement('label'); const i = document.createElement('input');
+    i.type = 'color'; i.value = v; i.setAttribute('aria-label', 'Color de ' + txt); i.dataset.clave = k;
+    i.oninput = () => { t.SetPalette({ [k]: i.value }, { merge: true }); mostrar(); };
+    l.append(i, txt); $('colores').appendChild(l);
+  }
+  const quitar = document.createElement('button'); quitar.type = 'button'; quitar.className = 'btn'; quitar.id = 'sin-paleta'; quitar.textContent = 'SetPalette(null)';
+  quitar.onclick = () => { t.SetPalette(null); mostrar(); };
+  $('colores').appendChild(quitar);
+  mostrar();
 });
 </script>
 </body>

@@ -8,12 +8,6 @@
   --letra: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif;
   --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
   color-scheme: light;
-  /* Variables que consume el tema de EdiTable (assets/tema-edittable.js) */
-  --et-texto: var(--texto); --et-texto-2: var(--texto-2); --et-cab: #f7f8fa; --et-sup: var(--sup); --et-sup-2: var(--sup-2);
-  --et-borde: var(--borde); --et-linea: var(--linea); --et-hover: #f7f9fa; --et-sel: #e6f3f1; --et-marcada: #eef6ff; --et-acento: var(--acento); --et-anillo: var(--anillo);
-  --et-grupo: #f1f4f7; --et-grupo-hover: #e9eef2; --et-esquema: light;
-  --et-fixed-bg: var(--sup); --et-fixed-head-bg: var(--et-cab); --et-fixed-hover-bg: var(--et-hover); --et-group-bg: var(--et-grupo); --et-group-hover-bg: var(--et-grupo-hover);
-  --et-badge-bg: #6b7785;
 }
 :root[data-tema="oscuro"] {
   --fondo: #0d1116; --sup: #151b22; --sup-2: #1b232c; --texto: #e7ecf1; --texto-2: #a3aeb9; --texto-3: #74808c;
@@ -21,8 +15,6 @@
   --aviso: #e3b341; --aviso-suave: #2e2510; --error: #ff7b72; --error-suave: #3a1715; --ok: #56d364; --ok-suave: #12301b; --info: #79a6ff; --info-suave: #16233f;
   --sombra: 0 1px 2px rgba(0,0,0,.4); --sombra-2: 0 16px 40px -16px rgba(0,0,0,.6);
   color-scheme: dark;
-  --et-cab: #19212a; --et-hover: #1a222b; --et-sel: #163a35; --et-marcada: #172a45; --et-grupo: #1d2630; --et-grupo-hover: #222d38; --et-esquema: dark;
-  --et-badge-bg: #4b5866;
 }
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
