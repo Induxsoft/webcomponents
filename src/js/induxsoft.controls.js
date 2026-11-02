@@ -529,6 +529,32 @@
  * página.
  */
 
+// IK-7 (2026-11-02): construcción de los componentes del núcleo (EditSelect, InputKey, CheckList, StackEdit, DateRange,
+// SafeInput, MediaList, FilterText, FilterDateRange). Mientras la página carga, en DOMContentLoaded como siempre (mismo
+// orden); si ya cargó (elemento insertado por JS, o este archivo cargado tarde), en un microtask, para que tome los
+// atributos que se pongan en el mismo script después de insertarlo. Se construye una sola vez: reconectar no repite.
+// Antes, un componente insertado después de DOMContentLoaded no se construía nunca. Mismo criterio que EdiTable (F1, C9).
+function _ixDocumentoCargado()
+{
+    if (document.readyState === 'complete') return true;
+    if (document.readyState === 'loading') return false;
+    try { const nav = performance.getEntriesByType('navigation')[0]; if (nav) return nav.domContentLoadedEventStart > 0; } catch (e) { }
+    return true;
+}
+function _ixConstruirAlCargar(el, construir)
+{
+    if (el._ixConstruido || el._ixEsperando) return;
+    el._ixEsperando = true;
+    const hacer = () => { el._ixEsperando = false; if (el._ixConstruido) return; el._ixConstruido = true; construir(); };
+    if (!_ixDocumentoCargado()) { document.addEventListener('DOMContentLoaded', hacer); return; }
+    queueMicrotask(() =>
+    {
+        if (!el.isConnected) { el._ixEsperando = false; return; }   // se quitó antes: se construye al volver a conectarse
+        el.attributes = el.getAttributeNames();   // lo que hace el DOMContentLoaded del constructor
+        hacer();
+    });
+}
+
 class EditSelect extends HTMLElement
 {
     attributes = null;
@@ -561,7 +587,7 @@ class EditSelect extends HTMLElement
     // Se llama cuando el componente se agrega al documento
     connectedCallback()
     {
-        document.addEventListener('DOMContentLoaded', () => 
+        _ixConstruirAlCargar(this, () =>   // IK-7 (2026-11-02)
         {
             const shadow = this.attachShadow({ mode: 'closed' });
             const option = this.querySelectorAll('option');
@@ -770,9 +796,9 @@ class InputKey extends HTMLElement
 
     connectedCallback()
     {
-        document.addEventListener('DOMContentLoaded', () => 
+        _ixConstruirAlCargar(this, () =>   // IK-7 (2026-11-02)
         {
-            this.CreateShadow();
+            if (!this.shadow) this.CreateShadow();   // pudo construirse antes (pick(), open() de InputKey 2)
         });
         this._ik2Conectado();   // InputKey 2
     }
@@ -1993,11 +2019,9 @@ class InputKey extends HTMLElement
     // ---- Ciclo de vida
     _ik2Conectado()
     {
-        // Hoy un input-key insertado después de DOMContentLoaded no se construye nunca. Se conserva así; solo se
-        // construye tarde si declara un atributo de InputKey 2 (theme, popup o headless), que ninguna pantalla usa hoy.
-        if (this.shadow) { this._ik2Suscribir(); this._ik2Aplicar(); return; }
-        if (document.readyState !== 'loading' && (this.hasAttribute('theme') || this.hasAttribute('popup') || this.hasAttribute('headless')))
-            queueMicrotask(() => { if (!this.shadow && this.isConnected) this.CreateShadow(); });
+        // IK-7 (2026-11-02): la construcción tardía ya es general (_ixConstruirAlCargar en connectedCallback); antes solo
+        // se construía tarde con theme, popup o headless. Aquí queda lo de reconectar uno ya construido.
+        if (this.shadow) { this._ik2Suscribir(); this._ik2Aplicar(); }
     }
     _ik2Desconectado()
     {
@@ -2975,7 +2999,7 @@ class CheckList extends HTMLElement
 
     connectedCallback()
     {
-        document.addEventListener('DOMContentLoaded', () => 
+        _ixConstruirAlCargar(this, () =>   // IK-7 (2026-11-02)
         {
             const shadow =      this.attachShadow({ mode: 'closed' });
             this.locked =       this._parseBool(this.getAttribute('data-locked'));
@@ -3789,7 +3813,7 @@ class StackEdit extends HTMLElement
 
     connectedCallback()
     {
-        document.addEventListener('DOMContentLoaded', () => 
+        _ixConstruirAlCargar(this, () =>   // IK-7 (2026-11-02)
         {
             const shadow =      this.attachShadow({ mode: 'closed' });
             this.captionA =     (this.getAttribute('caption-a')??'a');
@@ -4078,7 +4102,7 @@ class DateRange extends HTMLElement
 
     connectedCallback()
     {
-        document.addEventListener('DOMContentLoaded', () => 
+        _ixConstruirAlCargar(this, () =>   // IK-7 (2026-11-02)
         {
             const shadow = this.attachShadow({ mode: 'closed' });
             this._contnr = this._createFullElement('div', { id:'DateRange_contnr', class:'w-100 d-flex border'});
@@ -4359,7 +4383,7 @@ class SafeInput extends HTMLElement
 
     connectedCallback()
     {
-        document.addEventListener('DOMContentLoaded', () => 
+        _ixConstruirAlCargar(this, () =>   // IK-7 (2026-11-02)
         {
             const shadow = this.attachShadow({ mode: 'closed' });
             
@@ -4595,7 +4619,7 @@ class MediaList extends HTMLElement
     }
     connectedCallback()
     {
-        document.addEventListener('DOMContentLoaded', () => 
+        _ixConstruirAlCargar(this, () =>   // IK-7 (2026-11-02)
         {
             const shadow = this.attachShadow({ mode: 'closed' });
             const ppanel = this._createFullElement('div', { id:'MediaList_ppanel', class: 'p-1 bordered' });
@@ -4985,7 +5009,7 @@ class FilterText extends HTMLElement
     }
     connectedCallback()
     {
-        document.addEventListener('DOMContentLoaded', () =>
+        _ixConstruirAlCargar(this, () =>   // IK-7 (2026-11-02)
         {
             const shadow = this.attachShadow({ mode: 'closed' });
             this._writeStyles(shadow);
@@ -5213,7 +5237,7 @@ class FilterDateRange extends HTMLElement
     }
     connectedCallback()
     {
-        document.addEventListener('DOMContentLoaded', () =>
+        _ixConstruirAlCargar(this, () =>   // IK-7 (2026-11-02)
         {
             const shadow = this.attachShadow({ mode: 'closed' });
             this._writeStyles(shadow);

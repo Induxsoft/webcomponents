@@ -324,6 +324,56 @@ window.__filasA = function () { return Array.from(document.getElementById('ika')
       } },
     ];
   })(),
+  // ===== IK-7: componentes insertados después de cargar la página
+  { id: 'ik7-insertado', titulo: 'IK-7: un input-key insertado con createElement después de cargar se construye: campo, inputv con name en el formulario y data-value', fn: async (page, ok) => {
+    const r = await ev(page, async () => {
+      const f = document.createElement('form'); f.id = 'f7'; document.body.appendChild(f);
+      const a = document.createElement('input-key');
+      ['data-key:id', 'data-search:clave', 'data-text:nombre', 'columns:clave,nombre'].forEach(x => { const i = x.indexOf(':'); a.setAttribute(x.slice(0, i), x.slice(i + 1)); });
+      f.appendChild(a);
+      // Atributos puestos en el mismo script DESPUÉS de insertarlo: también se toman (se construye en un microtask).
+      a.setAttribute('name', 'prod7'); a.setAttribute('data-value', JSON.stringify({ id: 2, clave: 'C-002', nombre: 'Tornillo ficticio' }));
+      const antes = !!a.shadowRoot;
+      await new Promise(res => setTimeout(res, 50));
+      const s = a.shadowRoot;
+      return { antes, shadow: !!s, campo: !!(s && s.getElementById('container')), form: new FormData(f).get('prod7'), nombres: f.querySelectorAll('input[name="prod7"]').length, clave: s ? s.getElementById('search_container') && s.getElementById('search_container').value : null };
+    });
+    ok(r.antes === false, 'no se construye en el mismo instante (microtask): ' + JSON.stringify(r));
+    ok(r.shadow && r.campo, 'se construye y aparece el campo: ' + JSON.stringify(r));
+    ok(r.form === '2' && r.nombres === 1, 'el formulario manda prod7=2 con un solo control: ' + JSON.stringify(r));
+  } },
+  { id: 'ik7-reinsertado', titulo: 'IK-7: insertado, quitado y vuelto a insertar no se construye dos veces; quitado antes de construirse, se construye al volver', fn: async (page, ok) => {
+    const r = await ev(page, async () => {
+      const espera = () => new Promise(res => setTimeout(res, 40));
+      const a = document.createElement('input-key'); a.setAttribute('data-key', 'id'); a.setAttribute('name', 'r7');
+      document.body.appendChild(a); await espera();
+      const s1 = a.shadowRoot;
+      a.remove(); document.body.appendChild(a); await espera();
+      const b = document.createElement('input-key'); b.setAttribute('data-key', 'id'); b.setAttribute('name', 'q7');
+      document.body.appendChild(b); b.remove(); await espera();
+      const bAntes = !!b.shadowRoot;
+      document.body.appendChild(b); await espera();
+      return { mismo: !!s1 && a.shadowRoot === s1, inputs: document.querySelectorAll('input[name="r7"]').length, bAntes, bDespues: !!b.shadowRoot, bInputs: document.querySelectorAll('input[name="q7"]').length };
+    });
+    ok(r.mismo && r.inputs === 1, 'a: un solo shadow y un solo inputv: ' + JSON.stringify(r));
+    ok(r.bAntes === false && r.bDespues === true && r.bInputs === 1, 'b: no se construye quitado; sí al volver, una vez: ' + JSON.stringify(r));
+  } },
+  { id: 'ik7-otros', titulo: 'IK-7: los demás componentes del núcleo insertados después de cargar también se construyen (una vez)', fn: async (page, ok) => {
+    const r = await ev(page, async () => {
+      const tags = ['edit-select', 'check-list', 'stack-edit', 'date-range', 'safe-input', 'media-list', 'filter-text', 'filter-date-range'];
+      const out = {};
+      for (const t of tags) {
+        const e = document.createElement(t); document.body.appendChild(e);
+        await new Promise(res => setTimeout(res, 20));
+        const s = e.shadowRoot; e.remove(); document.body.appendChild(e);
+        await new Promise(res => setTimeout(res, 20));
+        out[t] = !!s && e.shadowRoot === s;
+      }
+      return out;
+    });
+    const mal = Object.keys(r).filter(k => !r[k]);
+    ok(mal.length === 0, 'sin construir o reconstruidos: ' + JSON.stringify(mal));
+  } },
   ...(await import('./ik2.mjs')).default({ esperar, buscar, ev, clicShadow, sinDoc }),
 ];
 

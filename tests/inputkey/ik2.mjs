@@ -326,14 +326,14 @@ export default ({ esperar, buscar, ev, clicShadow, sinDoc }) => {
       ok(JSON.stringify(r) === '["OK","Cancel"]', JSON.stringify(r));
     } },
     // ===== Construcción tardía (riesgo del inventario: solo DOMContentLoaded)
-    { id: 'ik2-tardio', titulo: 'Construcción: insertado después de cargar, sin atributos nuevos NO se construye (como hoy); con theme sí', fn: async (page, ok) => {
+    { id: 'ik2-tardio', titulo: 'Construcción: insertado después de cargar se construye con y sin atributos nuevos (IK-7; antes, sin ellos, no)', fn: async (page, ok) => {
       const r = await S(page, async () => {
         const a = document.createElement('input-key'); a.setAttribute('data-key', 'id'); document.body.appendChild(a);
         const b = document.createElement('input-key'); b.setAttribute('data-key', 'id'); b.setAttribute('theme', 'claro'); document.body.appendChild(b);
         await new Promise(r => setTimeout(r, 30));
         return { sin: !!a.shadowRoot, con: !!b.shadowRoot && b.shadowRoot.getElementById('container').classList.contains('ik2') };
       });
-      ok(r.sin === false && r.con === true, JSON.stringify(r));
+      ok(r.sin === true && r.con === true, JSON.stringify(r));
     } },
   ];
 };
