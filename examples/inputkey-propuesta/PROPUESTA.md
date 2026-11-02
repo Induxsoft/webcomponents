@@ -75,3 +75,69 @@ Cada paso con las pruebas del banco privado de la venta (`v12_qa/pruebas-edittab
 1. Activar la apariencia nueva con `theme` (igual que EdiTable) o además con `appearance="2"`, para tener la apariencia nueva sin elegir tema.
 2. En modo campo, ¿panel anclado por omisión cuando hay `theme`, o mantener la modal centrada y que el panel sea opcional (`mode="popover"`)?
 3. Nombres de los atributos nuevos: `mode`, `live-search`, `page-size`, `recent`, `strict`, `multiple` y `autoselect-exact`, además de `autoselect` y `autoselect-fields`, que ya existen desde IK-3 como propuesta.
+
+## Decisiones de Emmanuel (2026-11-02)
+
+1. La apariencia nueva se activa **solo con `theme`**. No habrá `appearance="2"`.
+2. El panel anclado es **opcional**. Aunque haya tema, la ventana de resultados sigue siendo la modal centrada de hoy, salvo que se pida el panel con `popup="anchored"`. El control se usa en muchos lugares y no se sabe dónde podría afectar un cambio de comportamiento.
+3. Nombres: propuestos abajo, en espera de aprobación.
+
+## Nombres propuestos
+
+Convenciones de EdiTable 2: atributos en kebab-case y propiedades en Pascal (R5). Los eventos se registran en el `addEventListener` sobrescrito (R4), con nombres en Pascal como los de EdiTable.
+
+**Aviso, verificado:** hoy el `addEventListener` de InputKey solo atiende `'change'` y descarta **sin error** cualquier otro nombre. No llama a `super`, así que un `click` registrado así nunca se ejecuta. Para no cambiar eso, los eventos nuevos entran como casos explícitos del `switch` y todo lo demás sigue descartándose.
+
+### Atributos
+
+| Atributo | Propiedad | Valores (omisión) | Qué hace | Punto |
+|---|---|---|---|---|
+| `theme` | `Theme` | `claro`, `oscuro`, `jade`, `libro-mayor`, `auto` (ninguno) | Activa la apariencia nueva con ese tema. Sin `theme`, todo como hoy. | A1 |
+| `palette` | `Palette` / `SetPalette()` | JSON de variables `--et-*` | Fija la paleta, igual que en EdiTable. | A1 |
+| `density` | `Density` | `compacta`, `normal`, `comoda` (`normal`) | Densidad, igual que en EdiTable. | A9 |
+| `popup` | `Popup` | `modal`, `anchored`, `auto` (`modal`) | Dónde salen los resultados: modal centrada (hoy), panel anclado al campo o a la celda, o `auto` (anclado en pantalla ancha y hoja inferior en móvil). | A5 |
+| `headless` | `Headless` | `true`, `false` (`false`) | No dibuja el campo, solo la ventana o el panel. Es la forma declarada del `control-styles="#container{display:none}"` de hoy, que sigue funcionando. | B1 |
+| `live-search` | `LiveSearch` | `true`, `false` (`false`) | Busca mientras se teclea. | B3 |
+| `min-chars` | `MinChars` | número (`2`) | Mínimo de caracteres para `live-search`. | B3 |
+| `search-delay` | `SearchDelay` | ms (`250`) | Espera entre teclas antes de buscar. | B3 |
+| `page-size` | `PageSize` | número (ninguno: trae todo, como hoy) | Límite por página. La URL recibe `@limit` y `@offset`. | B4 |
+| `cache-seconds` | `CacheSeconds` | segundos (`0`, sin caché) | Caché de resultados por texto. | B5 |
+| `recent-items` | `RecentItems` | número (`0`) | Cuántos registros recientes mostrar al abrir sin texto. | B6 |
+| `tab-accepts` | `TabAccepts` | `true`, `false` (`false`) | Tab acepta la fila activa de la lista. | B7 |
+| `columns` | — | lista (hoy) **o** JSON | Además de `codigo,descripcion`, acepta `[{"field","title","type","align","width","hidden"}]`. | B8 |
+| `search-fields` | `SearchFields` | lista de campos (`data-search`) | En qué campos filtra `data-source-array`. | B9 |
+| `strict` | `Strict` | `true`, `false` (`false`) | Lo escrito debe corresponder a un registro; si no, el campo queda inválido. | B10 |
+| `autoselect` | `Autoselect` | `true`, `false`, `exact` (`true`) | **Se amplía el atributo existente** (IK-3) en lugar de crear `autoselect-exact`. `true`: un solo resultado y exacto, como hoy. `exact`: también entre varios resultados, si uno es exacto (`100` frente a `1000`). `false`: nunca. | B13 |
+| `autoselect-fields` | `AutoselectFields` | lista de campos | Ya existe (IK-3). | — |
+| `multi-select` | `MultiSelect` | `true`, `false` (`false`) | Casillas en la lista; `pick()` devuelve un arreglo. Es el mismo nombre que en EdiTable. | B14 |
+| `request-timeout` | `RequestTimeout` | ms (`30000`) | Tiempo máximo de la búsqueda; si se pasa, muestra un error con «Reintentar». | B15 |
+| `search-case` | `SearchCase` | `lower`, `keep` (`lower`) | Mandar el texto en minúsculas (hoy) o tal cual. | B16 |
+| `texts` | `Texts` | JSON | Textos de la interfaz (Aceptar, Cancelar, avisos, títulos). También `InputKey.texts`, global. | A11 |
+
+### Métodos y propiedades
+
+| Nombre | Qué hace | Punto |
+|---|---|---|
+| `open(texto?, {anchor?})` | Abre la ventana o el panel con ese texto. Con `anchor` (por ejemplo, el `td`) y `popup="anchored"`, se ancla ahí. | B1 |
+| `close()` | Cierra sin seleccionar. | B1 |
+| `pick(texto?, {anchor?, multiple?})` → `Promise` | Abre, espera y resuelve con el registro (o un arreglo con `multi-select`). Al cancelar resuelve `null`. | B1 |
+| `load(llave)` → `Promise` | Busca por `data-key` y muestra el registro. | B11 |
+| `DataSource` (propiedad) | Función `async (texto, {limit, offset, signal}) => filas` en lugar de `data-source`. | B9 |
+| `checkValidity()` / `reportValidity()` | Validación nativa de formulario (`required`, `strict`). | B10 |
+| `searchText`, `setValue`, `getValue`, `clear`, `onBeforeSearch`, `change_event` | **Se conservan** sin cambios. | — |
+
+### Eventos (con `addEventListener`)
+
+| Evento | Cuándo | Detalle |
+|---|---|---|
+| `change` | Como hoy | Sin cambios. |
+| `Selected` | Al aceptar uno o más registros | `{record}` o `{records}` |
+| `Canceled` | Al cerrar sin elegir (Esc, Cancelar, X o clic fuera) | `{text}` |
+| `BeforeSearch` | Antes de buscar; se puede cancelar o cambiar el texto | `{text, cancel}` |
+| `SearchCompleted` | Al llegar los resultados | `{text, count}` |
+| `SearchError` | Si falla la red o se pasa el tiempo | `{text, error}` |
+| `Opened` / `Closed` | Al abrir o cerrar la ventana o el panel | `{popup}` |
+
+`BeforeSearch` convive con `onBeforeSearch`, la propiedad de hoy, que se conserva.
+
+`Selected` y `Canceled` sustituyen a los `ik-select` e `ik-cancel` que proponía B2, para seguir la convención de EdiTable.
