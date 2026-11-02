@@ -381,6 +381,7 @@ class EditTable extends HTMLElement
             this.checkAndSetRowCards();
             this._f5Iniciar?.();   // F5: virtual-rows (después de UpdateData y de la vista de tarjetas)
             this._f8bIniciar();   // F8b: variables --et-* en el CSSOM y theme/palette/striped/density
+            this._impIniciar();   // Impresión: sin scroll ni recorte (regla en el CSSOM, no cambia el texto de los <style>)
         }
         this._f1Inicializada = true;
         // F1 (C11): si lo sacaron del documento antes de inicializarse, no deja nada activo.
@@ -10472,6 +10473,27 @@ class EditTable extends HTMLElement
     _f8bHojas = new WeakSet();    // hojas ya reescritas
     _f8bMarcas = false;           // et-num / et-neg en las celdas (solo con tema)
 
+    // Impresión (2026-11-02): el contenedor interno tiene overflow:auto en línea y los anchos fijos de las columnas
+    // pueden sumar más que la hoja; al imprimir se veía la barra de scroll y la tabla recortada a la derecha.
+    // Se agrega con insertRule para no cambiar el texto de los <style> (el banco los compara por sha256).
+    static _impCss = `@media print {
+        div:has(> table) { overflow: visible !important; max-height: none !important; }
+        table { width: 100% !important; max-width: 100% !important; }
+        table > thead > tr > th, table > tbody > tr > td, table > tfoot > tr > td { width: auto !important; min-width: 0 !important; max-width: none !important; white-space: normal !important; overflow-wrap: normal; }
+        table .cell-content { width: auto !important; min-width: 0 !important; overflow: visible; }
+    }`;
+    _impIniciar()
+    {
+        try
+        {
+            const st = this._shadow?.querySelector('style');
+            const sh = st?.sheet;
+            if (!sh || this._impPuesta) return;
+            sh.insertRule(EditTable._impCss, sh.cssRules.length);
+            this._impPuesta = true;
+        }
+        catch (e) { }
+    }
     _f8bIniciar()
     {
         EditTable._f8bVivas.add(new WeakRef(this));

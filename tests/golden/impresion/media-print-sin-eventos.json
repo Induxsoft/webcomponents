@@ -268,6 +268,13 @@
       "estilos": {
        "$parche": [
         [
+         1,
+         1,
+         [
+          "contenedor = display:block;position:static;width:968px;height:123px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
          4,
          4,
          [

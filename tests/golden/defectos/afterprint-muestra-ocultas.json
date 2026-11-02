@@ -311,7 +311,17 @@
       "columnas": "@=paso-anterior",
       "respaldo": "@=paso-anterior",
       "props": "@=paso-anterior",
-      "estilos": "@=paso-anterior"
+      "estilos": {
+       "$parche": [
+        [
+         1,
+         1,
+         [
+          "contenedor = display:block;position:static;width:968px;height:155px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ]
+       ]
+      }
      }
     ],
     "luz": "@=paso-anterior",
@@ -340,7 +350,17 @@
       "columnas": "@=paso-anterior",
       "respaldo": "@=paso-anterior",
       "props": "@=paso-anterior",
-      "estilos": "@=paso-anterior"
+      "estilos": {
+       "$parche": [
+        [
+         1,
+         1,
+         [
+          "contenedor = display:block;position:static;width:968px;height:155px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:auto;overflow-y:auto"
+         ]
+        ]
+       ]
+      }
      }
     ],
     "luz": "@=paso-anterior",
