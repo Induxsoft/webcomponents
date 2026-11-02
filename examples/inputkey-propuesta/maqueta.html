@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>InputKey 2 · maqueta de la apariencia propuesta</title>
+<!--
+  Maqueta estática (HTML + CSS + JS, sin dependencias) de la propuesta en PROPUESTA.md.
+  No usa el componente real: ilustra cómo se vería y se manejaría. Datos ficticios.
+  Los colores salen de las mismas variables --et-* de EdiTable 2, con los valores de sus temas.
+-->
+<style>
+/* ---------- Temas (mismos nombres y valores base que EdiTable 2 F8b) ---------- */
+.t-claro{ --et-bg:#fff; --et-fg:#1f2328; --et-muted-fg:#6b7280; --et-header-bg:#f3f5f8; --et-header-fg:#374151; --et-border:#d8dee6; --et-row-alt-bg:#fafbfc; --et-hover-bg:#eef3fb; --et-sel-bg:#2f66cc; --et-sel-fg:#fff; --et-accent:#2f66cc; --et-focus-ring:rgba(47,102,204,.35); --et-input-bg:#fff; --et-input-border:#c7cfd9; --et-mark-bg:#fff2a8; --et-mark-fg:#1f2328; --et-error:#c62828; --et-error-bg:#fdecea; --et-ok:#2e7d32; --et-radius:6px; --et-font:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; --et-mono:ui-monospace,"Cascadia Mono",Consolas,monospace; --pagina:#eef1f5; }
+.t-oscuro{ --et-bg:#1b1f24; --et-fg:#e6e8eb; --et-muted-fg:#9aa3ad; --et-header-bg:#232931; --et-header-fg:#cfd5dc; --et-border:#353d47; --et-row-alt-bg:#1f242a; --et-hover-bg:#2a313a; --et-sel-bg:#3d74d6; --et-sel-fg:#fff; --et-accent:#6ea0ff; --et-focus-ring:rgba(110,160,255,.4); --et-input-bg:#14181c; --et-input-border:#3c4550; --et-mark-bg:#6b5a12; --et-mark-fg:#fff6c9; --et-error:#ff8a80; --et-error-bg:#3a1f1f; --et-ok:#81c784; --et-radius:6px; --et-font:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; --et-mono:ui-monospace,"Cascadia Mono",Consolas,monospace; --pagina:#111418; color-scheme:dark; }
+.t-jade{ --et-bg:#fff; --et-fg:#111b21; --et-muted-fg:#667781; --et-header-bg:#f0f2f5; --et-header-fg:#3b4a54; --et-border:#e1e6ea; --et-row-alt-bg:#f7f8fa; --et-hover-bg:#f0f2f5; --et-sel-bg:#d9fdd3; --et-sel-fg:#111b21; --et-accent:#0f7a41; --et-focus-ring:rgba(15,122,65,.3); --et-input-bg:#fff; --et-input-border:#d1d7db; --et-mark-bg:#fff4b8; --et-mark-fg:#111b21; --et-error:#b3261e; --et-error-bg:#fdecea; --et-ok:#0f7a41; --et-radius:10px; --et-font:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; --et-mono:ui-monospace,"Cascadia Mono",Consolas,monospace; --pagina:#efeae2; }
+.t-libro{ --et-bg:#fffdf8; --et-fg:#22201b; --et-muted-fg:#6d675c; --et-header-bg:#f1ece0; --et-header-fg:#3a362e; --et-border:#cfc6b4; --et-row-alt-bg:#faf7ef; --et-hover-bg:#f3eee2; --et-sel-bg:#1f3a5f; --et-sel-fg:#fffdf8; --et-accent:#1f3a5f; --et-focus-ring:rgba(31,58,95,.35); --et-input-bg:#fffdf8; --et-input-border:#b9ae98; --et-mark-bg:#f2e29b; --et-mark-fg:#22201b; --et-error:#9b1c1c; --et-error-bg:#f8e5e1; --et-ok:#2f5d33; --et-radius:0px; --et-font:"IBM Plex Sans",system-ui,"Segoe UI",sans-serif; --et-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace; --pagina:#e9e3d6; }
+.d-compacta{ --ik-h:28px; --ik-pad:4px 8px; --ik-row:26px; --ik-fs:13px; }
+.d-normal{ --ik-h:34px; --ik-pad:6px 10px; --ik-row:32px; --ik-fs:14px; }
+.d-comoda{ --ik-h:42px; --ik-pad:9px 12px; --ik-row:40px; --ik-fs:15px; }
+
+*{ box-sizing:border-box; }
+body{ margin:0; font-family:var(--et-font); font-size:var(--ik-fs); color:var(--et-fg); background:var(--pagina); }
+header.barra{ position:sticky; top:0; z-index:50; display:flex; flex-wrap:wrap; gap:14px; align-items:center; padding:10px 20px; background:var(--et-bg); border-bottom:1px solid var(--et-border); }
+header.barra h1{ font-size:16px; margin:0 12px 0 0; }
+header.barra label{ display:flex; gap:6px; align-items:center; color:var(--et-muted-fg); font-size:13px; }
+select, button{ font:inherit; }
+main{ max-width:1080px; margin:0 auto; padding:22px 20px 80px; display:grid; gap:22px; }
+section.tarjeta{ background:var(--et-bg); border:1px solid var(--et-border); border-radius:calc(var(--et-radius) + 4px); padding:18px 20px 22px; }
+section.tarjeta > h2{ font-size:15px; margin:0 0 4px; }
+section.tarjeta > p.nota{ margin:0 0 16px; color:var(--et-muted-fg); font-size:13px; line-height:1.5; }
+.fila{ display:flex; flex-wrap:wrap; gap:18px 24px; align-items:flex-start; }
+.campo-demo{ display:grid; grid-template-columns:minmax(0,1fr); gap:6px; min-width:240px; flex:1 1 300px; }
+.campo-demo > span.etq{ font-size:12px; color:var(--et-muted-fg); font-weight:600; letter-spacing:.02em; }
+kbd{ font-family:var(--et-mono); font-size:11px; padding:1px 5px; border:1px solid var(--et-border); border-bottom-width:2px; border-radius:4px; background:var(--et-header-bg); color:var(--et-header-fg); }
+
+/* ---------- A3/A4: campo unificado ---------- */
+.ik{ position:relative; }
+.ik-caja{ display:flex; align-items:stretch; height:var(--ik-h); background:var(--et-input-bg); border:1px solid var(--et-input-border); border-radius:var(--et-radius); overflow:hidden; transition:border-color .12s, box-shadow .12s; }
+.ik-caja:focus-within{ border-color:var(--et-accent); box-shadow:0 0 0 3px var(--et-focus-ring); }
+.ik-clave{ width:9.5em; flex:0 0 auto; border:0; outline:0; padding:var(--ik-pad); background:transparent; color:var(--et-fg); font-family:var(--et-mono); font-size:inherit; }
+.ik-sep{ width:1px; background:var(--et-border); margin:6px 0; }
+.ik-desc{ flex:1 1 auto; min-width:0; padding:var(--ik-pad); display:flex; align-items:center; color:var(--et-fg); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ik-desc.vacio{ color:var(--et-muted-fg); font-style:italic; }
+.ik-btn{ flex:0 0 auto; width:calc(var(--ik-h) - 2px); border:0; background:transparent; color:var(--et-muted-fg); display:grid; place-items:center; cursor:pointer; }
+.ik-btn:hover{ background:var(--et-hover-bg); color:var(--et-fg); }
+.ik-btn:focus-visible{ outline:2px solid var(--et-accent); outline-offset:-2px; }
+.ik-btn svg{ width:15px; height:15px; }
+.ik-btn.principal{ color:var(--et-accent); border-left:1px solid var(--et-border); }
+.ik.invalido .ik-caja{ border-color:var(--et-error); box-shadow:0 0 0 3px color-mix(in srgb, var(--et-error) 18%, transparent); }
+.ik-msg{ font-size:12px; color:var(--et-error); margin-top:4px; display:flex; gap:6px; align-items:center; }
+.ik.deshabilitado{ opacity:.55; pointer-events:none; }
+.ik.deshabilitado .ik-caja{ background:var(--et-header-bg); }
+.giro{ width:15px; height:15px; border:2px solid var(--et-border); border-top-color:var(--et-accent); border-radius:50%; animation:giro .7s linear infinite; }
+@keyframes giro{ to{ transform:rotate(360deg); } }
+
+/* ---------- A5/A6: panel anclado y lista ---------- */
+.ik-panel{ position:absolute; z-index:40; left:0; top:calc(100% + 4px); min-width:100%; width:max-content; max-width:min(720px, 92vw); background:var(--et-bg); color:var(--et-fg); border:1px solid var(--et-border); border-radius:var(--et-radius); box-shadow:0 12px 32px rgba(0,0,0,.18), 0 2px 6px rgba(0,0,0,.08); display:flex; flex-direction:column; overflow:hidden; }
+.ik-panel[hidden]{ display:none; }
+.ik-panel .ik-buscar{ display:flex; gap:8px; align-items:center; padding:8px 10px; border-bottom:1px solid var(--et-border); }
+.ik-panel .ik-buscar svg{ width:15px; height:15px; color:var(--et-muted-fg); flex:0 0 auto; }
+.ik-panel .ik-buscar input{ flex:1 1 auto; border:0; outline:0; background:transparent; color:var(--et-fg); font:inherit; }
+.ik-cuenta{ font-size:12px; color:var(--et-muted-fg); white-space:nowrap; }
+.ik-lista{ max-height:272px; overflow:auto; }
+.ik-lista table{ border-collapse:separate; border-spacing:0; width:100%; }
+.ik-lista th{ position:sticky; top:0; background:var(--et-header-bg); color:var(--et-header-fg); font-weight:600; font-size:12px; text-align:start; padding:6px 10px; border-bottom:1px solid var(--et-border); white-space:nowrap; }
+.ik-lista td{ padding:0 10px; height:var(--ik-row); border-bottom:1px solid color-mix(in srgb, var(--et-border) 55%, transparent); white-space:nowrap; }
+.ik-lista tr:nth-child(even) td{ background:var(--et-row-alt-bg); }
+.ik-lista tbody tr{ cursor:pointer; }
+.ik-lista tbody tr:hover td{ background:var(--et-hover-bg); }
+.ik-lista tbody tr.activa td{ background:var(--et-sel-bg); color:var(--et-sel-fg); }
+.ik-lista tbody tr.activa mark{ background:transparent; color:inherit; text-decoration:underline; text-underline-offset:2px; }
+.num{ text-align:end; font-variant-numeric:tabular-nums; }
+.cod{ font-family:var(--et-mono); }
+mark{ background:var(--et-mark-bg); color:var(--et-mark-fg); border-radius:2px; padding:0 1px; }
+.etq-grupo{ font-size:11px; font-weight:700; color:var(--et-muted-fg); text-transform:uppercase; letter-spacing:.06em; padding:8px 10px 4px; }
+.ik-vacio{ padding:22px 16px; text-align:center; color:var(--et-muted-fg); display:grid; gap:10px; justify-items:center; }
+.ik-vacio svg{ width:28px; height:28px; opacity:.6; }
+.btn{ border:1px solid var(--et-input-border); background:var(--et-bg); color:var(--et-fg); border-radius:var(--et-radius); padding:5px 12px; cursor:pointer; }
+.btn:hover{ background:var(--et-hover-bg); }
+.btn.primario{ background:var(--et-accent); border-color:var(--et-accent); color:#fff; }
+.btn.primario:hover{ filter:brightness(1.08); }
+.ik-pie{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; padding:7px 10px; border-top:1px solid var(--et-border); background:var(--et-header-bg); font-size:12px; color:var(--et-muted-fg); }
+.ik-pie .esp{ flex:1; }
+
+/* ---------- Tabla tipo EdiTable para el modo headless ---------- */
+.grid{ border:1px solid var(--et-border); border-radius:var(--et-radius); overflow:visible; position:relative; }
+.grid table{ width:100%; border-collapse:separate; border-spacing:0; }
+.grid th{ background:var(--et-header-bg); color:var(--et-header-fg); text-align:start; font-weight:600; font-size:12px; padding:7px 10px; border-bottom:1px solid var(--et-border); }
+.grid td{ padding:0 10px; height:var(--ik-row); border-bottom:1px solid color-mix(in srgb, var(--et-border) 55%, transparent); }
+.grid tr:nth-child(even) td{ background:var(--et-row-alt-bg); }
+.grid td.activa{ box-shadow:inset 0 0 0 2px var(--et-accent); }
+.grid td.editando{ padding:0; }
+.grid td.editando input{ width:100%; height:var(--ik-row); border:0; outline:0; padding:0 10px; font:inherit; font-family:var(--et-mono); background:var(--et-input-bg); color:var(--et-fg); box-shadow:inset 0 0 0 2px var(--et-accent); }
+.grid tfoot td{ background:var(--et-header-bg); font-weight:600; border-bottom:0; }
+
+/* ---------- Diálogo (mode="dialog" / móvil) ---------- */
+.velo{ position:fixed; inset:0; background:rgba(15,20,25,.45); display:grid; place-items:center; z-index:100; padding:16px; }
+.velo[hidden]{ display:none; }
+.dialogo{ width:min(760px, 100%); max-height:min(620px, 92vh); background:var(--et-bg); color:var(--et-fg); border:1px solid var(--et-border); border-radius:calc(var(--et-radius) + 4px); box-shadow:0 24px 60px rgba(0,0,0,.3); display:flex; flex-direction:column; overflow:hidden; }
+.dialogo header{ display:flex; align-items:center; gap:10px; padding:12px 14px; border-bottom:1px solid var(--et-border); }
+.dialogo header h3{ margin:0; font-size:15px; flex:1; }
+.dialogo .cerrar{ border:0; background:transparent; color:var(--et-fg); width:30px; height:30px; border-radius:var(--et-radius); cursor:pointer; display:grid; place-items:center; }
+.dialogo .cerrar:hover{ background:var(--et-error-bg); color:var(--et-error); }
+.dialogo .ik-lista{ max-height:none; flex:1 1 auto; }
+.chips{ display:flex; gap:6px; flex-wrap:wrap; padding:8px 14px; border-bottom:1px solid var(--et-border); }
+.chip{ font-size:12px; padding:3px 10px; border:1px solid var(--et-border); border-radius:999px; background:var(--et-header-bg); color:var(--et-header-fg); cursor:pointer; }
+.chip.on{ background:var(--et-accent); border-color:var(--et-accent); color:#fff; }
+input[type=checkbox]{ accent-color:var(--et-accent); width:15px; height:15px; }
+@media (max-width:640px){ .velo{ place-items:end stretch; padding:0; } .dialogo{ max-height:88vh; border-radius:14px 14px 0 0; } }
+
+/* ---------- Comparación con la apariencia actual ---------- */
+.hoy{ font-family:Arial, sans-serif; font-size:16px; color:#212529; }
+.hoy .c{ display:grid; grid-template-columns:40% 60%; }
+.hoy .s, .hoy .d{ display:flex; padding:0 4px; }
+.hoy input{ width:100%; color:#212529; border:none; outline:1px solid #ced4da; padding:.375rem .75rem; font-size:1rem; background:#fff; }
+.hoy input[readonly]{ background:#e9ecef; }
+.hoy button{ color:#212529; background:#fff; outline:1px solid #ced4da; border:0; padding:.375rem .75rem; }
+</style>
+</head>
+<body class="t-claro d-normal">
+
+<header class="barra">
+  <h1>InputKey 2 · maqueta</h1>
+  <label>Tema
+    <select id="selTema">
+      <option value="t-claro">claro</option>
+      <option value="t-oscuro">oscuro</option>
+      <option value="t-jade">jade</option>
+      <option value="t-libro">libro-mayor</option>
+    </select>
+  </label>
+  <label>Densidad
+    <select id="selDens">
+      <option value="d-compacta">compacta</option>
+      <option value="d-normal" selected>normal</option>
+      <option value="d-comoda">cómoda</option>
+    </select>
+  </label>
+  <span style="font-size:12px;color:var(--et-muted-fg)">Los colores salen de las variables <code>--et-*</code> de EdiTable 2: un tema de V12 pinta tablas y buscadores a la vez.</span>
+</header>
+
+<main>
+
+<section class="tarjeta">
+  <h2>Hoy y propuesta</h2>
+  <p class="nota">A la izquierda, el control como se ve hoy (estilo propio, sin tema). A la derecha, la propuesta: una sola caja, iconos dentro, foco visible y colores del tema.</p>
+  <div class="fila">
+    <div class="campo-demo hoy">
+      <span class="etq" style="color:#888">Hoy</span>
+      <div class="c"><div class="s"><input value="PRB-0010"><button>…</button></div><div class="d"><input readonly value="Brocha de pelo natural 2&quot;"><button>✕</button></div></div>
+    </div>
+    <div class="campo-demo">
+      <span class="etq">PROPUESTA</span>
+      <div class="ik"><div class="ik-caja"><input class="ik-clave" value="PRB-0010" aria-label="Código"><span class="ik-sep"></span><span class="ik-desc">Brocha de pelo natural 2"</span><button class="ik-btn" type="button" aria-label="Limpiar"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.15 2.85a.5.5 0 1 1 .7-.7L8 7.29l5.15-5.14a.5.5 0 0 1 .7.7L8.71 8l5.14 5.15a.5.5 0 0 1-.7.7L8 8.71l-5.15 5.14a.5.5 0 0 1-.7-.7L7.29 8 2.15 2.85Z"/></svg></button><button class="ik-btn principal" type="button" aria-label="Buscar"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M11.74 10.33a6 6 0 1 0-1.41 1.41l3.85 3.85a1 1 0 0 0 1.41-1.41l-3.85-3.85ZM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0Z"/></svg></button></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="tarjeta">
+  <h2>Campo (mode="field") con panel anclado</h2>
+  <p class="nota">Escribe en el código, por ejemplo <b>bro</b>, <b>tor</b> o <b>7501</b>. Los resultados aparecen en un panel pegado al campo, con las coincidencias resaltadas. Usa <kbd>↑</kbd><kbd>↓</kbd> para moverte, <kbd>Enter</kbd> para elegir y <kbd>Esc</kbd> para cerrar. Con el campo vacío, <kbd>F4</kbd> muestra los recientes.</p>
+  <div class="fila">
+    <div class="campo-demo">
+      <span class="etq">PRODUCTO</span>
+      <div class="ik" id="ikCampo">
+        <div class="ik-caja" role="combobox" aria-expanded="false" aria-haspopup="grid">
+          <input class="ik-clave" placeholder="Código" aria-label="Código del producto" autocomplete="off">
+          <span class="ik-sep"></span>
+          <span class="ik-desc vacio">Sin seleccionar</span>
+          <button class="ik-btn limpiar" type="button" aria-label="Limpiar" hidden><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.15 2.85a.5.5 0 1 1 .7-.7L8 7.29l5.15-5.14a.5.5 0 0 1 .7.7L8.71 8l5.14 5.15a.5.5 0 0 1-.7.7L8 8.71l-5.15 5.14a.5.5 0 0 1-.7-.7L7.29 8 2.15 2.85Z"/></svg></button>
+          <button class="ik-btn" type="button" aria-label="Agregar producto"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/></svg></button>
+          <button class="ik-btn principal abrir" type="button" aria-label="Buscar (F4)"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M11.74 10.33a6 6 0 1 0-1.41 1.41l3.85 3.85a1 1 0 0 0 1.41-1.41l-3.85-3.85ZM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0Z"/></svg></button>
+        </div>
+        <div class="ik-panel" hidden></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="tarjeta">
+  <h2>Estados (A4)</h2>
+  <p class="nota">Con valor, buscando, no encontrado en modo estricto (mensaje en línea, sin <code>alert()</code>) y deshabilitado.</p>
+  <div class="fila">
+    <div class="campo-demo"><span class="etq">CON VALOR</span>
+      <div class="ik"><div class="ik-caja"><input class="ik-clave" value="TOR-1/4-08"><span class="ik-sep"></span><span class="ik-desc">Tornillo hexagonal 1/4 × 1" galvanizado</span><button class="ik-btn" aria-label="Limpiar"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.15 2.85a.5.5 0 1 1 .7-.7L8 7.29l5.15-5.14a.5.5 0 0 1 .7.7L8.71 8l5.14 5.15a.5.5 0 0 1-.7.7L8 8.71l-5.15 5.14a.5.5 0 0 1-.7-.7L7.29 8 2.15 2.85Z"/></svg></button><button class="ik-btn" aria-label="Editar"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M12.85.15a.5.5 0 0 0-.7 0L10.5 1.79 14.21 5.5l1.64-1.65a.5.5 0 0 0 0-.7l-3-3ZM13.5 6.21 9.79 2.5 3.29 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.21l6.5-6.5Z"/></svg></button><button class="ik-btn principal" aria-label="Buscar"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M11.74 10.33a6 6 0 1 0-1.41 1.41l3.85 3.85a1 1 0 0 0 1.41-1.41l-3.85-3.85ZM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0Z"/></svg></button></div></div>
+    </div>
+    <div class="campo-demo"><span class="etq">BUSCANDO</span>
+      <div class="ik"><div class="ik-caja"><input class="ik-clave" value="tuerca"><span class="ik-sep"></span><span class="ik-desc vacio">Buscando…</span><span class="ik-btn principal"><span class="giro"></span></span></div></div>
+    </div>
+    <div class="campo-demo"><span class="etq">NO ENCONTRADO (strict)</span>
+      <div class="ik invalido"><div class="ik-caja"><input class="ik-clave" value="XYZ-999"><span class="ik-sep"></span><span class="ik-desc vacio">—</span><button class="ik-btn principal" aria-label="Buscar"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M11.74 10.33a6 6 0 1 0-1.41 1.41l3.85 3.85a1 1 0 0 0 1.41-1.41l-3.85-3.85ZM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0Z"/></svg></button></div>
+        <div class="ik-msg">⚠ No existe un producto con el código «XYZ-999».</div></div>
+    </div>
+    <div class="campo-demo"><span class="etq">DESHABILITADO</span>
+      <div class="ik deshabilitado"><div class="ik-caja"><input class="ik-clave" value="CLI-0042" disabled><span class="ik-sep"></span><span class="ik-desc">Ferretería La Llave, S.A. de C.V.</span><span class="ik-btn principal"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M11.74 10.33a6 6 0 1 0-1.41 1.41l3.85 3.85a1 1 0 0 0 1.41-1.41l-3.85-3.85ZM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0Z"/></svg></span></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="tarjeta">
+  <h2>Oculto dentro de una tabla (mode="headless", como en la venta)</h2>
+  <p class="nota">El campo no se ve: la tabla abre el buscador anclado a la celda con <code>await ik.pick(texto, {anchor: td})</code>. Escribe un código en la celda activa y pulsa <kbd>Enter</kbd>. Con una sola coincidencia exacta entra directo (IK-3). Si no, se abre el panel debajo de la celda y, al aceptar, la partida se llena y el foco pasa a Cantidad.</p>
+  <div class="grid" id="grid">
+    <table>
+      <thead><tr><th style="width:150px">Código</th><th>Descripción</th><th class="num" style="width:90px">Cantidad</th><th class="num" style="width:110px">Precio</th><th class="num" style="width:120px">Importe</th></tr></thead>
+      <tbody></tbody>
+      <tfoot><tr><td></td><td>Total</td><td></td><td></td><td class="num" id="total">$0.00</td></tr></tfoot>
+    </table>
+    <div class="ik-panel" id="panelCelda" hidden></div>
+  </div>
+</section>
+
+<section class="tarjeta">
+  <h2>Diálogo (mode="dialog", multiple) y vista móvil</h2>
+  <p class="nota">Para buscar con filtros o agregar varias partidas a la vez. En pantallas angostas se muestra como hoja inferior. Las ventanas de agregar y editar usan el mismo marco, con la X visible (hoy se dibuja blanca sobre blanco).</p>
+  <button class="btn primario" id="abrirDialogo" type="button">Abrir el buscador de productos…</button>
+  <span id="resDialogo" style="margin-left:12px;color:var(--et-muted-fg)"></span>
+</section>
+
+</main>
+
+<div class="velo" id="velo" hidden>
+  <div class="dialogo" role="dialog" aria-modal="true" aria-labelledby="tituloDlg">
+    <header><h3 id="tituloDlg">Seleccione productos</h3><button class="cerrar" type="button" aria-label="Cerrar">✕</button></header>
+    <div class="ik-buscar" style="display:flex;gap:8px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--et-border)">
+      <svg viewBox="0 0 16 16" fill="currentColor" style="width:15px;height:15px;color:var(--et-muted-fg)"><path d="M11.74 10.33a6 6 0 1 0-1.41 1.41l3.85 3.85a1 1 0 0 0 1.41-1.41l-3.85-3.85ZM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0Z"/></svg>
+      <input id="dlgBuscar" placeholder="Código, descripción o código de barras" style="flex:1;border:0;outline:0;background:transparent;color:var(--et-fg);font:inherit">
+      <span class="ik-cuenta" id="dlgCuenta"></span>
+    </div>
+    <div class="chips" id="chips"></div>
+    <div class="ik-lista" id="dlgLista"></div>
+    <div class="ik-pie"><span><kbd>Ctrl</kbd>+<kbd>Espacio</kbd> o clic: marcar</span><span><kbd>Enter</kbd> agregar</span><span><kbd>Esc</kbd> cerrar</span><span class="esp"></span><span id="dlgSel">0 seleccionados</span><button class="btn" type="button" id="dlgCancelar">Cancelar</button><button class="btn primario" type="button" id="dlgAceptar">Agregar</button></div>
+  </div>
+</div>
+
+<script>
+'use strict';
+/* ---------- Datos ficticios ---------- */
+const LINEAS = ['Ferretería', 'Pintura', 'Eléctrico', 'Plomería'];
+const BASE = [
+  ['BRO-0002','Brocha de cerda 2"','Pintura','7501000000017',38.5],
+  ['PRB-0010','Brocha de pelo natural 2"','Pintura','7501000000024',62.33],
+  ['BRO-0004','Brocha de cerda 4"','Pintura','7501000000031',71.9],
+  ['ROD-0009','Rodillo de felpa 9"','Pintura','7501000000048',95],
+  ['TOR-1/4-08','Tornillo hexagonal 1/4 × 1" galvanizado','Ferretería','7501000000055',2.15],
+  ['TOR-1/4-16','Tornillo hexagonal 1/4 × 2" galvanizado','Ferretería','7501000000062',3.4],
+  ['TUE-1/4','Tuerca hexagonal 1/4 galvanizada','Ferretería','7501000000079',0.95],
+  ['ROL-1/4','Rondana plana 1/4','Ferretería','7501000000086',0.6],
+  ['CAB-12-100','Cable THW calibre 12, rollo 100 m','Eléctrico','7501000000093',1489],
+  ['CAB-14-100','Cable THW calibre 14, rollo 100 m','Eléctrico','7501000000109',1099],
+  ['APA-SEN','Apagador sencillo blanco','Eléctrico','7501000000116',34.9],
+  ['CON-DUP','Contacto dúplex polarizado','Eléctrico','7501000000123',41.5],
+  ['VAL-PVC-1/2','Válvula de esfera PVC 1/2"','Plomería','7501000000130',58],
+  ['VAL-PVC-3/4','Válvula de esfera PVC 3/4"','Plomería','7501000000147',74.5],
+  ['TUB-CPVC-1/2','Tubo CPVC 1/2" × 6 m','Plomería','7501000000154',189],
+  ['COD-PVC-1/2','Codo PVC 90° 1/2"','Plomería','7501000000161',6.8],
+];
+const PRODUCTOS = BASE.map(([codigo, descripcion, linea, codbar, precio], i) => ({ id: i + 1, codigo, descripcion, linea, codbar, precio, existencia: (i * 37) % 160 }));
+const money = n => n.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' });
+const plegar = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+function resaltar(texto, q)
+{
+  if (!q) return esc(texto);
+  const t = String(texto), p = plegar(t), terms = plegar(q).split(/\s+/).filter(Boolean);
+  const marcas = new Array(t.length).fill(false);
+  terms.forEach(term => { let i = p.indexOf(term); while (i >= 0) { for (let k = i; k < i + term.length; k++) marcas[k] = true; i = p.indexOf(term, i + 1); } });
+  let out = '', dentro = false;
+  for (let i = 0; i < t.length; i++) { if (marcas[i] && !dentro) { out += '<mark>'; dentro = true; } if (!marcas[i] && dentro) { out += '</mark>'; dentro = false; } out += esc(t[i]); }
+  return out + (dentro ? '</mark>' : '');
+}
+function buscar(q, linea)
+{
+  const terms = plegar(q).split(/\s+/).filter(Boolean);
+  return PRODUCTOS.filter(p => (!linea || p.linea === linea) && terms.every(t => plegar(p.codigo + ' ' + p.descripcion + ' ' + p.codbar).includes(t)));
+}
+const RECIENTES = [];
+
+/* ---------- Tema y densidad ---------- */
+const temas = ['t-claro', 't-oscuro', 't-jade', 't-libro'], dens = ['d-compacta', 'd-normal', 'd-comoda'];
+document.getElementById('selTema').onchange = e => { document.body.classList.remove(...temas); document.body.classList.add(e.target.value); };
+document.getElementById('selDens').onchange = e => { document.body.classList.remove(...dens); document.body.classList.add(e.target.value); };
+
+/* ---------- Panel de resultados reutilizable ---------- */
+function crearPanel(panel, { alElegir, alCerrar })
+{
+  let filas = [], activa = 0, q = '';
+  function pintar(texto, conRecientes)
+  {
+    q = texto; filas = q ? buscar(q) : (conRecientes ? RECIENTES.slice() : []);
+    activa = 0;
+    let html = `<div class="ik-buscar"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M11.74 10.33a6 6 0 1 0-1.41 1.41l3.85 3.85a1 1 0 0 0 1.41-1.41l-3.85-3.85ZM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0Z"/></svg><input aria-label="Refinar búsqueda" value="${esc(q)}" placeholder="Código, descripción o código de barras"><span class="ik-cuenta" aria-live="polite">${q ? filas.length + ' de ' + PRODUCTOS.length : (filas.length ? 'Recientes' : '')}</span></div>`;
+    if (!filas.length)
+      html += `<div class="ik-vacio"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M11.74 10.33a6 6 0 1 0-1.41 1.41l3.85 3.85a1 1 0 0 0 1.41-1.41l-3.85-3.85ZM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0Z"/></svg><div>${q ? 'Sin coincidencias para «' + esc(q) + '»' : 'Escribe para buscar'}</div>${q ? `<button class="btn" type="button">＋ Crear «${esc(q)}»</button>` : ''}</div>`;
+    else
+    {
+      html += `${!q ? '<div class="etq-grupo">Elegidos recientemente</div>' : ''}<div class="ik-lista"><table role="grid"><thead><tr><th>Código</th><th>Descripción</th><th>Línea</th><th class="num">Exist.</th><th class="num">Precio</th></tr></thead><tbody>`;
+      filas.forEach((p, i) => { html += `<tr data-i="${i}" class="${i === 0 ? 'activa' : ''}" aria-selected="${i === 0}"><td class="cod">${resaltar(p.codigo, q)}</td><td>${resaltar(p.descripcion, q)}</td><td>${esc(p.linea)}</td><td class="num">${p.existencia}</td><td class="num">${money(p.precio)}</td></tr>`; });
+      html += '</tbody></table></div>';
+    }
+    html += `<div class="ik-pie"><span><kbd>↑</kbd><kbd>↓</kbd> moverse</span><span><kbd>Enter</kbd> elegir</span><span><kbd>Esc</kbd> cerrar</span><span class="esp"></span><span>F3 más resultados</span></div>`;
+    panel.innerHTML = html;
+    panel.hidden = false;
+    const inp = panel.querySelector('.ik-buscar input');
+    inp.oninput = () => { const pos = inp.selectionStart; pintar(inp.value, true); const n = panel.querySelector('.ik-buscar input'); n.focus(); n.setSelectionRange(pos, pos); };
+    inp.onkeydown = tecla;
+    panel.querySelectorAll('tbody tr').forEach(tr => {
+      tr.onmousemove = () => mover(+tr.dataset.i - activa);
+      tr.onclick = () => elegir(+tr.dataset.i);
+    });
+  }
+  function mover(d)
+  {
+    if (!filas.length) return;
+    activa = Math.max(0, Math.min(filas.length - 1, activa + d));
+    panel.querySelectorAll('tbody tr').forEach((tr, i) => { tr.classList.toggle('activa', i === activa); tr.setAttribute('aria-selected', i === activa); if (i === activa) tr.scrollIntoView({ block: 'nearest' }); });
+  }
+  function elegir(i)
+  {
+    const p = filas[i]; if (!p) return;
+    const r = RECIENTES.indexOf(p); if (r >= 0) RECIENTES.splice(r, 1); RECIENTES.unshift(p); RECIENTES.length = Math.min(RECIENTES.length, 5);
+    cerrar(); alElegir(p);
+  }
+  function cerrar() { panel.hidden = true; panel.innerHTML = ''; }
+  function tecla(e)
+  {
+    if (e.key === 'ArrowDown') { e.preventDefault(); mover(1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); mover(-1); }
+    else if (e.key === 'PageDown') { e.preventDefault(); mover(8); }
+    else if (e.key === 'PageUp') { e.preventDefault(); mover(-8); }
+    else if (e.key === 'Enter') { e.preventDefault(); elegir(activa); }
+    else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); cerrar(); alCerrar(); }
+  }
+  return { abrir: (t, rec) => { pintar(t, rec); panel.querySelector('.ik-buscar input').focus(); }, cerrar, tecla, abierto: () => !panel.hidden };
+}
+
+/* ---------- Campo con panel anclado ---------- */
+(function ()
+{
+  const raiz = document.getElementById('ikCampo');
+  const clave = raiz.querySelector('.ik-clave'), desc = raiz.querySelector('.ik-desc'), limpiar = raiz.querySelector('.limpiar'), caja = raiz.querySelector('.ik-caja');
+  const panel = crearPanel(raiz.querySelector('.ik-panel'), {
+    alElegir: p => { clave.value = p.codigo; desc.textContent = p.descripcion; desc.classList.remove('vacio'); limpiar.hidden = false; caja.setAttribute('aria-expanded', 'false'); clave.focus(); },
+    alCerrar: () => { caja.setAttribute('aria-expanded', 'false'); clave.focus(); },
+  });
+  let t = 0;
+  clave.addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => { if (clave.value.trim().length >= 2) { panel.abrir(clave.value, false); caja.setAttribute('aria-expanded', 'true'); } }, 250); });
+  clave.addEventListener('keydown', e => { if (e.key === 'F4' || (e.altKey && e.key === 'ArrowDown')) { e.preventDefault(); panel.abrir(clave.value, true); caja.setAttribute('aria-expanded', 'true'); } });
+  raiz.querySelector('.abrir').onclick = () => { panel.abrir(clave.value, true); caja.setAttribute('aria-expanded', 'true'); };
+  limpiar.onclick = () => { clave.value = ''; desc.textContent = 'Sin seleccionar'; desc.classList.add('vacio'); limpiar.hidden = true; clave.focus(); };
+  document.addEventListener('mousedown', e => { if (!raiz.contains(e.target) && panel.abierto()) panel.cerrar(); });
+})();
+
+/* ---------- Tabla con InputKey oculto anclado a la celda ---------- */
+(function ()
+{
+  const grid = document.getElementById('grid'), tbody = grid.querySelector('tbody'), panelEl = document.getElementById('panelCelda');
+  const partidas = [{ codigo: 'TOR-1/4-08', descripcion: 'Tornillo hexagonal 1/4 × 1" galvanizado', cantidad: 100, precio: 2.15 }, { codigo: '', descripcion: '', cantidad: '', precio: '' }];
+  let celdaCodigo = null;
+  const panel = crearPanel(panelEl, {
+    alElegir: p => { const i = +celdaCodigo.parentElement.dataset.i; Object.assign(partidas[i], { codigo: p.codigo, descripcion: p.descripcion, cantidad: 1, precio: p.precio }); siguiente(i); },
+    alCerrar: () => pintar(),
+  });
+  function siguiente(i) { if (i === partidas.length - 1) partidas.push({ codigo: '', descripcion: '', cantidad: '', precio: '' }); pintar(i, 2); }
+  function pintar(fila = partidas.length - 1, col = 0)
+  {
+    tbody.innerHTML = '';
+    partidas.forEach((p, i) => {
+      const tr = document.createElement('tr'); tr.dataset.i = i;
+      const imp = (+p.cantidad || 0) * (+p.precio || 0);
+      tr.innerHTML = `<td class="cod">${esc(p.codigo)}</td><td>${esc(p.descripcion)}</td><td class="num">${p.cantidad}</td><td class="num">${p.precio === '' ? '' : money(+p.precio)}</td><td class="num">${p.codigo ? money(imp) : ''}</td>`;
+      tbody.appendChild(tr);
+    });
+    document.getElementById('total').textContent = money(partidas.reduce((s, p) => s + (+p.cantidad || 0) * (+p.precio || 0), 0));
+    const td = tbody.rows[fila].cells[col];
+    if (col === 0) editarCodigo(td); else { td.classList.add('activa'); td.tabIndex = -1; td.focus(); }
+  }
+  function editarCodigo(td)
+  {
+    td.classList.add('editando');
+    td.innerHTML = '<input placeholder="Código, descripción o código de barras" aria-label="Código">';
+    const inp = td.firstChild; inp.focus();
+    inp.onkeydown = e =>
+    {
+      if (panel.abierto()) return panel.tecla(e);
+      if (e.key === 'Enter' && inp.value.trim())
+      {
+        e.preventDefault();
+        const r = buscar(inp.value), exacto = r.length === 1 && [r[0].codigo, r[0].codbar].some(v => plegar(v) === plegar(inp.value.trim()));
+        celdaCodigo = td;
+        if (exacto) { const i = +td.parentElement.dataset.i; Object.assign(partidas[i], { codigo: r[0].codigo, descripcion: r[0].descripcion, cantidad: 1, precio: r[0].precio }); siguiente(i); return; }
+        const gr = grid.getBoundingClientRect(), rc = td.getBoundingClientRect();
+        panelEl.style.left = (rc.left - gr.left) + 'px'; panelEl.style.top = (rc.bottom - gr.top + 4) + 'px';
+        panel.abrir(inp.value, false);
+      }
+    };
+  }
+  pintar();
+})();
+
+/* ---------- Diálogo con selección múltiple ---------- */
+(function ()
+{
+  const velo = document.getElementById('velo'), lista = document.getElementById('dlgLista'), buscarEl = document.getElementById('dlgBuscar');
+  let linea = '', marcados = new Set(), activa = 0, filas = [];
+  const chips = document.getElementById('chips');
+  chips.innerHTML = ['Todas', ...LINEAS].map(l => `<button class="chip${l === 'Todas' ? ' on' : ''}" type="button" data-l="${l === 'Todas' ? '' : l}">${l}</button>`).join('');
+  chips.onclick = e => { const b = e.target.closest('.chip'); if (!b) return; linea = b.dataset.l; chips.querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c === b)); pintar(); };
+  function pintar()
+  {
+    filas = buscar(buscarEl.value, linea); activa = Math.min(activa, Math.max(0, filas.length - 1));
+    document.getElementById('dlgCuenta').textContent = filas.length + ' de ' + PRODUCTOS.length;
+    lista.innerHTML = filas.length ? `<table role="grid"><thead><tr><th style="width:36px"></th><th>Código</th><th>Descripción</th><th>Código de barras</th><th class="num">Exist.</th><th class="num">Precio</th></tr></thead><tbody>${filas.map((p, i) => `<tr data-i="${i}" class="${i === activa ? 'activa' : ''}"><td><input type="checkbox" ${marcados.has(p.id) ? 'checked' : ''} tabindex="-1" aria-label="Marcar ${esc(p.codigo)}"></td><td class="cod">${resaltar(p.codigo, buscarEl.value)}</td><td>${resaltar(p.descripcion, buscarEl.value)}</td><td class="cod">${resaltar(p.codbar, buscarEl.value)}</td><td class="num">${p.existencia}</td><td class="num">${money(p.precio)}</td></tr>`).join('')}</tbody></table>` : '<div class="ik-vacio">Sin coincidencias</div>';
+    lista.querySelectorAll('tbody tr').forEach(tr => tr.onclick = () => { activa = +tr.dataset.i; alternar(); });
+    document.getElementById('dlgSel').textContent = marcados.size + (marcados.size === 1 ? ' seleccionado' : ' seleccionados');
+  }
+  function alternar() { const p = filas[activa]; if (!p) return; marcados.has(p.id) ? marcados.delete(p.id) : marcados.add(p.id); pintar(); }
+  function cerrar(res) { velo.hidden = true; document.getElementById('resDialogo').textContent = res ? 'Se agregarían: ' + res.map(p => p.codigo).join(', ') : 'Cancelado (sin selección, sin change_event).'; document.getElementById('abrirDialogo').focus(); }
+  document.getElementById('abrirDialogo').onclick = () => { marcados = new Set(); activa = 0; buscarEl.value = ''; velo.hidden = false; pintar(); buscarEl.focus(); };
+  buscarEl.oninput = () => { activa = 0; pintar(); };
+  buscarEl.onkeydown = e =>
+  {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); activa = Math.max(0, Math.min(filas.length - 1, activa + (e.key === 'ArrowDown' ? 1 : -1))); pintar(); lista.querySelector('tr.activa')?.scrollIntoView({ block: 'nearest' }); }
+    else if (e.key === ' ' && e.ctrlKey) { e.preventDefault(); alternar(); }
+    else if (e.key === 'Enter') { e.preventDefault(); if (!marcados.size) alternar(); cerrar(PRODUCTOS.filter(p => marcados.has(p.id))); }
+  };
+  velo.addEventListener('keydown', e => { if (e.key === 'Escape') { e.preventDefault(); cerrar(null); } if (e.key === ' ' && e.target !== buscarEl) { e.preventDefault(); alternar(); } });
+  velo.querySelector('.cerrar').onclick = () => cerrar(null);
+  document.getElementById('dlgCancelar').onclick = () => cerrar(null);
+  document.getElementById('dlgAceptar').onclick = () => cerrar(PRODUCTOS.filter(p => marcados.has(p.id)));
+  velo.onclick = e => { if (e.target === velo) cerrar(null); };
+})();
+</script>
+</body>
+</html>
