@@ -1307,7 +1307,10 @@ class InputKey extends HTMLElement
                     if (this._ik2PopupTema()) { this._ik2Error = { text: this.#lastSearch, message: m }; console.warn('InputKey: ' + m); }
                     else alert(m);
                 }
-                if (id && this.data){
+                // IK-6 (2026-11-02): la llave del registro aceptado antes (key-value) solo filtra si no hay texto o si el
+                // texto ES esa llave (carga por valor). Antes filtraba siempre: tras elegir un registro, cualquier búsqueda
+                // nueva (searchText("%") del menú de acciones de V12, o un texto distinto) devolvía solo ese registro.
+                if (id && this.data && (!search || search.toLowerCase() === id.toLowerCase())){
                     this.data = this.data.filter(data => (data[(this.getAttribute('data-key')??'').toLowerCase()] === id.toLowerCase()));
                 }
                 else if (search && this.data){

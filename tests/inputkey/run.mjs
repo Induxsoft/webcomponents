@@ -297,6 +297,33 @@ const PRUEBAS = [
     await esperar(page, 100);
     ok(dialogos.length === 1 && dialogos[0].includes('Ocurrió un error al invocar el servicio'), JSON.stringify(dialogos));
   } },
+  // ===== IK-6: con data-source-array, la llave del registro elegido antes no filtra las búsquedas nuevas
+  ...(() => {
+    const ACC = [{ id: 'imprimir', title: 'Imprimir' }, { id: 'cancelar', title: 'Cancelar' }, { id: 'copiar', title: 'Copiar' }, { id: 'enviar', title: 'Enviar por correo' }];
+    const pagina = { body: `<button id="btn_acc" type="button">Acciones</button><input-key id="ika" data-key="id" data-search="title" data-text="title" data-source-array='${JSON.stringify(ACC)}' columns="title" colcaptions="Acción" hidden-input="false" control-styles="#container{ display: none !important; }"></input-key>
+<script>document.addEventListener('DOMContentLoaded', function () { var a = document.getElementById('ika'); window.__acc = []; a.change_event = function (d) { window.__acc.push(d ? d.id : null); }; });
+window.__filasA = function () { return Array.from(document.getElementById('ika').shadowRoot.querySelectorAll('#body_tables_container2 tr')).map(function (tr) { return tr.cells[0].textContent; }); };</script>` };
+    const abrirA = async (page, t = '%') => { await page.focus('#btn_acc'); await ev(page, (x) => document.getElementById('ika').searchText(x), t); await esperar(page, 120); };
+    return [
+      { id: 'ik6-menu-reabre', titulo: 'IK-6: menú de acciones (V12 uie.printItemActions): tras elegir una, searchText("%") vuelve a mostrar las 4', pagina, fn: async (page, ok) => {
+        await abrirA(page);
+        ok((await ev(page, () => __filasA())).length === 4, 'primera apertura: 4 filas');
+        await page.keyboard.press('ArrowDown'); await page.keyboard.press('Enter'); await esperar(page, 120);
+        ok(JSON.stringify(await ev(page, () => __acc)) === '["cancelar"]', 'se elige Cancelar: ' + JSON.stringify(await ev(page, () => __acc)));
+        await abrirA(page);
+        const f = await ev(page, () => __filasA());
+        ok(f.length === 4, 'segunda apertura: 4 filas, no solo la elegida: ' + JSON.stringify(f));
+        ok(JSON.stringify(await ev(page, () => __acc)) === '["cancelar"]', 'reabrir no vuelve a disparar change_event');
+      } },
+      { id: 'ik6-texto-nuevo', titulo: 'IK-6: tras elegir una, un texto distinto filtra por el texto (no por la llave anterior)', pagina, fn: async (page, ok) => {
+        await abrirA(page);
+        await page.keyboard.press('ArrowDown'); await page.keyboard.press('Enter'); await esperar(page, 120);
+        await abrirA(page, 'ar');
+        const f = await ev(page, () => __filasA());
+        ok(JSON.stringify(f) === '["Cancelar","Copiar","Enviar por correo"]', 'filtra por «ar»: ' + JSON.stringify(f));
+      } },
+    ];
+  })(),
   ...(await import('./ik2.mjs')).default({ esperar, buscar, ev, clicShadow, sinDoc }),
 ];
 
