@@ -706,5 +706,22 @@ window.EJEMPLOS = [
   "requiere": [
    "theme"
   ]
+ },
+ {
+  "archivo": "tema-pagina.html",
+  "titulo": "Tema de la página",
+  "tipo": "v2",
+  "descripcion": "data-et-theme, data-et-density y data-et-palette en <html> o en cualquier contenedor (InduxsoftTheme): las tablas sin theme propio toman los del ancestro más cercano, un panel oscuro, una zona que corta la herencia con \"\", una tabla con theme propio y un iframe del mismo origen que hereda y se actualiza.",
+  "spec": [
+   "§TP-herencia",
+   "§TP-corte",
+   "§TP-precedencia",
+   "§TP-caliente",
+   "§TP-iframe",
+   "§TP-remember"
+  ],
+  "requiere": [
+   "page-theme"
+  ]
  }
 ];

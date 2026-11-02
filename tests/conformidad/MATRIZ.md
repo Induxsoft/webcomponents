@@ -8,11 +8,11 @@ Estado de la última corrida: ✓ pasada · ✗ fallida · x defecto conocido ·
 
 ## Resumen
 
-- Renglones de la spec y del contrato (sin §12): **221**; con al menos una prueba: **221** (**100.0 %**).
-- Solo renglones de la spec v2 (§0-§11): **201**; con prueba: **201** (**100.0 %**).
+- Renglones de la spec y del contrato (sin §12): **234**; con al menos una prueba: **234** (**100.0 %**).
+- Solo renglones de la spec v2 (§0-§11): **214**; con prueba: **214** (**100.0 %**).
 - Pilotos de §12 cubiertos con ejemplo: **6 de 6**.
-- Renglones con al menos un ejemplo: **155** de 227.
-- Pruebas: **944** (actual: 329, correcciones: 69, v2: 546). Ejemplos: **45**.
+- Renglones con al menos un ejemplo: **161** de 240.
+- Pruebas: **964** (actual: 329, correcciones: 69, v2: 566). Ejemplos: **46**.
 - Renglones sin prueba: ninguno.
 - Descartados: `§1-C14` C14 (bloquear la tecla del separador de miles): descartada el 2026-11-01, comportamiento del navegador.
 - Ids citados que no están en la lista de renglones: `§1-C20`, `§5-b`.
@@ -21,7 +21,7 @@ Estado de la última corrida: ✓ pasada · ✗ fallida · x defecto conocido ·
 
 | Renglón | Qué dice | Pruebas | Ejemplos |
 |---|---|---|---|
-| `§0-R1` | R1 Compatibilidad: sin atributos nuevos, DOM, CSS, eventos y DataArray idénticos a 0ed1824 | 25: `msk-r7-01d`✓ `fij-09`✓ `vis-12`✓ `reo-10`✓ `vir-02`✓ `vir-18`✓ `grp-01`✓ `grp-20`✓ `r1-01`✓ `r1-02`✓ `r1-03`✓ `r1-04`✓ `r1-05`✓ `r1-06`✓ … (+11) | — |
+| `§0-R1` | R1 Compatibilidad: sin atributos nuevos, DOM, CSS, eventos y DataArray idénticos a 0ed1824 | 26: `msk-r7-01d`✓ `fij-09`✓ `vis-12`✓ `reo-10`✓ `vir-02`✓ `vir-18`✓ `grp-01`✓ `grp-20`✓ `r1-01`✓ `r1-02`✓ `r1-03`✓ `r1-04`✓ `r1-05`✓ `r1-06`✓ … (+12) | — |
 | `§0-R2` | R2 Índices: todo índice de fila expuesto es de DataArray; filas de grupo y relleno sin índice | 9: `sel-11`✓ `sel-13`✓ `vir-11`✓ `vir-16`✓ `grp-03`✓ `grp-10`✓ `lim-09`✓ `bus-03`✓ `bus-14`✓ | — |
 | `§0-R3` | R3 Columns[i] ↔ celda de datos i; columnas del sistema fuera de Columns y de onTdPaint; estado por field | 8: `gen-r3-01`✓ `gen-r3-02`✓ `sel-15`✓ `reo-01`✓ `reo-06`✓ `lim-03`✓ `cmb-03`✓ `cmb-14`✓ | — |
 | `§0-R4` | R4 Eventos nuevos en Const.Events y en el switch de addEventListener; Before* cancelables | 16: `gen-ev-SummaryCalculated`✓ `gen-ev-MaskInvalid`✓ `gen-ev-SelectionChanged`✓ `gen-ev-BeforeCopy`✓ `gen-ev-ColumnFixedChanged`✓ `gen-ev-ColumnVisibilityChanged`✓ `gen-ev-BeforeColumnMove`✓ `gen-ev-ColumnMoved`✓ `gen-ev-LayoutChanged`✓ `gen-ev-LayoutRejected`✓ `gen-ev-BeforeGroup`✓ `gen-ev-GroupChanged`✓ `gen-ev-GroupToggled`✓ `gen-r4-cancel`✓ … (+2) | — |
@@ -309,6 +309,24 @@ Estado de la última corrida: ✓ pasada · ✗ fallida · x defecto conocido ·
 | `§T-partes` | Cubre fijas, pie, grupos, panel, menú, casillas, tarjetas, badges y rellenos virtuales | 2: `tem-08`✓ `tem-27`✓ | [temas.html](../../examples/v2/temas.html) |
 | `§T-api` | EditTable.themes, EditTable.defineTheme(nombre, paleta, {base}), bandera 'theme' | 2: `tem-01`✓ `tem-16`✓ | — |
 
+## Spec Tema de la página
+
+| Renglón | Qué dice | Pruebas | Ejemplos |
+|---|---|---|---|
+| `§TP-api` | InduxsoftTheme: resolve, get, set, setPalette, setDensity, define, theme, subscribe/unsubscribe, cssVars, fontStack; bandera 'page-theme' | 2: `tpg-01`✓ `tpg-02`✓ | — |
+| `§TP-registro` | Registro común: los temas de F8b con los mismos valores; EditTable.themes/defineTheme son alias de InduxsoftTheme.themes/define | 2: `tpg-01`✓ `tpg-16`✓ | — |
+| `§TP-herencia` | data-et-theme/-palette/-density en cualquier ancestro (<html>, <body>, un <div>); el más cercano gana; al mover la tabla se vuelve a resolver | 4: `tpg-03`✓ `tpg-04`✓ `tpg-05`✓ `tpg-10`✓ | [tema-pagina.html](../../examples/v2/tema-pagina.html) |
+| `§TP-corte` | data-et-theme="" corta la herencia (también la del tema recordado) | 1: `tpg-06`✓ | [tema-pagina.html](../../examples/v2/tema-pagina.html) |
+| `§TP-precedencia` | Respaldo < ancestro < theme propio < --et-* externas < palette propia; palette y density se resuelven por separado | 1: `tpg-07`✓ | [tema-pagina.html](../../examples/v2/tema-pagina.html) |
+| `§TP-caliente` | Cambio en caliente con set/setPalette/setDensity sin redibujar ni disparar eventos; themechange en document | 2: `tpg-08`✓ `tpg-10`✓ | [tema-pagina.html](../../examples/v2/tema-pagina.html) |
+| `§TP-aviso` | subscribe avisa solo a los suscriptores debajo del elemento cambiado; un solo MutationObserver global | 1: `tpg-09`✓ | — |
+| `§TP-shadow` | Herencia y cambios cruzando shadow DOM (host y atributos dentro del shadow) | 1: `tpg-11`✓ | — |
+| `§TP-iframe` | iframes del mismo origen: heredan del <iframe> en la ventana padre y se actualizan (con o sin el módulo en la padre) | 2: `tpg-12`✓ `tpg-13`✓ | [tema-pagina.html](../../examples/v2/tema-pagina.html) |
+| `§TP-auto` | auto sigue prefers-color-scheme y avisa al cambiar | 1: `tpg-14`✓ | — |
+| `§TP-remember` | set(nombre, {remember}) en localStorage ('induxsoft.theme'), solo si no hay nada declarado | 1: `tpg-15`✓ | [tema-pagina.html](../../examples/v2/tema-pagina.html) |
+| `§TP-incrustacion` | Copias incrustadas iguales al módulo (embed-theme.mjs); versiones: no se reinstala una igual, una nueva conserva temas y suscriptores | 2: `tpg-17`✓ `tpg-18`✓ | — |
+| `§TP-r1` | Sin data-et-* ni localStorage, todo igual a hoy | 1: `tpg-19`✓ | — |
+
 ## Contrato actual (0ed1824)
 
 | Renglón | Qué dice | Pruebas | Ejemplos |
@@ -326,7 +344,7 @@ Estado de la última corrida: ✓ pasada · ✗ fallida · x defecto conocido ·
 | `A.impresion` | Impresión | 4: `imp-01`✓ `imp-02`✓ `imp-03`✓ `ejm-a15-impresion`✓ | [a15-impresion.html](../../examples/v2/a15-impresion.html) |
 | `A.v12` | Consumidor V12 (índices tras ordenar/paginar/árbol, impresión, CSV, miembros internos) | 20: `v12-01`✓ `v12-02`✓ `v12-03`✓ `v12-04`✓ `v12-05`✓ `v12-06`✓ `v12-07`✓ `v12-08`✓ `v12-09`✓ `v12-10`✓ `v12-11`✓ `v12-12`✓ `v12-13`✓ `v12-14`✓ … (+6) | [a15-impresion.html](../../examples/v2/a15-impresion.html) [a16-v12-lista.html](../../examples/v2/a16-v12-lista.html) [p3-lista-productos.html](../../examples/v2/p3-lista-productos.html) |
 | `A.factudesk` | Consumidor FactuDesk v12 | 11: `fd-01`✓ `fd-02`✓ `fd-03`✓ `fd-04`✓ `fd-05`✓ `fd-06`✓ `fd-07`✓ `fd-08`✓ `fd-09`✓ `ejm-a14-control-styles`✓ `ejm-a17-factudesk-conceptos`✓ | [a14-control-styles.html](../../examples/v2/a14-control-styles.html) [a17-factudesk-conceptos.html](../../examples/v2/a17-factudesk-conceptos.html) |
-| `A.ejemplos` | Los ejemplos abren sin errores | 45: `ejm-a01-basica`✓ `ejm-a02-tipos`✓ `ejm-a03-formato`✓ `ejm-a04-boton-inputkey`✓ `ejm-a05-select-llave`✓ `ejm-a06-captura-partidas`✓ `ejm-a07-cancelacion`✓ `ejm-a08-isdirty`✓ `ejm-a09-ordenar`✓ `ejm-a10-columnas`✓ `ejm-a11-arbol-cuentas`✓ `ejm-a12-tarjetas`✓ `ejm-a13-ontdpaint`✓ `ejm-a14-control-styles`✓ … (+31) | — |
+| `A.ejemplos` | Los ejemplos abren sin errores | 46: `ejm-a01-basica`✓ `ejm-a02-tipos`✓ `ejm-a03-formato`✓ `ejm-a04-boton-inputkey`✓ `ejm-a05-select-llave`✓ `ejm-a06-captura-partidas`✓ `ejm-a07-cancelacion`✓ `ejm-a08-isdirty`✓ `ejm-a09-ordenar`✓ `ejm-a10-columnas`✓ `ejm-a11-arbol-cuentas`✓ `ejm-a12-tarjetas`✓ `ejm-a13-ontdpaint`✓ `ejm-a14-control-styles`✓ … (+32) | — |
 | `A.censo` | Censo de consumidores: selectores de control-styles y miembros con uso real | 117: `cen-css-tr-td`✓ `cen-css-tr-th`✓ `cen-css-th`✓ `cen-css-td`✓ `cen-css-table`✓ `cen-css-thead`✓ `cen-css-thead-tr-th`✓ `cen-css-tbody-tr`✓ `cen-css-input-type-checkbox`✓ `cen-css-table-input`✓ `cen-css-EdiTable-Row-Selected`✓ `cen-css-EdiTable-Button`✓ `cen-css-EdiTable-Cell`✓ `cen-css-EdiTable-Selector`✓ … (+103) | — |
 
 ## Censo de consumidores
@@ -338,7 +356,7 @@ Estado de la última corrida: ✓ pasada · ✗ fallida · x defecto conocido ·
 | Dependencia | Tipo | Usos | Pruebas |
 |---|---|---|---|
 | `id` | atributo edit-table (HTML) | 164 | `ini-01`✓ `ini-02`✓ `arb-02`✓ `v12-07`✓ `v12-11`✓ `cen-css-div-has-overflow`✓ … (+17) |
-| `data` | atributo edit-table | 145 | `ini-03`✓ `ini-04`✓ `dat-18`✓ `tar-01`✓ `tar-13`✓ `cen-css-tr-td-data-cell-Importe`✓ … (+10) |
+| `data` | atributo edit-table | 145 | `ini-03`✓ `ini-04`✓ `dat-18`✓ `tar-01`✓ `tar-13`✓ `cen-css-tr-td-data-cell-Importe`✓ … (+13) |
 | `style` | atributo edit-table (HTML) | 94 | `ini-10`✓ `ini-13`✓ `ini-18`✓ `cen-api-atributos-HTML-del-host-id-style-class`✓ `cen-api-atributos-libres-de-edit-th-title-align-href-min-width-allow-style`✓ `cen-api-tr-cells-td-style-tr-onclick-acceso-DOM-en-el-consumidor`✓ … (+4) |
 | `control-styles` | atributo edit-table | 91 | `ini-13`✓ `pre-12`✓ `v12-11`✓ `fd-01`✓ `ejm-a14-control-styles`✓ `cen-css-tr-td`✓ … (+34) |
 | `auto-confirm` | atributo edit-table | 82 | `cen-api-auto-confirm-row-height-cards-responsive-editable-responsive`✓ |
