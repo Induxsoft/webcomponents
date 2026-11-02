@@ -205,7 +205,7 @@
        " </table>",
        "</div>",
        "<style data-et=\"f8\">",
-       " @@ESTILO sha256:7d65d35cb935d876",
+       " @@ESTILO sha256:90f161cbae5be7b2",
        "</style>"
       ],
       "shadowEsElGuardado": true,
@@ -771,7 +771,16 @@
       "modoShadowPedido": "@=paso-anterior",
       "dom": {
        "$parche": [
-        [7,1,[" <span class=\"et-search-count\" aria-live=\"polite\">","  \"1\""," </span>"]],
+        [
+         6,
+         2,
+         [
+          " <input type=\"search\" class=\"et-search-input\" placeholder=\"Buscar…\" aria-label=\"Buscar en la tabla\" {value=\"cobre \" foco}></input>",
+          " <span class=\"et-search-count\" aria-live=\"polite\">",
+          "  \"1\"",
+          " </span>"
+         ]
+        ],
         [79,1,["   <tr class=\"\">"]],
         [92,3,["      \"Eléctrico\""]],
         [162,1,["   <tr class=\"EdiTable-Row-Selected\">"]],
@@ -835,7 +844,7 @@
      }
     ],
     "luz": "@=paso-anterior",
-    "foco": "@=paso-anterior",
+    "foco": {"documento":{"ruta":"body>edit-table#t1"},"shadow":{"ruta":"shadow(t1)>div>input","valor":"cobre "}},
     "eventos": [
      {
       "evento": "searchchanged",
@@ -899,6 +908,13 @@
       "modoShadowPedido": "@=paso-anterior",
       "dom": {
        "$parche": [
+        [
+         6,
+         1,
+         [
+          " <input type=\"search\" class=\"et-search-input\" placeholder=\"Buscar…\" aria-label=\"Buscar en la tabla\" {value=\"a\" foco}></input>"
+         ]
+        ],
         [8,1,["  \"1 / 5\""]],
         [54,1,["   <tr class=\"EdiTable-Row-Selected\">"]],
         [
@@ -957,7 +973,7 @@
      }
     ],
     "luz": "@=paso-anterior",
-    "foco": "@=paso-anterior",
+    "foco": {"documento":{"ruta":"body>edit-table#t1"},"shadow":{"ruta":"shadow(t1)>div>input","valor":"a"}},
     "eventos": [
      {
       "evento": "searchchanged",
@@ -1025,6 +1041,13 @@
       "modoShadowPedido": "@=paso-anterior",
       "dom": {
        "$parche": [
+        [
+         6,
+         1,
+         [
+          " <input type=\"search\" class=\"et-search-input\" placeholder=\"Buscar…\" aria-label=\"Buscar en la tabla\" {value=\"o\" foco}></input>"
+         ]
+        ],
         [8,1,["  \"5\""]],
         [83,1,["   <tr class=\"et-filter-hidden hidde-row\">"]],
         [137,1,["   <tr class=\"et-filter-hidden hidde-row\">"]]
@@ -1062,7 +1085,7 @@
      }
     ],
     "luz": "@=paso-anterior",
-    "foco": "@=paso-anterior",
+    "foco": {"documento":{"ruta":"body>edit-table#t1"},"shadow":{"ruta":"shadow(t1)>div>input","valor":"o"}},
     "eventos": [
      {
       "evento": "searchchanged",
@@ -1137,7 +1160,7 @@
          6,
          1,
          [
-          " <input type=\"search\" class=\"et-search-input\" placeholder=\"Buscar…\" aria-label=\"Buscar en la tabla\" {value=\"\"}></input>"
+          " <input type=\"search\" class=\"et-search-input\" placeholder=\"Buscar…\" aria-label=\"Buscar en la tabla\" {value=\"o\"}></input>"
          ]
         ],
         [54,1,["   <tr class=\"\">"]],
@@ -1259,7 +1282,14 @@
       "modoShadowPedido": "@=paso-anterior",
       "dom": {
        "$parche": [
-        [7,3,[" <span class=\"et-search-count\" aria-live=\"polite\"></span>"]],
+        [
+         6,
+         4,
+         [
+          " <input type=\"search\" class=\"et-search-input\" placeholder=\"Buscar…\" aria-label=\"Buscar en la tabla\" {value=\"\"}></input>",
+          " <span class=\"et-search-count\" aria-live=\"polite\"></span>"
+         ]
+        ],
         [81,1,["   <tr class=\"\">"]],
         [137,1,["   <tr class=\"\">"]]
        ]

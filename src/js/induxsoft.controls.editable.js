@@ -9064,6 +9064,8 @@ class EditTable extends HTMLElement
             .et-ok, .et-ok > td{ color:var(--et-ok, var(--et-t-ok, #2E7D32)); }
             .et-warn, .et-warn > td{ color:var(--et-warn, var(--et-t-warn, #B26A00)); }
             .et-err, .et-err > td{ color:var(--et-error, var(--et-t-error, #C62828)); }
+            tr.EdiTable-Row-Selected > td.et-ok, tr.EdiTable-Row-Selected > td.et-warn, tr.EdiTable-Row-Selected > td.et-err, tr.EdiTable-Row-Selected > td.et-muted,
+            tr.EdiTable-Row-Selected.et-ok > td, tr.EdiTable-Row-Selected.et-warn > td, tr.EdiTable-Row-Selected.et-err > td, tr.EdiTable-Row-Selected.et-muted > td{ color:var(--et-sel-fg, var(--et-t-sel-fg, inherit)); }
             td[data-et-icon] .cell-content::before, tr[data-et-icon] > td:nth-child(1 of :not(.et-sel-col):not(.hidde-col)) .cell-content::before{ content:var(--et-rule-icon); margin-inline-end:.35em; }
             @media print{ .et-search-bar{ display:none !important; } }`;
         this._shadow.appendChild(st);
@@ -9086,6 +9088,7 @@ class EditTable extends HTMLElement
         };
         const terms = this._f8Plegar(text.trim(), o.accentInsensitive).split(/\s+/).filter(Boolean);
         this._f8Busq = (terms.length ? { text, terms, opts: o } : null);
+        { const inp = this._f8Barra?.querySelector('input'); if (inp && inp.value !== text) inp.value = text; } // la barra refleja Search/ClearSearch hechos por código
         this._f8Actual = null;
         this._f8Estilo();
         this._f8Aplicar();
@@ -9096,7 +9099,7 @@ class EditTable extends HTMLElement
         this._f8Disparar('SearchChanged', { text, options: { ...o }, rows });
         return rows;
     }
-    ClearSearch = () => { if (!this._f8Busq) { this._f8PintarContador(); return 0; } return this.Search(''); }
+    ClearSearch = () => { if (!this._f8Busq) { const inp = this._f8Barra?.querySelector('input'); if (inp) inp.value = ''; this._f8PintarContador(); return 0; } return this.Search(''); }
     SearchNext = () => this._f8Saltar(1, false);
     SearchPrev = () => this._f8Saltar(-1, false);
     /** Filtro: predicado (data, index) => bool, objeto {campo: valor | {op, value, value2}} o arreglo de condiciones {field, op, value}. */

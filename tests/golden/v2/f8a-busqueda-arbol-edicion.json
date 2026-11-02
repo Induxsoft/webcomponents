@@ -369,7 +369,7 @@
         [96,1,["   <tr class=\"et-filter-hidden hidde-row\">"]],
         [123,1,["   <tr class=\"et-filter-hidden hidde-row\">"]],
         [150,1,["   <tr class=\"et-filter-hidden hidde-row\">"]],
-        [180,0,["<style data-et=\"f8\">"," @@ESTILO sha256:7d65d35cb935d876","</style>"]]
+        [180,0,["<style data-et=\"f8\">"," @@ESTILO sha256:90f161cbae5be7b2","</style>"]]
        ]
       },
       "shadowEsElGuardado": "@=paso-anterior",

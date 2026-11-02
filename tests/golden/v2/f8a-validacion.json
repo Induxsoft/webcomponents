@@ -509,7 +509,7 @@
           "    <td class=\"EdiTable-Cell et-cell-error\" data-cell=\"Cantidad\" aria-invalid=\"true\" title=\"No puede ser negativa\">"
          ]
         ],
-        [182,0,["<style data-et=\"f8\">"," @@ESTILO sha256:7d65d35cb935d876","</style>"]]
+        [182,0,["<style data-et=\"f8\">"," @@ESTILO sha256:90f161cbae5be7b2","</style>"]]
        ]
       },
       "shadowEsElGuardado": "@=paso-anterior",
