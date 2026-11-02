@@ -171,3 +171,14 @@ Objetivo: declarar el tema **una sola vez por página** y que lo tomen todos los
 - **EdiTable 2:** leer el tema de la página cuando no hay `theme` (un cambio pequeño en `_f8bTemaNombre`) y mover el registro al módulo.
 - **InputKey 2:** nace ya con ese comportamiento.
 - **Pruebas:** que sin `data-et-theme` todo quede igual, la precedencia, el cambio en caliente y los iframes.
+
+### Ajuste: el tema se hereda desde cualquier elemento (2026-11-02)
+
+`data-et-theme` (y `data-et-density` / `data-et-palette`) puede ir en **cualquier elemento**: `<html>`, `<body>`, un `<section>` o un `<div>`. Cada componente toma el del **ancestro más cercano** que lo declare, igual que la herencia de CSS.
+- Se busca hacia arriba con `closest('[data-et-theme]')`, cruzando los shadow DOM: si el componente vive dentro de otro componente, se sigue por el `host`.
+- `data-et-theme=""` en un ancestro corta la herencia: debajo de él no hay tema y se ve como hoy.
+- Un solo `MutationObserver` global (`subtree`, `attributeFilter: ['data-et-theme','data-et-density','data-et-palette']`) avisa a las instancias que quedan debajo del elemento que cambió.
+- Al mover un componente a otro lugar del DOM (`connectedCallback`), vuelve a resolver su tema.
+- Ejemplo: `<body data-et-theme="claro">` con un panel lateral `<aside data-et-theme="oscuro">`. Las tablas y buscadores del panel salen oscuros y el resto claros.
+- **Precedencia:** respaldo interno → ancestro más cercano con `data-et-theme` → `theme` del componente → variables `--et-*` → `palette` del componente.
+- `InduxsoftTheme.set('oscuro')` sin destino pone el atributo en `<html>`. Con destino (`InduxsoftTheme.set('oscuro', {on: elemento})`) lo pone en ese elemento.
