@@ -604,5 +604,23 @@ window.EJEMPLOS = [
    "export",
    "fixed"
   ]
+ },
+ {
+  "archivo": "temas.html",
+  "titulo": "Temas, paleta y densidad",
+  "tipo": "v2",
+  "descripcion": "theme=\"claro|oscuro|jade|libro-mayor|auto\" (Theme) cambia el aspecto en caliente sin redibujar; palette (Palette, SetPalette) fija colores encima de cualquier tema; las variables --et-* de un contenedor del sitio llegan al shadow DOM; striped y density. Sin theme, el aspecto es el actual.",
+  "spec": [
+   "§T-theme",
+   "§T-palette",
+   "§T-precedencia",
+   "§T-caliente",
+   "§T-striped",
+   "§T-density",
+   "§T-partes"
+  ],
+  "requiere": [
+   "theme"
+  ]
  }
 ];
