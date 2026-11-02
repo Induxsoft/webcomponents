@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Búsqueda y filtro · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- search-bar="true" muestra una barra hermana de la tabla: filtra al teclear (sin acentos ni mayúsculas), resalta sin cambiar el contenido (CSS Custom Highlight) y Enter, F3 o Mayús+F3 recorren las coincidencias. Search, Filter, getFilteredIndices y exportar con visibleOnly; el total del pie sigue al filtro. -->
+<div id="contenido">
+<div class="demo-barra" id="barra"></div><div class="demo-caja" style="max-height:480px"><edit-table id="t1" style="width:100%" search-bar="true" multi-select="checkbox"><edit-thead><edit-tr>
+<edit-th type="Text" field="codigo" width="100px">Código</edit-th>
+<edit-th type="Text" field="descripcion" minwidth="200px">Descripción</edit-th>
+<edit-th type="Text" field="linea">Línea</edit-th>
+<edit-th type="Text" field="marca">Marca</edit-th>
+<edit-th type="Number" field="existencia" textalign="end" summary="sum">Existencia</edit-th>
+<edit-th type="Number" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true">Precio</edit-th>
+</edit-tr></edit-thead></edit-table></div>
+</div>
+<script>
+Demo.pagina({"titulo": "Búsqueda y filtro", "tipo": "v2", "bajada": "search-bar=\"true\" muestra una barra hermana de la tabla: filtra al teclear (sin acentos ni mayúsculas), resalta sin cambiar el contenido (CSS Custom Highlight) y Enter, F3 o Mayús+F3 recorren las coincidencias. Search, Filter, getFilteredIndices y exportar con visibleOnly; el total del pie sigue al filtro."});
+Demo.requiere(["search"]);
+Demo.observar('t1');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1');
+  t.DataArray = DatosDemo.productos(300); t._printRows();
+  Demo.boton('barra', 'Search("cable")', () => Demo.llamar(t, 'Search', 'cable'));
+  Demo.boton('barra', 'Search("led", {filter:false})', () => Demo.llamar(t, 'Search', 'led', { filter: false }));
+  Demo.boton('barra', 'Filter({existencia:{op:"lt",value:50}})', () => Demo.llamar(t, 'Filter', { existencia: { op: 'lt', value: 50 } }));
+  Demo.boton('barra', 'Filter({linea:"Plomería"})', () => Demo.llamar(t, 'Filter', { linea: 'Plomería' }));
+  Demo.boton('barra', 'ClearFilter()', () => Demo.llamar(t, 'ClearFilter'));
+  Demo.boton('barra', 'SelectAll() (solo visibles)', () => Demo.llamar(t, 'SelectAll'));
+  Demo.boton('barra', 'CSV visibleOnly', () => Demo.log(String(Demo.llamar(t, 'exportCSV', { visibleOnly: true }) ?? '').split('\n').length - 1 + ' filas'));
+});
+</script>
+</body>
+</html>

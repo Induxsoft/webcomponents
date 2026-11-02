@@ -12,7 +12,7 @@
 (function () {
   'use strict';
   const EXTRA = ['summarycalculated', 'maskinvalid', 'selectionchanged', 'beforecopy', 'columnfixedchanged', 'columnvisibilitychanged',
-    'beforecolumnmove', 'columnmoved', 'layoutchanged', 'layoutrejected', 'beforegroup', 'groupchanged', 'grouptoggled', 'valuetypefallback'];
+    'beforecolumnmove', 'columnmoved', 'layoutchanged', 'layoutrejected', 'beforegroup', 'groupchanged', 'grouptoggled', 'valuetypefallback', 'searchchanged', 'filterchanged', 'beforerowleave'];
   let panelEv = null, panelDatos = null, observada = null, ultimo = '';
 
   function features() {
@@ -86,7 +86,8 @@
         let usuario = t.Events[n];
         Object.defineProperty(t.Events, n, {
           configurable: true, enumerable: true,
-          get() { return function (a) { log(resumir(a), n); if (typeof usuario === 'function') return usuario.apply(this, arguments); }; },
+          // F8a: con BeforeRowLeave, tener manejador ya activa la validación; solo se observa si la página pone el suyo.
+          get() { if (n === 'beforerowleave' && typeof usuario !== 'function') return undefined; return function (a) { log(resumir(a), n); if (typeof usuario === 'function') return usuario.apply(this, arguments); }; },
           set(f) { usuario = f; },
         });
       });

@@ -343,6 +343,7 @@ class EditTable extends HTMLElement
             this._f4Iniciar();   // F4: multi-select (columna del sistema y selección)
             this._f3Inicializar?.();   // F3: columnas fijas, selector, reordenar y diseño guardado
             this._f6Iniciar();   // F6: group-panel y group-summary
+            this._f8Iniciar();   // F8a: search-bar, enter-mode, skip-readonly y row-rules
 
             // Si no se ha proporcionado el atributo data para el dataArray se genera a partir del contenido de la tabla
             if (this.DataArray.length < 1) this.UpdateData();
@@ -523,6 +524,7 @@ class EditTable extends HTMLElement
         // (control-styles de los paquetes usa td[data-cell='<título>']).
         // Solo se consulta el mapa si changeColumnTitle cambió algún título (M1: sin trabajo extra por celda).
         td.setAttribute('data-cell',((this._f1TitulosDeclarados.size && this._f1TitulosDeclarados.has(i)) ? this._f1TitulosDeclarados.get(i) : (coldf?.title??'')));
+        if (column?.rules != null) this._f8ReglasCelda(td, column, data);   // F8a: formato condicional, antes de onTdPaint
         if (this.onTdPaint) this.onTdPaint(td, idx, this.ColIndexOfTd(td), (coldf?.field??''));
         if (ocultas && this.hideColumns.includes(td.cellIndex)) td.classList.add('hidde-col');
         return container;
@@ -1301,6 +1303,8 @@ class EditTable extends HTMLElement
             const funct = (e) => {
                 if (this._f6Tecla(e, selector)) return;   // F6: Ctrl+Inicio/Fin, RePág/AvPág y Ctrl+Supr en el orden visible
                 if (this._f4Tecla(e)) return;   // F4: Ctrl+C copia (§4.2), Espacio marca la fila (§4.1)
+                if (this._f8Tecla?.(e, selector)) return;   // F8a: F3 de la búsqueda, Ctrl+F a la barra, Tab/Enter de la secuencia de captura
+                if (this._f8Tecleo?.(e, selector, _current)) return;   // F8a: tecleo rápido (lector de códigos) sin perder caracteres
                 // F1 (C2): Ctrl o Meta con una letra no empieza la edición. Ctrl/Meta + C, V, X y A
                 // conservan su comportamiento nativo (no se cancelan); AltGr (Ctrl+Alt) sigue escribiendo.
                 const f1Atajo = (e.ctrlKey || e.metaKey) && !e.altKey && !(e.getModifierState && e.getModifierState('AltGraph'))
@@ -1712,6 +1716,7 @@ class EditTable extends HTMLElement
         if (rows<1 || cols<1 || row>rows-1 || row<0) return false;
 
         const f4Fila = this.DataArray[row];   // F4
+        this._f8AlBorrar?.(row);   // F8a: base de getChanges antes de quitar la fila; errores de la fila
         if (this._f5Activo) this._f5QuitarFila(row); else   // F5: en virtual la fila puede no estar dibujada
         this.GetTrByIndex(row).remove();
         this.DataArray.splice(row, 1);
@@ -1834,6 +1839,7 @@ class EditTable extends HTMLElement
     UpdateDataMember=(row, field, value, stopfire = false)=>
     {
         value = this._f2AlActualizar(row, field, value);   // F2: recálculo de totales y value-type="number" (C12)
+        this._f8AntesDeActualizar?.(row, field, value);   // F8a: getChanges guarda el original antes de escribir
         if (this.DataArray[row]==undefined)
             this.DataArray[row]={};
 
@@ -1854,6 +1860,7 @@ class EditTable extends HTMLElement
                 this._getCurren().Events[this.EdiTable.Const.Events.FieldUpdated](eventArgs);
         }
         this._f6AlActualizar(row, field, stopfire);   // F6: subtotales y filas nuevas en su grupo
+        this._f8TrasActualizar?.(row, field, stopfire);   // F8a: reglas de la fila, caché de la búsqueda, errores y resaltado
 
         return this.DataArray[row];
     }
@@ -1871,6 +1878,7 @@ class EditTable extends HTMLElement
      */
     InsertRow=(rw, nofocus = false)=>
     {
+        if (this._f8AlInsertar?.(rw, nofocus) === false) return;   // F8a: BeforeRowLeave hacia la fila nueva; base de getChanges
         if (this._f5Activo) return this._f5Insertar(rw, nofocus);   // F5: en virtual se inserta en el modelo y se dibuja
         var tbody=this.GetTBody();
         var cols=this.ColumnsCount();
@@ -2296,6 +2304,7 @@ class EditTable extends HTMLElement
 
         input.focus();
         this.EdiTable.SetInputEventHandler(input,this._getCurren()); 
+        this._f8PrepararEditor?.(input);   // F8a: Tab/Enter del editor con secuencia de captura
                                 
     }
     /**
@@ -2389,6 +2398,7 @@ class EditTable extends HTMLElement
 
             if (this.Events[this.EdiTable.Const.Events.BeforeUpdateCell]!=undefined)
                 this.Events[this.EdiTable.Const.Events.BeforeUpdateCell](eventArgs);
+            this._f8TrasBeforeUpdate?.(eventArgs, td, columnDef);   // F8a: e.error marca la celda y sigue editando
 
             if (eventArgs.cancel)
             {
@@ -2518,9 +2528,11 @@ class EditTable extends HTMLElement
             this._getCurren().Events[this.EdiTable.Const.Events.BeforeCellFocus](eventArgs);
 
         if (eventArgs.cancel) return;
+        if (this._f8SalirDeFila?.(td) === false) return;   // F8a: BeforeRowLeave (cancelable) al cambiar de fila
 
         let selector=this.EdiTable.GetSelector();
         let input=this.EdiTable.GetInput();
+        const f8Ref = (input!=undefined ? this._f8RefTd?.(td) : null);   // F8a: por si al confirmar se vuelve a dibujar
 
         if (input!=undefined)
         {
@@ -2536,6 +2548,7 @@ class EditTable extends HTMLElement
             else
                 input.remove();
         }
+        if (f8Ref && td && !td.isConnected) { td = this._f8TdVigente?.(f8Ref); if (!td) return; eventArgs.td = td; selector = this.EdiTable.GetSelector(); }   // F8a: celda equivalente de la fila redibujada
 
         if (selector!=undefined)
         {
@@ -2619,6 +2632,7 @@ class EditTable extends HTMLElement
 
         this._current_row = this.CurrentRowIndex();
         this._f6TrasFoco(td);   // F6: las filas nuevas que se dejan se colocan en su grupo
+        this._f8TrasFoco?.(td);   // F8a: resaltado de la búsqueda en la fila que se deja y en la nueva
     }
     /**
      * Mueve el selector una celda hacia arriba de la celda *td* especificada.
@@ -2961,6 +2975,7 @@ class EditTable extends HTMLElement
         this._f4TrasDibujar();   // F4: celdas del sistema y selección después de redibujar
         this._f3TrasDibujar?.();   // F3: clases y left de las columnas fijas en las filas nuevas
         this._f2Programar();   // F2: recálculo de totales (DataArray asignado, ordenar, árbol)
+        this._f8TrasDibujar?.();   // F8a: en árbol con filtro, se ven las filas que pasan
     }
 
     _setIndent=(td, indent=0)=>
@@ -3139,6 +3154,7 @@ class EditTable extends HTMLElement
         }
         const rows = this._getChildRows(row);
         removeHidde(rows);
+        this._f8Reocultar?.(rows);   // F8a: las filas filtradas siguen ocultas
     }
     CollapseRow(row)
     {
@@ -3293,7 +3309,9 @@ class EditTable extends HTMLElement
         // F1 (C4): la fila restaurada deja de contar como modificada.
         const f1EraSucia = (objBack?.isDirty === true);
         delete objBack.isDirty;
+        const f8Viejo = this.DataArray[indexRow];   // F8a
         this.DataArray[indexRow] = JSON.parse(JSON.stringify(objBack));
+        this._f8Reemplazar?.(f8Viejo, this.DataArray[indexRow]);   // F8a: getChanges sigue a la fila restaurada
         if (f1EraSucia) this._f1ReiniciarIsDirty(Math.max(0, this._count_isdirty - 1));
         this.UpdateRow(indexRow);
     }
@@ -3995,6 +4013,7 @@ class EditTable extends HTMLElement
             td.classList.toggle('et-hide-empty', empty && (def.hideEmpty ?? this.CardsHideEmpty));
         });
 
+        this._f8Decorar(tr, idx, data);   // F8a: reglas, errores, filtro y resaltado (antes de onRowPaint)
         this._paintBadges(tr, data, idx);
 
         if (typeof this.onRowPaint == 'function') this.onRowPaint(tr, idx, data);
@@ -4611,8 +4630,8 @@ class EditTable extends HTMLElement
     {
         const i = this._f4ThSel?.querySelector('input');
         if (!i) return;
-        const n = this.DataArray.filter(r => r && typeof r == 'object').length;
-        const s = this.getSelectedRows().length;
+        const u = (this._f8Visibles?.() ?? this.DataArray).filter(r => r && typeof r == 'object'), n = u.length;   // F8a: con filtro, las visibles
+        const s = u.filter(o => this._f4Sel.has(o)).length;
         i.checked = (n > 0 && s >= n);
         i.indeterminate = (s > 0 && s < n);
     }
@@ -4766,8 +4785,8 @@ class EditTable extends HTMLElement
     }
     _f4Todas()
     {
-        const n = this.DataArray.filter(r => r && typeof r == 'object').length;
-        if (n > 0 && this.getSelectedRows().length >= n) this.ClearSelection(); else this.SelectAll();
+        const u = (this._f8Visibles?.() ?? this.DataArray).filter(r => r && typeof r == 'object'), n = u.length;   // F8a: con filtro, las visibles
+        if (n > 0 && u.filter(o => this._f4Sel.has(o)).length >= n) this.ClearSelection(); else this.SelectAll();
     }
     // Teclado del selector (sin edición en curso). true si la tecla se atendió aquí.
     _f4Tecla(e)
@@ -4815,7 +4834,7 @@ class EditTable extends HTMLElement
         this._f4Objetos(indices ?? []).forEach(o => s.delete(o));
         return this._f4Fijar(s);
     }
-    SelectAll=()=> this._f4Fijar(new Set(this.DataArray.filter(r => r && typeof r == 'object')));
+    SelectAll=()=> this._f4Fijar(new Set((this._f8Visibles?.() ?? this.DataArray).filter(r => r && typeof r == 'object')));   // F8a: con filtro, solo las visibles
     ClearSelection=()=> this._f4Fijar(new Set());
     IsRowSelected=(i)=>
     {
@@ -4867,8 +4886,9 @@ class EditTable extends HTMLElement
         if (!raw && v !== '' && this._withFormat(col, v)) return this._aplyFormat(col, v);
         return String(v);
     }
-    _f4FilasExportar(selectedOnly)
+    _f4FilasExportar(selectedOnly, visibleOnly)
     {
+        if (visibleOnly && this._f8FiltrarIdx) return this._f8FiltrarIdx(this._f4FilasExportar(selectedOnly));   // F8a: visibleOnly
         if (!selectedOnly) return this.DataArray.map((_, i) => i);
         const s = this.getSelectedRows();
         if (s.length || this._f4Modo) return s;
@@ -4884,7 +4904,7 @@ class EditTable extends HTMLElement
         const raw = !!opts.raw;
         const tsv = (s) => (/[\t\r\n"]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s);
         let cols, lineas, headers = opts.headers;
-        const filas = this.getSelectedRows();
+        const filas = (opts.visibleOnly && this._f8FiltrarIdx ? this._f8FiltrarIdx(this.getSelectedRows()) : this.getSelectedRows());   // F8a: visibleOnly
         if (filas.length)
         {
             cols = this._f4Columnas();
@@ -4954,7 +4974,7 @@ class EditTable extends HTMLElement
             if (oculta) x.hidden = true;
             return x;
         });
-        const rows = this._f4FilasExportar(!!opts.selectedOnly).map(i => {
+        const rows = this._f4FilasExportar(!!opts.selectedOnly, !!opts.visibleOnly).map(i => {   // F8a: visibleOnly
             const d = this.DataArray[i], o = {};
             cols.forEach(({ col }) => { o[col.field] = this._f4Valor(col, d, raw); });
             return o;
@@ -4977,7 +4997,7 @@ class EditTable extends HTMLElement
         const cols = this._f4Columnas({ incluirOcultas: !!opts.includeHidden, sinImpresion: true, conField: true });
         const lineas = [];
         if (opts.headers !== false) lineas.push(cols.map(c => esc(this._f4Titulo(c.col))).join(sep));
-        this._f4FilasExportar(!!opts.selectedOnly).forEach(i => lineas.push(cols.map(c => esc(this._f4Texto(c.col, this.DataArray[i], raw))).join(sep)));
+        this._f4FilasExportar(!!opts.selectedOnly, !!opts.visibleOnly).forEach(i => lineas.push(cols.map(c => esc(this._f4Texto(c.col, this.DataArray[i], raw))).join(sep)));
         if (opts.includeSummary && typeof this.getSummaries == 'function')
         {
             let s = null;
@@ -5115,6 +5135,9 @@ class EditTable extends HTMLElement
             case this.EdiTable.Const.Events.GroupToggled:   // F6 (R4)
             case this.EdiTable.Const.Events.SummaryCalculated:   // F2 (R4)
             case this.EdiTable.Const.Events.ValueTypeFallback:   // F2 (R4)
+            case this.EdiTable.Const.Events.SearchChanged:    // F8a (R4)
+            case this.EdiTable.Const.Events.FilterChanged:    // F8a (R4)
+            case this.EdiTable.Const.Events.BeforeRowLeave:   // F8a (R4)
                 this._getCurren().Events[type.toLowerCase()] = listener
                 break;
         }
@@ -5244,6 +5267,7 @@ class EditTable extends HTMLElement
     _f5Filas()
     {
         { const f6 = this._f6FilasV?.(); if (f6) return f6; }   // F5+F6: con grupos, filas de grupo y de datos visibles
+        { const f8 = this._f8FilasV?.(); if (f8) return f8; }   // F8a: sin las filas filtradas
         const n = (this.DataArray ?? []).length, out = new Array(n);
         for (let i = 0; i < n; i++) out[i] = { tipo: 'datos', indice: i };
         return out;
@@ -5891,7 +5915,7 @@ class EditTable extends HTMLElement
             // Después de los DOMContentLoaded de los consumidores (pueden poner DesignKey o DataArray).
             // La base se abre desde ya para que la restauración llegue lo antes posible.
             if (this.DesignAutoSave && this._f3Llave()) EditTable._f3AbrirBd();
-            setTimeout(() => this._f3Restaurar(), 0);
+            setTimeout(() => this._f8Restaurar(), 0);   // F8a: _f3Restaurar + LayoutChanged 'restore' y LayoutReady
         }
         catch (e) { console.error('EditTable F3: error al inicializar', e); }
     }
@@ -6638,15 +6662,15 @@ class EditTable extends HTMLElement
     {
         try
         {
-            if (!this.DesignAutoSave) return;
+            if (!this.DesignAutoSave) return false;   // F8a: devuelve true (en una promesa) si restauró algo
             const k = this._f3Llave();
-            if (!k) return;
-            EditTable._f3Op('readonly', s => s.get(k)).then(rec => {
+            if (!k) return false;
+            return EditTable._f3Op('readonly', s => s.get(k)).then(rec => {   // F8a: return
                 try
                 {
-                    if (!rec || typeof rec !== 'object' || !rec.layout || !this.isConnected) return;
-                    if (rec.huella !== this._f3Huella) { EditTable._f3Op('readwrite', s => s.delete(k)); return; }   // huella de columnas
-                    if (Number(rec.layout.v ?? 1) > 1) return;
+                    if (!rec || typeof rec !== 'object' || !rec.layout || !this.isConnected) return false;
+                    if (rec.huella !== this._f3Huella) { EditTable._f3Op('readwrite', s => s.delete(k)); return false; }   // huella de columnas
+                    if (Number(rec.layout.v ?? 1) > 1) return false;
                     const antes = this._f3Silencio;
                     this._f3Silencio = true;
                     try
@@ -6657,11 +6681,12 @@ class EditTable extends HTMLElement
                         });
                     }
                     finally { this._f3Silencio = antes; }
+                    return true;   // F8a
                 }
-                catch (e) { console.error('EditTable: no se pudo restaurar el diseño', e); }
+                catch (e) { console.error('EditTable: no se pudo restaurar el diseño', e); return false; }
             });
         }
-        catch (e) { }
+        catch (e) { return false; }
     }
     ForgetLayout()
     {
@@ -7556,7 +7581,7 @@ class EditTable extends HTMLElement
     {
         const s = String(this.SummaryScope ?? 'all').trim().toLowerCase();
         if (this._f2ScopeDeclarado || (s && s != 'all')) return s;
-        return ((this.getGroups?.() ?? []).length ? 'visible' : 'all');   // P4: sin filtro; con agrupación (F6), visible
+        return (((this.getGroups?.() ?? []).length || this._f8Fuera) ? 'visible' : 'all');   // P4: con agrupación (F6) o filtro (F8a), visible
     }
     _f2Filas(alcance)
     {
@@ -8073,6 +8098,7 @@ class EditTable extends HTMLElement
         this._f6Trs.forEach(tr => { if (tr) { tr.classList.remove('hidde-row', 'et-group-hidden'); frag.appendChild(tr); } });
         tbody.appendChild(frag);
         this._f6Trs = []; this._f6Idx = new WeakMap(); this._f6Pend.clear(); this._f6PendApi.clear();
+        this._f8Reocultar?.();   // F8a: las filas filtradas siguen ocultas
         this._f6Restaurar(act, null);
         if (enGrupo) this.EdiTable.focusedTable = null;
         this._f3TrasDibujar?.();
@@ -8127,7 +8153,7 @@ class EditTable extends HTMLElement
     }
     _f6Modelo(pend)
     {
-        const idx = [];
+        let idx = [];   // F8a: let (el filtro la reemplaza)
         if (this._f5Activo)   // F5+F6: todas las filas del modelo, menos las nuevas pendientes
         {
             if (pend === undefined) pend = this._f6PendIdx();
@@ -8135,6 +8161,7 @@ class EditTable extends HTMLElement
         }
         else
         for (let i = 0; i < this.DataArray.length; i++) { const tr = this._f6Trs[i]; if (tr && !this._f6Pend.has(tr)) idx.push(i); }
+        if (this._f8Fuera) idx = this._f8FiltrarIdx(idx);   // F8a: se agrupan solo las filas que pasan el filtro
         return EditTable.groupRows(this.DataArray, this._f6Grupos, { indices: idx, collapsed: this._f6Colapsados, desc: this._f6Desc() });
     }
     _f6Subtotales(indices)
@@ -8308,6 +8335,7 @@ class EditTable extends HTMLElement
                 pila.length = g.level + 1;
                 continue;
             }
+            if (tr.classList.contains('et-filter-hidden')) continue;   // F8a: la fila filtrada sigue oculta
             const vis = (this._f6Pend.has(tr) || !pila.length || !!pila[this._f6Grupos.length - 1]);
             tr.classList.toggle('hidde-row', !vis);
             tr.classList.toggle('et-group-hidden', !vis);
@@ -8348,7 +8376,7 @@ class EditTable extends HTMLElement
         });
         const ent = this._f6Modelo();
         const actual = [];
-        for (const tr of tbody.rows) { if (!this._f6Pend.has(tr)) actual.push(tr._f6Grupo ? 'g' + tr._f6Grupo.pathKey : tr); }
+        for (const tr of tbody.rows) { if (!this._f6Pend.has(tr) && !tr.classList.contains('et-filter-hidden')) actual.push(tr._f6Grupo ? 'g' + tr._f6Grupo.pathKey : tr); }   // F8a: sin las filtradas
         const nuevo = ent.map(e => (e.type === 'group' ? 'g' + e.pathKey : this._f6Trs[e.index]));
         const igual = (actual.length === nuevo.length && actual.every((x, k) => x === nuevo[k]));
         if (!igual) { this._f6Dibujar(); return; }
@@ -8527,6 +8555,7 @@ class EditTable extends HTMLElement
     _f6EnfocarGrupo(tr)
     {
         if (!tr || !tr._f6Grupo) return false;
+        if (this._f8SalirDeFila?.(null) === false) return false;   // F8a: BeforeRowLeave hacia una fila de grupo
         const pk = tr._f6Grupo.pathKey, tenia = !!this.EdiTable.GetInput();
         if (!this._f6Soltar()) return false;   // F5+F6: separado para usarlo antes de colapsar en virtual
         if (tenia && !tr.isConnected) tr = this._f6FilaDeGrupo(pk);
@@ -8910,6 +8939,1269 @@ class EditTable extends HTMLElement
         return true;
     }
     // ===== F6: fin
+
+    // ===== F8a: búsqueda y filtro, validar la fila al salir, getChanges, secuencia de captura y formato condicional
+    //
+    // Spec: /home/claude/mapa/edittable-spec-f8-funcional.md. Todo opt-in (R1/R8): sin search-bar, Search/Filter,
+    // BeforeRowLeave, SetCellError, getChanges, enter-mode/skip-readonly/tab-order/tab-skip ni rules/row-rules, los
+    // enganches del código existente (marcados «// F8a») salen sin tocar el DOM, el CSS, los eventos ni DataArray.
+    // - Filtro: nunca toca DataArray ni los índices (R2). _f8Fuera es el conjunto de objetos de DataArray que no pasan;
+    //   sin virtual-rows sus tr llevan et-filter-hidden + hidde-row (la navegación de hoy ya salta hidde-row); con
+    //   virtual-rows no entran a la lista lógica de F5 (_f5Filas); con grupos, F6 agrupa solo las que pasan (_f6Modelo).
+    //   Se evalúa al llamar Search/Filter/RefreshFilter y cuando DataArray es otro arreglo; una fila editada o nueva
+    //   no desaparece mientras se captura.
+    // - Resaltado: CSS Custom Highlight API con StaticRange (no cambia el DOM); si no existe, clase et-search-hit en el td.
+    // - getChanges: base perezosa (Set de objetos) tomada en el primer enganche después de inicializar; originales por
+    //   objeto al primer cambio de UpdateDataMember. No toca IsDirty ni el respaldo.
+    static { this.features.push('search', 'rowvalidate', 'changes', 'capture', 'rules'); }
+    static _f8Num = 0;
+
+    _f8Eventos = Object.assign(this.EdiTable.Const.Events, { SearchChanged: 'searchchanged', FilterChanged: 'filterchanged', BeforeRowLeave: 'beforerowleave' });
+    _f8EstiloEl = null;
+    _f8SearchBar = false;
+    _f8Barra = null;
+    _f8Temporizador = 0;
+    SearchFilter = true;        // search-filter: la barra filtra (true) o solo salta (false)
+    SearchColumns = null;       // search-columns: "a,b" o arreglo de fields
+    SearchDebounce = 150;       // search-debounce (ms)
+    _f8EnterMode = 'current';
+    SkipReadonly = false;       // skip-readonly
+    RowRules = null;            // row-rules
+    _f8AttrFilaLeido = false;
+    _f8Busq = null;             // {text, terms, opts}
+    _f8Filtro = null;           // {fn, src}
+    _f8Fuera = null;            // Set de objetos de DataArray ocultos por el filtro (null: sin filtro)
+    _f8Arr = null;              // DataArray con el que se calculó _f8Fuera
+    _f8Cache = new WeakMap();   // objeto de DataArray → Map(clave de columna → texto plegado)
+    _f8Hl = null; _f8HlCur = null; _f8HlNombre = '';
+    _f8Rangos = new Map();      // tr → [rangos del resaltado]
+    _f8Actual = null;           // {obj, field}: coincidencia actual
+    _f8TrUlt = null;
+    _f8SinSalida = false;
+    _f8Errores = new Map();     // objeto de DataArray (o tr sin datos) → Map(field → {message, src})
+    _f8Base = null;             // getChanges: Set de objetos de la base
+    _f8BaseArr = null;
+    _f8Orig = new Map();        // objeto → copia superficial antes del primer cambio
+    _f8ReglasCache = new WeakMap();
+    _f8UsoReglas = false;
+
+    get SearchBar() { return this._f8SearchBar; }
+    set SearchBar(v) { this._f8SearchBar = this._f5Bool(v); if (this._f1Inicializada) this._f8AplicarBarra(); }
+    get EnterMode() { return this._f8EnterMode; }
+    set EnterMode(v) { const s = String(v ?? '').trim().toLowerCase(); this._f8EnterMode = (['next-cell', 'next-row', 'down'].includes(s) ? s : 'current'); }
+
+    _f8Iniciar()
+    {
+        try
+        {
+            if (this.hasAttribute('search-filter')) this.SearchFilter = this._f5Bool(this.getAttribute('search-filter'));
+            if (this.hasAttribute('search-columns')) this.SearchColumns = this.getAttribute('search-columns');
+            if (this.hasAttribute('search-debounce')) { const n = Number(this.getAttribute('search-debounce')); if (Number.isFinite(n) && n >= 0) this.SearchDebounce = n; }
+            if (this.hasAttribute('enter-mode')) this.EnterMode = this.getAttribute('enter-mode');
+            if (this.hasAttribute('skip-readonly')) this.SkipReadonly = this._f5Bool(this.getAttribute('skip-readonly'));
+            this._f8ReglasFilaDef();
+            if (this.hasAttribute('search-bar')) { this._f8SearchBar = this._f5Bool(this.getAttribute('search-bar')); this._f8AplicarBarra(); }
+        }
+        catch (e) { console.error('EditTable F8a: error al inicializar', e); }
+    }
+    _f8Manejador(nombre)
+    {
+        const k = this.EdiTable.Const.Events[nombre];
+        const fn = this._getCurren().Events?.[k] ?? this.Events?.[k];
+        return (typeof fn === 'function' ? fn : null);
+    }
+    _f8Disparar(nombre, args)
+    {
+        const fn = this._f8Manejador(nombre);
+        if (!fn) return args;
+        args.sender = this._getCurren();
+        try { fn(args); } catch (e) { console.error('EditTable: error en el manejador de ' + nombre, e); }
+        return args;
+    }
+    _f8Estilo()
+    {
+        if (this._f8EstiloEl || !this._shadow) return;
+        const api = (typeof CSS !== 'undefined' && CSS.highlights && typeof Highlight === 'function');
+        const n = ++EditTable._f8Num;
+        this._f8HlNombre = 'et-search-' + n;
+        if (api)
+        {
+            try
+            {
+                this._f8Hl = new Highlight(); this._f8HlCur = new Highlight();
+                this._f8HlCur.priority = 1;
+                CSS.highlights.set(this._f8HlNombre, this._f8Hl);
+                CSS.highlights.set(this._f8HlNombre + '-cur', this._f8HlCur);
+            }
+            catch (e) { this._f8Hl = null; this._f8HlCur = null; }
+        }
+        const st = document.createElement('style');
+        st.setAttribute('data-et', 'f8');
+        st.textContent = `
+            .et-search-bar{ display:flex; align-items:center; gap:4px; margin-bottom:4px; padding:2px 0; box-sizing:border-box; font-family:var(--et-font, var(--et-t-font, inherit)); font-size:var(--et-font-size, var(--et-t-font-size, .9rem)); color:var(--et-fg, var(--et-t-fg, inherit)); background:var(--et-bg, var(--et-t-bg, transparent)); }
+            .et-search-input{ flex:1 1 auto; min-width:8rem; box-sizing:border-box; padding:var(--et-cell-pad-y, var(--et-t-cell-pad-y, 4px)) var(--et-cell-pad-x, var(--et-t-cell-pad-x, 8px)); border:1px solid var(--et-input-border, var(--et-t-input-border, #ced4da)); border-radius:var(--et-radius, var(--et-t-radius, 3px)); background:var(--et-input-bg, var(--et-t-input-bg, #fff)); color:var(--et-input-fg, var(--et-t-input-fg, #212529)); font:inherit; outline:none; }
+            .et-search-input:focus{ border-color:var(--et-accent, var(--et-t-accent, #3D75DD)); box-shadow:0 0 0 2px var(--et-focus-ring, var(--et-t-focus-ring, rgba(61,117,221,.35))); }
+            .et-search-count{ min-width:4.5em; text-align:center; white-space:nowrap; color:var(--et-muted-fg, var(--et-t-muted-fg, #666)); }
+            .et-search-btn{ padding:2px 8px; border:1px solid var(--et-border, var(--et-t-border, #DDD)); border-radius:var(--et-radius, var(--et-t-radius, 3px)); background:var(--et-header-bg, var(--et-t-header-bg, #F5F5F5)); color:var(--et-header-fg, var(--et-t-header-fg, inherit)); font:inherit; cursor:pointer; }
+            ::highlight(${this._f8HlNombre}){ background-color:var(--et-mark-bg, var(--et-t-mark-bg, #FFE58F)); color:var(--et-mark-fg, var(--et-t-mark-fg, #000)); }
+            ::highlight(${this._f8HlNombre}-cur){ background-color:var(--et-accent, var(--et-t-accent, #3D75DD)); color:var(--et-sel-fg, var(--et-t-sel-fg, #FFF)); }
+            td.et-search-hit{ background-color:var(--et-mark-bg, var(--et-t-mark-bg, #FFF4C2)); }
+            td.et-search-current{ box-shadow:inset 0 0 0 2px var(--et-accent, var(--et-t-accent, #3D75DD)); }
+            tbody > tr.et-filter-hidden{ display:none !important; }
+            td.et-cell-error{ box-shadow:inset 0 0 0 2px var(--et-error, var(--et-t-error, #D93025)); background-color:var(--et-error-bg, var(--et-t-error-bg, #FDECEA)); color:var(--et-error, var(--et-t-error, #B3261E)); }
+            .et-neg, .et-neg > td{ color:var(--et-neg-fg, var(--et-t-neg-fg, #C62828)); }
+            .et-strike, .et-strike > td{ text-decoration:line-through; }
+            .et-muted, .et-muted > td{ color:var(--et-muted-fg, var(--et-t-muted-fg, #888)); }
+            .et-bold, .et-bold > td{ font-weight:600; }
+            .et-ok, .et-ok > td{ color:var(--et-ok, var(--et-t-ok, #2E7D32)); }
+            .et-warn, .et-warn > td{ color:var(--et-warn, var(--et-t-warn, #B26A00)); }
+            .et-err, .et-err > td{ color:var(--et-error, var(--et-t-error, #C62828)); }
+            td[data-et-icon] .cell-content::before, tr[data-et-icon] > td:nth-child(1 of :not(.et-sel-col):not(.hidde-col)) .cell-content::before{ content:var(--et-rule-icon); margin-inline-end:.35em; }
+            @media print{ .et-search-bar{ display:none !important; } }`;
+        this._shadow.appendChild(st);
+        this._f8EstiloEl = st;
+        this._f8bReescribirTodo?.();   // F8b (temas): vuelve a escribir las variables del tema con la hoja nueva
+    }
+
+    // ---------- búsqueda y filtro: API ----------
+    /** Busca texto en las columnas. opts: {columns, filter=true, highlight=true, accentInsensitive=true}. Devuelve cuántas filas coinciden. */
+    Search = (texto, opts = {}) =>
+    {
+        opts = opts ?? {};
+        const text = String(texto ?? '');
+        const cols = (opts.columns ?? this.SearchColumns ?? null);
+        const o = {
+            columns: (cols == null ? null : (Array.isArray(cols) ? cols : String(cols).split(',')).map(s => String(s).trim()).filter(Boolean)),
+            filter: (opts.filter === undefined ? true : !!opts.filter),
+            highlight: opts.highlight !== false,
+            accentInsensitive: opts.accentInsensitive !== false,
+        };
+        const terms = this._f8Plegar(text.trim(), o.accentInsensitive).split(/\s+/).filter(Boolean);
+        this._f8Busq = (terms.length ? { text, terms, opts: o } : null);
+        this._f8Actual = null;
+        this._f8Estilo();
+        this._f8Aplicar();
+        this._f8Resaltar();
+        const rows = this._f8ContarBusq();
+        if (this._f8Busq && !o.filter && opts._salto !== false) this._f8Saltar(1, true);
+        this._f8PintarContador();
+        this._f8Disparar('SearchChanged', { text, options: { ...o }, rows });
+        return rows;
+    }
+    ClearSearch = () => { if (!this._f8Busq) { this._f8PintarContador(); return 0; } return this.Search(''); }
+    SearchNext = () => this._f8Saltar(1, false);
+    SearchPrev = () => this._f8Saltar(-1, false);
+    /** Filtro: predicado (data, index) => bool, objeto {campo: valor | {op, value, value2}} o arreglo de condiciones {field, op, value}. */
+    Filter = (f) =>
+    {
+        let fn = null;
+        if (typeof f === 'function') fn = (o, i) => { try { return !!f(o, i); } catch (e) { return false; } };
+        else if (Array.isArray(f) || (f && typeof f === 'object'))
+        {
+            const conds = (Array.isArray(f) ? f.filter(x => x && typeof x === 'object')
+                : Object.entries(f).map(([k, v]) => ((v && typeof v === 'object' && !Array.isArray(v) && 'op' in v) ? { ...v, field: k }
+                    : (Array.isArray(v) ? { field: k, op: 'in', value: v } : { field: k, op: 'eq', value: v }))));
+            fn = (o) => conds.every(c => this._f8Cumple(c, o, this._f8ColDe(c.field)));
+        }
+        if (!fn) return this.ClearFilter();
+        this._f8Filtro = { fn, src: f };
+        this._f8Estilo();
+        this._f8Aplicar();
+        this._f8Resaltar();
+        const rows = this.getFilteredIndices().length;
+        this._f8PintarContador();
+        this._f8Disparar('FilterChanged', { filter: (typeof f === 'function' ? 'function' : f), rows });
+        return rows;
+    }
+    ClearFilter = () =>
+    {
+        if (!this._f8Filtro) return this.getFilteredIndices().length;
+        this._f8Filtro = null;
+        this._f8Aplicar();
+        this._f8Resaltar();
+        const rows = this.getFilteredIndices().length;
+        this._f8PintarContador();
+        this._f8Disparar('FilterChanged', { filter: null, rows });
+        return rows;
+    }
+    /** Vuelve a evaluar la búsqueda y el filtro (por ejemplo, después de editar). */
+    RefreshFilter = () =>
+    {
+        this._f8Cache = new WeakMap();
+        this._f8Aplicar();
+        this._f8Resaltar();
+        this._f8PintarContador();
+        return this.getFilteredIndices().length;
+    }
+    /** Índices de DataArray que pasan el filtro (todos si no hay filtro), en orden. */
+    getFilteredIndices = () =>
+    {
+        const d = (this.DataArray ?? []);
+        if (!this._f8Activo()) return d.map((_, i) => i);
+        this._f8Sync();
+        const out = [];
+        d.forEach((o, i) => { if (o && typeof o === 'object' && !this._f8Fuera.has(o)) out.push(i); });
+        return out;
+    }
+
+    // ---------- búsqueda y filtro: modelo ----------
+    _f8Activo() { return !!(this._f8Filtro || (this._f8Busq && this._f8Busq.opts.filter)); }
+    _f8Plegar(s, ai = true)
+    {
+        s = String(s ?? '').toLowerCase();
+        if (ai && /[^\x00-\x7f]/.test(s)) s = s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        return s;
+    }
+    _f8ColDe(field) { return this.Columns.find(c => c && c.field === field) ?? null; }
+    // Columnas en las que se busca: [{i, col}] (las indicadas, o las visibles con field o plantilla).
+    _f8ColumnasBusq()
+    {
+        const b = this._f8Busq, out = [];
+        this.Columns.forEach((col, i) => {
+            if (!col || this._isBadgesCol(col)) return;
+            if (b?.opts.columns) { if (b.opts.columns.includes(col.field)) out.push({ i, col }); return; }
+            if (col.field == undefined && !col.template) return;
+            if (col.field != undefined && this._f1ColumnaOculta(col.field)) return;
+            out.push({ i, col });
+        });
+        return out;
+    }
+    _f8Texto(o, col, i, ai)
+    {
+        let e = this._f8Cache.get(o);
+        if (!e) { e = new Map(); this._f8Cache.set(o, e); }
+        const k = (ai ? '1' : '0') + (col.field ?? ('#' + i));
+        let t = e.get(k);
+        if (t === undefined) { t = this._f8Plegar(this._f4Texto(col, o, false), ai); e.set(k, t); }
+        return t;
+    }
+    _f8PasaBusq(i, cols)
+    {
+        const b = this._f8Busq;
+        if (!b) return true;
+        const o = this.DataArray[i];
+        if (!o || typeof o !== 'object') return false;
+        cols = cols ?? this._f8ColumnasBusq();
+        const ai = b.opts.accentInsensitive;
+        return b.terms.every(t => cols.some(c => this._f8Texto(o, c.col, c.i, ai).includes(t)));
+    }
+    _f8PasaFiltro(i) { const o = this.DataArray[i]; return !this._f8Filtro || (!!o && this._f8Filtro.fn(o, i)); }
+    _f8ContarBusq()
+    {
+        const d = (this.DataArray ?? []);
+        if (!this._f8Busq) return this.getFilteredIndices().length;
+        const cols = this._f8ColumnasBusq();
+        let n = 0;
+        for (let i = 0; i < d.length; i++) if (this._f8PasaFiltro(i) && this._f8PasaBusq(i, cols)) n++;
+        return n;
+    }
+    _f8Recalcular()
+    {
+        if (!this._f8Activo()) { this._f8Fuera = null; this._f8Arr = null; return; }
+        const d = (this.DataArray ?? []), fuera = new Set(), dentro = [];
+        const conBusq = !!(this._f8Busq && this._f8Busq.opts.filter), cols = (conBusq ? this._f8ColumnasBusq() : null);
+        for (let i = 0; i < d.length; i++)
+        {
+            const o = d[i];
+            if (!o || typeof o !== 'object') continue;
+            if (this._f8PasaFiltro(i) && (!conBusq || this._f8PasaBusq(i, cols))) dentro.push(o); else fuera.add(o);
+        }
+        // En árbol se ven también los ancestros de las filas que pasan.
+        if (this.ShowAsTree && fuera.size && dentro.length)
+        {
+            const op = this._getTreeOptions(), porLlave = new Map();
+            d.forEach(x => { if (x && typeof x === 'object' && !porLlave.has(x[op.key])) porLlave.set(x[op.key], x); });
+            const vistos = new Set();
+            dentro.forEach(x => {
+                let p = porLlave.get(x[op.parentkey]);
+                while (p && !vistos.has(p)) { vistos.add(p); fuera.delete(p); p = porLlave.get(p[op.parentkey]); }
+            });
+        }
+        this._f8Fuera = fuera;
+        this._f8Arr = d;
+    }
+    _f8Sync() { if (this._f8Fuera && (this.DataArray ?? []) !== this._f8Arr) this._f8Recalcular(); }
+    _f8EsFuera(i)
+    {
+        if (!this._f8Fuera) return false;
+        this._f8Sync();
+        const o = this.DataArray[i];
+        return !!(o && this._f8Fuera && this._f8Fuera.has(o));
+    }
+    _f8FiltrarIdx(idx) { return (this._f8Fuera ? idx.filter(i => !this._f8EsFuera(i)) : idx); }
+    // Objetos que se ven por el filtro (null si no hay filtro). Para SelectAll y la casilla de "todas" (F4).
+    _f8Visibles() { if (!this._f8Fuera) return null; this._f8Sync(); return this.DataArray.filter(o => o && typeof o === 'object' && !this._f8Fuera.has(o)); }
+    // F5: lista lógica sin las filas filtradas (sin grupos; con grupos la arma F6 desde _f6Modelo).
+    _f8FilasV()
+    {
+        if (!this._f8Fuera) return null;
+        this._f8Sync();
+        const d = (this.DataArray ?? []), out = [];
+        for (let i = 0; i < d.length; i++) if (!(d[i] && this._f8Fuera.has(d[i]))) out.push({ tipo: 'datos', indice: i });
+        return out;
+    }
+    // Aplica el estado de la búsqueda y del filtro al DOM (o a la lista virtual).
+    _f8Aplicar()
+    {
+        const antes = !!this._f8Fuera;
+        this._f8Recalcular();
+        if (!antes && !this._f8Fuera) return;
+        this._f8SoltarSiOculta();
+        if (this._f5Activo)
+        {
+            if (this._f6Grupos.length) this._f6RearmarV();
+            else { this._f5Rearmar(); this._f5Pintar(); this._f3TrasDibujar?.(); }
+        }
+        else this._f8AplicarDom();
+        this._f2Programar?.();
+        this._f4Encabezado?.();
+    }
+    _f8AplicarDom()
+    {
+        const tbody = this._f1TBodyPrincipal();
+        if (!tbody) return;
+        const grupos = this._f6Grupos.length > 0;
+        for (const tr of tbody.rows)
+        {
+            if (tr._f6Grupo || tr.classList.contains('et-spacer')) continue;
+            const i = this._getRowIndex(tr);
+            if (i >= 0 && this._f8EsFuera(i)) tr.classList.add('et-filter-hidden', 'hidde-row');
+            else if (tr.classList.contains('et-filter-hidden')) { tr.classList.remove('et-filter-hidden'); if (!grupos) tr.classList.remove('hidde-row'); }
+            else if (this.ShowAsTree && this._f8Fuera && !grupos) tr.classList.remove('hidde-row');   // con filtro, el árbol muestra lo que pasa
+        }
+        if (grupos) this._f6Dibujar();
+        else if (this.ShowAsTree && !this._f8Fuera) this._f8VisibilidadArbol(tbody);
+    }
+    // Sin filtro, en árbol: oculta las filas con un ancestro colapsado (estado de los botones de expandir).
+    _f8VisibilidadArbol(tbody)
+    {
+        const porId = new Map(), oculta = new Map();
+        for (const tr of tbody.rows)
+        {
+            const id = tr.getAttribute('id');
+            const p = porId.get(tr.getAttribute('parent'));
+            const h = !!(p && (oculta.get(p) || p.querySelector('span.collapse-btn')?.getAttribute('expanded') === 'false'));
+            oculta.set(tr, h);
+            if (id != null && id !== '' && !porId.has(id)) porId.set(id, tr);
+            tr.classList.toggle('hidde-row', h);
+        }
+    }
+    // Las filas filtradas vuelven a llevar hidde-row (después de ExpandRow o de desagrupar).
+    _f8Reocultar(filas)
+    {
+        if (!this._f8Fuera || this._f5Activo) return;
+        const lista = filas ?? this._f1TBodyPrincipal()?.querySelectorAll(':scope > tr.et-filter-hidden') ?? [];
+        Array.from(lista).forEach(tr => { if (tr.classList.contains('et-filter-hidden')) tr.classList.add('hidde-row'); });
+    }
+    // Si la fila actual queda filtrada, se confirma el editor y se suelta el selector (CurrentRowIndex() = -1).
+    _f8SoltarSiOculta()
+    {
+        if (!this._f8Fuera) return;
+        const el = this.EdiTable.GetInput() ?? this.EdiTable.GetSelector();
+        const td = el?.closest?.('td');
+        if (!td) return;
+        const i = this._getRowIndex(td.closest('tr'));
+        if (i < 0 || !this._f8EsFuera(i)) return;
+        if (this._f6Soltar() === false) return;
+        this.EdiTable.focusedTable = null;
+        this._f8TrUlt = null;
+    }
+    // _printRows: en árbol, con filtro, se vuelven a mostrar las filas que pasan aunque su nodo esté colapsado.
+    _f8TrasDibujar() { if (this._f8Fuera && this.ShowAsTree && !this._f6Grupos.length) this._f8AplicarDom(); }
+
+    // ---------- búsqueda: resaltado ----------
+    _f8Resaltar()
+    {
+        this._f8Rangos.forEach((l, tr) => this._f8QuitarRangos(tr));
+        this._f8Rangos.clear();
+        const tbody = this._f1TBodyPrincipal();
+        if (tbody && (!this._f8Hl || !this._f8Busq)) tbody.querySelectorAll('td.et-search-hit, td.et-search-current').forEach(td => td.classList.remove('et-search-hit', 'et-search-current'));
+        if (!this._f8Busq || !this._f8Busq.opts.highlight || !tbody) return;
+        for (const tr of tbody.rows) if (!tr._f6Grupo && !tr.classList.contains('et-spacer') && !tr.classList.contains('et-filter-hidden')) this._f8ResaltarFila(tr);
+    }
+    _f8QuitarRangos(tr)
+    {
+        const l = this._f8Rangos.get(tr);
+        if (l) { l.forEach(r => { this._f8Hl?.delete(r); this._f8HlCur?.delete(r); }); this._f8Rangos.delete(tr); }
+    }
+    _f8ResaltarFila(tr, idx)
+    {
+        if (!tr || tr._f6Grupo) return;
+        this._f8QuitarRangos(tr);
+        const b = this._f8Busq;
+        if (!this._f8Hl) tr.querySelectorAll('td.et-search-hit, td.et-search-current').forEach(td => td.classList.remove('et-search-hit', 'et-search-current'));
+        if (!b || !b.opts.highlight) return;
+        const i = (idx ?? this._getRowIndex(tr));
+        if (!(i >= 0)) return;
+        const cols = this._f8ColumnasBusq();
+        if (!this._f8PasaBusq(i, cols)) return;
+        const o = this.DataArray[i], ai = b.opts.accentInsensitive, tds = this._f4CeldasDatos(tr), lista = [];
+        cols.forEach(({ i: k, col }) => {
+            const td = tds[k];
+            if (!td) return;
+            const cur = !!(this._f8Actual && this._f8Actual.obj === o && this._f8Actual.field === col.field);
+            const raiz = (td.querySelector('.cell-content') ?? td);
+            if (!this._f8Hl)
+            {
+                const t = this._f8Plegar(raiz.textContent, ai);
+                if (b.terms.some(x => t.includes(x))) { td.classList.add('et-search-hit'); td.classList.toggle('et-search-current', cur); }
+                return;
+            }
+            const w = document.createTreeWalker(raiz, NodeFilter.SHOW_TEXT);
+            for (let n = w.nextNode(); n; n = w.nextNode())
+            {
+                if (n.parentElement?.closest('button, input, select, textarea, .et-badges')) continue;
+                const s = n.nodeValue;
+                if (!s) continue;
+                // Texto plegado con el mapa de cada posición al carácter original.
+                let f = '', mapa = [];
+                for (let j = 0; j < s.length; j++) { const p = this._f8Plegar(s[j], ai); for (let q = 0; q < p.length; q++) mapa.push(j); f += p; }
+                mapa.push(s.length);
+                b.terms.forEach(x => {
+                    let p = f.indexOf(x);
+                    while (p >= 0)
+                    {
+                        const ini = mapa[p], fin = (mapa[p + x.length - 1] ?? (s.length - 1)) + 1;
+                        let r;
+                        try { r = new StaticRange({ startContainer: n, startOffset: ini, endContainer: n, endOffset: fin }); }
+                        catch (e) { r = document.createRange(); r.setStart(n, ini); r.setEnd(n, fin); }
+                        (cur ? this._f8HlCur : this._f8Hl).add(r);
+                        lista.push(r);
+                        p = f.indexOf(x, p + Math.max(1, x.length));
+                    }
+                });
+            }
+        });
+        if (lista.length) this._f8Rangos.set(tr, lista);
+        if (this._f8Rangos.size > 400) this._f8Rangos.forEach((l, x) => { if (!x.isConnected) this._f8QuitarRangos(x); });
+    }
+
+    // ---------- búsqueda: navegación entre coincidencias ----------
+    // Índices de datos en el orden en que se ven (sin las filtradas; con grupos, también las de grupos colapsados).
+    _f8OrdenVisual()
+    {
+        if (this._f6Grupos.length) return this._f6Modelo().filter(e => e.type === 'data').map(e => e.index);
+        if (this._f5Activo) return this._f5Lista.filter(e => e && e.tipo === 'datos').map(e => e.indice);
+        const tbody = this._f1TBodyPrincipal(), out = [];
+        if (tbody) for (const tr of tbody.rows) { if (tr._f6Grupo || tr.classList.contains('et-spacer') || tr.classList.contains('et-filter-hidden')) continue; const i = this._getRowIndex(tr); if (i >= 0) out.push(i); }
+        return out;
+    }
+    _f8Coincidencias()
+    {
+        const b = this._f8Busq;
+        if (!b) return [];
+        const cols = this._f8ColumnasBusq().filter(c => !(c.col.field != undefined && this._f1ColumnaOculta(c.col.field)));
+        const ai = b.opts.accentInsensitive, out = [];
+        this._f8OrdenVisual().forEach((i, p) => {
+            if (!this._f8PasaBusq(i, cols)) return;
+            const o = this.DataArray[i];
+            cols.forEach(c => { const t = this._f8Texto(o, c.col, c.i, ai); if (b.terms.some(x => t.includes(x))) out.push({ i, p, k: c.i, field: c.col.field }); });
+        });
+        return out;
+    }
+    // dir 1/-1; inclusivo: la celda actual cuenta (para el salto al teclear). Devuelve {index, field} o null.
+    _f8Saltar(dir, inclusivo)
+    {
+        const lista = this._f8Coincidencias();
+        if (!lista.length) { this._f8PintarContador(); return null; }
+        const td = this.CurrentTd();
+        let destino = null;
+        if (td)
+        {
+            const ci = this._getRowIndex(td.closest('tr')), ck = this.ColIndexOfTd(td);
+            const cp = (lista.find(x => x.i === ci)?.p ?? this._f8OrdenVisual().indexOf(ci));
+            const cmp = (x) => (x.p - cp) || (x.k - ck);
+            if (dir > 0) destino = lista.find(x => (inclusivo ? cmp(x) >= 0 : cmp(x) > 0)) ?? lista[0];
+            else destino = [...lista].reverse().find(x => cmp(x) < 0) ?? lista[lista.length - 1];
+        }
+        else destino = (dir > 0 ? lista[0] : lista[lista.length - 1]);
+        this._f8IrA(destino);
+        this._f8PintarContador(lista, destino);
+        return { index: destino.i, field: destino.field };
+    }
+    _f8IrA(m)
+    {
+        const o = this.DataArray[m.i];
+        const viejo = this._f8Actual;
+        this._f8Actual = { obj: o, field: m.field };
+        const col = this.Columns.slice(0, m.k).filter(c => !(c?.field != undefined && this._f1ColumnaOculta(c.field))).length;
+        const enBarra = (this._f8Barra && this._shadow?.activeElement === this._f8Barra.querySelector('input'));
+        this.NavTo(m.i, col);
+        if (viejo && viejo.obj !== o)
+        {
+            const i = this.DataArray.indexOf(viejo.obj);
+            const tr = (i >= 0 ? (this._f5Activo ? this._f5TrDibujado(i) : this.GetTrByIndex(i)) : null);
+            if (tr) this._f8ResaltarFila(tr, i);
+        }
+        const tr = this.CurrentTd()?.closest('tr');
+        if (tr) this._f8ResaltarFila(tr);
+        if (enBarra) this._f8Barra.querySelector('input').focus({ preventScroll: true });
+    }
+    _f8PintarContador(lista, actual)
+    {
+        const c = this._f8Barra?.querySelector('.et-search-count');
+        if (!c) return;
+        if (!this._f8Busq) { c.textContent = ''; return; }
+        lista = lista ?? this._f8Coincidencias();
+        const k = (actual ? lista.indexOf(actual) + 1 : 0);
+        c.textContent = (k > 0 ? k + ' / ' + lista.length : String(lista.length));
+    }
+
+    // ---------- búsqueda: barra ----------
+    _f8AplicarBarra()
+    {
+        if (!this._table || !this._shadow) return;
+        if (!this._f8SearchBar) { if (this._f8Barra) this._f8Barra.remove(); return; }
+        this._f8Estilo();
+        if (!this._f8Barra)
+        {
+            const b = document.createElement('div');
+            b.className = 'et-search-bar';
+            b.setAttribute('role', 'search');
+            const i = document.createElement('input');
+            i.type = 'search';
+            i.className = 'et-search-input';
+            i.setAttribute('placeholder', this.getAttribute('search-placeholder') ?? 'Buscar…');
+            i.setAttribute('aria-label', 'Buscar en la tabla');
+            const n = document.createElement('span');
+            n.className = 'et-search-count';
+            n.setAttribute('aria-live', 'polite');
+            const boton = (cls, txt, etq, dir) => { const x = document.createElement('button'); x.type = 'button'; x.className = 'et-search-btn ' + cls; x.textContent = txt; x.setAttribute('aria-label', etq); x.setAttribute('tabindex', '-1'); x.addEventListener('click', (e) => { e.stopPropagation(); this._f8DesdeBarra(dir); }); return x; };
+            b.append(i, n, boton('et-search-prev', '↑', 'Coincidencia anterior', -1), boton('et-search-next', '↓', 'Coincidencia siguiente', 1));
+            i.addEventListener('input', () => this._f8Programar());
+            i.addEventListener('keydown', (e) => this._f8TeclaBarra(e, i));
+            this._f8Barra = b;
+        }
+        const cont = this._table.parentElement;
+        if (!this._f8Barra.isConnected && cont && cont.parentNode)
+            cont.parentNode.insertBefore(this._f8Barra, (this._f6Panel && this._f6Panel.parentNode === cont.parentNode) ? this._f6Panel : cont);
+    }
+    _f8Programar()
+    {
+        clearTimeout(this._f8Temporizador);
+        const ms = Math.max(0, Number(this.SearchDebounce) || 0);
+        this._f8Temporizador = setTimeout(() => this._f8BuscarBarra(), ms);
+    }
+    _f8BuscarBarra()
+    {
+        clearTimeout(this._f8Temporizador);
+        this._f8Temporizador = 0;
+        const i = this._f8Barra?.querySelector('input');
+        if (!i) return;
+        const texto = i.value;
+        if (texto === (this._f8Busq?.text ?? '') && (this._f8Busq ? this._f8Busq.opts.filter === !!this.SearchFilter : true)) return;
+        const enBarra = (this._shadow?.activeElement === i);
+        this.Search(texto, { filter: !!this.SearchFilter });
+        if (enBarra && this._shadow?.activeElement !== i) i.focus({ preventScroll: true });
+    }
+    _f8DesdeBarra(dir)
+    {
+        if (this._f8Temporizador) this._f8BuscarBarra();
+        const i = this._f8Barra?.querySelector('input');
+        this._f8Saltar(dir, false);
+        if (i && this._shadow?.activeElement !== i) i.focus({ preventScroll: true });
+    }
+    _f8TeclaBarra(e, i)
+    {
+        const k = e.key;
+        if (k === 'Enter' || k === 'F3') { e.preventDefault(); e.stopPropagation(); this._f8DesdeBarra(e.shiftKey ? -1 : 1); return; }
+        if (k === 'Escape')
+        {
+            e.preventDefault(); e.stopPropagation();
+            if (i.value !== '') { i.value = ''; this._f8BuscarBarra(); }
+            else this._f8VolverATabla();
+            return;
+        }
+        if (k === 'ArrowDown') { e.preventDefault(); e.stopPropagation(); if (this._f8Temporizador) this._f8BuscarBarra(); this._f8VolverATabla(); return; }
+        e.stopPropagation();
+    }
+    _f8VolverATabla()
+    {
+        const td = this.CurrentTd() ?? this.EdiTable.GetSelector()?.closest('td');
+        if (td && td.isConnected && !td.closest('tr')?.classList.contains('et-filter-hidden')) { this.CellFocus(td); return; }
+        const orden = this._f8OrdenVisual();
+        if (orden.length) this.NavTo(orden[0], 0);
+    }
+
+    // ---------- validar la fila al salir (BeforeRowLeave) y errores por celda ----------
+    // Confirma el editor abierto (como lo haría CellFocus). false si no se pudo confirmar.
+    _f8Confirmar()
+    {
+        const input = this.EdiTable.GetInput();
+        if (!input) return true;
+        const t = (this.EdiTable.focusedTable ?? this);
+        this._f1ConfirmDesdeCelda = true;
+        let ok;
+        try { ok = t.ConfirmEdit(input.closest('td')); } finally { this._f1ConfirmDesdeCelda = false; }
+        return ok !== false;
+    }
+    // Desde CellFocus (td destino), _f6EnfocarGrupo (td null) e InsertRow (nueva). false: se canceló, no moverse.
+    _f8SalirDeFila(td, toIndex, nueva = false)
+    {
+        if (this._f8SinSalida) return true;
+        if (!this._f8Manejador('BeforeRowLeave')) return true;
+        const cur = this.CurrentTd();
+        if (!cur) return true;
+        const trA = cur.closest('tr');
+        const trB = (td && td.closest ? td.closest('tr') : null);
+        if (!nueva && trB === trA) return true;
+        const index = this._getRowIndex(trA);
+        if (index < 0) return true;
+        if (!this._f8Confirmar()) return false;
+        const args = { index, data: this.DataArray[index], toIndex: (toIndex !== undefined ? toIndex : (trB ? this._getRowIndex(trB) : -1)), cancel: false };
+        this._f8Disparar('BeforeRowLeave', args);
+        if (args.errors && typeof args.errors === 'object')
+        {
+            let n = 0;
+            Object.entries(args.errors).forEach(([f, msg]) => { if (msg != null && msg !== '') { this.SetCellError(index, f, String(msg)); n++; } });
+            if (n) args.cancel = true;
+        }
+        if (args.cancel)
+        {
+            if (!this.EdiTable.GetSelector() && !this.EdiTable.GetInput() && cur.isConnected)
+            {
+                this._f8SinSalida = true;
+                try { this.CellFocus(cur); } finally { this._f8SinSalida = false; }
+            }
+            return false;
+        }
+        if (nueva) { this._f8SinSalida = true; queueMicrotask(() => { this._f8SinSalida = false; }); }
+        return true;
+    }
+    // InsertRow (enganche): base de getChanges antes de insertar y BeforeRowLeave hacia la fila nueva.
+    _f8AlInsertar(rw, nofocus)
+    {
+        this._f8Asegurar();
+        if (nofocus) return true;
+        return this._f8SalirDeFila(null, (rw != undefined ? Number(rw) : (this._f5Activo ? this.DataArray.length : this.TRCount())), true);
+    }
+    // ConfirmEdit (enganche, después de BeforeUpdateCell): e.error marca la celda y sigue editando.
+    _f8TrasBeforeUpdate(args, td, coldef)
+    {
+        if (args.error == null && !this._f8Errores.size) return;
+        const i = this.RowIndexOfTd(td), f = coldef?.field;
+        if (f == undefined || i < 0) return;
+        if (args.error != null && args.error !== '' && args.error !== false)
+        {
+            args.cancel = true;
+            this._f8PonerError(i, f, String(args.error), 'edit');
+            return;
+        }
+        if (!args.cancel) { const k = this._f8Llave(i); const e = (k ? this._f8Errores.get(k)?.get(f) : null); if (e && e.src === 'edit') this.ClearCellError(i, f); }
+    }
+    _f8Llave(i)
+    {
+        const o = this.DataArray[i];
+        if (o && typeof o === 'object') return o;
+        if (this._f5Activo) return null;
+        return this.GetTrByIndex(i) ?? null;
+    }
+    _f8PonerError(i, field, message, src)
+    {
+        const k = this._f8Llave(i);
+        if (!k || field == undefined) return false;
+        let m = this._f8Errores.get(k);
+        if (!m) { m = new Map(); this._f8Errores.set(k, m); }
+        m.set(String(field), { message: String(message), src });
+        this._f8Estilo();
+        this._f8PintarErroresFila(i);
+        return true;
+    }
+    /** Marca la celda con error: clase et-cell-error, aria-invalid y el mensaje en title. Mensaje vacío: quita el error. */
+    SetCellError = (i, field, message) =>
+    {
+        i = Number(i);
+        if (message == null || message === '') return this.ClearCellError(i, field);
+        return this._f8PonerError(i, field, message, 'api');
+    }
+    /** Sin argumentos: todos; con índice: los de la fila; con índice y campo: el de la celda. */
+    ClearCellError = (i, field) =>
+    {
+        if (i === undefined || i === null)
+        {
+            const filas = new Set();
+            this._shadow?.querySelectorAll('td.et-cell-error').forEach(td => filas.add(td.closest('tr')));
+            this._f8Errores.clear();
+            filas.forEach(tr => { if (tr) this._f8PintarErroresTr(tr, this._getRowIndex(tr)); });
+            return true;
+        }
+        i = Number(i);
+        const k = this._f8Llave(i);
+        const m = (k ? this._f8Errores.get(k) : null);
+        if (!m) return false;
+        if (field === undefined || field === null) this._f8Errores.delete(k);
+        else { m.delete(String(field)); if (!m.size) this._f8Errores.delete(k); }
+        this._f8PintarErroresFila(i);
+        return true;
+    }
+    /** [{index, field, message}] ordenados por fila y por columna. */
+    getErrors = () =>
+    {
+        const out = [];
+        if (!this._f8Errores.size) return out;
+        const orden = (f) => { const k = this.Columns.findIndex(c => c?.field === f); return (k < 0 ? 1e9 : k); };
+        this._f8Errores.forEach((m, k) => {
+            let i = -1;
+            if (k && k.nodeType === 1) i = (k.isConnected ? this._getRowIndex(k) : -1);
+            else i = this.DataArray.indexOf(k);
+            if (i < 0) return;
+            [...m.entries()].sort((a, b) => orden(a[0]) - orden(b[0])).forEach(([field, e]) => out.push({ index: i, field, message: e.message }));
+        });
+        return out.sort((a, b) => (a.index - b.index) || (orden(a.field) - orden(b.field)));
+    }
+    _f8PintarErroresFila(i)
+    {
+        const tr = (this._f5Activo ? this._f5TrDibujado(i) : this.GetTrByIndex(i));
+        if (tr) this._f8PintarErroresTr(tr, i);
+    }
+    _f8PintarErroresTr(tr, idx)
+    {
+        if (!tr || tr._f6Grupo) return;
+        const o = this.DataArray[idx];
+        const m = this._f8Errores.get((o && typeof o === 'object') ? o : tr);
+        this._f4CeldasDatos(tr).forEach((td, k) => {
+            const e = (m ? m.get(String(this.Columns[k]?.field)) : null);
+            if (e)
+            {
+                if (!td.classList.contains('et-cell-error')) td._f8Title = td.getAttribute('title');
+                td.classList.add('et-cell-error');
+                td.setAttribute('aria-invalid', 'true');
+                td.setAttribute('title', e.message);
+            }
+            else if (td.classList.contains('et-cell-error'))
+            {
+                td.classList.remove('et-cell-error');
+                td.removeAttribute('aria-invalid');
+                if (td._f8Title != null) td.setAttribute('title', td._f8Title); else td.removeAttribute('title');
+                td._f8Title = null;
+            }
+        });
+    }
+
+    // ---------- getChanges ----------
+    // Base perezosa: el primer enganche después de inicializar la toma. Un DataArray que no comparte ningún objeto
+    // con la base (datos nuevos, restore) la reinicia; uno que sí comparte (filtrado, árbol) la conserva.
+    _f8Asegurar()
+    {
+        if (!this._f1Inicializada) return false;
+        const d = (this.DataArray ?? []);
+        if (this._f8Base && d === this._f8BaseArr) return true;
+        if (this._f8Base)
+        {
+            let comparte = false;
+            for (const o of d) if (o && this._f8Base.has(o)) { comparte = true; break; }
+            this._f8BaseArr = d;
+            if (comparte) return true;
+        }
+        this._f8Base = new Set(d.filter(o => o && typeof o === 'object'));
+        this._f8BaseArr = d;
+        this._f8Orig = new Map();
+        return true;
+    }
+    _f8AntesDeActualizar(row, field, value)
+    {
+        if (!this._f8Asegurar()) return;
+        const o = this.DataArray[row];
+        if (!o || typeof o !== 'object' || field == undefined || value == undefined || this._f8Orig.has(o) || !this._f8Base.has(o)) return;
+        if (o[field] !== value) this._f8Orig.set(o, Object.assign({}, o));
+    }
+    _f8AlBorrar(row)
+    {
+        this._f8Asegurar();
+        const o = this.DataArray[row];
+        if (this._f8Errores.size) { this._f8Errores.delete(o); const tr = (this._f5Activo ? null : this.GetTrByIndex(row)); if (tr) this._f8Errores.delete(tr); }
+    }
+    // restoreRow: la copia restaurada ocupa el lugar del objeto anterior en la base.
+    _f8Reemplazar(viejo, nuevo)
+    {
+        if (!this._f8Base || !viejo || !nuevo || viejo === nuevo) return;
+        if (this._f8Base.has(viejo)) { this._f8Base.delete(viejo); this._f8Base.add(nuevo); }
+        if (this._f8Orig.has(viejo)) { this._f8Orig.set(nuevo, this._f8Orig.get(viejo)); this._f8Orig.delete(viejo); }
+        const e = this._f8Errores.get(viejo);
+        if (e) { this._f8Errores.delete(viejo); this._f8Errores.set(nuevo, e); }
+    }
+    /** {added:[{index,data}], modified:[{index,data,original}], deleted:[{data}]}. */
+    getChanges = () =>
+    {
+        this._f8Asegurar();
+        const d = (this.DataArray ?? []), base = (this._f8Base ?? new Set()), vivos = new Set();
+        const added = [], modified = [], deleted = [];
+        const txt = (v) => (v == null ? '' : String(v));
+        d.forEach((o, index) => {
+            if (!o || typeof o !== 'object') return;
+            vivos.add(o);
+            if (!base.has(o)) { if (Object.keys(o).length) added.push({ index, data: o }); return; }
+            const orig = this._f8Orig.get(o);
+            if (!orig) return;
+            const claves = new Set([...Object.keys(orig), ...Object.keys(o)]);
+            for (const k of claves) if (txt(orig[k]) !== txt(o[k])) { modified.push({ index, data: o, original: orig }); return; }
+        });
+        base.forEach(o => { if (!vivos.has(o)) deleted.push({ data: o }); });
+        return { added, modified, deleted };
+    }
+    /** true si la fila no estaba en la base (alta), o si no tiene datos todavía. */
+    isNew = (i) =>
+    {
+        i = Number(i);
+        if (!(i >= 0)) return false;
+        const o = this.DataArray[i];
+        if (!o) return (i < this.TRCount());
+        this._f8Asegurar();
+        return !!(this._f8Base && !this._f8Base.has(o));
+    }
+    /** La base pasa a ser lo que hay ahora: getChanges() queda vacío. No cambia IsDirty. */
+    AcceptChanges = () =>
+    {
+        const d = (this.DataArray ?? []);
+        this._f8Base = new Set(d.filter(o => o && typeof o === 'object'));
+        this._f8BaseArr = d;
+        this._f8Orig = new Map();
+    }
+
+    // ---------- enganches comunes ----------
+    // _decorateRow (antes de onRowPaint): reglas, errores, clase del filtro y resaltado de la fila.
+    _f8Decorar(tr, idx, data)
+    {
+        if (!tr || tr._f6Grupo) return;
+        const o = this.DataArray[idx];
+        if (o && this._f8Busq) this._f8Cache.delete(o);
+        if (this._f8UsoReglas || this.RowRules != null || !this._f8AttrFilaLeido) this._f8ReglasTr(tr, data, true);
+        if (this._f8Errores.size) this._f8PintarErroresTr(tr, idx);
+        if (this._f8Fuera && !this._f5Activo && idx >= 0 && this._f8EsFuera(idx)) tr.classList.add('et-filter-hidden', 'hidde-row');
+        if (this._f8Busq && this._f8Busq.opts.highlight) this._f8ResaltarFila(tr, idx);
+    }
+    // UpdateDataMember (enganche, después de escribir): reglas de esa fila, caché de búsqueda y resaltado.
+    _f8TrasActualizar(row, field, stopfire)
+    {
+        const o = this.DataArray[row];
+        if (o) this._f8Cache.delete(o);
+        if (stopfire) return;
+        const reglas = (this._f8UsoReglas || this.RowRules != null);
+        if (!reglas && !this._f8Errores.size && !this._f8Busq) return;
+        // Un error puesto sobre una fila sin datos pasa al objeto que se acaba de crear.
+        if (this._f8Errores.size && o && !this._f5Activo) { const tr0 = this.GetTrByIndex(row), e = (tr0 ? this._f8Errores.get(tr0) : null); if (e) { this._f8Errores.delete(tr0); this._f8Errores.set(o, e); } }
+        const tr = (this._f5Activo ? this._f5TrDibujado(row) : this.GetTrByIndex(row));
+        if (!tr) return;
+        if (reglas) this._f8ReglasTr(tr, o ?? {}, false);
+        if (this._f8Errores.size) this._f8PintarErroresTr(tr, row);
+        if (this._f8Busq && this._f8Busq.opts.highlight) this._f8ResaltarFila(tr, row);
+    }
+    // CellFocus (enganche, al final): el texto de la celda se movió al selector; se vuelve a resaltar.
+    _f8TrasFoco(td)
+    {
+        const tr = td?.closest?.('tr');
+        if (this._f8Busq && this._f8Busq.opts.highlight)
+        {
+            if (this._f8TrUlt && this._f8TrUlt !== tr && this._f8TrUlt.isConnected) this._f8ResaltarFila(this._f8TrUlt);
+            if (tr) this._f8ResaltarFila(tr);
+        }
+        this._f8TrUlt = tr ?? null;
+        this._f8VerCelda(td);   // (4) columnas fijas
+    }
+
+    // ---------- secuencia de captura ----------
+    _f8CapturaActiva()
+    {
+        if (this._f8EnterMode !== 'current' || this.SkipReadonly === true) return true;
+        return this.Columns.some(c => c && ((c['tab-order'] ?? c.tabOrder) != null || (c['tab-skip'] ?? c.tabSkip) != null));
+    }
+    _f8Orden(col)
+    {
+        const v = (col?.['tab-order'] ?? col?.tabOrder);
+        if (v == null || String(v).trim() === '') return Infinity;
+        const n = Number(v);
+        return (Number.isFinite(n) ? n : Infinity);
+    }
+    _f8Capturable(col)
+    {
+        if (!col) return false;
+        const skip = (col['tab-skip'] ?? col.tabSkip);
+        if (skip != null && this._f5Bool(skip === '' ? true : skip)) return false;
+        if (this.SkipReadonly === true)
+        {
+            if (col.readonly != null && !this._f1EsFalso(col.readonly)) return false;
+            const ty = String(col.type ?? this.ColumnsDefaultType);
+            if (ty === 'NoEditable' || this._isBadgesCol(col)) return false;
+        }
+        return true;
+    }
+    /** Fields en el orden de captura (visibles y capturables). */
+    getCaptureOrder = () =>
+    {
+        const l = [];
+        this.Columns.forEach((c, i) => { if (c && !(c.field != undefined && this._f1ColumnaOculta(c.field)) && this._f8Capturable(c)) l.push({ c, i, k: this._f8Orden(c) }); });
+        l.sort((a, b) => (a.k - b.k) || (a.i - b.i));
+        return l.map(x => x.c.field);
+    }
+    // Celdas capturables de la fila, en el orden de captura.
+    _f8Secuencia(tr)
+    {
+        if (!tr || tr._f6Grupo) return [];
+        const l = [];
+        this._f4CeldasDatos(tr).forEach((td, i) => {
+            if (td.classList.contains('hidde-col')) return;
+            const c = this.Columns[i];
+            if (this._f8Capturable(c)) l.push({ td, i, k: this._f8Orden(c) });
+        });
+        l.sort((a, b) => (a.k - b.k) || (a.i - b.i));
+        return l.map(x => x.td);
+    }
+    _f8Clave(td) { const i = this.ColIndexOfTd(td); const k = this._f8Orden(this.Columns[i]); return (k === Infinity ? 1e12 : k * 1e6) + i; }
+    // La fila de datos visible vecina (salta grupos, ocultas, filtradas y relleno); en virtual la dibuja.
+    _f8FilaVecina(tr, dir)
+    {
+        if (this._f5Activo)
+        {
+            const p = this._f5PosTr.get(tr);
+            if (p === undefined) return null;
+            for (let q = p + dir; q >= 0 && q < this._f5Lista.length; q += dir) if (this._f5Lista[q]?.tipo === 'datos') return (this._f5IrA(q) ?? null);
+            return null;
+        }
+        let x = tr;
+        do { x = (dir > 0 ? x.nextElementSibling : x.previousElementSibling); }
+        while (x && (x.tagName !== 'TR' || x._f6Grupo || x.classList.contains('hidde-row') || x.classList.contains('et-spacer')));
+        return x ?? null;
+    }
+    _f8Tab(td, dir)
+    {
+        const tr = td.closest('tr');
+        const seq = this._f8Secuencia(tr);
+        if (!seq.length) { if (dir > 0) this.NavRight(td); else this.NavLeft(td); return true; }
+        const k = seq.indexOf(td);
+        let destino;
+        if (k >= 0) destino = seq[k + dir];
+        else { const c = this._f8Clave(td); destino = (dir > 0 ? seq.find(x => this._f8Clave(x) > c) : [...seq].reverse().find(x => this._f8Clave(x) < c)); }
+        if (destino) { this.CellFocus(destino); return true; }
+        return this._f8OtraFila(td, dir, (dir > 0 ? 'primera' : 'ultima'));
+    }
+    _f8OtraFila(td, dir, cual)
+    {
+        const tr = td.closest('tr');
+        const sig = this._f8FilaVecina(tr, dir);
+        if (sig)
+        {
+            const seq = this._f8Secuencia(sig);
+            const destino = (cual === 'primera' ? seq[0] : seq[seq.length - 1]) ?? sig.querySelector('td:not(.hidde-col):not(.et-sel-col)');
+            if (destino) this.CellFocus(destino);
+            return true;
+        }
+        if (dir < 0 || !this.AutoAddRow) return true;
+        // Última fila: se agrega otra solo si la actual ya tiene datos (como eQGridXBar con <Nueva Fila>).
+        const i = this._getRowIndex(tr);
+        const habia = !!this.EdiTable.GetInput();
+        if (!this._f8Confirmar()) return true;
+        if (habia && !this.EdiTable.GetSelector() && td.isConnected) { this._f8SinSalida = true; try { this.CellFocus(td); } finally { this._f8SinSalida = false; } }
+        const o = this.DataArray[i];
+        if (!o || !Object.keys(o).some(k => o[k] != null && o[k] !== '')) return true;
+        const n0 = this.TRCount();
+        this.AddRow();
+        if (this.TRCount() === n0) return true;
+        const cur = this.CurrentTd();
+        const seq = (cur ? this._f8Secuencia(cur.closest('tr')) : []);
+        if (seq[0] && seq[0] !== cur) this.CellFocus(seq[0]);
+        return true;
+    }
+    _f8Enter(td, atras)
+    {
+        switch (this._f8EnterMode)
+        {
+            case 'next-cell': return this._f8Tab(td, atras ? -1 : 1);
+            case 'next-row': return this._f8OtraFila(td, atras ? -1 : 1, 'primera');
+            case 'down': if (atras) this.NavUp(td); else this.NavDown(td); return true;
+        }
+        return false;
+    }
+    // Teclado del selector (enganche): F3 de la búsqueda, Ctrl+F a la barra, Tab y Enter de la secuencia.
+    _f8Tecla(e, selector)
+    {
+        if (this._f8Pend) return false;   // tecleo rápido: la tecla se repite en el editor (_f8Tecleo)
+        const k = e.key;
+        if (k === 'F3' && this._f8Busq && !e.ctrlKey && !e.altKey) { e.preventDefault(); e.stopPropagation(); this._f8Saltar(e.shiftKey ? -1 : 1, false); return true; }
+        if ((e.ctrlKey || e.metaKey) && !e.altKey && !e.shiftKey && (k === 'f' || k === 'F') && this._f8Barra?.isConnected)
+        {
+            e.preventDefault(); e.stopPropagation();
+            const i = this._f8Barra.querySelector('input');
+            i.focus(); i.select();
+            return true;
+        }
+        if (k !== 'Tab' && k !== 'Enter') return false;
+        if (!this._f8CapturaActiva()) return false;
+        const td = selector.closest('td');
+        if (!td) return false;
+        if (k === 'Tab' && !e.ctrlKey && !e.altKey && !e.metaKey) { e.preventDefault(); e.stopPropagation(); this._f8Tab(td, e.shiftKey ? -1 : 1); return true; }
+        if (k === 'Enter' && this._f8EnterMode !== 'current' && !e.ctrlKey && !e.altKey && !e.metaKey) { e.preventDefault(); e.stopPropagation(); this._f8Enter(td, e.shiftKey); return true; }
+        return false;
+    }
+    // StartEdit (enganche): en captura, Tab y Enter del editor siguen la secuencia (antes que el manejador de hoy).
+    _f8PrepararEditor(input)
+    {
+        if (!input || !this._f8CapturaActiva()) return;
+        const tag = input.tagName;
+        input.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.altKey || e.metaKey) return;
+            const td = input.closest('td');
+            if (!td) return;
+            if (e.key === 'Tab') { e.preventDefault(); e.stopImmediatePropagation(); this._f8Tab(td, e.shiftKey ? -1 : 1); return; }
+            if (e.key === 'Enter' && tag === 'INPUT' && this._f8EnterMode !== 'current') { e.preventDefault(); e.stopImmediatePropagation(); this._f8Enter(td, e.shiftKey); }
+        }, true);
+    }
+
+    // ---------- formato condicional (rules, row-rules) ----------
+    _f8ParseReglas(src, donde)
+    {
+        if (src == null || src === '') return null;
+        let r = src;
+        if (typeof src === 'string')
+        {
+            try { r = JSON.parse(src); }
+            catch (e) { console.warn('EditTable: rules inválido en ' + donde + ': ' + e.message); r = []; }
+        }
+        if (!Array.isArray(r)) r = (r && typeof r === 'object' ? [r] : []);
+        return r.filter(x => x && typeof x === 'object');
+    }
+    _f8ReglasDe(col)
+    {
+        if (!col || col.rules == null) return null;
+        const c = this._f8ReglasCache.get(col);
+        if (c && c.src === col.rules) return c.r;
+        const r = this._f8ParseReglas(col.rules, 'la columna ' + (col.field ?? ''));
+        this._f8ReglasCache.set(col, { src: col.rules, r });
+        return r;
+    }
+    _f8ReglasFilaDef()
+    {
+        if (!this._f8AttrFilaLeido)
+        {
+            this._f8AttrFilaLeido = true;
+            const a = this.getAttribute('row-rules');
+            if (a != null && a !== '' && this.RowRules == null) this.RowRules = this._f8ParseReglas(a, 'row-rules');
+        }
+        if (this.RowRules == null) return null;
+        if (this._f8FilaSrc !== this.RowRules) { this._f8FilaSrc = this.RowRules; this._f8FilaReglas = this._f8ParseReglas(this.RowRules, 'RowRules'); }
+        return this._f8FilaReglas;
+    }
+    // Número canónico (R9) o null.
+    _f8Num(v)
+    {
+        if (typeof v === 'number') return (Number.isFinite(v) ? EditTable.Mask.canonicalFromText(String(v), { native: true }) : null);
+        if (typeof v !== 'string' || v.trim() === '') return null;
+        return EditTable.Mask.canonicalFromText(v.trim(), { native: true });
+    }
+    _f8CmpNum(a, b)
+    {
+        const A = this._f2Dec(a), B = this._f2Dec(b), s = Math.max(A.s, B.s);
+        const x = this._f2Escalar(A, s), y = this._f2Escalar(B, s);
+        return (x < y ? -1 : (x > y ? 1 : 0));
+    }
+    // Compara un valor con el de la regla: número (canónico), fecha ISO o texto. null si no son comparables.
+    _f8Cmp(v, w, col)
+    {
+        const numerico = (typeof w === 'number' || typeof v === 'number' || /^(number)$/i.test(String(col?.type ?? '')));
+        if (numerico)
+        {
+            const a = this._f8Num(v), b = this._f8Num(w);
+            if (a != null && b != null) return this._f8CmpNum(a, b);
+            if (typeof w === 'number' || a == null) return null;
+        }
+        const iso = /^\d{4}-\d{2}-\d{2}([T ]\d{2}:\d{2}(:\d{2}(\.\d+)?)?)?$/;
+        const sv = (v == null ? '' : String(v).trim()), sw = (w == null ? '' : String(w).trim());
+        if (iso.test(sv) && iso.test(sw)) { const a = sv.replace(' ', 'T'), b = sw.replace(' ', 'T'); return (a < b ? -1 : (a > b ? 1 : 0)); }
+        if (sv === sw) return 0;
+        if (!this._f8Coll) this._f8Coll = (typeof Intl !== 'undefined' ? new Intl.Collator('es', { numeric: true }) : null);
+        return (this._f8Coll ? Math.sign(this._f8Coll.compare(sv, sw)) || (sv < sw ? -1 : 1) : (sv < sw ? -1 : 1));
+    }
+    _f8Cumple(r, data, col)
+    {
+        if (!r || !data) return false;
+        const v = data[r.field];
+        const op = String(r.op ?? 'eq').trim().toLowerCase();
+        const vacio = (v == null || String(v).trim() === '');
+        switch (op)
+        {
+            case 'empty': return vacio;
+            case 'notempty': return !vacio;
+            case 'contains': return !vacio && this._f8Plegar(v).includes(this._f8Plegar(r.value));
+            case 'in': return Array.isArray(r.value) && r.value.some(x => this._f8Cmp(v, x, col) === 0);
+            case 'between': { if (vacio) return false; const a = this._f8Cmp(v, r.value, col), b = this._f8Cmp(v, r.value2, col); return a != null && b != null && a >= 0 && b <= 0; }
+            case 'eq': case 'ne': { const c = (vacio && (r.value == null || r.value === '') ? 0 : (vacio ? null : this._f8Cmp(v, r.value, col))); return (op === 'eq' ? c === 0 : c !== 0); }
+            case 'lt': case 'le': case 'gt': case 'ge':
+            {
+                if (vacio) return false;
+                const c = this._f8Cmp(v, r.value, col);
+                if (c == null) return false;
+                return (op === 'lt' ? c < 0 : (op === 'le' ? c <= 0 : (op === 'gt' ? c > 0 : c >= 0)));
+            }
+        }
+        if (!this._f8OpAvisado) { this._f8OpAvisado = true; console.warn('EditTable: operador de regla desconocido: ' + op); }
+        return false;
+    }
+    _f8Estilos(s)
+    {
+        const out = {};
+        if (!s) return out;
+        if (typeof s === 'string') s.split(';').forEach(p => { const k = p.indexOf(':'); if (k > 0) out[p.slice(0, k).trim()] = p.slice(k + 1).trim(); });
+        else if (typeof s === 'object') Object.entries(s).forEach(([k, v]) => { if (v != null) out[k.startsWith('--') ? k : k.replace(/[A-Z]/g, m => '-' + m.toLowerCase())] = String(v); });
+        return out;
+    }
+    _f8Evaluar(reglas, data, col)
+    {
+        const res = { cls: [], sty: {}, icon: null };
+        if (!reglas || !reglas.length) return res;
+        reglas.forEach(r => {
+            const field = (r.field ?? col?.field);
+            if (field == undefined) return;
+            const c = (r.field != null && r.field !== col?.field ? this._f8ColDe(field) : col);
+            if (!this._f8Cumple({ ...r, field }, data, c)) return;
+            if (r.class) String(r.class).split(/\s+/).filter(Boolean).forEach(x => res.cls.push(x));
+            if (r.style) Object.assign(res.sty, this._f8Estilos(r.style));
+            if (r.icon != null && r.icon !== '') res.icon = String(r.icon);
+        });
+        return res;
+    }
+    _f8Poner(el, res)
+    {
+        const tenia = ((el._f8Cls?.length ?? 0) + (el._f8Sty?.length ?? 0) > 0) || !!el._f8Ico;
+        if (!tenia && !res.cls.length && !Object.keys(res.sty).length && res.icon == null) return;
+        this._f8Estilo();
+        (el._f8Cls ?? []).forEach(c => el.classList.remove(c));
+        (el._f8Sty ?? []).forEach(p => el.style.removeProperty(p));
+        if (el._f8Ico) { el.removeAttribute('data-et-icon'); el.style.removeProperty('--et-rule-icon'); }
+        el._f8Cls = res.cls;
+        res.cls.forEach(c => el.classList.add(c));
+        el._f8Sty = Object.keys(res.sty);
+        el._f8Sty.forEach(p => el.style.setProperty(p, res.sty[p]));
+        el._f8Ico = (res.icon != null);
+        if (el._f8Ico)
+        {
+            el.setAttribute('data-et-icon', res.icon);
+            el.style.setProperty('--et-rule-icon', '"' + res.icon.replace(/[\\"]/g, '\\$&').replace(/[\r\n\f]/g, ' ') + '"');
+        }
+        if (!el.getAttribute('style')) el.removeAttribute('style');
+    }
+    // _f1PintarCelda (enganche, antes de onTdPaint).
+    _f8ReglasCelda(td, col, data)
+    {
+        const r = this._f8ReglasDe(col);
+        if (r && r.length) this._f8UsoReglas = true;
+        this._f8Poner(td, this._f8Evaluar(r, data, col));
+        td._f8Listo = true;
+    }
+    // Reglas de las celdas y de la fila. pintada: true si viene de _decorateRow (las celdas recién pintadas ya las tienen).
+    _f8ReglasTr(tr, data, pintada)
+    {
+        const tds = this._f4CeldasDatos(tr);
+        tds.forEach((td, i) => {
+            if (pintada && td._f8Listo) { td._f8Listo = false; return; }
+            const col = this.Columns[i];
+            if (col?.rules != null || td._f8Cls || td._f8Sty || td._f8Ico) this._f8ReglasCelda(td, col, data);
+            td._f8Listo = false;
+        });
+        const rr = this._f8ReglasFilaDef();
+        if (rr && rr.length) this._f8UsoReglas = true;
+        if (rr || tr._f8Cls || tr._f8Sty || tr._f8Ico) this._f8Poner(tr, this._f8Evaluar(rr, data, null));
+    }
+    /** Vuelve a aplicar las reglas a las filas dibujadas (después de cambiar Columns[i].rules o RowRules por código). */
+    RefreshRules = () =>
+    {
+        const tbody = this._f1TBodyPrincipal();
+        if (!tbody) return;
+        this._f8UsoReglas = true;
+        for (const tr of tbody.rows)
+        {
+            if (tr._f6Grupo || tr.classList.contains('et-spacer')) continue;
+            const i = this._getRowIndex(tr);
+            this._f8ReglasTr(tr, (tr._etData ?? this.DataArray[i] ?? {}), false);
+        }
+    }
+    // ---------- encargos de la integración (2026-11-01) ----------
+    // (1) Tecleo rápido en el selector (lector de códigos): hoy cada tecla programa su propio StartEdit en un
+    // setTimeout de 1 ms; las que llegan antes de que exista el editor se pierden o lanzan TypeError. Ahora la
+    // primera programa el StartEdit con el mismo retraso y las siguientes se acumulan: los caracteres se agregan
+    // al texto inicial y las demás teclas (Enter, Tab, flechas) se repiten en el editor ya creado, en orden.
+    _f8Pend = null;
+    _f8Tecleo(e, selector, cur)
+    {
+        const k = e.key ?? '';
+        const imprimible = (k.trim().length == 1 && !((e.ctrlKey || e.metaKey) && !e.altKey));
+        if (!this._f8Pend)
+        {
+            if (!imprimible) return false;
+            const p = { td: selector.closest('td'), texto: k, teclas: [] };
+            this._f8Pend = p;
+            setTimeout(() => {
+                this._f8Pend = null;
+                const td = (p.td && p.td.isConnected ? p.td : selector.closest('td'));
+                if (!td) return;
+                (cur ?? this).StartEdit(td, p.texto);
+                const input = this.EdiTable.GetInput();
+                if (!input) return;
+                for (const t of p.teclas)
+                {
+                    const i = this.EdiTable.GetInput();
+                    if (!i) break;
+                    i.dispatchEvent(new KeyboardEvent('keydown', { key: t.key, code: t.code, shiftKey: t.shiftKey, ctrlKey: t.ctrlKey, altKey: t.altKey, metaKey: t.metaKey, bubbles: true, cancelable: true, composed: true }));
+                }
+            }, 1);
+            e.preventDefault(); e.stopPropagation();
+            return true;
+        }
+        if (imprimible && !this._f8Pend.teclas.length) this._f8Pend.texto += k;
+        else if (!['Shift', 'Control', 'Alt', 'Meta', 'CapsLock', 'AltGraph'].includes(k)) this._f8Pend.teclas.push({ key: k, code: e.code, shiftKey: e.shiftKey, ctrlKey: e.ctrlKey, altKey: e.altKey, metaKey: e.metaKey });
+        e.preventDefault(); e.stopPropagation();
+        return true;
+    }
+    // (2) CellFocus con una edición abierta: si al confirmar alguien vuelve a dibujar (por ejemplo _printRows en
+    // FieldUpdated), la celda destino queda desconectada; se busca la equivalente (misma fila de datos y columna).
+    _f8RefTd(td)
+    {
+        const tr = td?.closest?.('tr');
+        if (!tr) return null;
+        return { fila: this._getRowIndex(tr), col: this.ColIndexOfTd(td) };
+    }
+    _f8TdVigente(ref)
+    {
+        if (!ref || ref.fila < 0 || ref.col < 0) return null;
+        const tr = (this._f5Activo ? this._f5Asegurar(ref.fila) : this.GetTrByIndex(ref.fila));
+        return (tr ? (this._f4CeldasDatos(tr)[ref.col] ?? null) : null);
+    }
+    // (4) Con columnas fijas, la celda enfocada queda a la vista y no debajo de la banda fija (normal y virtual).
+    _f8VerCelda(td)
+    {
+        if (!td || !td.isConnected || !this._table?.classList.contains('et-has-fixed') || td.classList.contains('et-fixed')) return;
+        let el = this._table, cont = null;
+        while ((el = this._composedParent(el)))
+        {
+            if (el === document.body || el === document.documentElement) break;
+            const ox = getComputedStyle(el).overflowX;
+            if ((ox == 'auto' || ox == 'scroll' || ox == 'overlay') && el.scrollWidth > el.clientWidth + 1) { cont = el; break; }
+        }
+        const tr = td.closest('tr');
+        const r = td.getBoundingClientRect();
+        let izq = (cont ? cont.getBoundingClientRect().left + cont.clientLeft : 0);
+        const der = (cont ? cont.getBoundingClientRect().left + cont.clientLeft + cont.clientWidth : window.innerWidth);
+        Array.from(tr.cells).forEach(x => { if ((x.classList.contains('et-fixed') || x.classList.contains('et-sel-col')) && !x.classList.contains('hidde-col') && getComputedStyle(x).position === 'sticky') izq = Math.max(izq, x.getBoundingClientRect().right); });
+        let d = 0;
+        if (r.left < izq - 0.5) d = r.left - izq;
+        else if (r.right > der + 0.5) d = Math.min(r.right - der, r.left - izq);
+        if (Math.abs(d) < 1) return;
+        if (cont) cont.scrollLeft += d; else window.scrollBy(d, 0);
+    }
+    // (5) Restauración del diseño guardado: LayoutChanged {reason:'restore'} si se aplicó algo, y la promesa
+    // LayoutReady / whenLayoutReady(), que se resuelve (true si se restauró, false si no había nada) al terminar.
+    _f8LayoutRes = null;
+    _f8LayoutPromesa = new Promise(r => { this._f8LayoutRes = r; });
+    get LayoutReady() { return this._f8LayoutPromesa; }
+    whenLayoutReady() { return this._f8LayoutPromesa; }
+    _f8Restaurar()
+    {
+        let p;
+        try { p = Promise.resolve(this._f3Restaurar?.()); } catch (e) { p = Promise.resolve(false); }
+        p.then(ok => {
+            if (ok === true) { try { this._f3Disparar?.('LayoutChanged', () => ({ layout: this.getLayout(), reason: 'restore' })); } catch (e) { } }
+            this._f8LayoutRes?.(ok === true);
+        }, () => this._f8LayoutRes?.(false));
+    }
+    // ===== F8a: fin
 }
 
 customElements.define('edit-table', EditTable);

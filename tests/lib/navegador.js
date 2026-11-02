@@ -114,6 +114,7 @@
   window.__etSer = ser;
 
   // ---------- Registro de eventos: Proxy sobre Events ----------
+  const SOLO_CONSUMIDOR = new Set(['beforerowleave']);
   function wrapEvents(host, obj) {
     if (!obj || typeof obj !== 'object') return obj;
     if (obj.__etIsProxy) return obj;
@@ -127,6 +128,10 @@
         const v = Reflect.get(t, k);
         if (typeof k !== 'string' || !known.has(k)) return v;
         if (typeof v !== 'function' && mode !== 'all') return v;
+        // F8a (AJUSTES del banco): con estos eventos, tener un manejador ya es activar la función (BeforeRowLeave
+        // confirma la edición y valida la fila). El registrador automático del modo 'all' no los atiende; si el
+        // consumidor pone su manejador, se registra como cualquier otro.
+        if (typeof v !== 'function' && SOLO_CONSUMIDOR.has(k)) return v;
         const key = (typeof v === 'function') ? v : null;
         if (!cache.has(k)) cache.set(k, new Map());
         const ck = cache.get(k);

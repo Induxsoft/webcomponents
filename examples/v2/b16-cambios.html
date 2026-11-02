@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Altas, cambios y bajas (getChanges) · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- getChanges() devuelve {added, modified, deleted} para mandarlo al guardado: la alta nace al editar la fila nueva, el cambio guarda el original y volver al valor lo quita, las bajas incluyen DeleteRow y Ctrl+Supr. isNew(i) y AcceptChanges(); no toca IsDirty. -->
+<div id="contenido">
+<div class="demo-barra" id="barra"></div><div class="demo-caja" style="max-height:480px"><edit-table id="t1" style="width:100%"><edit-thead><edit-tr>
+<edit-th type="Text" field="codigo" width="100px">Código</edit-th>
+<edit-th type="Text" field="descripcion" minwidth="200px">Descripción</edit-th>
+<edit-th type="Text" field="linea">Línea</edit-th>
+<edit-th type="Text" field="marca">Marca</edit-th>
+<edit-th type="Number" field="existencia" textalign="end" summary="sum">Existencia</edit-th>
+<edit-th type="Number" field="precio" textalign="end" format="true" decs="2" prefix="$" thousandssep="true">Precio</edit-th>
+</edit-tr></edit-thead></edit-table></div>
+</div>
+<script>
+Demo.pagina({"titulo": "Altas, cambios y bajas (getChanges)", "tipo": "v2", "bajada": "getChanges() devuelve {added, modified, deleted} para mandarlo al guardado: la alta nace al editar la fila nueva, el cambio guarda el original y volver al valor lo quita, las bajas incluyen DeleteRow y Ctrl+Supr. isNew(i) y AcceptChanges(); no toca IsDirty."});
+Demo.requiere(["changes"]);
+Demo.observar('t1');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1');
+  t.DataArray = DatosDemo.productos(10); t._printRows();
+  Demo.boton('barra', 'getChanges()', () => { const c = Demo.llamar(t, 'getChanges'); if (c) Demo.log(JSON.stringify({ added: c.added.map(x => x.index), modified: c.modified.map(x => x.index), deleted: c.deleted.map(x => x.data.codigo) })); });
+  Demo.boton('barra', 'AddRow()', () => t.AddRow());
+  Demo.boton('barra', 'DeleteRow(0)', () => t.DeleteRow(0));
+  Demo.boton('barra', 'AcceptChanges()', () => Demo.llamar(t, 'AcceptChanges'));
+});
+</script>
+</body>
+</html>

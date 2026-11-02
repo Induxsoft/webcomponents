@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Secuencia de captura (como eQGridXBar) · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- Captura de partidas como en R5: tab-order fija el orden de Tab, tab-skip y skip-readonly saltan columnas, enter-mode="next-cell" hace que Enter avance (F2 edita) y al terminar la última columna capturable pasa a la fila siguiente o agrega una nueva (AutoAddRow) si la actual ya tiene datos. Teclear muy rápido (lector de códigos) no pierde caracteres. -->
+<div id="contenido">
+<div class="demo-barra" id="barra"></div><div class="demo-caja" style="max-height:480px"><edit-table id="t1" style="width:100%" enter-mode="next-cell" skip-readonly="true"><edit-thead><edit-tr>
+<edit-th type="Text" field="codigo" width="110px" tab-order="1">Código</edit-th>
+<edit-th type="NoEditable" field="descripcion" minwidth="200px">Descripción</edit-th>
+<edit-th type="Number" field="cantidad" textalign="end" tab-order="2" calc="true">Cantidad</edit-th>
+<edit-th type="Number" field="precio" textalign="end" tab-order="3" format="true" decs="2" prefix="$">Precio</edit-th>
+<edit-th type="Number" field="importe" textalign="end" readonly="true" format="true" decs="2" prefix="$">Importe</edit-th>
+</edit-tr></edit-thead></edit-table></div>
+</div>
+<script>
+Demo.pagina({"titulo": "Secuencia de captura (como eQGridXBar)", "tipo": "v2", "bajada": "Captura de partidas como en R5: tab-order fija el orden de Tab, tab-skip y skip-readonly saltan columnas, enter-mode=\"next-cell\" hace que Enter avance (F2 edita) y al terminar la última columna capturable pasa a la fila siguiente o agrega una nueva (AutoAddRow) si la actual ya tiene datos. Teclear muy rápido (lector de códigos) no pierde caracteres."});
+Demo.requiere(["capture"]);
+Demo.observar('t1');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1');
+  const cat = Object.fromEntries(DatosDemo.productos(50).map(p => [p.codigo, p]));
+  t.DataArray = [];
+  t._printRows(); t.AddRow();
+  t.addEventListener('FieldUpdated', (e) => {
+    const d = t.DataArray[e.row]; if (!d) return;
+    if (e.field === 'codigo' && cat[d.codigo]) { d.descripcion = cat[d.codigo].descripcion; d.precio = String(cat[d.codigo].precio); }
+    d.importe = String(Math.round(Number(d.cantidad || 0) * Number(d.precio || 0) * 100) / 100);
+    t.UpdateRow(e.row);
+  });
+  Demo.boton('barra', 'getCaptureOrder()', () => Demo.log(JSON.stringify(Demo.llamar(t, 'getCaptureOrder'))));
+  Demo.boton('barra', 'enter-mode = down', () => { t.EnterMode = 'down'; });
+  Demo.boton('barra', 'enter-mode = next-cell', () => { t.EnterMode = 'next-cell'; });
+});
+</script>
+</body>
+</html>

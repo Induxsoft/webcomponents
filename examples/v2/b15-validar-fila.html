@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Validar la fila al salir · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- BeforeRowLeave se dispara al cambiar de fila (teclado, clic, NavTo o AddRow) con la edición ya confirmada; e.errors marca las celdas y deja el foco en la fila. BeforeUpdateCell con e.error marca la celda y sigue editando. SetCellError, ClearCellError y getErrors; el color sale de --et-error y --et-error-bg. -->
+<div id="contenido">
+<div class="demo-barra" id="barra"></div><div class="demo-caja" style="max-height:480px"><edit-table id="t1" style="width:100%"><edit-thead><edit-tr>
+<edit-th type="Text" field="codigo" width="100px">Código</edit-th>
+<edit-th type="Text" field="descripcion" minwidth="200px">Descripción</edit-th>
+<edit-th type="Number" field="cantidad" textalign="end">Cantidad</edit-th>
+<edit-th type="Number" field="precio" textalign="end" format="true" decs="2" prefix="$">Precio</edit-th>
+</edit-tr></edit-thead></edit-table></div>
+</div>
+<script>
+Demo.pagina({"titulo": "Validar la fila al salir", "tipo": "v2", "bajada": "BeforeRowLeave se dispara al cambiar de fila (teclado, clic, NavTo o AddRow) con la edición ya confirmada; e.errors marca las celdas y deja el foco en la fila. BeforeUpdateCell con e.error marca la celda y sigue editando. SetCellError, ClearCellError y getErrors; el color sale de --et-error y --et-error-bg."});
+Demo.requiere(["rowvalidate"]);
+Demo.observar('t1');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1');
+  t.DataArray = DatosDemo.productos(8).map(p => ({ codigo: p.codigo, descripcion: p.descripcion, cantidad: 1, precio: p.precio }));
+  t._printRows();
+  t.addEventListener('BeforeRowLeave', (e) => {
+    const err = {};
+    if (!(Number(e.data?.cantidad) > 0)) err.cantidad = 'La cantidad debe ser mayor que cero';
+    if (!String(e.data?.descripcion ?? '').trim()) err.descripcion = 'Falta la descripción';
+    if (Object.keys(err).length) e.errors = err; else t.ClearCellError(e.index);
+  });
+  t.addEventListener('BeforeUpdateCell', (e) => { if (e.coldef.field === 'precio' && Number(e.text) < 0) e.error = 'El precio no puede ser negativo'; });
+  Demo.boton('barra', 'Poner cantidad 0 en la fila 2', () => { t.UpdateDataMember(1, 'cantidad', '0'); t.UpdateRow(1); });
+  Demo.boton('barra', 'getErrors()', () => Demo.log(JSON.stringify(Demo.llamar(t, 'getErrors'))));
+  Demo.boton('barra', 'ClearCellError()', () => Demo.llamar(t, 'ClearCellError'));
+});
+</script>
+</body>
+</html>

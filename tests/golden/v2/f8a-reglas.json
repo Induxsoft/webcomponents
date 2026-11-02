@@ -1,0 +1,635 @@
+{
+ "id": "v2/f8a-reglas",
+ "titulo": "rules por columna (clase, estilo, icono, field de otra columna) y row-rules; se reaplican al editar, con UpdateRow y RefreshRules",
+ "etiquetas": ["v2","f8a","reglas"],
+ "archivo": "escenarios/v2/reglas.mjs",
+ "pasos": [
+  {
+   "nombre": "inicio",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": true,
+      "modoShadowPedido": "closed",
+      "dom": [
+       "\"\\n                \"",
+       "<style>",
+       " @@ESTILO sha256:e02dcdadace9a84f",
+       "</style>",
+       "\"\\n            \"",
+       "<style data-et=\"f8\">",
+       " @@ESTILO sha256:7d65d35cb935d876",
+       "</style>",
+       "<div style=\"min-height: 2rem; max-height: 100%; overflow: auto; padding-bottom: 5px\">",
+       " <table id=\"t1\">",
+       "  <thead>",
+       "   <tr>",
+       "    <th field=\"codigo\" type=\"Text\">",
+       "     <span>",
+       "      \"Código\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:186px;\"></div>",
+       "    </th>",
+       "    <th field=\"nombre\" type=\"Text\">",
+       "     <span>",
+       "      \"Nombre\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:186px;\"></div>",
+       "    </th>",
+       "    <th field=\"linea\" type=\"Text\">",
+       "     <span>",
+       "      \"Línea\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:186px;\"></div>",
+       "    </th>",
+       "    <th field=\"cantidad\" type=\"Number\" rules=\"[{\\\"op\\\":\\\"lt\\\",\\\"value\\\":0,\\\"class\\\":\\\"et-neg\\\",\\\"icon\\\":\\\"▼\\\"},{\\\"op\\\":\\\"ge\\\",\\\"value\\\":10,\\\"class\\\":\\\"et-bold\\\"}]\">",
+       "     <span>",
+       "      \"Cantidad\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:186px;\"></div>",
+       "    </th>",
+       "    <th field=\"precio\" type=\"Number\" format=\"true\" decs=\"2\" rules=\"[{\\\"field\\\":\\\"linea\\\",\\\"op\\\":\\\"eq\\\",\\\"value\\\":\\\"Plomería\\\",\\\"class\\\":\\\"et-strike\\\",\\\"style\\\":{\\\"color\\\":\\\"rgb(120, 120, 120)\\\"}}]\">",
+       "     <span>",
+       "      \"Precio\"",
+       "     </span>",
+       "     <div class=\"sizable-border\" style=\"height:186px;\"></div>",
+       "    </th>",
+       "   </tr>",
+       "  </thead>",
+       "  <tbody>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Código\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"A1\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Tornillo hexagonal\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Línea\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Ferretería\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell et-bold\" data-cell=\"Cantidad\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"10\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Precio\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"2.50\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr class=\"et-muted\">",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Código\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"A2\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Cable eléctrico\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Línea\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Eléctrico\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell et-neg\" data-cell=\"Cantidad\" data-et-icon=\"▼\" style=\"--et-rule-icon: \\\"▼\\\";\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"-3\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Precio\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"18.00\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr class=\"et-muted\">",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Código\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"A3\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Apagador sencillo\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Línea\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Eléctrico\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Cantidad\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"7\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Precio\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"35.90\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Código\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"A4\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Arandela plana\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Línea\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Ferretería\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Cantidad\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"0\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Precio\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"0.75\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "   <tr>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Código\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"A5\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Nombre\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Tubo de cobre\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Línea\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"Plomería\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell\" data-cell=\"Cantidad\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"5\"",
+       "     </div>",
+       "    </td>",
+       "    <td class=\"EdiTable-Cell et-strike\" data-cell=\"Precio\" style=\"color: rgb(120, 120, 120);\">",
+       "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%;\">",
+       "      \"120.00\"",
+       "     </div>",
+       "    </td>",
+       "   </tr>",
+       "  </tbody>",
+       " </table>",
+       "</div>"
+      ],
+      "shadowEsElGuardado": true,
+      "datos": [
+       {"codigo":"A1","nombre":"Tornillo hexagonal","linea":"Ferretería","cantidad":10,"precio":2.5},
+       {"codigo":"A2","nombre":"Cable eléctrico","linea":"Eléctrico","cantidad":-3,"precio":18},
+       {"codigo":"A3","nombre":"Apagador sencillo","linea":"Eléctrico","cantidad":7,"precio":35.9},
+       {"codigo":"A4","nombre":"Arandela plana","linea":"Ferretería","cantidad":0,"precio":0.75},
+       {"codigo":"A5","nombre":"Tubo de cobre","linea":"Plomería","cantidad":5,"precio":120}
+      ],
+      "columnas": [
+       {"field":"codigo","type":"Text","title":"Código"},
+       {"field":"nombre","type":"Text","title":"Nombre"},
+       {"field":"linea","type":"Text","title":"Línea"},
+       {
+        "field": "cantidad",
+        "type": "Number",
+        "rules": "[{\"op\":\"lt\",\"value\":0,\"class\":\"et-neg\",\"icon\":\"▼\"},{\"op\":\"ge\",\"value\":10,\"class\":\"et-bold\"}]",
+        "title": "Cantidad"
+       },
+       {
+        "field": "precio",
+        "type": "Number",
+        "format": "true",
+        "decs": "2",
+        "rules": "[{\"field\":\"linea\",\"op\":\"eq\",\"value\":\"Plomería\",\"class\":\"et-strike\",\"style\":{\"color\":\"rgb(120, 120, 120)\"}}]",
+        "title": "Precio"
+       }
+      ],
+      "respaldo": null,
+      "props": [
+       "IsDirty = false",
+       "Editing = false",
+       "ReadOnly = false",
+       "AutoAddRow = true",
+       "AutoDelRow = true",
+       "EverMove = true",
+       "PagOffSet = 10",
+       "TheadRowIndex = 0",
+       "ColumnsDefaultType = \"Text\"",
+       "ShowAsTree = false",
+       "CanMoveRow = false",
+       "Key = \"id\"",
+       "ParentKey = \"idp\"",
+       "Childs = \"__items\"",
+       "TreeOptions = {}",
+       "sorTable = true",
+       "_sorTable = true",
+       "htmlEncode = false",
+       "autoConfirm = false",
+       "hiddeSelector = false",
+       "hiddeRowSelector = false",
+       "minRowHeight = \"none\"",
+       "maxRowHeight = \"none\"",
+       "rowHeight = \"100%\"",
+       "cardsResponsive = false",
+       "editableResponsive = false",
+       "tableId = \"t1\"",
+       "NumFormat = {\"default_decimals\":\".\",\"thousands\":\",\",\"decimals\":\".\"}",
+       "CSS = {\"Cell\":\"EdiTable-Cell\",\"RowSelected\":\"EdiTable-Row-Selected\"}",
+       "hideColumns = []",
+       "_expandOnStart = false",
+       "KeepSelectionVisible = true",
+       "CardsMode = null",
+       "CardsLayout = \"grid\"",
+       "CardsBreakpoint = \"768px\"",
+       "CardsBreakpointTarget = \"viewport\"",
+       "IsCardView = false",
+       "_count_isdirty = 0",
+       "_current_row = -1",
+       "attributes = [\"id\",\"style\",\"design-auto-save\",\"row-rules\",\"data\"]",
+       "BadgesField = \"__badges\"",
+       "BadgeTooltip = \"native\"",
+       "BadgeSelectsRow = false",
+       "NativeEvents = false",
+       "TemplateEncode = false",
+       "Locale = null",
+       "RowClassField = null",
+       "_TreeValueIndent = 1",
+       "_TreeUnitIndent = \"rem\"",
+       "temp_html = \"[undefined]\"",
+       "CurrentRowIndex() = -1",
+       "CurrentColIndex() = -1",
+       "TRCount() = 5",
+       "THCount() = 5",
+       "ColumnsCount() = 5",
+       "CurrentTd() = null",
+       "focusedTable==_getCurren() = false",
+       "Events reemplazado = 0",
+       "Events claves = []",
+       "scroll = {\"contenedor\":[0,0]}"
+      ],
+      "estilos": [
+       "host = display:inline;position:static;width:100%;height:auto;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "contenedor = display:block;position:static;width:968px;height:186px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:auto;overflow-y:auto",
+       "table = display:table;position:static;width:968px;height:186px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "thead = display:table-header-group;position:sticky;width:966px;height:27px;color:rgb(0, 0, 0);background-color:rgb(245, 245, 245);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[0] = display:table-cell;position:relative;width:133px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[1] = display:table-cell;position:relative;width:302px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[2] = display:table-cell;position:relative;width:162px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[3] = display:table-cell;position:relative;width:167px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "th[4] = display:table-cell;position:relative;width:118px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0] = display:table-row;position:relative;width:966px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[0] = display:table-cell;position:relative;width:141px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[1] = display:table-cell;position:relative;width:310px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[2] = display:table-cell;position:relative;width:170px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[3] = display:table-cell;position:relative;width:175px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[0].td[4] = display:table-cell;position:relative;width:126px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1] = display:table-row;position:relative;width:966px;height:30px;color:rgb(136, 136, 136);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[0] = display:table-cell;position:relative;width:141px;height:22px;color:rgb(136, 136, 136);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[1] = display:table-cell;position:relative;width:310px;height:22px;color:rgb(136, 136, 136);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[2] = display:table-cell;position:relative;width:170px;height:22px;color:rgb(136, 136, 136);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[3] = display:table-cell;position:relative;width:175px;height:22px;color:rgb(136, 136, 136);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[1].td[4] = display:table-cell;position:relative;width:126px;height:22px;color:rgb(136, 136, 136);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2] = display:table-row;position:relative;width:966px;height:30px;color:rgb(136, 136, 136);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[0] = display:table-cell;position:relative;width:141px;height:22px;color:rgb(136, 136, 136);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[1] = display:table-cell;position:relative;width:310px;height:22px;color:rgb(136, 136, 136);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[2] = display:table-cell;position:relative;width:170px;height:22px;color:rgb(136, 136, 136);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[3] = display:table-cell;position:relative;width:175px;height:22px;color:rgb(136, 136, 136);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[2].td[4] = display:table-cell;position:relative;width:126px;height:22px;color:rgb(136, 136, 136);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[4] = display:table-row;position:relative;width:966px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[4].td[0] = display:table-cell;position:relative;width:141px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[4].td[1] = display:table-cell;position:relative;width:310px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[4].td[2] = display:table-cell;position:relative;width:170px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[4].td[3] = display:table-cell;position:relative;width:175px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+       "tr[4].td[4] = display:table-cell;position:relative;width:126px;height:22px;color:rgb(120, 120, 120);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+      ]
+     }
+    ],
+    "luz": [
+     "<body {foco}>",
+     " \"\\n\"",
+     " <edit-table id=\"t1\" style=\"width:100%\" design-auto-save=\"false\" row-rules=\"[{\\\"field\\\":\\\"linea\\\",\\\"op\\\":\\\"eq\\\",\\\"value\\\":\\\"Eléctrico\\\",\\\"class\\\":\\\"et-muted\\\"}]\" data=\"[{\\\"codigo\\\":\\\"A1\\\",\\\"nombre\\\":\\\"Tornillo hexagonal\\\",\\\"linea\\\":\\\"Ferretería\\\",\\\"cantidad\\\":10,\\\"precio\\\":2.5},{\\\"codigo\\\":\\\"A2\\\",\\\"nombre\\\":\\\"Cable eléctrico\\\",\\\"linea\\\":\\\"Eléctrico\\\",\\\"cantidad\\\":-3,\\\"precio\\\":18},{\\\"codigo\\\":\\\"A3\\\",\\\"nombre\\\":\\\"Apagador sencillo\\\",\\\"linea\\\":\\\"Eléctrico\\\",\\\"cantidad\\\":7,\\\"precio\\\":35.9},{\\\"codigo\\\":\\\"A4\\\",\\\"nombre\\\":\\\"Arandela plana\\\",\\\"linea\\\":\\\"Ferretería\\\",\\\"cantidad\\\":0,\\\"precio\\\":0.75},{\\\"codigo\\\":\\\"A5\\\",\\\"nombre\\\":\\\"Tubo de cobre\\\",\\\"linea\\\":\\\"Plomería\\\",\\\"cantidad\\\":5,\\\"precio\\\":120}]\">",
+     "  #shadow-root -> tablas[0]",
+     " </edit-table>",
+     " \"\\n\"",
+     " <script>",
+     "  \"\\nwindow.__ev = [];\\nwindow.__etExtra = () => { const t = ET('t1'), s = ETs('t1'), tb = s.querySelector('tbody');\\n  const vis = Array.from(tb.rows).filter(r => !r.classList.contains('et-spacer') && getComputedStyle(r).display !== 'none').map(tr => {\\n    if (tr.classList.contains('et-group-row')) return 'G[' + tr.getAttribute('data-key') + '] ' + tr.textContent.replace(/\\\\s+/g, ' ').trim();\\n    const i = t._getRowIndex(tr), td = tr.querySelectorAll('td:not(.et-sel-col)')[0];\\n    return i + ':' + (td ? td.textContent.trim() : '') + (tr.className ? ' {' + tr.className.split(' ').filter(c => c.startsWith('et-')).sort().join(' ') + '}' : '');\\n  });\\n  const ch = t.getChanges();\\n  const td = t.CurrentTd();\\n  return { vis, filtradas: t.getFilteredIndices(), actual: [t.CurrentRowIndex(), td ? t.Columns[t.ColIndexOfTd(td)]?.field : null],\\n    cambios: { added: ch.added.map(x => x.index), modified: ch.modified.map(x => [x.index, x.original?.nombre ?? null]), deleted: ch.deleted.map(x => x.data.codigo ?? null) },\\n    errores: t.getErrors(), totales: t.getSummaries ? t.getSummaries() : null, sel: t.getSelectedRows(), eventos: window.__ev.splice(0) };\\n};document.addEventListener('DOMContentLoaded', () => { const t = ET('t1'); [].forEach(n => t.addEventListener(n, (e) => { const x = {}; for (const k of Object.keys(e)) if (k !== 'sender' && k !== 'data') x[k] = (e[k] && typeof e[k] === 'object' && e[k].nodeType ? '$nodo' : e[k]); window.__ev.push([n, x]); if (window.__cancelar && window.__cancelar[n]) window.__cancelar[n](e); })); });\\n\"",
+     " </script>",
+     " \"\\n\\n\"",
+     "</body>"
+    ],
+    "foco": {"documento":{"ruta":"html>body"},"shadow":null},
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": {
+     "valor": {
+      "vis": ["0:A1","1:A2 {et-muted}","2:A3 {et-muted}","3:A4","4:A5"],
+      "filtradas": [0,1,2,3,4],
+      "actual": [-1,null],
+      "cambios": {"added":[],"modified":[],"deleted":[]},
+      "errores": [],
+      "totales": {},
+      "sel": [],
+      "eventos": []
+     }
+    },
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 3,
+      "nodo:mousedown": 5,
+      "document:mousemove": 5,
+      "document:mouseup": 5,
+      "window:beforeprint": 1,
+      "window:afterprint": 1
+     },
+     "intervalos": 1
+    }
+   }
+  },
+  {
+   "nombre": "editar la cantidad de A1 a -2",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [45,1,["   <tr class=\"EdiTable-Row-Selected\">"]],
+        [
+         61,
+         1,
+         [
+          "    <td class=\"EdiTable-Cell et-neg\" data-cell=\"Cantidad\" data-et-icon=\"▼\" style=\"--et-rule-icon: \\\"▼\\\";\">"
+         ]
+        ],
+        [63,1,["      \"-2\""]],
+        [
+         68,
+         1,
+         [
+          "      <div id=\"__table_selector\" class=\"EdiTable-Selector\" tabindex=\"0\" {foco}>",
+          "       \"2.50\"",
+          "      </div>"
+         ]
+        ]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": [
+       {"codigo":"A1","nombre":"Tornillo hexagonal","linea":"Ferretería","cantidad":"-2","precio":2.5},
+       {"codigo":"A2","nombre":"Cable eléctrico","linea":"Eléctrico","cantidad":-3,"precio":18},
+       {"codigo":"A3","nombre":"Apagador sencillo","linea":"Eléctrico","cantidad":7,"precio":35.9},
+       {"codigo":"A4","nombre":"Arandela plana","linea":"Ferretería","cantidad":0,"precio":0.75},
+       {"codigo":"A5","nombre":"Tubo de cobre","linea":"Plomería","cantidad":5,"precio":120}
+      ],
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": {
+       "$parche": [
+        [38,1,["_current_row = 0"]],
+        [49,3,["temp_html = \"10\"","CurrentRowIndex() = 0","CurrentColIndex() = 4"]],
+        [
+         55,
+         2,
+         [
+          "CurrentTd() = {\"$nodo\":{\"ruta\":\"shadow(t1)>div>table#t1>tbody>tr[0]>td[4]\",\"texto\":\"2.50\"}}",
+          "focusedTable==_getCurren() = true"
+         ]
+        ]
+       ]
+      },
+      "estilos": {
+       "$parche": [
+        [
+         9,
+         6,
+         [
+          "tr[0] = display:table-row;position:relative;width:966px;height:30px;color:rgb(255, 255, 255);background-color:rgb(61, 117, 221);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[0] = display:table-cell;position:relative;width:141px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[1] = display:table-cell;position:relative;width:310px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[2] = display:table-cell;position:relative;width:170px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[3] = display:table-cell;position:relative;width:175px;height:22px;color:rgb(198, 40, 40);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[4] = display:table-cell;position:relative;width:126px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         33,
+         0,
+         [
+          "selector = display:flex;position:static;width:124px;height:22px;color:rgb(0, 0, 0);background-color:rgba(255, 255, 255, 0.7);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": {
+     "$parche": [
+      [0,1,["<body>"]],
+      [
+       2,
+       1,
+       [
+        " <edit-table id=\"t1\" style=\"width:100%\" design-auto-save=\"false\" row-rules=\"[{\\\"field\\\":\\\"linea\\\",\\\"op\\\":\\\"eq\\\",\\\"value\\\":\\\"Eléctrico\\\",\\\"class\\\":\\\"et-muted\\\"}]\" data=\"[{\\\"codigo\\\":\\\"A1\\\",\\\"nombre\\\":\\\"Tornillo hexagonal\\\",\\\"linea\\\":\\\"Ferretería\\\",\\\"cantidad\\\":10,\\\"precio\\\":2.5},{\\\"codigo\\\":\\\"A2\\\",\\\"nombre\\\":\\\"Cable eléctrico\\\",\\\"linea\\\":\\\"Eléctrico\\\",\\\"cantidad\\\":-3,\\\"precio\\\":18},{\\\"codigo\\\":\\\"A3\\\",\\\"nombre\\\":\\\"Apagador sencillo\\\",\\\"linea\\\":\\\"Eléctrico\\\",\\\"cantidad\\\":7,\\\"precio\\\":35.9},{\\\"codigo\\\":\\\"A4\\\",\\\"nombre\\\":\\\"Arandela plana\\\",\\\"linea\\\":\\\"Ferretería\\\",\\\"cantidad\\\":0,\\\"precio\\\":0.75},{\\\"codigo\\\":\\\"A5\\\",\\\"nombre\\\":\\\"Tubo de cobre\\\",\\\"linea\\\":\\\"Plomería\\\",\\\"cantidad\\\":5,\\\"precio\\\":120}]\" {foco}>"
+       ]
+      ]
+     ]
+    },
+    "foco": {
+     "documento": {"ruta":"body>edit-table#t1"},
+     "shadow": {"ruta":"shadow(t1)>div>table#t1>tbody>tr[0]>td[4]>div>div#__table_selector"}
+    },
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": {
+     "valor": {
+      "vis": ["0:A1 {}","1:A2 {et-muted}","2:A3 {et-muted}","3:A4","4:A5"],
+      "filtradas": [0,1,2,3,4],
+      "actual": [0,"precio"],
+      "cambios": {"added":[],"modified":[[0,"Tornillo hexagonal"]],"deleted":[]},
+      "errores": [],
+      "totales": {},
+      "sel": [],
+      "eventos": []
+     }
+    },
+    "internos": {
+     "listeners": {
+      "document:DOMContentLoaded": 3,
+      "nodo:mousedown": 5,
+      "document:mousemove": 5,
+      "document:mouseup": 5,
+      "window:beforeprint": 1,
+      "window:afterprint": 1,
+      "nodo:click:remove": 2,
+      "nodo:click": 3,
+      "nodo:keydown:remove": 2,
+      "nodo:keydown": 3
+     },
+     "intervalos": 1
+    }
+   }
+  },
+  {
+   "nombre": "DataArray[4].linea = \"Pintura\" y UpdateRow(4)",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {"$parche":[[168,1,["      \"Pintura\""]],[176,1,["    <td class=\"EdiTable-Cell\" data-cell=\"Precio\">"]]]},
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": [
+       {"codigo":"A1","nombre":"Tornillo hexagonal","linea":"Ferretería","cantidad":"-2","precio":2.5},
+       {"codigo":"A2","nombre":"Cable eléctrico","linea":"Eléctrico","cantidad":-3,"precio":18},
+       {"codigo":"A3","nombre":"Apagador sencillo","linea":"Eléctrico","cantidad":7,"precio":35.9},
+       {"codigo":"A4","nombre":"Arandela plana","linea":"Ferretería","cantidad":0,"precio":0.75},
+       {"codigo":"A5","nombre":"Tubo de cobre","linea":"Pintura","cantidad":5,"precio":120}
+      ],
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": "@=paso-anterior",
+      "estilos": {
+       "$parche": [
+        [
+         32,
+         1,
+         [
+          "tr[4].td[4] = display:table-cell;position:relative;width:126px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": "@=paso-anterior",
+    "foco": "@=paso-anterior",
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": "@=paso-anterior",
+    "internos": "@=paso-anterior"
+   }
+  },
+  {
+   "nombre": "RowRules por código y RefreshRules",
+   "foto": {
+    "tablas": [
+     {
+      "indice": 0,
+      "id": "t1",
+      "inicializada": "@=paso-anterior",
+      "modoShadowPedido": "@=paso-anterior",
+      "dom": {
+       "$parche": [
+        [
+         61,
+         1,
+         [
+          "    <td class=\"EdiTable-Cell et-neg\" data-cell=\"Cantidad\" style=\"--et-rule-icon: \\\"▼\\\";\" data-et-icon=\"▼\">"
+         ]
+        ],
+        [74,1,["   <tr class=\"\">"]],
+        [
+         90,
+         1,
+         [
+          "    <td class=\"EdiTable-Cell et-neg\" data-cell=\"Cantidad\" style=\"--et-rule-icon: \\\"▼\\\";\" data-et-icon=\"▼\">"
+         ]
+        ],
+        [101,1,["   <tr class=\"et-ok\">"]],
+        [155,1,["   <tr class=\"et-ok\">"]]
+       ]
+      },
+      "shadowEsElGuardado": "@=paso-anterior",
+      "datos": "@=paso-anterior",
+      "columnas": "@=paso-anterior",
+      "respaldo": "@=paso-anterior",
+      "props": "@=paso-anterior",
+      "estilos": {
+       "$parche": [
+        [
+         15,
+         18,
+         [
+          "tr[1] = display:table-row;position:relative;width:966px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[0] = display:table-cell;position:relative;width:141px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[1] = display:table-cell;position:relative;width:310px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[2] = display:table-cell;position:relative;width:170px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[3] = display:table-cell;position:relative;width:175px;height:22px;color:rgb(198, 40, 40);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[4] = display:table-cell;position:relative;width:126px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2] = display:table-row;position:relative;width:966px;height:30px;color:rgb(46, 125, 50);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[0] = display:table-cell;position:relative;width:141px;height:22px;color:rgb(46, 125, 50);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[1] = display:table-cell;position:relative;width:310px;height:22px;color:rgb(46, 125, 50);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[2] = display:table-cell;position:relative;width:170px;height:22px;color:rgb(46, 125, 50);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[3] = display:table-cell;position:relative;width:175px;height:22px;color:rgb(46, 125, 50);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[4] = display:table-cell;position:relative;width:126px;height:22px;color:rgb(46, 125, 50);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[4] = display:table-row;position:relative;width:966px;height:30px;color:rgb(46, 125, 50);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[4].td[0] = display:table-cell;position:relative;width:141px;height:22px;color:rgb(46, 125, 50);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[4].td[1] = display:table-cell;position:relative;width:310px;height:22px;color:rgb(46, 125, 50);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[4].td[2] = display:table-cell;position:relative;width:170px;height:22px;color:rgb(46, 125, 50);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[4].td[3] = display:table-cell;position:relative;width:175px;height:22px;color:rgb(46, 125, 50);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[4].td[4] = display:table-cell;position:relative;width:126px;height:22px;color:rgb(46, 125, 50);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ]
+       ]
+      }
+     }
+    ],
+    "luz": "@=paso-anterior",
+    "foco": "@=paso-anterior",
+    "eventos": [],
+    "callbacks": [],
+    "callbacksTruncados": 0,
+    "errores": [],
+    "consola": [],
+    "extra": {
+     "valor": {
+      "vis": ["0:A1 {}","1:A2","2:A3 {et-ok}","3:A4","4:A5 {et-ok}"],
+      "filtradas": [0,1,2,3,4],
+      "actual": [0,"precio"],
+      "cambios": {"added":[],"modified":[[0,"Tornillo hexagonal"]],"deleted":[]},
+      "errores": [],
+      "totales": {},
+      "sel": [],
+      "eventos": []
+     }
+    },
+    "internos": "@=paso-anterior"
+   }
+  }
+ ]
+}

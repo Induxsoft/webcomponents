@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Formato condicional declarativo · EdiTable</title>
+<link rel="stylesheet" href="_comun/demo.css">
+<script src="../../src/js/induxsoft.controls.editable.js"></script>
+<script src="_comun/datos.js"></script>
+<script src="_comun/demo.js"></script>
+
+</head>
+<body>
+<!-- rules (JSON) en el edit-th y row-rules en la tabla, sin escribir JavaScript ni usar eval (funciona con CSP estricta): operadores lt, le, gt, ge, eq, ne, between, in, contains, empty y notempty; clases et-neg, et-strike, et-muted, et-bold, et-ok, et-warn y et-err con las variables del tema; style e icon sin cambiar el contenido. Se reaplican al editar. -->
+<div id="contenido">
+<div class="demo-barra" id="barra"></div><div class="demo-caja" style="max-height:480px"><edit-table id="t1" style="width:100%" row-rules='[{"field": "activo", "op": "eq", "value": "No", "class": "et-muted et-strike"}]'><edit-thead><edit-tr>
+<edit-th type="Text" field="codigo" width="100px">Código</edit-th>
+<edit-th type="Text" field="descripcion" minwidth="200px" rules='[{"op": "contains", "value": "LED", "icon": "💡"}]'>Descripción</edit-th>
+<edit-th type="Number" field="existencia" textalign="end" rules='[{"op": "lt", "value": 20, "class": "et-err et-bold", "icon": "▼"}, {"op": "between", "value": 20, "value2": 100, "class": "et-warn"}, {"op": "ge", "value": 400, "class": "et-ok"}]'>Existencia</edit-th>
+<edit-th type="Number" field="precio" textalign="end" format="true" decs="2" prefix="$" rules='[{"op": "gt", "value": 1000, "style": {"fontWeight": "700"}}]'>Precio</edit-th>
+<edit-th type="Text" field="activo">Activo</edit-th>
+</edit-tr></edit-thead></edit-table></div>
+</div>
+<script>
+Demo.pagina({"titulo": "Formato condicional declarativo", "tipo": "v2", "bajada": "rules (JSON) en el edit-th y row-rules en la tabla, sin escribir JavaScript ni usar eval (funciona con CSP estricta): operadores lt, le, gt, ge, eq, ne, between, in, contains, empty y notempty; clases et-neg, et-strike, et-muted, et-bold, et-ok, et-warn y et-err con las variables del tema; style e icon sin cambiar el contenido. Se reaplican al editar."});
+Demo.requiere(["rules"]);
+Demo.observar('t1');
+document.addEventListener('DOMContentLoaded', () => {
+  const t = document.getElementById('t1');
+  t.DataArray = DatosDemo.productos(40); t._printRows();
+  Demo.boton('barra', 'RowRules: Plomería en negritas', () => { t.RowRules = [{ field: 'activo', op: 'eq', value: 'No', class: 'et-muted et-strike' }, { field: 'linea', op: 'eq', value: 'Plomería', class: 'et-bold' }]; Demo.llamar(t, 'RefreshRules'); });
+});
+</script>
+</body>
+</html>

@@ -604,5 +604,89 @@ window.EJEMPLOS = [
    "export",
    "fixed"
   ]
- }
+ },
+{
+ "archivo": "b14-busqueda.html",
+ "titulo": "Búsqueda y filtro",
+ "tipo": "v2",
+ "descripcion": "search-bar=\"true\" muestra una barra hermana de la tabla: filtra al teclear, resalta sin cambiar el contenido y Enter, F3 o Mayús+F3 recorren las coincidencias. Search, Filter, getFilteredIndices, SelectAll sobre las visibles y exportar con visibleOnly.",
+ "spec": [
+  "§F8a-bus-a",
+  "§F8a-bus-b",
+  "§F8a-bus-c",
+  "§F8a-bus-d",
+  "§F8a-bus-h",
+  "§F8a-bus-j",
+  "§F8a-bus-k",
+  "§F8a-bus-l"
+ ],
+ "requiere": [
+  "search"
+ ]
+},
+{
+ "archivo": "b15-validar-fila.html",
+ "titulo": "Validar la fila al salir",
+ "tipo": "v2",
+ "descripcion": "BeforeRowLeave al cambiar de fila (con la edición confirmada); e.errors marca las celdas y deja el foco en la fila; BeforeUpdateCell con e.error; SetCellError, ClearCellError y getErrors.",
+ "spec": [
+  "§F8a-val-a",
+  "§F8a-val-b",
+  "§F8a-val-c",
+  "§F8a-val-d",
+  "§F8a-val-e"
+ ],
+ "requiere": [
+  "rowvalidate"
+ ]
+},
+{
+ "archivo": "b16-cambios.html",
+ "titulo": "Altas, cambios y bajas (getChanges)",
+ "tipo": "v2",
+ "descripcion": "getChanges() {added, modified, deleted}; isNew(i) y AcceptChanges(); no toca IsDirty.",
+ "spec": [
+  "§F8a-chg-a",
+  "§F8a-chg-b",
+  "§F8a-chg-c",
+  "§F8a-chg-d",
+  "§F8a-chg-e"
+ ],
+ "requiere": [
+  "changes"
+ ]
+},
+{
+ "archivo": "b17-captura.html",
+ "titulo": "Secuencia de captura (como eQGridXBar)",
+ "tipo": "v2",
+ "descripcion": "tab-order, tab-skip, skip-readonly y enter-mode; al terminar la última columna capturable pasa de fila o agrega una (AutoAddRow). Escriba P-00001 en Código.",
+ "spec": [
+  "§F8a-cap-a",
+  "§F8a-cap-b",
+  "§F8a-cap-c",
+  "§F8a-cap-d",
+  "§F8a-enc-a"
+ ],
+ "requiere": [
+  "capture"
+ ]
+},
+{
+ "archivo": "b18-reglas.html",
+ "titulo": "Formato condicional declarativo",
+ "tipo": "v2",
+ "descripcion": "rules (JSON) por columna y row-rules por fila, sin eval: operadores, clases utilitarias con variables del tema, style e icon; se reaplican al editar.",
+ "spec": [
+  "§F8a-reg-a",
+  "§F8a-reg-b",
+  "§F8a-reg-d",
+  "§F8a-reg-e",
+  "§F8a-reg-f",
+  "§F8a-reg-g"
+ ],
+ "requiere": [
+  "rules"
+ ]
+}
 ];
