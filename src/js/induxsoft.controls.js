@@ -529,9 +529,6 @@
  * página.
  */
 
-/* <induxsoft-theme v=0> */
-/* </induxsoft-theme> */
-
 class EditSelect extends HTMLElement
 {
     attributes = null;
@@ -1788,41 +1785,12 @@ class InputKey extends HTMLElement
         listLabel: 'Resultados de la búsqueda'
     };
 
-    // ---- Copia mínima de los temas de EdiTable 2 (F8b, src/js/induxsoft.controls.editable.js _f8bExplicitos), solo
-    // con las variables que usa InputKey. Se usa si no está el módulo común ni EditTable. 'mono' es propia de InputKey.
-    static _ik2TemasBase = {
-        claro: { 'color-scheme': 'light', font: 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-            bg: '#FFFFFF', fg: '#1F2328', 'muted-fg': '#59636E', 'header-bg': '#F3F5F8', 'header-fg': '#1F2328', 'header-border': '#D0D7DE', 'header-weight': '600',
-            border: '#E1E5EA', 'row-alt-bg': '#F8FAFC', 'hover-bg': '#EDF2F8', 'sel-bg': '#2F66CC', 'sel-fg': '#FFFFFF', accent: '#2F66CC', 'focus-ring': '#2F66CC',
-            'input-bg': '#FFFFFF', 'input-fg': '#1F2328', 'input-border': '#8C959F', 'input-disabled-bg': '#EEF1F4',
-            'mark-bg': '#FFF1A8', 'mark-fg': '#1F2328', error: '#C62828', 'error-bg': '#FDECEC', warn: '#8A5A00', ok: '#1A7F37', radius: '4px', 'num-font': 'inherit' },
-        oscuro: { 'color-scheme': 'dark', font: 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-            bg: '#15181C', fg: '#E6EDF3', 'muted-fg': '#9DA7B3', 'header-bg': '#1F242B', 'header-fg': '#E6EDF3', 'header-border': '#3A424C', 'header-weight': '600',
-            border: '#2C333B', 'row-alt-bg': '#1A1E23', 'hover-bg': '#242B33', 'sel-bg': '#2C5AA8', 'sel-fg': '#FFFFFF', accent: '#6CA8FF', 'focus-ring': '#8CC2FF',
-            'input-bg': '#0D1117', 'input-fg': '#E6EDF3', 'input-border': '#5A6572', 'input-disabled-bg': '#1F242B',
-            'mark-bg': '#6B5800', 'mark-fg': '#FFF6CC', error: '#FF8A80', 'error-bg': '#3D1F1F', warn: '#E3B341', ok: '#5FD07A', radius: '4px', 'num-font': 'inherit' },
-        jade: { 'color-scheme': 'light', font: '"Segoe UI", system-ui, -apple-system, Roboto, sans-serif',
-            bg: '#FFFFFF', fg: '#1A202C', 'muted-fg': '#5A6577', 'header-bg': '#F4F6F9', 'header-fg': '#4A5568', 'header-border': '#E2E8F0', 'header-weight': '600',
-            'header-transform': 'uppercase', 'header-spacing': '.04em',
-            border: '#E2E8F0', 'row-alt-bg': '#F8FAFB', 'hover-bg': '#EEF9F2', 'sel-bg': '#D1FAE5', 'sel-fg': '#064E3B', accent: '#0F7A41', 'focus-ring': '#128C4A',
-            'input-bg': '#FFFFFF', 'input-fg': '#1A202C', 'input-border': '#A0AEC0', 'input-disabled-bg': '#F4F6F9',
-            'mark-bg': '#FDE68A', 'mark-fg': '#1A202C', error: '#C53030', 'error-bg': '#FFF5F5', warn: '#B45309', ok: '#0F7A41', radius: '8px', 'num-font': 'inherit' },
-        'libro-mayor': { 'color-scheme': 'light', font: '"IBM Plex Sans", system-ui, sans-serif', 'num-font': '"IBM Plex Mono", ui-monospace, monospace',
-            mono: '"IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace',
-            bg: '#FFFFFF', fg: '#1B1F24', 'muted-fg': '#5B6470', 'header-bg': '#F3F4F6', 'header-fg': '#4E5661', 'header-border': '#D9DDE3', 'header-weight': '600',
-            'header-transform': 'uppercase', 'header-spacing': '.04em',
-            border: '#E3E6EA', 'row-alt-bg': '#F8F9FA', 'hover-bg': '#EEF1F5', 'sel-bg': '#1D4F91', 'sel-fg': '#FFFFFF', accent: '#1D4F91', 'focus-ring': '#1D4F91',
-            'input-bg': '#FFFFFF', 'input-fg': '#1B1F24', 'input-border': '#9AA3AE', 'input-disabled-bg': '#F3F4F6',
-            'mark-bg': '#FBEBD0', 'mark-fg': '#4A3200', error: '#A13A14', 'error-bg': '#FBE9E3', warn: '#6E4700', ok: '#1E6B3A', radius: '0' }
-    };
-    static _ik2Alias = { light: 'claro', dark: 'oscuro', 'libro mayor': 'libro-mayor', libromayor: 'libro-mayor' };
     // A9: densidad (alto del campo, relleno, alto de fila de la lista, tamaño de letra).
     static _ik2Densidades = {
         compacta: { h: '28px', pad: '3px 8px', row: '26px', fs: '13px' },
         normal: { h: '34px', pad: '6px 10px', row: '32px', fs: '14px' },
         comoda: { h: '42px', pad: '9px 12px', row: '40px', fs: '15px' }
     };
-    static _ik2DensidadAlias = { 'cómoda': 'comoda', compact: 'compacta', comfortable: 'comoda', compacto: 'compacta', comodo: 'comoda' };
     static _ik2Iconos = {
         buscar: '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M11.74 10.33a6 6 0 1 0-1.41 1.41l3.85 3.85a1 1 0 0 0 1.41-1.41l-3.85-3.85ZM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0Z"/></svg>',
         vacio: '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M11.74 10.33a6 6 0 1 0-1.41 1.41l3.85 3.85a1 1 0 0 0 1.41-1.41l-3.85-3.85ZM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0Z"/></svg>',
@@ -1923,38 +1891,30 @@ class InputKey extends HTMLElement
 
     // ---- Tema: resolución (A1, A2). Precedencia: respaldo < tema (propio, o heredado por el módulo, o de la tabla
     // que abre la ventana) < variables --et-* externas < palette.
+    static _ik2Modulo() { const m = (typeof window !== 'undefined') ? window.InduxsoftTheme : null; return (m && typeof m.resolve === 'function') ? m : null; }
+    /** Nombre normalizado con el módulo común (alias light/dark…; none/ninguno/false = sin tema). */
     static _ik2Nombre(v)
     {
+        const m = InputKey._ik2Modulo();
+        if (m && typeof m.normalize === 'function') return m.normalize(v) || '';
         const s = String(v ?? '').trim().toLowerCase();
-        if (!s || s === 'none' || s === 'ninguno' || s === 'false') return '';
-        return InputKey._ik2Alias[s] ?? s;
+        return (!s || s === 'none' || s === 'ninguno' || s === 'false') ? '' : s;
     }
-    static _ik2Modulo() { const m = (typeof window !== 'undefined') ? window.InduxsoftTheme : null; return (m && typeof m.resolve === 'function') ? m : null; }
-    /** Paleta de un tema por nombre: módulo común, EditTable (incluye defineTheme) o la copia mínima de aquí. */
+    /** Paleta resuelta de un tema registrado en el módulo común (InduxsoftTheme.theme), o null. */
     static _ik2Paleta(nombre)
     {
-        const n = InputKey._ik2Nombre(nombre);
-        if (!n || n === 'auto') return null;
-        const m = InputKey._ik2Modulo();
-        try { const t = m && m.themes ? m.themes[n] : null; if (t && typeof t === 'object') return InputKey._ik2SinPrefijo(t); } catch { }
-        try { const E = (typeof EditTable === 'function') ? EditTable : null; const t = E && E.themes ? E.themes[n] : null; if (t && typeof t === 'object') return InputKey._ik2SinPrefijo(t); } catch { }
-        return InputKey._ik2TemasBase[n] ?? null;
+        const n = InputKey._ik2Nombre(nombre), m = InputKey._ik2Modulo();
+        if (!n || n === 'auto' || !m || typeof m.theme !== 'function') return null;
+        try { return m.theme(n); } catch { return null; }
     }
-    static _ik2SinPrefijo(o) { const r = {}; for (const [k, v] of Object.entries(o)) r[String(k).replace(/^--et-/, '')] = v; return r; }
     static _ik2LimpiarPaleta(p, donde)
     {
-        if (typeof p === 'string') { try { p = p.trim() ? JSON.parse(p) : {}; } catch { console.warn(`InputKey: ${donde}: JSON inválido; se ignora.`); return {}; } }
-        if (!p || typeof p !== 'object' || Array.isArray(p)) return {};
-        const r = {};
-        for (let [k, v] of Object.entries(p))
-        {
-            k = String(k).trim().replace(/^--et-/, '').replace(/[A-Z]/g, c => '-' + c.toLowerCase());
-            if (!/^[a-z0-9][a-z0-9-]*$/.test(k) || (typeof v !== 'string' && typeof v !== 'number') || /[;{}<>]/.test(String(v)) || String(v).trim() === '')
-            { console.warn(`InputKey: ${donde}: se ignora ${JSON.stringify(k)}.`); continue; }
-            r[k] = String(v).trim();
-        }
-        return r;
+        const m = InputKey._ik2Modulo();
+        if (m && typeof m.parsePalette === 'function') { try { return m.parsePalette(p, 'InputKey ' + donde) ?? {}; } catch { return {}; } }
+        return {};
     }
+    /** El componente declara theme (atributo o propiedad), aunque sea vacío: entonces gana al heredado. */
+    _ik2TemaDeclarado() { return this._ik2TemaProp !== undefined || this.hasAttribute('theme'); }
     _ik2TemaPropio()
     {
         const v = this._ik2TemaProp !== undefined ? this._ik2TemaProp : this.getAttribute('theme');
@@ -1972,28 +1932,33 @@ class InputKey extends HTMLElement
     }
     static _ik2Densidad(v)
     {
-        const s = String(v ?? '').trim().toLowerCase();
-        const d = InputKey._ik2DensidadAlias[s] ?? s;
+        const m = InputKey._ik2Modulo();
+        const d = (m && typeof m.normalizeDensity === 'function') ? m.normalizeDensity(v) : String(v ?? '').trim().toLowerCase();
         return InputKey._ik2Densidades[d] ? d : '';
     }
-    /** Tema del campo: propio o heredado (módulo). {theme, palette, density, origen} */
+    /**
+     * Tema del campo (spec del módulo §4 y §8): cada atributo propio (theme, palette, density), aunque sea vacío, gana
+     * a su equivalente heredado por data-et-* (InduxsoftTheme.resolve). {theme, palette, density, origen}
+     */
     _ik2Estado()
     {
-        let theme = this._ik2TemaPropio(), palette = this._ik2PaletaPropia(), density = '';
-        density = InputKey._ik2Densidad(this._ik2DensProp !== undefined ? this._ik2DensProp : this.getAttribute('density'));
-        let origen = theme ? 'propio' : '';
         const m = InputKey._ik2Modulo();
-        if (m)
+        let r = null;
+        const hace = () => { if (r === null) { r = {}; if (m) { try { r = m.resolve(this) || {}; } catch (e) { console.warn('InputKey: InduxsoftTheme.resolve falló', e); } } } return r; };
+        let theme, origen;
+        if (this._ik2TemaDeclarado()) { theme = this._ik2TemaPropio(); origen = theme ? 'propio' : ''; }
+        else
         {
-            let r = null;
-            try { r = m.resolve(this); } catch (e) { console.warn('InputKey: InduxsoftTheme.resolve falló', e); }
-            if (r && typeof r === 'object')
-            {
-                if (!theme && r.theme) { const n = InputKey._ik2Nombre(r.theme); if (n === 'auto' || InputKey._ik2Paleta(n)) { theme = n; origen = 'pagina'; } }
-                if (!palette && r.palette && typeof r.palette === 'object' && Object.keys(r.palette).length) palette = InputKey._ik2LimpiarPaleta(r.palette, 'InduxsoftTheme.palette');
-                if (!density && r.density) density = InputKey._ik2Densidad(r.density);
-            }
+            const n = InputKey._ik2Nombre(hace().theme);
+            theme = (n === 'auto' || InputKey._ik2Paleta(n)) ? n : '';
+            origen = theme ? (hace().source || 'pagina') : '';
         }
+        let palette;
+        if (this._ik2PaletaProp !== undefined || this.hasAttribute('palette')) palette = this._ik2PaletaPropia();
+        else { const p = hace().palette; palette = (p && typeof p === 'object' && Object.keys(p).length) ? p : null; }
+        let density;
+        if (this._ik2DensProp !== undefined || this.hasAttribute('density')) density = InputKey._ik2Densidad(this._ik2DensProp !== undefined ? this._ik2DensProp : this.getAttribute('density'));
+        else density = InputKey._ik2Densidad(hace().density);
         return { theme, palette, density, origen };
     }
     /** Edit-table que contiene al elemento (cruzando shadows), o null. */
@@ -2033,8 +1998,7 @@ class InputKey extends HTMLElement
     }
     _ik2Desconectado()
     {
-        const m = InputKey._ik2Modulo();
-        if (m && this._ik2Sub && typeof m.unsubscribe === 'function') { try { m.unsubscribe(this, this._ik2Sub); } catch { } }
+        if (typeof this._ik2Sub === 'function') { try { this._ik2Sub(); } catch { } }   // subscribe devuelve la baja
         this._ik2Sub = null;
         this._ik2QuitarReubicar();
     }
@@ -2042,8 +2006,7 @@ class InputKey extends HTMLElement
     {
         const m = InputKey._ik2Modulo();
         if (!m || this._ik2Sub || typeof m.subscribe !== 'function') return;
-        this._ik2Sub = () => this._ik2Aplicar();
-        try { m.subscribe(this, this._ik2Sub); } catch (e) { this._ik2Sub = null; }
+        try { const baja = m.subscribe(this, () => this._ik2Aplicar()); this._ik2Sub = typeof baja === 'function' ? baja : null; } catch (e) { this._ik2Sub = null; }
     }
     /** Construye el control si aún no existe (open, pick y load lo usan). */
     _ik2Asegurar() { if (!this.shadow || !this.container2) this.CreateShadow(); }
@@ -2197,13 +2160,28 @@ class InputKey extends HTMLElement
     }
 
     // ---- CSS (A1-A11). Variables: var(--et-x, var(--et-t-x, respaldo)), como EdiTable F8b. Solo existe con algo activo.
-    static _ik2V(n, fb) { return `var(--et-${n}, var(--et-t-${n}${fb != null ? ', ' + fb : ''}))`; }
+    static _ik2V(n, fb)
+    {
+        const t = `var(--et-t-${n}${fb != null ? ', ' + fb : ''})`;
+        const m = InputKey._ik2Modulo();
+        const p = m && m.parents ? (InputKey._ik2Padres ??= m.parents)[n] : null;
+        return p ? `var(--et-${n}, var(--et-${p}, ${t}))` : `var(--et-${n}, ${t})`;
+    }
+    static _ik2VarsDe(pal)
+    {
+        if (!pal) return '';
+        const m = InputKey._ik2Modulo();
+        let s = (m && typeof m.cssVars === 'function') ? m.cssVars(pal, { prefix: '--et-t-' }) : '';
+        // 'mono' es propia de InputKey (código del campo): libro-mayor la toma de su num-font monoespaciada.
+        if (!pal.mono && /mono/i.test(pal['num-font'] ?? '')) s += ` --et-t-mono: ${pal['num-font']};`;
+        if (pal['color-scheme']) s += ` --ik2-cs: ${pal['color-scheme']};`;
+        return s;
+    }
     _ik2Vars(e)
     {
-        const vars = (o) => Object.entries(o).filter(([k]) => k !== 'color-scheme').map(([k, v]) => `--et-t-${k}: ${v};`).join(' ') + (o['color-scheme'] ? ` --ik2-cs: ${o['color-scheme']};` : '');
         let s = '';
-        if (e.theme === 'auto') s += `:host { ${vars(InputKey._ik2Paleta('claro'))} }\n@media (prefers-color-scheme: dark) { :host { ${vars(InputKey._ik2Paleta('oscuro'))} } }\n`;
-        else if (e.theme) s += `:host { ${vars(InputKey._ik2Paleta(e.theme) ?? {})} }\n`;
+        if (e.theme === 'auto') s += `:host { ${InputKey._ik2VarsDe(InputKey._ik2Paleta('claro'))} }\n@media (prefers-color-scheme: dark) { :host { ${InputKey._ik2VarsDe(InputKey._ik2Paleta('oscuro'))} } }\n`;
+        else if (e.theme) s += `:host { ${InputKey._ik2VarsDe(InputKey._ik2Paleta(e.theme))} }\n`;
         const d = InputKey._ik2Densidades[e.density || 'normal'];
         s += `:host { --ik-t-h: ${d.h}; --ik-t-pad: ${d.pad}; --ik-t-row: ${d.row}; --ik-t-fs: ${d.fs}; }\n`;
         if (e.palette) s += `:host { ${Object.entries(e.palette).map(([k, v]) => `--et-${k}: ${v} !important;`).join(' ')} }\n`;

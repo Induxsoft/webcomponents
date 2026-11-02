@@ -3,25 +3,6 @@
 //
 // p.attrs: atributos extra del #ik. p.pagina: {antes, head, body, bodyAttrs, editable} para armar la página.
 
-// Módulo de tema de prueba con el contrato acordado (resolve, themes, subscribe, unsubscribe, cssVars). Busca
-// data-et-theme en el ancestro más cercano, cruzando shadows. Solo se define si no existe el real.
-export const STUB_TEMA = `<script>
-if (!window.InduxsoftTheme) (function () {
-  var subs = new Map();
-  function arriba(n) { return n.parentElement || (n.parentNode && n.parentNode.host) || null; }
-  function cerca(el, a) { for (var n = el; n; n = arriba(n)) if (n.nodeType === 1 && n.hasAttribute(a)) return n.getAttribute(a); return null; }
-  window.InduxsoftTheme = {
-    themes: {},
-    resolve: function (el) { var t = cerca(el, 'data-et-theme'); var d = cerca(el, 'data-et-density'); var p = cerca(el, 'data-et-palette'); var pal = null; try { pal = p ? JSON.parse(p) : null; } catch (e) { } return { theme: t || '', palette: pal, density: d || '' }; },
-    subscribe: function (el, cb) { subs.set(el, cb); window.__subs = subs.size; },
-    unsubscribe: function (el, cb) { subs.delete(el); window.__subs = subs.size; },
-    cssVars: function (p) { return Object.keys(p || {}).map(function (k) { return '--et-' + k + ':' + p[k] + ';'; }).join(''); },
-    _avisar: function () { subs.forEach(function (cb) { cb(); }); }
-  };
-  new MutationObserver(function () { window.InduxsoftTheme._avisar(); }).observe(document.documentElement, { subtree: true, attributes: true, attributeFilter: ['data-et-theme', 'data-et-density', 'data-et-palette'] });
-})();
-</script>`;
-
 export default ({ esperar, buscar, ev, clicShadow, sinDoc }) => {
   const S = (page, fn, arg) => page.evaluate(fn, arg);
   const cs = (page, css, prop) => S(page, ([c, p]) => { const e = __s().querySelector(c); return e ? getComputedStyle(e).getPropertyValue(p) : null; }, [css, prop]);
@@ -91,18 +72,28 @@ export default ({ esperar, buscar, ev, clicShadow, sinDoc }) => {
       const h2 = await S(page, () => __s().getElementById('container').getBoundingClientRect().height);
       ok(h1 >= 27 && h1 <= 32 && h2 >= 41 && h2 <= 46, `compacta ${h1}, cómoda ${h2}`);
     } },
-    { id: 'ik2-modulo', titulo: 'Módulo: con InduxsoftTheme, data-et-theme de un ancestro activa el tema; el propio gana; data-et-theme="" corta; cambio en caliente', pagina: { antes: STUB_TEMA, bodyAttrs: ' data-et-theme="oscuro"' }, fn: async (page, ok) => {
+    { id: 'ik2-modulo-real', titulo: 'Módulo: el InduxsoftTheme real (1.x) está incrustado en controls.js', fn: async (page, ok) => {
+      ok(/^1\./.test(await S(page, () => window.InduxsoftTheme && InduxsoftTheme.version)), 'versión ' + await S(page, () => window.InduxsoftTheme && InduxsoftTheme.version));
+    } },
+    { id: 'ik2-define', titulo: 'Módulo: un tema registrado con InduxsoftTheme.define pinta el InputKey (y se actualiza en caliente)', attrs: 'theme="v12-azul"', fn: async (page, ok) => {
+      await S(page, () => { InduxsoftTheme.define('v12-azul', { 'input-border': '#0F3D6E', accent: '#0F3D6E' }); }); await esperar(page, 250);
+      ok((await cs(page, '#container', 'border-top-color')) === 'rgb(15, 61, 110)', 'define: ' + await cs(page, '#container', 'border-top-color'));
+    } },
+    { id: 'ik2-modulo', titulo: 'Módulo: con el InduxsoftTheme incrustado, data-et-theme de un ancestro activa el tema; el propio gana; data-et-theme="" corta; cambio en caliente', pagina: { bodyAttrs: ' data-et-theme="oscuro"' }, fn: async (page, ok) => {
       ok(await S(page, () => __s().getElementById('container').classList.contains('ik2')), 'heredado de <body>');
       ok((await cs(page, '#container', 'background-color')) === 'rgb(13, 17, 23)', 'oscuro');
-      ok((await S(page, () => window.__subs)) === 1, 'suscrito');
       await S(page, () => document.body.setAttribute('data-et-theme', 'jade')); await esperar(page, 250);
       ok((await cs(page, '#button_search_container', 'color')) === 'rgb(15, 122, 65)', 'cambio en caliente a jade');
       await S(page, () => document.getElementById('ik').setAttribute('theme', 'libro-mayor')); await esperar(page, 250);
       ok((await cs(page, '#button_search_container', 'color')) === 'rgb(29, 79, 145)', 'el theme propio gana');
       await S(page, () => { document.getElementById('ik').removeAttribute('theme'); document.body.setAttribute('data-et-theme', ''); }); await esperar(page, 30);
       ok(!(await S(page, () => __s().getElementById('container').classList.contains('ik2'))), 'data-et-theme="" corta: sin tema');
-      await S(page, () => document.getElementById('ik').remove());
-      ok((await S(page, () => window.__subs)) === 0, 'al quitarlo se desuscribe');
+      await S(page, () => { document.body.setAttribute('data-et-theme', 'oscuro'); document.getElementById('ik').setAttribute('theme', ''); }); await esperar(page, 250);
+      ok(!(await S(page, () => __s().getElementById('container').classList.contains('ik2'))), 'theme="" propio corta lo heredado (spec §4)');
+      await S(page, () => { const ik = document.getElementById('ik'); ik.removeAttribute('theme'); window.__ik = ik; ik.remove(); document.body.setAttribute('data-et-theme', 'jade'); }); await esperar(page, 100);
+      ok(!(await S(page, () => __ik._ik2Sub)), 'al quitarlo se desuscribe');
+      await S(page, () => { document.body.appendChild(__ik); }); await esperar(page, 250);
+      ok((await S(page, () => getComputedStyle(__ik.shadowRoot.getElementById('button_search_container')).color)) === 'rgb(15, 122, 65)', 'al reconectarlo vuelve a resolver (jade)');
     } },
     { id: 'ik2-a2-tabla', titulo: 'A2: sin tema propio, la ventana toma el tema de la EdiTable que la abre, y lo suelta al cerrar', pagina: { editable: true, body: '<edit-table id="t" theme="jade" style="width:400px" data=\'[{"a":"x"},{"a":"y"}]\'><edit-thead><edit-tr><edit-th field="a" type="Text">A</edit-th></edit-tr></edit-thead></edit-table>' }, fn: async (page, ok) => {
       await S(page, () => { const t = document.getElementById('t'); t.setInputKey('a', document.getElementById('ik')); });
