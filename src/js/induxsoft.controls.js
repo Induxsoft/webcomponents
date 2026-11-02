@@ -1832,6 +1832,7 @@ class InputKey extends HTMLElement
         if (!this._ik2Ini || this.IsOpen) return;
         const pe = this._ik2ResolverPopup(opener);
         this._ik2PopEstado = pe;
+        this._ik2Abridor = (opener && opener.getRootNode && opener.getRootNode() !== this.shadow) ? opener : null;
         this._ik2TablaOrigen = pe.tabla ?? InputKey._ik2TablaDe(opener ?? null);
         // Modo: modal (hoy), anchored o auto (anclado en pantalla ancha; hoja inferior en pantallas angostas).
         const p = this.Popup;
@@ -1863,6 +1864,7 @@ class InputKey extends HTMLElement
         const modo = this._ik2Modo;
         this._ik2Modo = 'modal';
         this._ik2Ancla = null;
+        this._ik2Abridor = null;
         this._ik2PopEstado = null;
         this._ik2Activa = -1;
         const est = this.shadow.getElementById('ik2_estado'); if (est) { est.textContent = ''; est.classList.remove('ik2-error'); }
@@ -1924,6 +1926,9 @@ class InputKey extends HTMLElement
         }
         const cont = this._ik2El.container;
         if (cont && cont.getClientRects().length) return cont;
+        // Campo oculto y fuera de una tabla (p. ej. el menú de acciones de la barra de V12): el elemento que abrió.
+        const ab = this._ik2Abridor;
+        if (ab && ab.isConnected && ab.getClientRects().length) return ab;
         return null;
     }
     _ik2RectAncla()
