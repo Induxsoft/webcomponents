@@ -218,6 +218,14 @@ class InputKey extends HTMLElement
     onBeforeSearch = null;
     buttonElements = [];
     #Requesting = false;
+    // IK-5 (2026-11-02): cada búsqueda lleva un número; la respuesta que no es de la última se descarta.
+    #searchSeq = 0;
+    #abort = null;
+    // IK-3: texto de la última búsqueda, tal como se escribió (para la coincidencia exacta).
+    #lastSearch = '';
+    // IK-1: elemento que tenía el foco al abrir la búsqueda; recibe el foco al cerrar sin selección.
+    #opener = null;
+    #skipBlur = null;
 
     constructor() 
     {
@@ -391,12 +399,13 @@ class InputKey extends HTMLElement
         this.input_description_container.addEventListener('dblclick', () => {
             button_search_container.click();
         })
+        // IK-2 (2026-11-02): la X, «Cancelar» y Esc cierran igual: sin selección y sin change_event.
+        // Antes «Cancelar» llamaba a setValue(this.accept_data) y volvía a disparar change_event con el último registro.
         close_header_container2.addEventListener('click', () => {
-            this.container2.classList.add('hide-element');
+            this._ikCancel();
         });
         close2_footer_container2.addEventListener('click', () => {
-            this.container2.classList.add('hide-element');
-            this.setValue(this.accept_data);
+            this._ikCancel();
         });
         this.accept_footer_container2.addEventListener('click', () => {
             if (!this.record_selected || Object.entries(this.record_selected).length <= 0)
@@ -404,14 +413,19 @@ class InputKey extends HTMLElement
                 alert("Debe seleccionar un registro para continuar");
                 return;
             }
+            this.#opener = null;
             this.setValue(this.record_selected);
             this.container2.classList.add('hide-element');
+            InputKey._ikSyncListeners();   // IK-1
         });
         this.input_search_container.addEventListener('click', () => {
             this.input_search_container.select();
             this.input_search_container.focus();
         });
         this.input_search_container.addEventListener('blur', (e) => {
+            // IK-2: primer blur después de cerrar sin selección, sin haber cambiado el texto: no busca ni limpia.
+            const skip = this.#skipBlur; this.#skipBlur = null;
+            if (skip !== null && skip === this.input_search_container.value) return;
             if (this.container2.classList.contains('hide-element'))
             {
                 if (!this.input_search_container.value.trim())
@@ -443,9 +457,11 @@ class InputKey extends HTMLElement
             if (e.key === 'Enter')
                 this.searchButton(this.container2);
         });
+        // IK-1: Esc lo atiende InputKey._ikOnWindowKey (keydown en captura de window, que lo consume). Esto queda por si
+        // el keyup llegara de todos modos.
         search_container2.addEventListener('keyup', (e) => {
-            if (e.key === 'Escape')
-                this.container2.classList.add('hide-element');
+            if (e.key === 'Escape' && !this.container2.classList.contains('hide-element'))
+                this._ikCancel();
         });
         button_add_container.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -555,6 +571,7 @@ class InputKey extends HTMLElement
             </style>
         `;
 
+        InputKey._ikInstances.add(this);   // IK-1
         this.shadow.appendChild(container);
         this.shadow.appendChild(this.container2);
         this.shadow.appendChild(container3);
@@ -683,27 +700,41 @@ class InputKey extends HTMLElement
     setDataSource(id="",search="")
     {
         this.data = null;
+        // IK-5 (2026-11-02): una búsqueda nueva cancela la anterior (AbortController) y la respuesta que no es de la
+        // última búsqueda se descarta (su promesa no se resuelve). Antes, con #Requesting activo, se ignoraba la NUEVA.
+        const seq = ++this.#searchSeq;
+        if (this.#abort) { try { this.#abort.abort(); } catch {} this.#abort = null; }
+        this.#Requesting = false;
         let url = this.getAttribute('data-source');
-        search=search.toLowerCase();
+        this.#lastSearch = (search ?? '').toString();   // IK-3
+        search=search.toLowerCase();                     // IK-4: se conserva el envío en minúsculas (compatibilidad)
         return new Promise(resolve => {
-            if (url && search.trim() != "" && !this.#Requesting)
+            if (url && search.trim() != "")
             {
-                let surl = url.replace('@search', search);
+                // IK-4: el texto va codificado (antes iba crudo y '&', '#', '+' o '%' armaban mal la URL).
+                let surl = url.replace('@search', () => encodeURIComponent(search));
                 if (this.onBeforeSearch) {
                     surl = this.onBeforeSearch(surl);
                 }
 
+                const ctrl = (typeof AbortController === 'function') ? new AbortController() : null;
+                this.#abort = ctrl;
                 this.#Requesting = true;
+                const vigente = () => (seq === this.#searchSeq);
                 this.request(surl, (dataSuccess) => {
+                    if (!vigente()) return;   // IK-5: respuesta vieja
+                    this.#abort = null;
                     this.data = this.setObjectListMinus(dataSuccess);
                     this.findValue(id);
                     resolve();
                     this.#Requesting = false;
                 }, (dataFail) => {
+                    if (!vigente()) return;   // IK-5: también la cancelada por AbortController
+                    this.#abort = null;
                     resolve();
                     alert("Ocurrió un error al invocar el servicio.\n\n" + dataFail);
                     this.#Requesting = false;
-                });
+                }, ctrl ? ctrl.signal : undefined);
             }
             else if(this.hasAttribute('data-source-array') && this.getAttribute('data-source-array').trim() != '')
             {
@@ -763,7 +794,7 @@ class InputKey extends HTMLElement
             // console.log("key")
         }
         if (Object.keys(this.record_selected??{}).length == 0) {
-            this.record_selected = this.data.find(d => (d[(this.getAttribute('data-search')??'').toString().toLowerCase()]??'').toString().toLowerCase() == id.toLowerCase());
+            this.record_selected = (this.data ?? []).find(d => (d[(this.getAttribute('data-search')??'').toString().toLowerCase()]??'').toString().toLowerCase() == id.toLowerCase());
             // console.log("search")
         }
         // console.log(this.record_selected)
@@ -784,7 +815,16 @@ class InputKey extends HTMLElement
     setValue(value={})
     {
         this.accept_data = value;
+        this._ikPaintValue();
 
+        if (this.change_event)
+            this.change_event(value);
+    }
+    /**
+     * Muestra this.accept_data en los controles sin disparar change_event (IK-2: lo usa también el cierre sin selección).
+     */
+    _ikPaintValue()
+    {
         if(!this.accept_data || Object.entries(this.accept_data).length <= 0)
         {
             this.input_search_container.value = '';
@@ -801,9 +841,6 @@ class InputKey extends HTMLElement
             this.setAttribute('value', this.accept_data[(this.getAttribute('data-key')??'').toLowerCase()]??'');
             this.inputv.setAttribute('value', this.accept_data[(this.getAttribute('data-key')??'').toLowerCase()]??'');
         }
-
-        if (this.change_event)
-            this.change_event(value);
     }
     /**
      * Limpia la información del objeto seleccionado y los controles del componente.
@@ -821,14 +858,26 @@ class InputKey extends HTMLElement
      */
     search(container2, autoselect=false)
     {
-        if (this.data && this.data.length == 1 && this.record_selected && autoselect)
+        // IK-3 (2026-11-02): selección automática = autoselect pedido + atributo autoselect distinto de "false" + UN solo
+        // resultado + el texto buscado es IGUAL (sin distinguir mayúsculas ni espacios en los extremos) a uno de los
+        // campos de _ikAutoselectFields(). Antes se comparaba contra la llave del registro aceptado la vez anterior
+        // (key-value): un código nuevo abría la lista y una coincidencia parcial del mismo registro entraba sola.
+        const unico = (this.data && this.data.length == 1) ? this.data[0] : null;
+        if (autoselect && this._parseBool(this.getAttribute('autoselect'), true) && unico && this._ikExactMatch(unico, this.#lastSearch))
         {
+            this.record_selected = unico;
+            this.#opener = null;
             this.setValue(this.record_selected);
         }
         else
         {
+            // IK-1: si lo que tenía el foco al pedir la búsqueda ya no existe (p. ej. el editor de la celda, que EdiTable
+            // quita al confirmar), se toma lo que tiene el foco ahora, justo antes de abrir la ventana.
+            if (this.container2.classList.contains('hide-element') && (!this.#opener || !this.#opener.isConnected))
+                this.#opener = InputKey._ikDeepActive();
             this.printTableData();
             this.container2.classList.remove('hide-element');
+            InputKey._ikSyncListeners();   // IK-1
             if(!this.data || this.data.length <= 0)
             {
                 this.input_search_container2.select();
@@ -893,16 +942,17 @@ class InputKey extends HTMLElement
             .replace('@key',this.getAttribute('value')??'')
             .replace('@text', this.input_description_container.value);
     }
-    request(url, success, fail)
+    request(url, success, fail, signal)
     {
-        fetch(url, 
-        {
+        const opts = {
             method: 'GET',
             mode: 'cors',
             headers:{
                 'Access-Control-Allow-Origin':'*'
             }
-        }).then(response => 
+        };
+        if (signal) opts.signal = signal;   // IK-5
+        fetch(url, opts).then(response =>
         {
             if (response.ok)
             {
@@ -931,7 +981,8 @@ class InputKey extends HTMLElement
     {
         let kv = this.input_search_container.getAttribute("key-value") || "";
         let sv = this.input_search_container.value || "";
-        
+        this._ikRememberOpener();   // IK-1
+
         if (autoselect)
         {
             this.setDataSource(kv,sv).then(()=>{
@@ -953,6 +1004,123 @@ class InputKey extends HTMLElement
         this.input_search_container.value = text;
         this._search(autoselect);
     }
+    // ===== Correcciones IK-1 a IK-3 (2026-11-02)
+    /**
+     * IK-3: campos que se comparan con el texto buscado para la selección automática (llaves en minúsculas).
+     * Atributo autoselect-fields="campo1,campo2": lista explícita. Sin él: data-key, data-search y los campos del
+     * registro con nombre de código de barras (codbar*, cod_bar*, codigo_barras*, barcode*, ean*, upc*, gtin*).
+     */
+    _ikAutoselectFields(rec)
+    {
+        const attr = this.getAttribute('autoselect-fields');
+        if (attr !== null && attr.trim() !== '')
+            return attr.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+        const f = [(this.getAttribute('data-key') ?? ''), (this.getAttribute('data-search') ?? '')].map(s => s.toLowerCase()).filter(Boolean);
+        Object.keys(rec ?? {}).forEach(k => { if (/^(codbar|cod_bar|codigo_?barras|barcode|ean|upc|gtin)/i.test(k) && !f.includes(k)) f.push(k); });
+        return f;
+    }
+    /** IK-3: true si el texto es igual (sin mayúsculas ni espacios en los extremos) a uno de los campos del registro. */
+    _ikExactMatch(rec, text)
+    {
+        const t = (text ?? '').toString().trim().toLowerCase();
+        if (!rec || t === '') return false;
+        return this._ikAutoselectFields(rec).some(k => {
+            const v = rec[k];
+            return v !== undefined && v !== null && v.toString().trim().toLowerCase() === t;
+        });
+    }
+    /** IK-1: recuerda qué tenía el foco al abrir la búsqueda (solo si la ventana está cerrada). */
+    _ikRememberOpener()
+    {
+        if (!this.container2 || !this.container2.classList.contains('hide-element')) return;
+        this.#opener = InputKey._ikDeepActive();
+    }
+    /** IK-1 e IK-2: cierra la ventana sin selección (Esc, «Cancelar» o la X): no dispara change_event. */
+    _ikCancel()
+    {
+        this.container2.classList.add('hide-element');
+        InputKey._ikSyncListeners();
+        // Los controles vuelven a mostrar el registro aceptado, sin evento. Sin registro aceptado solo se borra el texto
+        // buscado (los atributos value quedan como estaban).
+        if (this.accept_data && Object.keys(this.accept_data).length > 0) this._ikPaintValue();
+        else { this.input_search_container.value = ''; this.input_description_container.value = ''; }
+        const o = this.#opener;
+        this.#opener = null;
+        // Si el foco vuelve al buscador propio, el siguiente blur sin teclear nada no debe buscar ni limpiar (eso
+        // dispararía change_event). Se guarda el texto: si el usuario lo cambia, el blur funciona como siempre.
+        this.#skipBlur = (o === this.input_search_container) ? this.input_search_container.value : null;
+        if (o && o.isConnected && typeof o.focus === 'function')
+        {
+            try { o.focus({ preventScroll: true }); } catch { }
+        }
+    }
+    /** Elemento con el foco, entrando a los shadow (abiertos, el de EdiTable por _shadow y el de InputKey por shadow). */
+    static _ikDeepActive()
+    {
+        let a = document.activeElement;
+        for (let i = 0; a && i < 10; i++)
+        {
+            const r = a.shadowRoot || a._shadow || ((a instanceof InputKey) ? a.shadow : null);
+            if (!r || !r.activeElement) break;
+            a = r.activeElement;
+        }
+        return (a && a !== document.body && a !== document.documentElement) ? a : null;
+    }
+    static _ikInstances = new Set();
+    static _ikEscPending = false;
+    static _ikListening = false;
+    /**
+     * IK-1: los listeners de Esc (captura de window, que corre antes que cualquier listener de document) solo están
+     * puestos mientras hay una ventana de búsqueda abierta o falta el keyup del Esc que la cerró.
+     */
+    static _ikSyncListeners()
+    {
+        let abierta = false;
+        InputKey._ikInstances.forEach(x => { if (x.isConnected && x.container2 && !x.container2.classList.contains('hide-element')) abierta = true; });
+        const quiero = abierta || InputKey._ikEscPending;
+        if (quiero === InputKey._ikListening) return;
+        InputKey._ikListening = quiero;
+        const f = quiero ? 'addEventListener' : 'removeEventListener';
+        window[f]('keydown', InputKey._ikOnWindowKey, true);
+        window[f]('keyup', InputKey._ikOnWindowKey, true);
+    }
+    /**
+     * IK-1: con la ventana de búsqueda abierta, Esc la cierra y se CONSUME (preventDefault + stopImmediatePropagation en
+     * la captura de window, la primera fase), así que ningún listener del documento recibe ese keydown ni su keyup.
+     */
+    static _ikOnWindowKey(e)
+    {
+        if (e.key !== 'Escape' && e.key !== 'Esc') return;
+        if (e.type === 'keyup')
+        {
+            if (InputKey._ikEscPending)
+            {
+                InputKey._ikEscPending = false;
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                InputKey._ikSyncListeners();
+            }
+            return;
+        }
+        if (e.repeat && InputKey._ikEscPending)
+        {
+            // Esc sostenido después de cerrar: la repetición tampoco llega al documento.
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            return;
+        }
+        let ik = null;
+        InputKey._ikInstances.forEach(x => {
+            if (!x.isConnected) { InputKey._ikInstances.delete(x); return; }
+            if (x.container2 && !x.container2.classList.contains('hide-element')) ik = x;
+        });
+        if (!ik) return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        InputKey._ikEscPending = true;
+        ik._ikCancel();
+    }
+    // ===== fin IK-1 a IK-3
     _parseBool=(value, _default = false)=>
     {
         if (value) return (value.toString().toLowerCase() === 'true');
