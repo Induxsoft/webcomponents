@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es" data-et-theme="libro-mayor">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diálogos y avisos (induxsoft.dialogs.js)</title>
+    <!-- Solo el CSS de Bootstrap, para el marcado de modal y pestañas de abajo; su JS NO se carga. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css">
+    <script src="../src/js/induxsoft.theme.js"></script>
+    <script src="../src/js/induxsoft.dialogs.js"></script>
+    <script>Induxsoft.dialog.bootstrapCompat();</script>
+    <style>
+        body { padding: 1rem 2rem; font-family: system-ui, sans-serif; }
+        section { margin: 1rem 0 2rem; }
+        .fila { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+        #salida { font-family: monospace; color: #555; }
+    </style>
+</head>
+<body>
+    <h1 class="h4">Diálogos y avisos sin Bootstrap</h1>
+
+    <section>
+        <h2 class="h6">Tema de la página</h2>
+        <div class="fila">
+            <select id="tema">
+                <option value="libro-mayor" selected>libro-mayor</option>
+                <option value="claro">claro</option>
+                <option value="oscuro">oscuro</option>
+                <option value="jade">jade</option>
+                <option value="ninguno">ninguno</option>
+            </select>
+            <label>Barra <input type="color" id="bar" value="#ba0135"></label>
+            <label>Texto <input type="color" id="barText" value="#ffffff"></label>
+            <label>Fondo <input type="color" id="bg" value="#ffffff"></label>
+            <button type="button" id="aplicar">applyColors</button>
+            <button type="button" id="quitar">Quitar colores</button>
+        </div>
+    </section>
+
+    <section>
+        <h2 class="h6">API propia: Induxsoft.dialog</h2>
+        <div class="fila">
+            <button type="button" id="b-alert">alert</button>
+            <button type="button" id="b-confirm">confirm</button>
+            <button type="button" id="b-danger">confirm (peligro)</button>
+            <button type="button" id="b-prompt">prompt</button>
+            <button type="button" id="b-open">open (formulario)</button>
+            <button type="button" id="b-pila">apilados</button>
+            <button type="button" id="b-toast">toast</button>
+        </div>
+        <p id="salida"></p>
+        <form id="frm" hidden>
+            <label>Clave <input name="clave" value="C-001"></label>
+            <label>Nombre <input name="nombre" value="Pieza de demostración"></label>
+        </form>
+    </section>
+
+    <section>
+        <h2 class="h6">Marcado de Bootstrap 5 tal cual (sin bootstrap.bundle.js)</h2>
+        <div class="fila">
+            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#mdl">Modal con data-bs-toggle</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="bootstrap.Modal.getOrCreateInstance(document.getElementById('mdl_static')).show()">bootstrap.Modal(...).show() (static)</button>
+            <div class="dropdown">
+                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dmb" data-bs-toggle="dropdown" aria-expanded="false">Enlaces</button>
+                <ul class="dropdown-menu" aria-labelledby="dmb"><li><a class="dropdown-item" href="#">Uno</a></li><li><a class="dropdown-item" href="#">Dos</a></li></ul>
+            </div>
+            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#col" aria-expanded="false">Collapse</button>
+        </div>
+        <div class="collapse" id="col"><div class="card card-body mt-2">Contenido que se muestra y se oculta.</div></div>
+
+        <nav class="mt-3"><div class="nav nav-tabs" role="tablist">
+            <button class="nav-link py-1 active" type="button" role="tab" id="nav-general-tab" data-bs-toggle="tab" data-bs-target="#nav-general" aria-controls="nav-general" aria-selected="true">General</button>
+            <button class="nav-link py-1" type="button" role="tab" id="nav-pref-tab" data-bs-toggle="tab" data-bs-target="#nav-pref" aria-controls="nav-pref" aria-selected="false">Preferencias</button>
+        </div></nav>
+        <div class="tab-content border border-top-0 p-2">
+            <div class="tab-pane fade show active" id="nav-general" role="tabpanel" aria-labelledby="nav-general-tab">Pestaña General.</div>
+            <div class="tab-pane fade" id="nav-pref" role="tabpanel" aria-labelledby="nav-pref-tab">Pestaña Preferencias.</div>
+        </div>
+    </section>
+
+    <div class="modal fade" id="mdl" tabindex="-1" aria-labelledby="mdlLabel" aria-hidden="true">
+        <div class="modal-dialog"><div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title" id="mdlLabel">Modal de Bootstrap</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+            <div class="modal-body"><input class="form-control" placeholder="Captura"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="mdl-confirm">Confirmar encima</button>
+            </div>
+        </div></div>
+    </div>
+    <div class="modal fade" id="mdl_static" data-bs-keyboard="false" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog"><div class="modal-content">
+            <div class="modal-body">Ni Esc ni el clic fuera lo cierran.</div>
+            <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button></div>
+        </div></div>
+    </div>
+
+    <script>
+        const $ = (s) => document.querySelector(s);
+        const D = Induxsoft.dialog;
+        const salida = (t) => { $('#salida').textContent = t; };
+        $('#tema').addEventListener('change', (e) => InduxsoftTheme.set(e.target.value));
+        $('#aplicar').addEventListener('click', () => {
+            const p = InduxsoftTheme.applyColors(document.documentElement, { bar: $('#bar').value, barText: $('#barText').value, bg: $('#bg').value });
+            salida('Paleta: sel-bg ' + p['sel-bg'] + ', sel-fg ' + p['sel-fg'] + ', acento ' + p.accent + ', contraste texto ' + InduxsoftTheme.contrast(p.fg, p.bg).toFixed(2) + ':1');
+        });
+        $('#quitar').addEventListener('click', () => InduxsoftTheme.applyColors(document.documentElement, null));
+        $('#b-alert').addEventListener('click', async () => { await D.alert('El documento se guardó.\nFolio A-0001 (ficticio).', { title: 'Listo' }); salida('alert cerrado'); });
+        $('#b-confirm').addEventListener('click', async () => salida('confirm: ' + await D.confirm('¿Guardar los cambios?')));
+        $('#b-danger').addEventListener('click', async () => salida('confirm: ' + await D.confirm('Se cancelará el documento.', { title: 'Cancelar documento', okText: 'Cancelar documento', cancelText: 'Volver', danger: true, focus: 'cancel' })));
+        $('#b-prompt').addEventListener('click', async () => salida('prompt: ' + JSON.stringify(await D.prompt('Motivo de la cancelación', { required: true, validate: (v) => v.length >= 5 || 'Escribe al menos 5 caracteres.' }))));
+        $('#b-open').addEventListener('click', async () => {
+            const h = D.open({ title: 'Editar', element: $('#frm'), size: 'lg', buttons: [{ text: 'Cancelar', value: null }, { text: 'Guardar', variant: 'primary', onClick: (h) => { h.close(new FormData($('#frm')).get('nombre')); return false; } }] });
+            salida('open: ' + await h.result);
+        });
+        $('#b-pila').addEventListener('click', () => {
+            D.open({ title: 'Primero', text: 'Abre otro encima.', buttons: [{ text: 'Abrir otro', close: false, onClick: () => { D.confirm('¿Segundo diálogo, encima del primero?'); } }, { text: 'Cerrar', variant: 'primary' }] });
+        });
+        let n = 0;
+        $('#b-toast').addEventListener('click', () => { const t = ['info', 'success', 'warning', 'error'][n++ % 4]; D.toast('Aviso de tipo ' + t, { type: t }); });
+        $('#mdl-confirm').addEventListener('click', async () => { if (await D.confirm('¿Confirmar desde el modal de Bootstrap?')) D.toast('Confirmado', { type: 'success' }); });
+        document.getElementById('mdl').addEventListener('shown.bs.modal', (e) => salida('shown.bs.modal, relatedTarget: ' + (e.relatedTarget ? e.relatedTarget.textContent : 'null')));
+    </script>
+</body>
+</html>

@@ -48,6 +48,15 @@ Herramientas (y `tests/VERSIONES.md`, el resultado de correr el banco con las ve
   aserciones de InputKey (`<input-key>`), aparte del banco: Esc, «Cancelar», selección automática, codificación del
   texto y búsquedas simultáneas (IK-1 a IK-5), con datos ficticios y el servidor simulado en la página. Sale con 1 si
   alguna falla.
+- `node tests/theme/run.mjs [--src <induxsoft.theme.js>] [--filtro <id>] [--verbose]`: pruebas del módulo de tema
+  1.1.0: `fromColors` (contraste AA con amarillo claro, gris medio, negro y blanco sobre los cuatro temas),
+  `applyColors` (herencia a descendientes, shadow DOM, iframes y EdiTable) y `data-et-theme="ninguno"`.
+- `node tests/dialogs/run.mjs [--filtro <id>] [--bootstrap-css <css>] [--jquery <js>] [--bootstrap-js <bundle>]`:
+  pruebas de `induxsoft.dialogs.js` (API, foco, Esc, apilado, ARIA, tema y avisos) y de `bootstrapCompat()` con el
+  marcado de V12 sin `bootstrap.bundle.js` (Modal, Tab, Dropdown, Collapse, Alert y puente de jQuery). Por omisión usa
+  un CSS mínimo con las reglas de Bootstrap 5.0.1 y un sustituto de jQuery; con `--bootstrap-css`/`--jquery` usa los
+  reales (no se versionan aquí: p. ej. los de la plantilla de V12). `--bootstrap-js` carga el bundle real en lugar de
+  la compatibilidad, para comparar: las diferencias esperadas están en el encabezado del archivo.
 
 ## Cómo funciona
 
