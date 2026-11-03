@@ -1124,6 +1124,8 @@ textarea.form-control-sm { min-height: calc(1.5em + .5rem + 2px); }
 }
 .badge:empty { display: none; }
 .btn .badge { position: relative; top: -1px; }
+/* Con tema, el texto de un .badge.bg-info usa el color legible calculado (--ix-on-info); sin tema queda blanco, como Bootstrap 5.0.1. */
+[data-et-theme]:not([data-et-theme=""], [data-et-theme="ninguno" i], [data-et-theme="none" i], [data-et-theme="false" i]) .badge.bg-info { color: var(--ix-on-info); }
 .alert { position: relative; padding: 1rem 1rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: var(--ix-radius); }
 .alert-dismissible { padding-right: 3rem; }
 .alert-dismissible .btn-close { position: absolute; top: 0; right: 0; z-index: 2; padding: 1.25rem 1rem; }
