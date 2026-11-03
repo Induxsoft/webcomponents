@@ -1545,6 +1545,7 @@ textarea.form-control-sm { min-height: calc(1.5em + .5rem + 2px); }
 .fs-6 { font-size: 1rem !important; }
 .fst-italic { font-style: italic !important; }
 .fw-normal { font-weight: 400 !important; }
+.fw-semibold { font-weight: 600 !important; }   /* de Bootstrap 5.1+: la usa ventas/_static/html/cfg_promo.html */
 .fw-bold { font-weight: 700 !important; }
 .fw-bolder { font-weight: bolder !important; }
 .text-start { text-align: left !important; }
