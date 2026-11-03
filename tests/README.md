@@ -261,3 +261,19 @@ Las demos se usan sin modificarlas. `_EdiTable-demo.html` e `index2.html` están
 `induxsoft.controls.editable.js`, `induxsoft.controls.js` e `induxsoft.controls.opcanva.js` relativos a `examples/`,
 donde no existen): el banco corrige esas rutas **solo al servirlas**. `index.html` intenta cargar recursos externos que
 el banco bloquea (aparecen como `Failed to load resource` en la consola de su foto).
+
+## Base CSS de V12 (`tests/basecss/`)
+
+`src/css/induxsoft.base.css` reemplaza a `bootstrap.min.css` 5.0.1 en V12 con solo las clases que usan los paquetes
+(`tests/basecss/clases.tsv`). Sin tema debe verse igual que Bootstrap; con `data-et-theme` toma la paleta del tema.
+
+```sh
+node tests/basecss/compara.mjs [--anchos 400,600,800,1000,1300] [--filtro <clase>] [--sin-capturas]
+node tests/basecss/temas.mjs [--check]     # bloque de paletas del CSS desde src/js/induxsoft.theme.js
+node tests/basecss/extrae.mjs              # vuelve a sacar muestras.json de los repos de paquetes
+```
+
+`compara.mjs` carga las muestras (fragmentos reales de los paquetes y `sinteticos.mjs`, con estados forzados por CDP)
+con Bootstrap y con la base sin tema, compara estilo computado y caja de cada elemento, y escribe
+`tests/basecss/out/report.md` y capturas del muestrario con los temas. Sale con 1 si alguna de las 100 clases más
+usadas tiene una diferencia visible. Al cambiar `induxsoft.theme.js`, correr `temas.mjs` (o `--check`).
