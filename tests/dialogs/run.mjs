@@ -587,6 +587,14 @@ const PRUEBAS = [
       ok(!(await visibleModal(page, 'mdl')), 'y el de compat no actúa');
     }
   },
+  {
+    id: 'c-13', titulo: 'delegación en captura, como Bootstrap 5.0.1: un stopPropagation en el contenedor no impide abrir el modal (F6, vendesk)',
+    pagina: { body: MODALES.replace('<button id="abrir"', '<div id="caja" onclick="event.stopPropagation()"><button id="abrir2" type="button" data-bs-toggle="modal" data-bs-target="#mdl">Abrir 2</button></div><button id="abrir"') },
+    fn: async (page, ok) => {
+      await page.click('#abrir2'); await esperar(page, 400);
+      ok(await visibleModal(page, 'mdl'), 'el modal abre aunque el clic no burbujee hasta document');
+    }
+  },
 ];
 
 async function main() {
