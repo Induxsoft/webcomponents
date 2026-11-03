@@ -776,7 +776,7 @@
       "modoShadowPedido": "@=paso-anterior",
       "dom": {
        "$parche": [
-        [0,0,["<style data-et=\"f8b\">"," @@ESTILO sha256:5f51c365dfd0753d","</style>"]],
+        [0,0,["<style data-et=\"f8b\">"," @@ESTILO sha256:387ea707662a3500","</style>"]],
         [
          46,
          1,
@@ -906,7 +906,7 @@
       "id": "t1",
       "inicializada": "@=paso-anterior",
       "modoShadowPedido": "@=paso-anterior",
-      "dom": {"$parche":[[1,1,[" @@ESTILO sha256:0ef28b913cedc192"]]]},
+      "dom": {"$parche":[[1,1,[" @@ESTILO sha256:6e175171721a3155"]]]},
       "shadowEsElGuardado": "@=paso-anterior",
       "datos": "@=paso-anterior",
       "columnas": "@=paso-anterior",
@@ -1008,7 +1008,7 @@
       "id": "t1",
       "inicializada": "@=paso-anterior",
       "modoShadowPedido": "@=paso-anterior",
-      "dom": {"$parche":[[1,1,[" @@ESTILO sha256:ea2e15b59394cde1"]]]},
+      "dom": {"$parche":[[1,1,[" @@ESTILO sha256:43dd700ee22e3148"]]]},
       "shadowEsElGuardado": "@=paso-anterior",
       "datos": "@=paso-anterior",
       "columnas": "@=paso-anterior",
@@ -1112,7 +1112,7 @@
       "id": "t1",
       "inicializada": "@=paso-anterior",
       "modoShadowPedido": "@=paso-anterior",
-      "dom": {"$parche":[[1,1,[" @@ESTILO sha256:4d71a6388cbf949e"]]]},
+      "dom": {"$parche":[[1,1,[" @@ESTILO sha256:5825ca7269c27c1a"]]]},
       "shadowEsElGuardado": "@=paso-anterior",
       "datos": "@=paso-anterior",
       "columnas": "@=paso-anterior",

@@ -46,7 +46,7 @@ export function encima(hex)
 }
 const enc = s => s.replace(/#/g, '%23');
 const icono = fill => `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='${enc(fill)}'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e")`;
-const DERIVADAS = new Set(['color-scheme', 'on-accent', 'on-muted-fg', 'on-ok', 'on-warn', 'on-error', 'accordion-icon', 'btn-close-filter']);
+const DERIVADAS = new Set(['color-scheme', 'on-accent', 'on-muted-fg', 'on-ok', 'on-warn', 'on-error', 'on-info', 'accordion-icon', 'btn-close-filter']);
 
 export function bloque(css, mod)
 {
@@ -59,7 +59,7 @@ export function bloque(css, mod)
         const out = [];
         for (const k of usadas) if (p[k] != null) out.push(`--ixt-${k}: ${p[k]};`);
         out.push(`--ixt-color-scheme: ${p['color-scheme'] || 'normal'};`);
-        for (const [k, base] of [['on-accent', 'accent'], ['on-muted-fg', 'muted-fg'], ['on-ok', 'ok'], ['on-warn', 'warn'], ['on-error', 'error']])
+        for (const [k, base] of [['on-accent', 'accent'], ['on-muted-fg', 'muted-fg'], ['on-ok', 'ok'], ['on-warn', 'warn'], ['on-error', 'error'], ['on-info', 'info']])
         { const v = encima(p[base]); if (v) out.push(`--ixt-${k}: ${v};`); }
         if (rgb(p.fg)) out.push(`--ixt-accordion-icon: ${icono(p.fg)};`);
         if (p['color-scheme'] === 'dark') out.push('--ixt-btn-close-filter: invert(1) grayscale(100%) brightness(200%);');

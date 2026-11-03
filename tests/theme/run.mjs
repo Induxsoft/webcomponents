@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// Pruebas del módulo de tema InduxsoftTheme 1.1.0 (src/js/induxsoft.theme.js): fromColors, applyColors, contraste
-// AA con colores difíciles y «ninguno». Cada prueba afirma lo que espera. Sin red: la página se sirve con page.route.
+// Pruebas del módulo de tema InduxsoftTheme 1.2.0 (src/js/induxsoft.theme.js): fromColors, applyColors, contraste
+// AA con colores difíciles, «ninguno» y (1.2.0) el color info y la letra de Windows 11 de los temas. Cada prueba afirma lo que espera. Sin red: la página se sirve con page.route.
 //
 //   node tests/theme/run.mjs [--src ruta/induxsoft.theme.js] [--filtro texto] [--verbose]
 //
@@ -38,16 +38,16 @@ ${o.body ?? ''}
 // Pares que fromColors garantiza (los mismos de induxsoft.theme.js).
 const TEXTO = [['fg', 'bg'], ['muted-fg', 'bg'], ['header-fg', 'header-bg'], ['footer-fg', 'footer-bg'], ['sel-fg', 'sel-bg'],
   ['active-fg', 'active-bg'], ['input-fg', 'input-bg'], ['menu-fg', 'menu-bg'], ['mark-fg', 'mark-bg'],
-  ['accent', 'bg'], ['error', 'bg'], ['error', 'error-bg'], ['warn', 'bg'], ['ok', 'bg'], ['neg-fg', 'bg'],
+  ['accent', 'bg'], ['error', 'bg'], ['error', 'error-bg'], ['warn', 'bg'], ['ok', 'bg'], ['info', 'bg'], ['neg-fg', 'bg'],
   ['tooltip-fg', 'tooltip-bg'], ['badge-color', 'badge-bg'], ['fg', 'row-alt-bg'], ['fg', 'hover-bg'], ['fg', 'sel-bg-soft'], ['fg', 'checked-bg']];
 const DIFICILES = { 'amarillo claro': '#FFF59D', 'gris medio': '#808080', negro: '#000000', blanco: '#FFFFFF' };
 
 const PRUEBAS = [
   {
-    id: 'th-01', titulo: 'versión 1.1.0 y API nueva',
+    id: 'th-01', titulo: 'versión 1.2.0 y API nueva',
     fn: async (page, ok) => {
       const r = await page.evaluate(() => ({ v: InduxsoftTheme.version, f: ['fromColors', 'applyColors', 'contrast', 'isNone'].map(n => typeof InduxsoftTheme[n]), none: InduxsoftTheme.none }));
-      ok(r.v === '1.1.0', 'version 1.1.0: ' + r.v);
+      ok(r.v === '1.2.0', 'version 1.2.0: ' + r.v);
       ok(r.f.every(x => x === 'function'), 'funciones: ' + r.f);
       ok(r.none === 'ninguno', 'none = ninguno');
     }
@@ -253,13 +253,32 @@ const PRUEBAS = [
     }
   },
   {
-    id: 'th-13', titulo: '1.1.0 cargado después de 1.0.0 lo reemplaza y conserva sus temas',
+    id: 'th-13', titulo: '1.2.0 cargado después de 1.0.0 lo reemplaza y conserva sus temas',
     pagina: { antes: '<script src="/theme100.js"></script><script>InduxsoftTheme.define("mio", {accent: "#123456"});</script>' },
     fn: async (page, ok) => {
       if (!V100) { ok(false, 'sin la copia 1.0.0 (git show 96537f4)'); return; }
       const r = await page.evaluate(() => ({ v: InduxsoftTheme.version, f: typeof InduxsoftTheme.fromColors, mio: InduxsoftTheme.has('mio'), p: InduxsoftTheme.fromColors({}, { base: 'mio' }).accent }));
-      ok(r.v === '1.1.0' && r.f === 'function', 'versión nueva: ' + r.v);
+      ok(r.v === '1.2.0' && r.f === 'function', 'versión nueva: ' + r.v);
       ok(r.mio && r.p === '#123456', 'tema definido con 1.0.0 disponible como base: ' + r.p);
+    }
+  },
+  {
+    id: 'th-14', titulo: '1.2.0: info y letra de Windows 11 en los cuatro temas; fromColors toma info de la base',
+    fn: async (page, ok) => {
+      const r = await page.evaluate(() => {
+        const temas = ['claro', 'oscuro', 'jade', 'libro-mayor'].map(n => { const t = InduxsoftTheme.theme(n); return { n, info: t.info, font: t.font, size: t['font-size'], c: InduxsoftTheme.contrast(t.info, t.bg) }; });
+        const lm = InduxsoftTheme.fromColors({}, { base: 'libro-mayor' }).info;
+        const osc = InduxsoftTheme.fromColors({ bg: '#101418' }, { base: 'libro-mayor' });
+        return { temas, lm, osc: { info: osc.info, c: InduxsoftTheme.contrast(osc.info, osc.bg) } };
+      });
+      for (const t of r.temas) {
+        ok(/^#[0-9A-F]{6}$/i.test(t.info || ''), t.n + ': info ' + t.info);
+        ok(t.c >= 4.5, t.n + ': info contra bg ' + (t.c || 0).toFixed(2));
+        ok(/^"Segoe UI Variable Text", "Segoe UI Variable", "Segoe UI", system-ui/.test(t.font || ''), t.n + ': letra ' + t.font);
+        ok(t.size === '0.875rem', t.n + ': tamaño ' + t.size);
+      }
+      ok(r.lm === r.temas[3].info.toUpperCase(), 'fromColors({}) conserva info de la base: ' + r.lm);
+      ok(r.osc.c >= 4.5, 'con fondo oscuro, info se ajusta a 4.5:1: ' + r.osc.info + ' ' + r.osc.c.toFixed(2));
     }
   },
 ];

@@ -1,0 +1,22 @@
+:host { --et-t-font: "Segoe UI Variable Text", "Segoe UI Variable", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif; --et-t-font-size: 0.875rem; --et-t-bg: #FFFFFF; --et-t-fg: #1A202C; --et-t-muted-fg: #5A6577; --et-t-header-bg: #F4F6F9; --et-t-header-fg: #4A5568; --et-t-header-border: #E2E8F0; --et-t-header-weight: 600; --et-t-header-transform: uppercase; --et-t-header-spacing: .04em; --et-t-header-font-size: 0.72rem; --et-t-border: #E2E8F0; --et-t-row-alt-bg: #F8FAFB; --et-t-hover-bg: #EEF9F2; --et-t-sel-bg: #D1FAE5; --et-t-sel-fg: #064E3B; --et-t-sel-bg-soft: #E6F7EE; --et-t-active-cell: #128C4A; --et-t-active-bg: #FFFFFF; --et-t-active-fg: #1A202C; --et-t-active-border: #FFFFFF; --et-t-accent: #0F7A41; --et-t-focus-ring: #128C4A; --et-t-input-bg: #FFFFFF; --et-t-input-fg: #1A202C; --et-t-input-border: #A0AEC0; --et-t-input-disabled-bg: #F4F6F9; --et-t-mark-bg: #FDE68A; --et-t-mark-fg: #1A202C; --et-t-error: #C53030; --et-t-error-bg: #FFF5F5; --et-t-warn: #B45309; --et-t-ok: #0F7A41; --et-t-info: #2B6CB0; --et-t-neg-fg: #C53030; --et-t-tooltip-bg: #1A202C; --et-t-tooltip-fg: #FFFFFF; --et-t-badge-bg: #667781; --et-t-badge-color: #FFFFFF; --et-t-radius: 8px; --et-t-chip-radius: 20px; --et-t-badge-radius: 999px; --et-t-cell-pad-x: 12px; --et-t-cell-pad-y: 7px; --et-t-header-pad-x: 12px; --et-t-header-pad-y: 8px; --et-t-row-height: 2rem; --et-t-input-pad-y: 0.25rem; --et-t-input-pad-x: 0.6rem; --et-t-num-font: inherit; --et-t-footer-bg: #F4F6F9; --et-t-footer-fg: #4A5568; --et-t-menu-bg: #FFFFFF; --et-t-menu-fg: #1A202C; --et-t-menu-border: #E2E8F0; --et-t-menu-hover-bg: #EEF9F2; --et-t-panel-bg: #F4F6F9; --et-t-panel-border: #E2E8F0; --et-t-chip-bg: #FFFFFF; --et-t-chip-border: #A0AEC0; --et-t-card-border: #E2E8F0; --et-t-group-bg: #F4F6F9; --et-t-group-hover-bg: #EEF9F2; --et-t-fixed-bg: #FFFFFF; --et-t-fixed-head-bg: #F4F6F9; --et-t-fixed-hover-bg: #EEF9F2; --et-t-checked-bg: #E6F7EE; color-scheme: light; }
+
+            table, .et-chooser, .et-group-panel, .et-tooltip, input, select, textarea, button { font-family: var(--et-font, var(--et-t-font)); }
+            /* (0,1,1) > .EdiTable-Cell: contorno de la celda activa, distinto del relleno de la fila */
+            td.EdiTable-Cell:where(:has(#__table_selector, #__table_input)) { outline: 2px solid var(--et-active-cell, var(--et-t-active-cell)); outline-offset: -2px; }
+            td.et-num, th.et-num, tfoot td.et-summary { font-variant-numeric: tabular-nums; }
+            tfoot td.et-summary { text-align: right; font-family: var(--et-num-font, var(--et-t-num-font, inherit)); }
+            td.et-num { font-family: var(--et-num-font, var(--et-t-num-font, inherit)); }
+            td.et-num .cell-content { justify-content: flex-end; text-align: right; }
+            th.et-num { text-align: right; }
+            tr:not(.EdiTable-Row-Selected) > td.et-neg { color: var(--et-neg-fg, var(--et-t-neg-fg)); }
+            :where(button, input, select, textarea, th, [tabindex]):focus-visible:where(:not(#__table_input)) { outline: 2px solid var(--et-focus-ring, var(--et-t-focus-ring)); outline-offset: 1px; }
+            input[type=checkbox], input[type=radio] { accent-color: var(--et-accent, var(--et-t-accent)); }
+            .et-chooser { box-shadow: 0 6px 18px rgba(0,0,0,.22); }
+            /* (0,2,3) > celda fija (0,2,2): en el pie, las fijas y la del sistema llevan el fondo del pie */
+            table.et-has-fixed tfoot td.et-fixed, tfoot > tr > td.et-sel-col { background-color: var(--et-footer-bg, var(--et-header-bg, var(--et-t-footer-bg))); }
+        
+            /* (0,0,2): pierde con tbody tr:hover (0,1,2), la fila seleccionada (!important) y la marcada (0,1,2) */
+            tbody > tr:where(:nth-child(even of tr:not(.et-spacer, .hidde-row, .et-group-row))) { background-color: var(--et-row-alt-bg, var(--et-t-row-alt-bg, #F7F7F7)); }
+            /* (0,2,4): gana a la celda fija (0,2,2) y pierde con su hover (0,3,3) */
+            table.et-has-fixed tbody > tr:where(:nth-child(even of tr:not(.et-spacer, .hidde-row, .et-group-row))) > td.et-fixed { background-color: var(--et-row-alt-bg, var(--et-t-row-alt-bg, #F7F7F7)); }
+        

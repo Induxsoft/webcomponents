@@ -10,8 +10,9 @@ import { verificar } from '../../tools/embed-theme.mjs';
 
 const { P, t } = registro('tpg', { requiere: ['page-theme'] });
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
-// sha256 de JSON.stringify(EditTable.themes) en main (F8b, antes del módulo): los temas no cambian de valores.
-const HASH_TEMAS_F8B = '60cfda3921b7e5f6526b03bda4fffa85890d75cb65be4a967b3ce89c1cb6b679';
+// sha256 de JSON.stringify(EditTable.themes): los temas no cambian de valores sin querer. Hasta 1.1.0 eran los de F8b
+// (60cfda39…); InduxsoftTheme 1.2.0 cambia a propósito solo 'font' (letra de Windows 11) y agrega 'info' en los cuatro.
+const HASH_TEMAS_F8B = 'e12e5b4cd3fb315018bb39353af33166c060b8f6879d655aab8c68f86f9b1e3a';
 
 const COLS = [
   { field: 'codigo', type: 'Text', title: 'Código', width: '90px' },
@@ -47,7 +48,7 @@ t('01', "bandera 'page-theme'; InduxsoftTheme expone la API; los temas son los d
   });
   c.igual(r.f, true); c.igual(r.api, [], 'métodos'); c.ok(/^\d+\.\d+\.\d+$/.test(r.v), 'version semver');
   c.igual(r.mismos, true, 'EditTable.themes es alias'); c.igual(r.nombres, ['claro', 'oscuro', 'jade', 'libro-mayor']);
-  c.igual(r.hash, HASH_TEMAS_F8B, 'valores exactos de F8b');
+  c.igual(r.hash, HASH_TEMAS_F8B, 'valores exactos de F8b (con la letra y el info de 1.2.0)');
 });
 t('02', 'cssVars y fontStack: declaraciones --et-t-* (sin color-scheme), prefijo e !important opcionales', ['§TP-api'], async (c) => {
   await c.abrir({ html: pag({ cuerpo: T('t1') }) });

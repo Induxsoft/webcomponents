@@ -49,8 +49,9 @@ Herramientas (y `tests/VERSIONES.md`, el resultado de correr el banco con las ve
   texto y búsquedas simultáneas (IK-1 a IK-5), con datos ficticios y el servidor simulado en la página. Sale con 1 si
   alguna falla.
 - `node tests/theme/run.mjs [--src <induxsoft.theme.js>] [--filtro <id>] [--verbose]`: pruebas del módulo de tema
-  1.1.0: `fromColors` (contraste AA con amarillo claro, gris medio, negro y blanco sobre los cuatro temas),
-  `applyColors` (herencia a descendientes, shadow DOM, iframes y EdiTable) y `data-et-theme="ninguno"`.
+  1.2.0: `fromColors` (contraste AA con amarillo claro, gris medio, negro y blanco sobre los cuatro temas),
+  `applyColors` (herencia a descendientes, shadow DOM, iframes y EdiTable), `data-et-theme="ninguno"` y el color
+  `info` y la letra de Windows 11 de los cuatro temas.
 - `node tests/dialogs/run.mjs [--filtro <id>] [--bootstrap-css <css>] [--jquery <js>] [--bootstrap-js <bundle>]`:
   pruebas de `induxsoft.dialogs.js` (API, foco, Esc, apilado, ARIA, tema y avisos) y de `bootstrapCompat()` con el
   marcado de V12 sin `bootstrap.bundle.js` (Modal, Tab, Dropdown, Collapse, Alert y puente de jQuery). Por omisión usa
