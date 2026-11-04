@@ -232,6 +232,50 @@ const PRUEBAS = [
       for (const [n, k] of Object.entries(m.kIconos)) ok(k >= 3, `contraste de icono ${n}: ${k.toFixed(2)}`);
     }
   })),
+  ...TEMAS.map(tema => ({
+    id: 'gb-4' + TEMAS.indexOf(tema), titulo: `tema ${tema}: texto centrado en el campo; alto, padding y letra iguales al campo de InputKey`,
+    pagina: { htmlAttrs: ` data-et-theme="${tema}"`, body: `<div class="caja"><input-key id="ikref" data-key="id" data-search="clave" data-text="nombre" data-source-array='[{"id":1,"clave":"A1","nombre":"Uno"}]' data-value='{"id":1,"clave":"A1","nombre":"Uno"}'></input-key></div>` },
+    fn: async (page, ok) => {
+      await page.evaluate(() => __espera(80));
+      const r = await page.evaluate(() => {
+        const S = id => document.getElementById(id).shadowRoot;
+        const cs = (el, p) => getComputedStyle(el).getPropertyValue(p);
+        const caja = (el) => el.getBoundingClientRect();
+        // Elementos con texto y el campo que los contiene: el texto debe quedar dentro y centrado verticalmente.
+        const pares = [
+          ['ft input', S('ft').querySelector('input'), S('ft').querySelector('.d-flex')],
+          ['ft2 input (filtro aplicado)', S('ft2').querySelector('input'), S('ft2').querySelector('.d-flex')],
+          ['dr fecha Desde', S('dr').querySelector('#DateRange_iptStr'), S('dr').querySelector('#DateRange_contnr')],
+          ['dr etiqueta Desde', S('dr').querySelector('#DateRange_lblStr'), S('dr').querySelector('#DateRange_contnr')],
+          ['dr2 fecha Hasta', S('dr2').querySelector('#DateRange_iptEnd'), S('dr2').querySelector('#DateRange_contnr')],
+          ['fdr select de modo', S('fdr').querySelector('#FDR_sel_mode'), S('fdr').querySelector('#FDR_container')],
+          ['fdr mes', S('fdr').querySelector('.month-button'), S('fdr').querySelector('#FDR_container')],
+          ['fdr2 fecha Desde', S('fdr2').querySelector('#FDR_div_datef input'), S('fdr2').querySelector('#FDR_container')],
+          ['fdr2 etiqueta Desde', S('fdr2').querySelector('#FDR_div_datef small'), S('fdr2').querySelector('#FDR_container')],
+        ];
+        const centrado = pares.map(([n, el, c]) => {
+          const e = caja(el), k = caja(c), bt = parseFloat(cs(c, 'border-top-width')) || 0, bb = parseFloat(cs(c, 'border-bottom-width')) || 0;
+          const pt = parseFloat(cs(el, 'padding-top')) || 0, pb = parseFloat(cs(el, 'padding-bottom')) || 0;
+          return { n, dentro: e.top >= k.top + bt - 0.5 && e.bottom <= k.bottom - bb + 0.5, dy: Math.abs((e.top + pt + e.bottom - pb) / 2 - (k.top + k.bottom) / 2), pt, pb };
+        });
+        const ik = document.getElementById('ikref').shadowRoot, ikc = ik.querySelector('#container'), iki = ik.querySelector('#input_description_container');
+        const ft = S('ft'), ftc = ft.querySelector('.d-flex'), fti = ft.querySelector('input');
+        const m = (el) => ({ alto: caja(el).height, pad: cs(el, 'padding-top') + ' ' + cs(el, 'padding-right') + ' ' + cs(el, 'padding-bottom') + ' ' + cs(el, 'padding-left'), fs: cs(el, 'font-size'), lh: cs(el, 'line-height'), fuente: cs(el, 'font-family'), altoInput: caja(el).height });
+        return { centrado, ik: { campo: m(ikc), texto: m(iki) }, ft: { campo: m(ftc), texto: m(fti) } };
+      });
+      for (const c of r.centrado) {
+        ok(c.dentro, `${c.n}: el texto queda dentro del campo`);
+        ok(c.dy <= 1.5, `${c.n}: centrado verticalmente (desvío ${c.dy.toFixed(2)}px)`);
+        ok(Math.abs(c.pt - c.pb) < 0.5, `${c.n}: padding arriba = abajo (${c.pt} / ${c.pb})`);
+      }
+      ok(Math.abs(r.ft.campo.alto - r.ik.campo.alto) < 0.6, `filter-text: alto del campo igual a InputKey (${r.ft.campo.alto} vs ${r.ik.campo.alto})`);
+      ok(Math.abs(r.ft.texto.altoInput - r.ik.texto.altoInput) < 0.6, `filter-text: alto del texto igual a InputKey (${r.ft.texto.altoInput} vs ${r.ik.texto.altoInput})`);
+      ok(r.ft.texto.pad === r.ik.texto.pad, `filter-text: padding igual a InputKey (${r.ft.texto.pad} vs ${r.ik.texto.pad})`);
+      ok(r.ft.texto.fs === r.ik.texto.fs && r.ft.texto.lh === r.ik.texto.lh, `filter-text: tamaño y alto de línea iguales a InputKey (${r.ft.texto.fs}/${r.ft.texto.lh} vs ${r.ik.texto.fs}/${r.ik.texto.lh})`);
+      // Contra la letra del campo de InputKey (#container): su #input_description_container hoy sale en Arial (no hereda).
+      ok(r.ft.texto.fuente === r.ik.campo.fuente, `filter-text: misma letra que el campo de InputKey (${r.ft.texto.fuente.slice(0, 30)} vs ${r.ik.campo.fuente.slice(0, 30)})`);
+    }
+  })),
   {
     id: 'gb-15', titulo: 'tema auto: claro u oscuro según el sistema', pagina: { htmlAttrs: ' data-et-theme="auto"' },
     fn: async (page, ok) => {

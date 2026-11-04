@@ -5587,7 +5587,7 @@ class FilterText extends HTMLElement
         return K.chico + `
 .ixt{ ${K.campo} align-items:stretch; overflow:hidden; }
 .ixt:focus-within{ ${K.foco} }
-.ixt .induxsoft-form-control{ ${K.texto} height:100%; }
+.ixt .induxsoft-form-control{ ${K.texto} box-sizing:border-box; height:auto; min-width:0; align-self:stretch; }
 .ixt .induxsoft-form-control::placeholder{ color:${K.muted}; opacity:1; }
 .ixt .induxsoft-form-control:disabled{ background:${V('input-disabled-bg', '#EEF1F4')}; color:${K.muted}; }
 .ixt .induxsoft-buttons{ ${K.icono} }
