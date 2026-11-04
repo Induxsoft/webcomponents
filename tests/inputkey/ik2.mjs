@@ -72,6 +72,23 @@ export default ({ esperar, buscar, ev, clicShadow, sinDoc }) => {
       const h2 = await S(page, () => __s().getElementById('container').getBoundingClientRect().height);
       ok(h1 >= 27 && h1 <= 32 && h2 >= 41 && h2 <= 46, `compacta ${h1}, cómoda ${h2}`);
     } },
+    // Alto del campo: el de todo el campo y de sus partes, que deben coincidir (sin escalones).
+    { id: 'ik2-size-sm', titulo: 'size="sm": campo de 28px, relleno 3px 8px y letra 13px (los de «compacta»); quitarlo regresa a 34px', attrs: 'theme="libro-mayor" size="sm"', fn: async (page, ok) => {
+      const m = () => S(page, () => { const s = __s(), h = id => Math.round(s.getElementById(id).getBoundingClientRect().height); const k = getComputedStyle(s.getElementById('input_search_container')); return { c: h('container'), k: h('input_search_container'), d: h('input_description_container'), pad: k.padding, fs: k.fontSize }; });
+      const a = await m();
+      ok(Math.abs(a.c - 28) <= 1 && a.k === a.c - 2 && a.d === a.c - 2 && a.pad === '3px 8px' && a.fs === '13px', 'sm: ' + JSON.stringify(a));
+      await S(page, () => document.getElementById('ik').removeAttribute('size')); await esperar(page, 30);
+      const b = await m();
+      ok(Math.abs(b.c - 34) <= 1, 'sin size: ' + JSON.stringify(b));
+    } },
+    { id: 'ik2-sm-style', titulo: 'Con tema y la hoja ik_sm_style de V12 (height !important en los ids) el campo mide 28 ± 1px, no 45 (v12_qa, hallazgo 2026-11-03)', attrs: 'theme="libro-mayor" control-styles="#input_search_container, #input_description_container, #button_search_container, #button_clear_container { height: calc(1.5em + .5rem + 2px) !important; padding: .25rem .5rem !important; font-size: .875rem !important; }"', fn: async (page, ok) => {
+      const r = await S(page, () => { const s = __s(), h = id => Math.round(s.getElementById(id).getBoundingClientRect().height); return { c: h('container'), k: h('input_search_container'), d: h('input_description_container'), b: h('button_search_container') }; });
+      ok(Math.abs(r.c - 28) <= 1 && Math.abs(r.k - r.d) <= 1 && Math.abs(r.k - r.b) <= 1, JSON.stringify(r));
+    } },
+    { id: 'ik2-letra-descripcion', titulo: 'Con tema, la descripción usa la letra del tema (no Arial) igual que el campo', attrs: 'theme="libro-mayor"', fn: async (page, ok) => {
+      const r = await S(page, () => { const s = __s(); return { c: getComputedStyle(s.getElementById('container')).fontFamily, d: getComputedStyle(s.getElementById('input_description_container')).fontFamily }; });
+      ok(r.d === r.c && /Segoe UI Variable/.test(r.d), JSON.stringify(r));
+    } },
     { id: 'ik2-modulo-real', titulo: 'Módulo: el InduxsoftTheme real (1.x) está incrustado en controls.js', fn: async (page, ok) => {
       ok(/^1\./.test(await S(page, () => window.InduxsoftTheme && InduxsoftTheme.version)), 'versión ' + await S(page, () => window.InduxsoftTheme && InduxsoftTheme.version));
     } },
