@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Pruebas del módulo de tema InduxsoftTheme 1.2.0 (src/js/induxsoft.theme.js): fromColors, applyColors, contraste
+// Pruebas del módulo de tema InduxsoftTheme 1.3.0 (src/js/induxsoft.theme.js): fromColors, applyColors, contraste
 // AA con colores difíciles, «ninguno» y (1.2.0) el color info y la letra de Windows 11 de los temas. Cada prueba afirma lo que espera. Sin red: la página se sirve con page.route.
 //
 //   node tests/theme/run.mjs [--src ruta/induxsoft.theme.js] [--filtro texto] [--verbose]
@@ -47,7 +47,7 @@ const PRUEBAS = [
     id: 'th-01', titulo: 'versión 1.2.0 y API nueva',
     fn: async (page, ok) => {
       const r = await page.evaluate(() => ({ v: InduxsoftTheme.version, f: ['fromColors', 'applyColors', 'contrast', 'isNone'].map(n => typeof InduxsoftTheme[n]), none: InduxsoftTheme.none }));
-      ok(r.v === '1.2.0', 'version 1.2.0: ' + r.v);
+      ok(r.v === '1.3.0', 'version 1.3.0: ' + r.v);
       ok(r.f.every(x => x === 'function'), 'funciones: ' + r.f);
       ok(r.none === 'ninguno', 'none = ninguno');
     }
@@ -258,7 +258,7 @@ const PRUEBAS = [
     fn: async (page, ok) => {
       if (!V100) { ok(false, 'sin la copia 1.0.0 (git show 96537f4)'); return; }
       const r = await page.evaluate(() => ({ v: InduxsoftTheme.version, f: typeof InduxsoftTheme.fromColors, mio: InduxsoftTheme.has('mio'), p: InduxsoftTheme.fromColors({}, { base: 'mio' }).accent }));
-      ok(r.v === '1.2.0' && r.f === 'function', 'versión nueva: ' + r.v);
+      ok(r.v === '1.3.0' && r.f === 'function', 'versión nueva: ' + r.v);
       ok(r.mio && r.p === '#123456', 'tema definido con 1.0.0 disponible como base: ' + r.p);
     }
   },
@@ -279,6 +279,76 @@ const PRUEBAS = [
       }
       ok(r.lm === r.temas[3].info.toUpperCase(), 'fromColors({}) conserva info de la base: ' + r.lm);
       ok(r.osc.c >= 4.5, 'con fondo oscuro, info se ajusta a 4.5:1: ' + r.osc.info + ' ' + r.osc.c.toFixed(2));
+    }
+  },
+  {
+    id: 'th-30', titulo: 'bind sin tema no deja nada: ni <style> ni atributos',
+    fn: async (page, ok) => {
+      const r = await page.evaluate(() => {
+        class XS extends HTMLElement { constructor() { super(); this.sr = this.attachShadow({ mode: 'open' }); this.sr.innerHTML = '<div id="c">x</div>'; } }
+        customElements.define('x-s', XS);
+        const a = document.createElement('x-s'), b = document.createElement('div');
+        document.body.append(a, b);
+        const ha = InduxsoftTheme.bind(a, { root: a.sr, css: V => ':host{color:' + V('fg', 'red') + '}' });
+        const hb = InduxsoftTheme.bind(b, { name: 'div', css: () => '' });
+        return { act: [ha.active, hb.active], estilos: a.sr.querySelectorAll('style').length + document.head.querySelectorAll('style[data-ix-theme]').length, attr: b.hasAttribute('data-ix-themed'), html: a.sr.innerHTML };
+      });
+      ok(!r.act[0] && !r.act[1], 'inactivo: ' + r.act);
+      ok(r.estilos === 0, 'sin <style>: ' + r.estilos);
+      ok(!r.attr, 'sin data-ix-themed');
+      ok(r.html === '<div id="c">x</div>', 'shadow intacto');
+    }
+  },
+  {
+    id: 'th-31', titulo: 'bind con tema heredado: <style> al principio del shadow, variables y css del componente; se va con «ninguno»',
+    fn: async (page, ok) => {
+      const r = await page.evaluate(async () => {
+        const espera = () => new Promise(res => setTimeout(res, 30));
+        class XS extends HTMLElement { constructor() { super(); this.sr = this.attachShadow({ mode: 'open' }); this.sr.innerHTML = '<div id="c">x</div>'; } }
+        customElements.define('x-s', XS);
+        document.documentElement.setAttribute('data-et-theme', 'libro-mayor');
+        const a = document.createElement('x-s'); document.body.append(a);
+        let cambios = 0;
+        const h = InduxsoftTheme.bind(a, { root: a.sr, css: (V, e) => '#c{color:' + V('fg', 'red') + ';border-color:' + V('menu-border', 'red') + '}', onChange: () => cambios++ });
+        const prim = a.sr.firstChild && a.sr.firstChild.localName, css = a.sr.firstChild.textContent, color = getComputedStyle(a.sr.getElementById('c')).color;
+        document.documentElement.setAttribute('data-et-theme', 'ninguno'); await espera();
+        const tras = a.sr.querySelectorAll('style').length;
+        document.documentElement.setAttribute('data-et-theme', 'oscuro'); await espera();
+        const osc = getComputedStyle(a.sr.getElementById('c')).color;
+        a.setAttribute('theme', ''); await espera();
+        const propio = a.sr.querySelectorAll('style').length;
+        h.dispose();
+        return { prim, css, color, tras, osc, propio, cambios, activo: h.active };
+      });
+      ok(r.prim === 'style', 'primer hijo es <style>: ' + r.prim);
+      ok(/--et-t-fg:/.test(r.css) && /--ix-t-h: 34px/.test(r.css), 'variables del tema y densidad');
+      ok(/var\(--et-menu-border, var\(--et-border, var\(--et-t-menu-border, red\)\)\)/.test(r.css), 'V con derivada: ' + r.css.match(/border-color:[^;}]*/));
+      ok(r.color !== 'rgb(255, 0, 0)', 'color del tema, no el respaldo: ' + r.color);
+      ok(r.tras === 0, '«ninguno» quita el <style>: ' + r.tras);
+      ok(r.osc !== r.color, 'oscuro cambia el color: ' + r.osc);
+      ok(r.propio === 0, 'theme="" propio gana al heredado: ' + r.propio);
+      ok(r.cambios >= 3, 'onChange en cada cambio: ' + r.cambios);
+    }
+  },
+  {
+    id: 'th-32', titulo: 'bind en DOM claro: <style> en head con selector propio; palette y density propias',
+    fn: async (page, ok) => {
+      const r = await page.evaluate(async () => {
+        const espera = () => new Promise(res => setTimeout(res, 30));
+        const d = document.createElement('div'); d.innerHTML = '<span>t</span>'; document.body.append(d);
+        d.setAttribute('theme', 'claro'); d.setAttribute('density', 'compacta'); d.setAttribute('palette', '{"fg":"#123456"}');
+        const h = InduxsoftTheme.bind(d, { name: 'div', css: (V, e) => e.sel + ' span{color:' + V('fg') + '}' });
+        const st = document.head.querySelector('style[data-ix-theme="div"]');
+        const color = getComputedStyle(d.querySelector('span')).color;
+        d.removeAttribute('theme'); await espera();
+        const fuera = !document.head.querySelector('style[data-ix-theme="div"]') && !d.hasAttribute('data-ix-themed');
+        return { sel: h.estado.sel, hay: !!st, comp: st && /--ix-t-h: 28px/.test(st.textContent), color, fuera };
+      });
+      ok(r.hay, '<style> en head');
+      ok(/^div\[data-ix-themed="\d+"\]$/.test(r.sel), 'selector: ' + r.sel);
+      ok(r.comp, 'densidad compacta');
+      ok(r.color === 'rgb(18, 52, 86)', 'palette propia gana: ' + r.color);
+      ok(r.fuera, 'sin tema se quita todo');
     }
   },
 ];
