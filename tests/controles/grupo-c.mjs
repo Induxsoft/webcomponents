@@ -182,7 +182,7 @@ async function revisarTema(page, tag, efectivo, densidad = 'normal') {
       for (const [el, n] of [[inp, 'campo'], [sel, 'lista']]) {
         igual(el, 'background-color', 'input-bg', n); igual(el, 'color', 'input-fg', n); igual(el, 'border-top-color', 'input-border', n);
         ok(el.offsetHeight === alto, `${n} alto ${el.offsetHeight} = ${alto}`);
-        ok(cs(el, 'border-top-left-radius') === P('radius'), `${n} radio ${cs(el, 'border-top-left-radius')}`);
+        ok(cs(el, 'border-top-left-radius') === (P('radius') === '0' ? '0px' : P('radius')), `${n} radio ${cs(el, 'border-top-left-radius')}`);
         aa(cs(el, 'color'), cs(el, 'background-color'), n);
       }
       igual(tit, 'color', 'muted-fg', 'título'); aa(cs(tit, 'color'), cs(pie, 'background-color'), 'título/pie');
@@ -270,8 +270,9 @@ for (const tag of Object.keys(CONTROLES)) {
     fn: async (browser, ok) => {
       const x = await abrir(browser, tag, { modulo: true });
       try {
+        // La captura va primero: la de página completa puede reacomodar el diseño (columnas «auto» de la rejilla).
+        const p0 = await x.page.screenshot({ fullPage: true, caret: 'initial' });
         const antes = await foto(x.page, tag);
-        const p0 = await x.page.screenshot({ fullPage: true });
         const set = async (fn, arg) => { await x.page.evaluate(fn, arg); await x.page.waitForTimeout(60); };
         await set(() => document.documentElement.setAttribute('data-et-theme', 'oscuro'));
         (await revisarTema(x.page, tag, 'oscuro')).forEach(c => ok(c.ok, 'html=oscuro: ' + c.msg));
@@ -280,10 +281,11 @@ for (const tag of Object.keys(CONTROLES)) {
         await set(() => document.documentElement.setAttribute('data-et-theme', 'libro-mayor'));
         (await revisarTema(x.page, tag, 'jade')).forEach(c => ok(c.ok, 'el propio gana: ' + c.msg));
         await set(() => { document.querySelectorAll('[id^="c"]').forEach(h => h.removeAttribute('theme')); document.documentElement.setAttribute('data-et-theme', 'ninguno'); });
+        await x.page.waitForTimeout(250); // transiciones propias del control (p. ej. border-color .15s de OpCanva)
         const despues = await foto(x.page, tag);
         const d = primeraDif(antes.ctl, despues.ctl);
         ok(!d, '«ninguno» lo deja como estaba' + (d ? ' — ' + d : ''));
-        const p1 = await x.page.screenshot({ fullPage: true });
+        const p1 = await x.page.screenshot({ fullPage: true, caret: 'initial' });
         ok(p0.equals(p1), '«ninguno»: píxeles como al principio');
         ok(!x.errores.length, 'sin errores: ' + x.errores.join(' | '));
       } finally { await x.ctx.close(); }

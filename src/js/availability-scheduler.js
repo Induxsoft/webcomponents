@@ -874,7 +874,7 @@ ${P} .cell[aria-pressed="true"] { background: ${V('accent', '#2F66CC')}; }
 ${P} .cell:focus-visible { outline-color: ${V('focus-ring', '#2F66CC')}; }
 ${P} .strip-ticks { color: ${V('muted-fg', '#59636E')}; }
 ${P} .range-row label { color: ${V('muted-fg', '#59636E')}; }
-${P} .range-row input[type="time"] { ${campo} background: ${V('input-bg', '#FFFFFF')}; color: ${V('input-fg', '#1F2328')}; color-scheme: var(--ix-t-cs, normal); }
+${P} .range-row input[type="time"] { ${campo} height: ${H}; line-height: 1.2; background: ${V('input-bg', '#FFFFFF')}; color: ${V('input-fg', '#1F2328')}; color-scheme: var(--ix-t-cs, normal); }
 ${P} .range-row input[type="time"]:focus { ${foco} }
 ${P} .range-row input[type="time"].has-error { border-color: ${V('error', '#C62828')}; background: ${V('error-bg', '#FDECEC')}; color: ${V('input-fg', '#1F2328')}; }
 ${P} .range-row .remove { color: ${V('muted-fg', '#59636E')}; min-height: ${H}; min-width: ${H}; border-radius: ${V('radius', '4px')}; }
