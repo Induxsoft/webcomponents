@@ -931,6 +931,29 @@ function _ixConstruirAlCargar(el, construir)
     });
 }
 
+// Tema en EditSelect, CheckList, StackEdit y SafeInput (tests/theme/CONTROLES.md, 2026-11-03). Liga el control a
+// InduxsoftTheme.bind con su shadow: sin el módulo o sin tema no deja nada (ni <style> ni clases), así que el control
+// queda como antes. Las reglas usan ':host' en cadena (más específicas que las de la hoja de hoy) y solo existen con
+// tema. css(V, e) es la función del control. Se vuelve a ligar al reconectar y se libera al desconectar.
+function _ixVincularTema(el, nombre, css)
+{
+    const T = (typeof window !== 'undefined') ? window.InduxsoftTheme : null;
+    if (!el._ixRaiz || !T || typeof T.bind !== 'function') return null;
+    if (el._ixTema) { el._ixTema.update(); return el._ixTema; }
+    try { el._ixTema = T.bind(el, { root: el._ixRaiz, name: nombre, css }); }
+    catch (e) { console.warn(nombre + ': InduxsoftTheme.bind falló', e); el._ixTema = null; }
+    return el._ixTema;
+}
+function _ixSoltarTema(el) { if (el._ixTema) { try { el._ixTema.dispose(); } catch (e) { } el._ixTema = null; } }
+// Medidas de la densidad (las pone bind) y size="sm" (alto 28px, relleno 3px 8px, letra 13px: los de «compacta»).
+const _ixT = {
+    H: 'var(--ix-h, var(--ix-t-h))', PAD: 'var(--ix-pad, var(--ix-t-pad))', FS: 'var(--ix-fs, var(--ix-t-fs))', ROW: 'var(--ix-row, var(--ix-t-row))',
+    sm: ':host([size="sm" i]){ --ix-t-h: 28px; --ix-t-pad: 3px 8px; --ix-t-fs: 13px; --ix-t-row: 26px; }\n',
+    anillo: (V) => `0 0 0 3px color-mix(in srgb, ${V('focus-ring', '#2F66CC')} 30%, transparent)`,
+    // Flecha de select en currentColor (la de hoy es un SVG con color fijo, invisible en oscuro).
+    flecha: (V) => `background-image: linear-gradient(45deg, transparent 50%, ${V('muted-fg', '#59636E')} 50%), linear-gradient(135deg, ${V('muted-fg', '#59636E')} 50%, transparent 50%); background-position: calc(100% - 16px) 50%, calc(100% - 11px) 50%; background-size: 5px 5px, 5px 5px; background-repeat: no-repeat;`
+};
+
 class EditSelect extends HTMLElement
 {
     attributes = null;
@@ -963,6 +986,7 @@ class EditSelect extends HTMLElement
     // Se llama cuando el componente se agrega al documento
     connectedCallback()
     {
+        if (this._ixRaiz) this._ixTemaLigar();   // reconectado: vuelve a tomar el tema
         _ixConstruirAlCargar(this, () =>   // IK-7 (2026-11-02)
         {
             const shadow = this.attachShadow({ mode: 'closed' });
@@ -1070,9 +1094,29 @@ class EditSelect extends HTMLElement
             contnr.appendChild(this.manualInput);
             shadow.appendChild(contnr);
             this.after(this.inputh);
+            this._ixRaiz = shadow;
+            this._ixTemaLigar();
         });
     }
-    
+    disconnectedCallback() { _ixSoltarTema(this); }
+
+    // Tema (CONTROLES.md): el select es el campo; el texto manual se encima dentro de él con los mismos colores.
+    _ixTemaLigar() { return _ixVincularTema(this, 'edit-select', (V) => EditSelect._ixCss(V)); }
+    static _ixCss(V)
+    {
+        const { H, PAD, FS } = _ixT, S = ':host #EditSelect_container';
+        return _ixT.sm + `
+:host{ color-scheme: var(--ix-t-cs, normal); }
+${S} select.induxsoft-form-select{ box-sizing: border-box; min-height: ${H}; height: auto; padding: ${PAD} !important; padding-right: 2rem !important; font-family: ${V('font', 'system-ui, sans-serif')}; font-size: ${FS}; line-height: 1.4; color: ${V('input-fg', '#1F2328')}; background-color: ${V('input-bg', '#FFFFFF')}; ${_ixT.flecha(V)} border: 1px solid ${V('input-border', '#8C959F')}; outline: 0; border-radius: ${V('radius', '4px')}; transition: border-color .12s, box-shadow .12s; }
+${S} select.induxsoft-form-select:focus{ border-color: ${V('accent', '#2F66CC')}; box-shadow: ${_ixT.anillo(V)}; }
+${S} select.induxsoft-form-select:disabled{ background-color: ${V('input-disabled-bg', '#EEF1F4')}; color: ${V('muted-fg', '#59636E')}; }
+${S} select.induxsoft-form-select option{ background-color: ${V('menu-bg', '#FFFFFF')}; color: ${V('menu-fg', '#1F2328')}; }
+${S} input.induxsoft-form-control{ box-sizing: border-box; top: 1px; left: 1px; width: calc(100% - 2rem - 2px) !important; height: calc(100% - 2px) !important; padding: ${PAD} !important; font-family: ${V('font', 'system-ui, sans-serif')}; font-size: ${FS}; line-height: 1.4; color: ${V('input-fg', '#1F2328')}; background-color: ${V('input-bg', '#FFFFFF')}; border-radius: ${V('radius', '4px')} 0 0 ${V('radius', '4px')}; }
+${S} input.induxsoft-form-control::placeholder{ color: ${V('muted-fg', '#59636E')}; opacity: 1; }
+${S}:focus-within select.induxsoft-form-select{ border-color: ${V('accent', '#2F66CC')}; box-shadow: ${_ixT.anillo(V)}; }
+`;
+    }
+
     setValue(value, allowFocus=true)
     {
         this.setAttribute('value', value);
@@ -2174,7 +2218,7 @@ class InputKey extends HTMLElement
     static version = '2.0.0-alpha.1';
     static features = ['theme', 'palette', 'density', 'popup', 'headless', 'pick', 'events', 'columns-json', 'strict', 'request-timeout', 'search-case', 'autoselect-exact', 'key-chars'];
     static _ik2Eventos = ['Selected', 'Canceled', 'BeforeSearch', 'SearchCompleted', 'SearchError', 'Opened', 'Closed'];
-    static _ik2Atributos = ['theme', 'palette', 'density', 'popup', 'headless', 'key-min-chars', 'key-max-chars', 'texts', 'strict', 'disabled', 'required'];
+    static _ik2Atributos = ['theme', 'palette', 'density', 'popup', 'headless', 'key-min-chars', 'key-max-chars', 'texts', 'strict', 'disabled', 'required', 'size', 'control-styles'];
 
     /** A11: textos de la interfaz. Se pueden traducir aquí (global) o por control con el atributo texts (JSON). */
     static texts = {
@@ -2586,7 +2630,7 @@ class InputKey extends HTMLElement
         if (e.theme === 'auto') s += `:host { ${InputKey._ik2VarsDe(InputKey._ik2Paleta('claro'))} }\n@media (prefers-color-scheme: dark) { :host { ${InputKey._ik2VarsDe(InputKey._ik2Paleta('oscuro'))} } }\n`;
         else if (e.theme) s += `:host { ${InputKey._ik2VarsDe(InputKey._ik2Paleta(e.theme))} }\n`;
         const d = InputKey._ik2Densidades[e.density || 'normal'];
-        s += `:host { --ik-t-h: ${d.h}; --ik-t-pad: ${d.pad}; --ik-t-row: ${d.row}; --ik-t-fs: ${d.fs}; }\n`;
+        s += `:host { --ik-t-h: ${d.h}; --ik-t-pad: ${d.pad}; --ik-t-px: ${d.pad.split(' ')[1] ?? d.pad}; --ik-t-row: ${d.row}; --ik-t-fs: ${d.fs}; }\n`;
         if (e.palette) s += `:host { ${Object.entries(e.palette).map(([k, v]) => `--et-${k}: ${v} !important;`).join(' ')} }\n`;
         return s;
     }
@@ -2598,7 +2642,7 @@ class InputKey extends HTMLElement
         if (campo || lista) s += this._ik2Vars(campo ?? lista);
         if (lista && campo && (lista.theme !== campo.theme || lista.density !== campo.density || lista.palette !== campo.palette))
             s += this._ik2Vars(lista).replace(/:host \{/g, '#container2, #container3, #container4 {');
-        if (campo) s += InputKey._ik2CssCampo(this.KeyMinChars, this.KeyMaxChars);
+        if (campo) s += InputKey._ik2CssCampo(this.KeyMinChars, this.KeyMaxChars) + (this._ik2Chico() ? InputKey._ik2CssChico() : '');
         if (lista) s += InputKey._ik2CssLista();
         if (popup) s += InputKey._ik2CssAnclado();
         if (headless) s += '#container{ display: none !important; }\n';
@@ -2613,14 +2657,16 @@ class InputKey extends HTMLElement
 #container.ik2{ display:flex; flex-wrap:wrap; align-items:stretch; min-height:${H}; background:${V('input-bg', '#fff')}; color:${V('input-fg', '#1F2328')}; border:1px solid ${V('input-border', '#8C959F')}; border-radius:${V('radius', '4px')}; overflow:hidden; font-family:${V('font', 'system-ui, sans-serif')}; font-size:${FS}; color-scheme:var(--ik2-cs, normal); transition:border-color .12s, box-shadow .12s; }
 #container.ik2:focus-within{ border-color:${V('accent', '#2F66CC')}; box-shadow:0 0 0 3px color-mix(in srgb, ${V('focus-ring', '#2F66CC')} 30%, transparent); }
 #container.ik2 #search_container, #container.ik2 #description_container{ display:contents; }
-#container.ik2 #input_search_container{ --ik2-kmin: var(--ik-key-min, ${kmin}); --ik2-kmax: var(--ik-key-max, ${kmax}); order:1; field-sizing:content; box-sizing:content-box; min-width:calc(var(--ik2-kmin) * 1ch); max-width:calc(var(--ik2-kmax) * 1ch); width:calc(var(--ik2-kmin) * 1ch); flex:0 1 auto; border:0; outline:0; padding:${PAD} !important; background:transparent; color:inherit; font-family:${mono}; font-size:inherit; line-height:1.4; }
+#container.ik2 #input_search_container{ --ik2-kmin: var(--ik-key-min, ${kmin}); --ik2-kmax: var(--ik-key-max, ${kmax}); --ik2-px: calc(2 * var(--ik-px, var(--ik-t-px, 10px))); order:1; field-sizing:content; box-sizing:border-box; min-width:calc(var(--ik2-kmin) * 1ch + var(--ik2-px)); max-width:calc(var(--ik2-kmax) * 1ch + var(--ik2-px)); width:calc(var(--ik2-kmin) * 1ch + var(--ik2-px)); flex:0 1 auto; border:0; outline:0; padding:${PAD} !important; background:transparent; color:inherit; font-family:${mono}; font-size:inherit; line-height:1.4; }
 @supports (field-sizing: content){ #container.ik2 #input_search_container{ width:auto; } }
 #container.ik2 #input_search_container::placeholder, #container.ik2 #input_description_container::placeholder{ color:${V('muted-fg', '#59636E')}; font-style:italic; opacity:1; }
-#container.ik2 #input_description_container{ order:2; flex:1 1 0; min-width:0; border:0; outline:0; border-left:1px solid ${V('border', '#E1E5EA')}; background:transparent !important; padding:${PAD} !important; color:inherit; font-size:inherit; line-height:1.4; text-overflow:ellipsis; white-space:nowrap; cursor:default; }
+#container.ik2 #input_description_container{ order:2; flex:1 1 0; min-width:0; box-sizing:border-box; border:0; outline:0; border-left:1px solid ${V('border', '#E1E5EA')}; background:transparent !important; padding:${PAD} !important; color:inherit; font-size:inherit; line-height:1.4; text-overflow:ellipsis; white-space:nowrap; cursor:default; }
 #container.ik2 .induxsoft-buttons{ order:3; flex:0 0 auto; min-width:calc(${H} - 2px); border:0; outline:0; background:transparent; color:${V('muted-fg', '#59636E')}; display:grid; place-items:center; padding:0 6px; cursor:pointer; font-size:inherit; }
 #container.ik2 .induxsoft-buttons:hover{ background:${V('hover-bg', '#EDF2F8')}; color:${V('fg', '#1F2328')}; }
 #container.ik2 .induxsoft-buttons:focus-visible{ outline:2px solid ${V('accent', '#2F66CC')}; outline-offset:-2px; }
 #container.ik2 .induxsoft-buttons svg{ width:14px; height:14px; }
+#container.ik2 #input_search_container, #container.ik2 #input_description_container, #container.ik2 .induxsoft-buttons{ height:auto !important; font-size:inherit !important; }
+#container.ik2 .induxsoft-buttons{ box-sizing:border-box; padding:0 6px !important; }
 #container.ik2 #button_search_container{ order:9; color:${V('accent', '#2F66CC')}; border-left:1px solid ${V('border', '#E1E5EA')}; }
 #container.ik2.ik2-vacio #button_clear_container{ display:none; }
 #container.ik2.ik2-angosto #input_search_container{ flex:1 1 0; min-width:0; width:auto; }
@@ -2690,6 +2736,17 @@ class InputKey extends HTMLElement
 .ik2 iframe{ border:0; display:block; }
 `;
     }
+    /**
+     * Tamaño chico del campo (alto 28px, relleno 3px 8px, letra 13px): size="sm", o la hoja de V12 que fija el alto de
+     * los ids internos por control-styles (ik_sm_style y equivalentes). Solo con tema; sin tema el campo queda como hoy.
+     */
+    _ik2Chico()
+    {
+        if (String(this.getAttribute('size') ?? '').trim().toLowerCase() === 'sm') return true;
+        const cs = this.getAttribute('control-styles') ?? '';
+        return /#input_search_container[^{}]*\{[^}]*\bheight\s*:/i.test(cs);
+    }
+    static _ik2CssChico() { return '#container.ik2{ --ik-t-h: 28px; --ik-t-pad: 3px 8px; --ik-t-px: 8px; --ik-t-fs: 13px; }\n'; }
     static _ik2CssAnclado()
     {
         return `
@@ -3378,6 +3435,7 @@ class CheckList extends HTMLElement
 
     connectedCallback()
     {
+        if (this._ixRaiz) this._ixTemaLigar();   // reconectado: vuelve a tomar el tema
         _ixConstruirAlCargar(this, () =>   // IK-7 (2026-11-02)
         {
             const shadow =      this.attachShadow({ mode: 'closed' });
@@ -3512,7 +3570,47 @@ class CheckList extends HTMLElement
             }
 
             this._initTreeValues();
+            this._ixRaiz = shadow;
+            this._ixTemaLigar();
         });
+    }
+    disconnectedCallback() { _ixSoltarTema(this); }
+
+    // Tema (CONTROLES.md): marco como panel, título como encabezado, renglones como opciones de lista.
+    _ixTemaLigar() { return _ixVincularTema(this, 'check-list', (V) => CheckList._ixCss(V)); }
+    static _ixCss(V)
+    {
+        const { PAD, FS, ROW } = _ixT, S = ':host #CL_container';
+        return _ixT.sm + `
+:host{ color-scheme: var(--ix-t-cs, normal); }
+${S}.bordered{ border: 1px solid ${V('card-border', '#E1E5EA')}; border-radius: ${V('radius', '4px')}; background-color: ${V('bg', '#FFFFFF')}; color: ${V('fg', '#1F2328')}; font-family: ${V('font', 'system-ui, sans-serif')}; font-size: ${FS}; overflow: hidden; }
+${S} #CL_headerSection{ background-color: ${V('header-bg', '#F3F5F8')}; color: ${V('header-fg', '#1F2328')}; border-bottom: 1px solid ${V('header-border', '#D0D7DE')}; }
+${S} #CL_headerSection:focus-visible{ outline: 2px solid ${V('focus-ring', '#2F66CC')}; outline-offset: -2px; }
+${S} #CL_title_headSection{ background-color: transparent; color: inherit; font-family: inherit; font-size: calc(${FS} * 1.3); font-weight: ${V('header-weight', '600')}; }
+${S} input::placeholder{ color: ${V('muted-fg', '#59636E')}; opacity: 1; }
+${S} .bg-white{ background-color: ${V('bg', '#FFFFFF')}; }
+${S} .hover-item{ min-height: ${ROW}; color: ${V('fg', '#1F2328')}; box-shadow: 0 1px 0 ${V('border', '#E1E5EA')}; }
+${S} .hover-item:hover{ background-color: ${V('hover-bg', '#EDF2F8')}; }
+${S} .hover-item:focus-within{ outline: 2px solid ${V('focus-ring', '#2F66CC')} !important; outline-offset: -2px; }
+${S} .hover-item[item-done="true"]{ background-color: ${V('checked-bg', '#DCE7FA')}; }
+${S} .list-item input[type="text"], ${S} .list-item-new input[type="text"]{ color: inherit; font-family: inherit; font-size: ${FS}; padding: ${PAD}; }
+${S} input[type="checkbox"], ${S} input[type="radio"]{ accent-color: ${V('accent', '#2F66CC')}; width: 15px; height: 15px; }
+${S} svg{ fill: currentColor; }
+${S} .movItem, ${S} .list-item-new > div{ color: ${V('muted-fg', '#59636E')}; }
+${S} .delItem{ color: ${V('muted-fg', '#59636E')}; border-radius: ${V('radius', '4px')}; }
+${S} .delItem:hover{ background-color: ${V('error-bg', '#FDECEC')} !important; color: ${V('error', '#C62828')} !important; fill: currentColor !important; }
+${S} .hover-item > div:not(.list-item):not(.list-item-new){ color: ${V('accent', '#2F66CC')}; }
+${S} .rd-item-yes::before, ${S} .rd-item-no::before{ color: ${V('muted-fg', '#59636E')}; }
+${S} .rd-item-yes:hover::before, ${S} .rd-item-no:hover::before{ color: ${V('fg', '#1F2328')}; }
+${S} .dragging{ background-color: ${V('sel-bg-soft', '#DCE7FA')}; }
+${S} .bg-light-gray{ background-color: ${V('hover-bg', '#EDF2F8')}; }
+${S} .border-t{ border-top-color: ${V('accent', '#2F66CC')}; }
+${S} .border-b{ border-bottom-color: ${V('accent', '#2F66CC')}; }
+${S} #CL_footHeader{ border-top: 1px solid ${V('border', '#E1E5EA')} !important; background-color: ${V('header-bg', '#F3F5F8')}; }
+${S} #CL_footHeader:hover{ background-color: ${V('hover-bg', '#EDF2F8')}; }
+${S} #CL_btnDropDown{ color: ${V('header-fg', '#1F2328')}; font-family: inherit; font-size: ${FS}; font-weight: ${V('header-weight', '600')}; }
+${S} #CL_btnDropDown:focus-visible{ outline: 2px solid ${V('focus-ring', '#2F66CC')}; outline-offset: -2px; }
+`;
     }
 
     _parseBool(value, _default = false)
@@ -4192,6 +4290,7 @@ class StackEdit extends HTMLElement
 
     connectedCallback()
     {
+        if (this._ixRaiz) this._ixTemaLigar();   // reconectado: vuelve a tomar el tema
         _ixConstruirAlCargar(this, () =>   // IK-7 (2026-11-02)
         {
             const shadow =      this.attachShadow({ mode: 'closed' });
@@ -4255,7 +4354,35 @@ class StackEdit extends HTMLElement
                     this.data = {};
                 }
             }
+            this._ixRaiz = shadow;
+            this._ixTemaLigar();
         });
+    }
+    disconnectedCallback() { _ixSoltarTema(this); }
+
+    // Tema (CONTROLES.md): la pila es un panel y cada elemento una tarjeta. color-field y backcolor-field con un valor
+    // distinto del de omisión (#000 / #FFF) se respetan; con el de omisión, los colores salen del tema.
+    _ixTemaLigar() { return _ixVincularTema(this, 'stack-edit', (V) => this._ixCss(V)); }
+    static _ixColorPropio(v, omision) { const s = String(v ?? '').trim().toLowerCase().replace(/\s+/g, ''); return !!s && !omision.includes(s); }
+    _ixCss(V)
+    {
+        const { FS } = _ixT, S = ':host #_stackContainer';
+        const fondo = StackEdit._ixColorPropio(this.getAttribute('backcolor-field'), ['#fff', '#ffffff', 'white']);
+        const texto = StackEdit._ixColorPropio(this.getAttribute('color-field'), ['#000', '#000000', 'black']);
+        return _ixT.sm + `
+:host{ color-scheme: var(--ix-t-cs, normal); }
+${S}{ background-color: ${V('panel-bg', '#F3F5F8')}; color: ${V('fg', '#1F2328')}; border: 1px solid ${V('card-border', '#E1E5EA')}; border-radius: ${V('radius', '4px')}; padding: 4px 6px 6px; font-family: ${V('font', 'system-ui, sans-serif')}; font-size: ${FS}; }
+${S} .container-item{ ${fondo ? '' : `background-color: ${V('bg', '#FFFFFF')} !important; `}${texto ? '' : `color: ${V('fg', '#1F2328')} !important; `}outline: 0; box-shadow: 0 0 0 1px ${V('card-border', '#E1E5EA')}; border-radius: ${V('radius', '4px')}; margin-top: 6px; }
+${fondo ? '' : `${S} .container-item:hover{ background-color: ${V('hover-bg', '#EDF2F8')} !important; }\n`}${S} .text-secondary{ color: ${V('muted-fg', '#59636E')}; }
+${S} .fz-normal{ font-size: ${FS}; }
+${S} .fz-sm{ font-size: calc(${FS} - 2px); }
+${S} .fw-bold{ font-weight: ${V('header-weight', '600')}; }
+${S} .mov-item{ color: ${V('muted-fg', '#59636E')}; border-radius: ${V('radius', '4px')}; }
+${S} .mov-item:focus-visible{ outline: 2px solid ${V('focus-ring', '#2F66CC')} !important; outline-offset: -2px; }
+${S} .dragging{ background-color: ${V('sel-bg-soft', '#DCE7FA')} !important; box-shadow: 0 6px 18px rgba(0,0,0,.18); }
+${S} .border-t{ border-top-color: ${V('accent', '#2F66CC')}; }
+${S} .border-b{ border-bottom-color: ${V('accent', '#2F66CC')}; }
+`;
     }
     _refreshView()
     {
@@ -4762,10 +4889,11 @@ class SafeInput extends HTMLElement
 
     connectedCallback()
     {
+        if (this._ixRaiz) this._ixTemaLigar();   // reconectado: vuelve a tomar el tema
         _ixConstruirAlCargar(this, () =>   // IK-7 (2026-11-02)
         {
             const shadow = this.attachShadow({ mode: 'closed' });
-            
+
             const contanr = this._createFullElement('div', { id:'SafeInput_contnr', class:'d-flex justify-content-center' });
             this._btnEdit = this._createFullElement('button', { id:'SafeInput_btnEdit', title:'Edit', class:'induxsoft-buttons d-flex justify-content-center align-items-center' });
             this._btnDone = this._createFullElement('button', { id:'SafeInput_btnDone', title:'Save', class:'d-none induxsoft-buttons d-flex justify-content-center align-items-center' });
@@ -4835,7 +4963,40 @@ class SafeInput extends HTMLElement
             contanr.appendChild(this._btnDone);
             contanr.appendChild(this._btnUndo);
             shadow.appendChild(contanr);
+            this._ixRaiz = shadow;
+            this._ixTemaLigar();
         });
+    }
+    disconnectedCallback() { _ixSoltarTema(this); }
+
+    // Tema (CONTROLES.md): el contenedor es el campo (como InputKey 2) y los botones van dentro, separados por una
+    // línea. Bloqueado (sin editar) se ve como solo lectura; «Guardar» es el botón principal.
+    _ixTemaLigar() { return _ixVincularTema(this, 'safe-input', (V) => SafeInput._ixCss(V)); }
+    static _ixCss(V)
+    {
+        const { H, PAD, FS } = _ixT, S = ':host #SafeInput_contnr';
+        const campo = `${S} .induxsoft-form-control, ${S} .induxsoft-form-select`;
+        return _ixT.sm + `
+:host{ color-scheme: var(--ix-t-cs, normal); }
+${S}{ align-items: stretch; box-sizing: border-box; min-height: ${H}; background-color: ${V('input-bg', '#FFFFFF')}; color: ${V('input-fg', '#1F2328')}; border: 1px solid ${V('input-border', '#8C959F')}; border-radius: ${V('radius', '4px')}; overflow: hidden; font-family: ${V('font', 'system-ui, sans-serif')}; font-size: ${FS}; transition: border-color .12s, box-shadow .12s; }
+${S}:focus-within{ border-color: ${V('accent', '#2F66CC')}; box-shadow: ${_ixT.anillo(V)}; }
+${S}:has(> :disabled){ background-color: ${V('input-disabled-bg', '#EEF1F4')}; }
+${campo}{ flex: 1 1 auto; min-width: 0; border: 0; outline: 0; border-radius: 0; padding: ${PAD} !important; font-family: inherit; font-size: inherit; line-height: 1.4; color: ${V('input-fg', '#1F2328')}; background-color: transparent; }
+${S} .induxsoft-form-select{ padding-right: 2rem !important; ${_ixT.flecha(V)} }
+${S} .induxsoft-form-select option{ background-color: ${V('menu-bg', '#FFFFFF')}; color: ${V('menu-fg', '#1F2328')}; }
+${S} .induxsoft-form-control:disabled, ${S} .induxsoft-form-control[readonly], ${S} .induxsoft-form-select:disabled{ background-color: transparent; color: ${V('input-fg', '#1F2328')}; -webkit-text-fill-color: currentColor; opacity: 1; }
+${S} .induxsoft-form-control::placeholder{ color: ${V('muted-fg', '#59636E')}; opacity: 1; -webkit-text-fill-color: currentColor; }
+${S} .induxsoft-buttons{ flex: 0 0 auto; box-sizing: border-box; min-width: calc(${H} - 2px); padding: 0 8px; border: 0; border-left: 1px solid ${V('border', '#E1E5EA')}; outline: 0; border-radius: 0; background-color: transparent; color: ${V('muted-fg', '#59636E')}; font-size: inherit; line-height: 1; }
+${S} .induxsoft-buttons:hover{ background-color: ${V('hover-bg', '#EDF2F8')}; color: ${V('fg', '#1F2328')}; }
+${S} .induxsoft-buttons:focus-visible{ outline: 2px solid ${V('accent', '#2F66CC')}; outline-offset: -2px; }
+${S} #SafeInput_btnEdit{ color: ${V('accent', '#2F66CC')}; }
+${S} #SafeInput_btnDone{ background-color: ${V('sel-bg', '#2F66CC')}; color: ${V('sel-fg', '#FFFFFF')}; border-left-color: ${V('sel-bg', '#2F66CC')}; }
+${S} #SafeInput_btnDone:hover{ background-color: color-mix(in srgb, ${V('sel-bg', '#2F66CC')} 88%, ${V('fg', '#1F2328')}); color: ${V('sel-fg', '#FFFFFF')}; }
+${S} #SafeInput_btnUndo:hover{ background-color: ${V('error-bg', '#FDECEC')}; color: ${V('error', '#C62828')}; }
+${S} .induxsoft-buttons.disable-element, ${S} #SafeInput_btnEdit.disable-element{ background-color: ${V('input-disabled-bg', '#EEF1F4')} !important; color: ${V('muted-fg', '#59636E')}; }
+:host([disabled="true"]) #SafeInput_contnr{ background-color: ${V('input-disabled-bg', '#EEF1F4')}; }
+:host([disabled="true"]) #SafeInput_contnr .induxsoft-form-control, :host([disabled="true"]) #SafeInput_contnr .induxsoft-form-select{ color: ${V('muted-fg', '#59636E')}; }
+`;
     }
     /**
      * @param {string} tagName Nombre de etiqueta.

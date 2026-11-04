@@ -317,8 +317,8 @@ export default ({ esperar, buscar, ev, clicShadow, sinDoc }) => {
       ok(await ev(page, () => __abierta()), 'sin exacto: abre la lista');
     } },
     // ===== Ancho del código y textos
-    { id: 'ik2-key-chars', titulo: 'Ancho del código: key-min-chars / key-max-chars en ch', attrs: 'theme="claro" key-min-chars="6" key-max-chars="10"', fn: async (page, ok) => {
-      const r = await S(page, () => { const i = __s().getElementById('input_search_container'); const c = document.createElement('canvas').getContext('2d'); const st = getComputedStyle(i); c.font = st.fontSize + ' ' + st.fontFamily; const ch = c.measureText('0').width; return { min: parseFloat(st.minWidth) / ch, max: parseFloat(st.maxWidth) / ch }; });
+    { id: 'ik2-key-chars', titulo: 'Ancho del código: key-min-chars / key-max-chars en ch (área de texto: sin el relleno, que con border-box va incluido)', attrs: 'theme="claro" key-min-chars="6" key-max-chars="10"', fn: async (page, ok) => {
+      const r = await S(page, () => { const i = __s().getElementById('input_search_container'); const c = document.createElement('canvas').getContext('2d'); const st = getComputedStyle(i); c.font = st.fontSize + ' ' + st.fontFamily; const ch = c.measureText('0').width; const px = st.boxSizing === 'border-box' ? parseFloat(st.paddingLeft) + parseFloat(st.paddingRight) : 0; return { min: (parseFloat(st.minWidth) - px) / ch, max: (parseFloat(st.maxWidth) - px) / ch }; });
       ok(Math.abs(r.min - 6) < 0.3 && Math.abs(r.max - 10) < 0.3, JSON.stringify(r));
     } },
     { id: 'ik2-textos', titulo: 'A11: texts (JSON) e InputKey.texts traducen la interfaz', attrs: `theme="claro" texts='{"accept":"OK","cancel":"Cancel"}'`, fn: async (page, ok) => {
