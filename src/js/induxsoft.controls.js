@@ -4627,7 +4627,32 @@ class DateRange extends HTMLElement
             this._showControlButtons(false);
             shadow.appendChild(this._contnr);
             this._refreshDates();
+            _ixgbLigar(this, shadow, this._contnr, V => DateRange._ixgbCss(V));   // tema (2026-11-03)
         });
+        _ixgbReligar(this);
+    }
+    disconnectedCallback() { _ixgbSoltar(this); }
+    static _ixgbCss(V)
+    {
+        const K = _ixgbK(V);
+        return K.chico + `
+.ixt.border{ ${K.campo} align-items:stretch; overflow:hidden; }
+.ixt:focus-within{ ${K.foco} }
+.ixt .disabled{ background:${V('input-disabled-bg', '#EEF1F4')}; }
+.ixt > .grow-1{ padding-left:10px; column-gap:14px; row-gap:0; }
+.ixt #DateRange_cntnr1, .ixt #DateRange_cntnr2{ gap:6px; }
+.ixt .text-secondary{ color:${K.muted}; }
+.ixt .induxsoft-form-control.input-date{ ${K.fecha} border-bottom:1px solid transparent; border-radius:0; }
+.ixt .induxsoft-form-control.input-date:disabled{ background:transparent; color:${K.muted}; }
+.ixt .input-date:focus{ border-bottom-color:${V('accent', '#2F66CC')}; }
+.ixt .induxsoft-buttons{ ${K.icono} }
+.ixt .induxsoft-buttons:hover{ background:${V('hover-bg', '#EDF2F8')}; color:${V('fg', '#1F2328')}; }
+.ixt .induxsoft-buttons:focus-visible{ outline:2px solid ${V('accent', '#2F66CC')}; outline-offset:-2px; }
+.ixt #SafeInput_btnDone{ color:${V('accent', '#2F66CC')}; }
+.ixt #SafeInput_btnUndo:hover{ background:${V('error-bg', '#FDECEC')}; color:${V('error', '#C62828')}; }
+.ixt .induxsoft-buttons.disable-element{ background:${V('input-disabled-bg', '#EEF1F4')} !important; color:${K.muted}; }
+.ixt .waiting, .ixt.waiting{ opacity:.6; }
+`;
     }
 
     /**
@@ -5048,7 +5073,28 @@ class MediaList extends HTMLElement
             }
 
             this._refreshView();
+            _ixgbLigar(this, shadow, ppanel, V => MediaList._ixgbCss(V));   // tema (2026-11-03)
         });
+        _ixgbReligar(this);
+    }
+    disconnectedCallback() { _ixgbSoltar(this); }
+    static _ixgbCss(V)
+    {
+        const K = _ixgbK(V);
+        return K.chico + `
+.ixt{ outline:0; box-sizing:border-box; background:${V('input-bg', '#fff')}; color:${V('input-fg', '#1F2328')}; border:1px solid ${V('input-border', '#8C959F')}; border-radius:${V('radius', '4px')}; font-family:${K.font}; font-size:${K.FS}; color-scheme:var(--ix-t-cs, normal); }
+.ixt .img.bordered{ outline:1px solid ${K.sep}; border-radius:${V('radius', '4px')}; }
+:host(:not([back-color-media])) .ixt .img{ background-color:${V('input-bg', '#fff')} !important; }
+.ixt .media-item.highlight{ border-color:${V('sel-bg-soft', '#DCE7F7')}; }
+.ixt .media-item.highlight > .img.bordered{ outline-color:${V('accent', '#2F66CC')}; }
+.ixt .btn-delete, .ixt .label-img{ opacity:.95; background:${V('bg', '#fff')}; color:${V('fg', '#1F2328')}; border-radius:${V('radius', '4px')}; font-family:inherit; }
+.ixt .label-img{ font-size:12px; padding:2px 6px; }
+.ixt .btn-delete{ min-width:22px; }
+.ixt .btn-delete:hover{ opacity:1; background:${V('error-bg', '#FDECEC')}; color:${V('error', '#C62828')}; }
+.ixt .drag-container{ background:${V('hover-bg', '#EDF2F8')}; border:1px dashed ${V('accent', '#2F66CC')}; }
+.ixt .dragging .img{ box-shadow:0 6px 18px rgba(0,0,0,.18) !important; }
+.ixt .outline-element{ outline:2px solid ${V('accent', '#2F66CC')} !important; }
+`;
     }
 
     // Internal Functions
@@ -5530,7 +5576,28 @@ class FilterText extends HTMLElement
 
             shadow.appendChild(container);
             this.after(ipt_hidden);
+            _ixgbLigar(this, shadow, container, V => FilterText._ixgbCss(V));   // tema (2026-11-03)
         });
+        _ixgbReligar(this);
+    }
+    disconnectedCallback() { _ixgbSoltar(this); }
+    static _ixgbCss(V)
+    {
+        const K = _ixgbK(V);
+        return K.chico + `
+.ixt{ ${K.campo} align-items:stretch; overflow:hidden; }
+.ixt:focus-within{ ${K.foco} }
+.ixt .induxsoft-form-control{ ${K.texto} box-sizing:border-box; height:auto; min-width:0; align-self:stretch; }
+.ixt .induxsoft-form-control::placeholder{ color:${K.muted}; opacity:1; }
+.ixt .induxsoft-form-control:disabled{ background:${V('input-disabled-bg', '#EEF1F4')}; color:${K.muted}; }
+.ixt .induxsoft-buttons{ ${K.icono} }
+.ixt .induxsoft-buttons:hover{ background:${V('hover-bg', '#EDF2F8')}; color:${V('fg', '#1F2328')}; }
+.ixt .induxsoft-buttons:focus-visible{ outline:2px solid ${V('accent', '#2F66CC')}; outline-offset:-2px; }
+.ixt .induxsoft-buttons[title="Filtrar"], .ixt .induxsoft-buttons[title="Aplicar"]{ color:${V('accent', '#2F66CC')}; }
+.ixt .induxsoft-buttons[title="Cancelar"]:hover, .ixt .induxsoft-buttons[title=" Cancelar edición"]:hover{ background:${V('error-bg', '#FDECEC')}; color:${V('error', '#C62828')}; }
+.ixt .button-icon svg{ width:14px; height:14px; }
+.ixt .button-icon svg, .ixt .button-icon svg *{ fill:currentColor !important; }
+`;
     }
     _writeStyles(shadow)
     {
@@ -5674,8 +5741,11 @@ class FilterDateRange extends HTMLElement
             this._fillSelectMode(select_mode);
             this._printMonths(panel_monthly);
             this._printRange(panel_range);
+            _ixgbLigar(this, shadow, this._container, V => FilterDateRange._ixgbCss(V));   // tema (2026-11-03)
         });
+        _ixgbReligar(this);
     }
+    disconnectedCallback() { _ixgbSoltar(this); }
 
     _createFullElement(tagName = 'div', attributes = {}, html = '') {
         const elem = document.createElement(tagName);
@@ -5980,6 +6050,84 @@ class FilterDateRange extends HTMLElement
             this._selection[k]=obj[k];
         });
     }
+
+    // Tema (2026-11-03, tests/theme/CONTROLES.md). Solo con tema: el <style data-ix-theme> y la clase ixt del contenedor.
+    static _ixgbCss(V)
+    {
+        const K = _ixgbK(V);
+        return K.chico + `
+.ixt.border{ ${K.campo} align-items:stretch; gap:0; overflow:hidden; }
+.ixt:focus-within{ ${K.foco} }
+.ixt #FDR_pnl_mode{ display:flex; flex:0 0 auto; }
+.ixt #FDR_div_years{ flex:0 0 auto; }
+.ixt #FDR_pnl_mode .induxsoft-form-select, .ixt #FDR_div_years .induxsoft-form-select{ width:auto; }
+.ixt .panel:not(.d-none){ display:flex; }
+.ixt .panel > div{ flex:1 1 auto; }
+.ixt #FDR_cont_montly{ align-items:stretch; }
+.ixt .induxsoft-form-select{ ${K.select} border-right:1px solid ${K.sep}; }
+.ixt .induxsoft-form-select:hover, .ixt .induxsoft-form-select:focus-visible{ background-color:${V('hover-bg', '#EDF2F8')}; color:${V('fg', '#1F2328')}; }
+.ixt option{ background:${V('menu-bg', '#fff')}; color:${V('menu-fg', '#1F2328')}; }
+.ixt #FDR_div_months{ align-items:stretch; }
+.ixt #FDR_month_select{ border-right:0; }
+.ixt .month-button{ outline:0; border:0; border-left:1px solid ${K.sep}; background:transparent; color:${V('input-fg', '#1F2328')}; font-family:inherit; font-size:inherit; line-height:1.2; padding:0 6px; }
+.ixt .month-button:first-child{ border-left:0; }
+.ixt .month-button:hover{ background:${V('hover-bg', '#EDF2F8')}; color:${V('fg', '#1F2328')}; }
+.ixt .month-button.active-month{ background:${V('sel-bg', '#2F66CC')} !important; color:${V('sel-fg', '#fff')} !important; }
+.ixt .induxsoft-buttons:focus-visible{ outline:2px solid ${V('accent', '#2F66CC')}; outline-offset:-2px; }
+.ixt .induxsoft-buttons small{ font-size:inherit; }
+.ixt #FDR_cont_range{ padding:0 4px 0 10px; gap:10px; }
+.ixt #FDR_div_datef, .ixt #FDR_div_datet{ background:transparent; padding-left:0; gap:6px; }
+.ixt .text-secondary{ color:${K.muted}; }
+.ixt .induxsoft-form-control.input-date{ ${K.fecha} }
+.ixt .induxsoft-form-control.input-date:disabled{ background:transparent; color:${K.muted}; }
+.ixt .input-date:focus{ outline:0 !important; ${K.foco} }
+.ixt #FDR_div_cntrls{ gap:4px; padding:3px 0; }
+.ixt #FDR_div_cntrls .induxsoft-buttons{ ${K.boton} border:1px solid ${V('input-border', '#8C959F')} !important; min-height:calc(${K.H} - 8px); }
+.ixt #FDR_div_cntrls .induxsoft-buttons:hover{ background:${V('hover-bg', '#EDF2F8')}; }
+.ixt #FDR_div_cntrls #FDR_btn_accept{ background:${V('sel-bg', '#2F66CC')}; color:${V('sel-fg', '#fff')}; border-color:${V('sel-bg', '#2F66CC')} !important; }
+`;
+    }
+}
+
+// Tema de DateRange, MediaList, FilterText y FilterDateRange (2026-11-03, tests/theme/CONTROLES.md): se ligan con
+// InduxsoftTheme.bind al terminar de construirse. Sin tema, o sin InduxsoftTheme (archivo suelto), no dejan nada.
+function _ixgbLigar(el, raiz, marca, css)
+{
+    if (!raiz || el._ixgbH || !el.isConnected) return;
+    el._ixgbRaiz = raiz; el._ixgbMarca = marca; el._ixgbCssFn = css;
+    const T = (typeof window !== 'undefined') ? window.InduxsoftTheme : null;
+    if (!T || typeof T.bind !== 'function') return;
+    el._ixgbH = T.bind(el, { root: raiz, name: el.localName, css: (V, e) => css(V, e), onChange: e => _ixgbMarcar(marca, !!e.theme) });
+}
+function _ixgbMarcar(marca, si)
+{
+    // Solo se toca la clase si cambia: así, sin tema, el atributo class queda exactamente como lo dejó el control.
+    if (marca && marca.classList.contains('ixt') !== si) marca.classList.toggle('ixt', si);
+}
+function _ixgbSoltar(el)
+{
+    if (el._ixgbH) { try { el._ixgbH.dispose(); } catch (e) { } el._ixgbH = null; }
+    _ixgbMarcar(el._ixgbMarca, false);
+}
+function _ixgbReligar(el) { if (el._ixgbRaiz && !el._ixgbH) _ixgbLigar(el, el._ixgbRaiz, el._ixgbMarca, el._ixgbCssFn); }
+/** Piezas comunes del CSS con tema (tabla de apariencia uniforme de CONTROLES.md). */
+function _ixgbK(V)
+{
+    const H = 'var(--ix-h, var(--ix-t-h))', PAD = 'var(--ix-pad, var(--ix-t-pad))', FS = 'var(--ix-fs, var(--ix-t-fs))', ROW = 'var(--ix-row, var(--ix-t-row))';
+    const font = V('font', 'system-ui, sans-serif'), muted = V('muted-fg', '#59636E'), sep = V('border', '#E1E5EA');
+    const accent = V('accent', '#2F66CC'), ring = V('focus-ring', '#2F66CC');
+    return {
+        H, PAD, FS, ROW, font, muted, sep,
+        chico: `:host([size="sm"]){ --ix-t-h:28px; --ix-t-pad:3px 8px; --ix-t-fs:13px; --ix-t-row:26px; }\n`,
+        campo: `min-height:${H}; box-sizing:border-box; background:${V('input-bg', '#fff')}; color:${V('input-fg', '#1F2328')}; border:1px solid ${V('input-border', '#8C959F')}; border-radius:${V('radius', '4px')}; outline:0; font-family:${font}; font-size:${FS}; color-scheme:var(--ix-t-cs, normal); transition:border-color .12s, box-shadow .12s;`,
+        foco: `border-color:${accent}; box-shadow:0 0 0 3px color-mix(in srgb, ${ring} 30%, transparent);`,
+        texto: `outline:0; border:0; background:transparent; color:inherit; font-family:inherit; font-size:inherit; font-weight:inherit; line-height:1.4; padding:${PAD} !important; accent-color:${accent};`,
+        fecha: `outline:0; border:0; text-align:start; background:transparent; color:inherit; font-family:inherit; font-size:inherit !important; line-height:1.4; padding:2px 4px !important; width:auto; border-radius:${V('radius', '4px')}; accent-color:${accent};`,
+        icono: `outline:0; border:0; border-left:1px solid ${sep}; background:transparent; color:${muted}; min-width:calc(${H} - 2px); padding:0 8px; font-size:inherit; display:flex; align-items:center; justify-content:center; cursor:pointer;`,
+        boton: `outline:0; background:${V('bg', '#fff')}; color:${V('fg', '#1F2328')}; border-radius:${V('radius', '4px')}; padding:2px 12px; font-family:inherit; font-size:inherit; line-height:1.3; cursor:pointer;`,
+        // Flecha del select con gradientes en currentColor (la de hoy es un SVG gris fijo que no se ve en oscuro).
+        select: `outline:0; border:0; background-color:transparent; color:inherit; font-family:inherit; font-size:inherit; line-height:1.4; padding:0 28px 0 10px !important; min-height:calc(${H} - 2px); height:auto; cursor:pointer; background-image:linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%); background-position:calc(100% - 15px) 52%, calc(100% - 10px) 52%; background-size:5px 5px, 5px 5px; background-repeat:no-repeat;`
+    };
 }
 
 customElements.define('edit-select', EditSelect);
