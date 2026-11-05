@@ -19,7 +19,7 @@
        "</style>",
        "\"\\n                \"",
        "<style>",
-       " @@ESTILO sha256:e02dcdadace9a84f",
+       " @@ESTILO sha256:2709534b750a5578",
        "</style>",
        "\"\\n            \"",
        "<div style=\"min-height: 2rem; max-height: 100%; overflow: auto; padding-bottom: 5px\" class=\"et-chooser-host\">",
@@ -940,12 +940,12 @@
       "nodo:keydown": 1,
       "document:mousedown": 1,
       "document:keydown": 1,
+      "document:scroll": 2,
+      "window:resize": 2,
+      "nodo:scroll": 4,
       "window:beforeprint": 1,
       "window:afterprint": 1,
       "window:scroll": 1,
-      "window:resize": 1,
-      "document:scroll": 1,
-      "nodo:scroll": 3,
       "nodo:scroll:remove": 1
      },
      "intervalos": 1
@@ -1428,6 +1428,13 @@
           "   </tr>",
           "   <tr class=\"et-spacer\" aria-hidden=\"true\" style=\"height: 139px;\"></tr>"
          ]
+        ],
+        [
+         663,
+         1,
+         [
+          " <button type=\"button\" class=\"et-chooser-btn\" title=\"Columnas\" aria-label=\"Columnas\" aria-haspopup=\"menu\" style=\"transform: translate(0px, 2660px);\">"
+         ]
         ]
        ]
       },
@@ -1787,7 +1794,14 @@
         [1005,1,["      \"3\""]],
         [1009,1,["   <tr class=\"et-spacer\" aria-hidden=\"true\" style=\"height: 1119px;\"></tr>"]],
         [1017,0,["    <td class=\"et-summary hidde-col\"></td>"]],
-        [1020,1,[]]
+        [1020,1,[]],
+        [
+         1024,
+         1,
+         [
+          " <button type=\"button\" class=\"et-chooser-btn\" title=\"Columnas\" aria-label=\"Columnas\" aria-haspopup=\"menu\" style=\"transform: translate(0px, 1680px);\">"
+         ]
+        ]
        ]
       },
       "shadowEsElGuardado": "@=paso-anterior",

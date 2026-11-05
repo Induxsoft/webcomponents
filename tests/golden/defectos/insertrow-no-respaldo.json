@@ -16,7 +16,7 @@
       "dom": [
        "\"\\n                \"",
        "<style>",
-       " @@ESTILO sha256:e02dcdadace9a84f",
+       " @@ESTILO sha256:2709534b750a5578",
        "</style>",
        "\"\\n            \"",
        "<div style=\"min-height: 2rem; max-height: 100%; overflow: auto; padding-bottom: 5px\">",
@@ -383,19 +383,7 @@
     "errores": [],
     "consola": [],
     "extra": {"valor":{"a":[[null,false],[1,false],[2,true],[3,false],[4,false]]}},
-    "internos": {
-     "listeners": {
-      "document:DOMContentLoaded": 2,
-      "nodo:mousedown": 4,
-      "document:mousemove": 4,
-      "document:mouseup": 4,
-      "window:beforeprint": 1,
-      "window:afterprint": 1,
-      "nodo:click:remove": 20,
-      "nodo:click": 20
-     },
-     "intervalos": 1
-    }
+    "internos": "@=paso-anterior"
    }
   }
  ]

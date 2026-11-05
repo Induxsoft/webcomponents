@@ -16,7 +16,7 @@
       "dom": [
        "\"\\n                \"",
        "<style>",
-       " @@ESTILO sha256:e02dcdadace9a84f",
+       " @@ESTILO sha256:2709534b750a5578",
        "</style>",
        "\"\\n            \"",
        "<div class=\"et-search-bar\" role=\"search\">",
@@ -567,7 +567,7 @@
          15,
          6,
          [
-          "tr[1] = display:table-row;position:relative;width:966px;height:30px;color:rgb(255, 255, 255);background-color:rgb(61, 117, 221);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1] = display:table-row;position:relative;width:966px;height:30px;color:rgb(255, 255, 255);background-color:rgb(47, 102, 204);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[1].td[0] = display:table-cell;position:relative;width:144px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[1].td[1] = display:table-cell;position:relative;width:312px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[1].td[2] = display:table-cell;position:relative;width:160px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
@@ -830,7 +830,7 @@
          27,
          7,
          [
-          "tr[4] = display:table-row;position:relative;width:966px;height:30px;color:rgb(255, 255, 255);background-color:rgb(61, 117, 221);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[4] = display:table-row;position:relative;width:966px;height:30px;color:rgb(255, 255, 255);background-color:rgb(47, 102, 204);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[4].td[0] = display:table-cell;position:relative;width:141px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[4].td[1] = display:table-cell;position:relative;width:310px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[4].td[2] = display:table-cell;position:relative;width:170px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
@@ -947,7 +947,7 @@
          9,
          6,
          [
-          "tr[0] = display:table-row;position:relative;width:966px;height:30px;color:rgb(255, 255, 255);background-color:rgb(61, 117, 221);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0] = display:table-row;position:relative;width:966px;height:30px;color:rgb(255, 255, 255);background-color:rgb(47, 102, 204);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[0].td[0] = display:table-cell;position:relative;width:141px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[0].td[1] = display:table-cell;position:relative;width:310px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[0].td[2] = display:table-cell;position:relative;width:170px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
@@ -1212,7 +1212,7 @@
          21,
          6,
          [
-          "tr[2] = display:table-row;position:relative;width:966px;height:30px;color:rgb(255, 255, 255);background-color:rgb(61, 117, 221);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2] = display:table-row;position:relative;width:966px;height:30px;color:rgb(255, 255, 255);background-color:rgb(47, 102, 204);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[2].td[0] = display:table-cell;position:relative;width:141px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[2].td[1] = display:table-cell;position:relative;width:310px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[2].td[2] = display:table-cell;position:relative;width:170px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",

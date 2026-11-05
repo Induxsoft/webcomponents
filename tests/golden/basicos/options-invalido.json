@@ -13,7 +13,7 @@
       "id": "t1",
       "inicializada": true,
       "modoShadowPedido": "closed",
-      "dom": ["\"\\n                \"","<style>"," @@ESTILO sha256:e02dcdadace9a84f","</style>","\"\\n            \""],
+      "dom": ["\"\\n                \"","<style>"," @@ESTILO sha256:2709534b750a5578","</style>","\"\\n            \""],
       "shadowEsElGuardado": true,
       "datos": [
        {"id":1,"nombre":"Producto de prueba 1","cantidad":1,"precio":1},

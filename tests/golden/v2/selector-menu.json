@@ -16,7 +16,7 @@
       "dom": [
        "\"\\n                \"",
        "<style>",
-       " @@ESTILO sha256:e02dcdadace9a84f",
+       " @@ESTILO sha256:2709534b750a5578",
        "</style>",
        "\"\\n            \"",
        "<div style=\"min-height: 2rem; max-height: 100%; overflow: auto; padding-bottom: 5px\" class=\"et-chooser-host\">",
@@ -166,7 +166,7 @@
        "   </tr>",
        "  </tbody>",
        " </table>",
-       " <button type=\"button\" class=\"et-chooser-btn\" title=\"Columnas\" aria-label=\"Columnas\" aria-haspopup=\"menu\">",
+       " <button type=\"button\" class=\"et-chooser-btn\" title=\"Columnas\" aria-label=\"Columnas\" aria-haspopup=\"menu\" style=\"transform: translate(-380px, 0px);\">",
        "  <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"12\" fill=\"currentColor\" viewBox=\"0 0 16 16\" aria-hidden=\"true\">",
        "   <path d=\"M1 2h4v12H1zm5 0h4v12H6zm5 0h4v12h-4z\"></path>",
        "  </svg>",
@@ -353,6 +353,9 @@
       "nodo:keydown": 1,
       "document:mousedown": 1,
       "document:keydown": 1,
+      "document:scroll": 1,
+      "window:resize": 1,
+      "nodo:scroll": 1,
       "window:beforeprint": 1,
       "window:afterprint": 1
      },
@@ -375,7 +378,7 @@
          157,
          0,
          [
-          " <div class=\"et-chooser et-open\" role=\"menu\" tabindex=\"-1\" style=\"left: 344px; top: 41px;\" {foco}>",
+          " <div class=\"et-chooser et-open\" role=\"menu\" tabindex=\"-1\" style=\"left: 336px; top: 41px;\" {foco}>",
           "  <button type=\"button\" role=\"menuitem\" disabled=\"\">",
           "   \"Fijar o soltar columna\"",
           "  </button>",
@@ -445,11 +448,11 @@
     "internos": {
      "listeners": {
       "document:DOMContentLoaded": 3,
-      "nodo:mousedown": 5,
+      "nodo:mousedown": 6,
       "document:mousemove": 5,
       "document:mouseup": 5,
-      "nodo:click": 4,
-      "nodo:contextmenu": 1,
+      "nodo:click": 5,
+      "nodo:contextmenu": 2,
       "nodo:dragstart": 1,
       "nodo:dragenter": 1,
       "nodo:dragover": 1,
@@ -458,8 +461,13 @@
       "nodo:keydown": 2,
       "document:mousedown": 1,
       "document:keydown": 1,
+      "document:scroll": 1,
+      "window:resize": 1,
+      "nodo:scroll": 1,
       "window:beforeprint": 1,
       "window:afterprint": 1,
+      "nodo:pointerdown": 1,
+      "nodo:dblclick": 1,
       "nodo:change": 4
      },
      "intervalos": 1
@@ -485,7 +493,7 @@
         [
          157,
          1,
-         [" <div class=\"et-chooser et-open\" role=\"menu\" tabindex=\"-1\" style=\"left: 344px; top: 41px;\">"]
+         [" <div class=\"et-chooser et-open\" role=\"menu\" tabindex=\"-1\" style=\"left: 336px; top: 41px;\">"]
         ],
         [175,1,["   <input type=\"checkbox\" {value=\"on\" checked=false foco}></input>"]]
        ]
@@ -636,10 +644,10 @@
          152,
          1,
          [
-          " <button type=\"button\" class=\"et-chooser-btn\" title=\"Columnas\" aria-label=\"Columnas\" aria-haspopup=\"menu\" {foco}>"
+          " <button type=\"button\" class=\"et-chooser-btn\" title=\"Columnas\" aria-label=\"Columnas\" aria-haspopup=\"menu\" style=\"transform: translate(-380px, 0px);\" {foco}>"
          ]
         ],
-        [157,1,[" <div class=\"et-chooser\" role=\"menu\" tabindex=\"-1\" style=\"left: 344px; top: 41px;\">"]],
+        [157,1,[" <div class=\"et-chooser\" role=\"menu\" tabindex=\"-1\" style=\"left: 336px; top: 41px;\">"]],
         [175,1,["   <input type=\"checkbox\" {value=\"on\" checked=false}></input>"]]
        ]
       },
@@ -709,14 +717,14 @@
          152,
          1,
          [
-          " <button type=\"button\" class=\"et-chooser-btn\" title=\"Columnas\" aria-label=\"Columnas\" aria-haspopup=\"menu\">"
+          " <button type=\"button\" class=\"et-chooser-btn\" title=\"Columnas\" aria-label=\"Columnas\" aria-haspopup=\"menu\" style=\"transform: translate(-380px, 0px);\">"
          ]
         ],
         [
          157,
          3,
          [
-          " <div class=\"et-chooser et-open\" role=\"menu\" tabindex=\"-1\" style=\"left: 48px; top: 30px;\" {foco}>",
+          " <div class=\"et-chooser et-open\" role=\"menu\" tabindex=\"-1\" style=\"left: 361px; top: 30px;\" {foco}>",
           "  <button type=\"button\" role=\"menuitem\">",
           "   \"Fijar «Nombre» a la izquierda\""
          ]
@@ -753,11 +761,11 @@
     "internos": {
      "listeners": {
       "document:DOMContentLoaded": 3,
-      "nodo:mousedown": 5,
+      "nodo:mousedown": 6,
       "document:mousemove": 5,
       "document:mouseup": 5,
-      "nodo:click": 7,
-      "nodo:contextmenu": 1,
+      "nodo:click": 8,
+      "nodo:contextmenu": 2,
       "nodo:dragstart": 1,
       "nodo:dragenter": 1,
       "nodo:dragover": 1,
@@ -766,8 +774,13 @@
       "nodo:keydown": 2,
       "document:mousedown": 1,
       "document:keydown": 1,
+      "document:scroll": 1,
+      "window:resize": 1,
+      "nodo:scroll": 1,
       "window:beforeprint": 1,
       "window:afterprint": 1,
+      "nodo:pointerdown": 1,
+      "nodo:dblclick": 1,
       "nodo:change": 8
      },
      "intervalos": 1
@@ -855,10 +868,10 @@
          152,
          1,
          [
-          " <button type=\"button\" class=\"et-chooser-btn\" title=\"Columnas\" aria-label=\"Columnas\" aria-haspopup=\"menu\" {foco}>"
+          " <button type=\"button\" class=\"et-chooser-btn\" title=\"Columnas\" aria-label=\"Columnas\" aria-haspopup=\"menu\" style=\"transform: translate(-380px, 0px);\" {foco}>"
          ]
         ],
-        [157,1,[" <div class=\"et-chooser\" role=\"menu\" tabindex=\"-1\" style=\"left: 48px; top: 30px;\">"]]
+        [157,1,[" <div class=\"et-chooser\" role=\"menu\" tabindex=\"-1\" style=\"left: 361px; top: 30px;\">"]]
        ]
       },
       "shadowEsElGuardado": "@=paso-anterior",

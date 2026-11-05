@@ -25,7 +25,7 @@
                     }
                     .EdiTable-Row-Selected
                     {
-                        background-color: #3D75DD !important;
+                        background-color: #2F66CC !important;
                         color: #FFF !important;
                     }
                     
@@ -240,11 +240,11 @@
                     table.et-cards tbody td.et-card-hidden:not(#__et_none),
                     table.et-cards tbody td.et-hide-empty:not(#__et_none),
                     table.et-cards tbody td.hidde-col:not(#__et_none) { display: none !important; }
-                                div:has(table#tbl_imp) { overflow:revert !important; }
-                        #tbl_imp tr th { font-weight:500; }
+                                div:has(table#tbl_prueba) { overflow:revert !important; }
+                        #tbl_prueba tr th { font-weight:500; }
                     
                         @media print {
-                            #tbl_imp { overflow:hidden; }
+                            #tbl_prueba { overflow:hidden; }
                         }
 
                         

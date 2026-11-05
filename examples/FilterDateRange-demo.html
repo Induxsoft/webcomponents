@@ -10,8 +10,14 @@
     <div style="width: max-content;">
         <h3>Filter Date Range</h3>
         <form action="" method="GET">
+            <!-- Personalizado: al pulsar «Aplicar» se completan las fechas vacías (D50). Solo inicio: final = hoy.
+                 Solo final: inicio = min-date (atributo opcional, por omisión 1900-01-01). Las dos: se respetan, e
+                 intercambiadas si inicio > final. Ninguna: las dos = hoy. «Hoy» es la fecha local del navegador.
+                 Por mes: sin año en selection (o al volver a «Por mes») toma el año actual si está en years-options,
+                 en cualquier orden, y el mes actual si no hay mes; sin el año actual en la lista, la primera opción. -->
             <filter-date-range
                 auto-submit="true"
+                min-date="1900-01-01"
                 selection='{"mode":"month","year":2024,"month":12}'
                 years-options="2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025,2026,2027,2028,2029">
             </filter-date-range>

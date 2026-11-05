@@ -19,7 +19,7 @@
        "</style>",
        "\"\\n                \"",
        "<style>",
-       " @@ESTILO sha256:e02dcdadace9a84f",
+       " @@ESTILO sha256:2709534b750a5578",
        "</style>",
        "\"\\n            \"",
        "<div class=\"et-group-panel\" data-placeholder=\"Arrastre aquí el encabezado de una columna para agrupar\"></div>",
@@ -896,7 +896,7 @@
          21,
          0,
          [
-          "tr[7] = display:table-row;position:relative;width:638px;height:30px;color:rgb(255, 255, 255);background-color:rgb(61, 117, 221);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[7] = display:table-row;position:relative;width:638px;height:30px;color:rgb(255, 255, 255);background-color:rgb(47, 102, 204);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[7].td[0] = display:table-cell;position:relative;width:99px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[7].td[1] = display:table-cell;position:relative;width:188px;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[7].td[2] = display:none;position:relative;width:auto;height:22px;color:rgb(255, 255, 255);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",

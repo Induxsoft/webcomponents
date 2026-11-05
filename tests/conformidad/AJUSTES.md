@@ -56,3 +56,17 @@ la spec o el comportamiento actual, no defectos del componente. Cada renglón: p
 | Prueba | Motivo | Cambio |
 |---|---|---|
 | `lim-02` (`v12-limites-y-r1.mjs`) | Decisión de Emmanuel: por omisión, agrupar por una columna la oculta (`group-hide-columns`, por omisión `true`). La copia de la fila agrupada por `linea` ya no trae esa columna. | Espera `P-003\tTornillo hexagonal\t10\t2.50`. Las pruebas nuevas están en `v17-lista-ventas.mjs` (`lv-*`). |
+
+## Iteración 2026-11b, bloque N (2026-11-05)
+
+| Prueba | Motivo | Cambio |
+|---|---|---|
+| R1 (`r1-*`), `tem-02`, `tem-03`, `tpg-19` | Decisión de Emmanuel (siguiente iteración, punto 1): contraste AA en la fila seleccionada sin tema. Blanco sobre `#3D75DD` da 4.39:1; el respaldo pasa a `#2F66CC` (5.39:1, el `sel-bg` del tema claro), en el texto del `<style>` y en el CSSOM (`V('sel-bg', …)`). | `run.mjs` extrae la referencia `0ed1824` y le cambia solo esa declaración (`.EdiTable-Row-Selected { background-color: #3D75DD !important }` → `#2F66CC`), en `$TMPDIR/et-conformidad-ref/…0ed1824-sel2F66CC.js`. Todo lo demás de R1 se sigue comparando contra `0ed1824` sin cambios. |
+| Suite nueva `v18-barras.mjs` (`bn-*`) | Punto 3: el botón de columnas se queda en la orilla derecha visible al desplazar la tabla a lo ancho. | 5 pruebas: sin desplazar no cambia el DOM (sin `style`), contenedor interno, contenedor de la página con `overflow:revert` y shadow cerrado, tabla oculta al cargar, y contraste ≥ 4.5 sin tema. |
+
+Banco (`tests/golden/`): referencia regenerada completa con esta versión (`--update`). Cambian en todos los escenarios la
+huella del `<style>` principal y el color de la fila seleccionada (`rgb(61, 117, 221)` → `rgb(47, 102, 204)`); con
+`column-chooser`, los oyentes `document:scroll`, `window:resize` y `nodo:scroll` del botón, y `v2/selector-menu` y
+`v2/combinados-sistema-fijas-pie` (host de 900 px en una caja de 520 con scroll) el `transform` que lleva el botón a la
+orilla visible. Además entran las 4 diferencias de `v2/temas-*` que ya daba `fe56b8d` (agrupar oculta la columna,
+decisión del 2026-11-05). Revisadas en `diff/` antes de actualizar; ninguna otra.

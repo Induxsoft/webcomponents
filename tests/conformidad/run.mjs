@@ -46,11 +46,15 @@ const MASK = A.mask ? path.resolve(A.mask) : null; // solo para validar el motor
 function referencia() {
   if (A.ref) return path.resolve(A.ref);
   const dir = path.join(os.tmpdir(), 'et-conformidad-ref');
-  const f = path.join(dir, 'induxsoft.controls.editable.0ed1824.js');
+  // Única diferencia intencional con 0ed1824 en R1 (iteración 2026-11b, contraste AA): la fila seleccionada sin tema
+  // pasa de #3D75DD (4.39:1 con blanco) a #2F66CC (5.39:1). Ver AJUSTES.md.
+  const f = path.join(dir, 'induxsoft.controls.editable.0ed1824-sel2F66CC.js');
   if (!fs.existsSync(f)) {
     fs.mkdirSync(dir, { recursive: true });
-    const txt = execFileSync('git', ['-C', RAIZ, 'show', '0ed1824:src/js/induxsoft.controls.editable.js'], { maxBuffer: 1 << 26 });
-    fs.writeFileSync(f, txt);
+    const txt = execFileSync('git', ['-C', RAIZ, 'show', '0ed1824:src/js/induxsoft.controls.editable.js'], { maxBuffer: 1 << 26 }).toString('utf8');
+    const sel = /(\.EdiTable-Row-Selected\s*\{\s*background-color:\s*)#3D75DD( !important;)/;
+    if (!sel.test(txt)) throw new Error('referencia: no se encontró la regla .EdiTable-Row-Selected de 0ed1824');
+    fs.writeFileSync(f, txt.replace(sel, '$1#2F66CC$2'));
   }
   return f;
 }
