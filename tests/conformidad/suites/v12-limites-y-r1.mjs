@@ -21,7 +21,8 @@ t('01', 'sin datos: todas las funciones juntas no lanzan errores; SelectAll → 
 t('02', 'una sola fila: selección, totales, copiar y agrupar', ['L-una-fila'], async (c) => {
   await c.abrir({ body: tabla({ a: TODO, cols: COLS(), data: [PRODUCTOS[0]] }), permisos: ['clipboard-read', 'clipboard-write'] });
   const r = await c.ev(() => { const t = __ct.t('t1'); t.SelectAll(); t.GroupBy(['linea']); return [t.getSelectedRows(), t.getSummary('cantidad'), t.getClipboardText({ headers: false })]; });
-  c.igual(r, [[0], 10, 'P-003\tTornillo hexagonal\tFerretería\t10\t2.50']);
+  // Agrupar oculta la columna agrupada (group-hide-columns, 2026-11-05): la copia ya no trae «Ferretería».
+  c.igual(r, [[0], 10, 'P-003\tTornillo hexagonal\t10\t2.50']);
 }, { requiere: ['multiselect', 'summary', 'clipboard', 'group'] });
 t('03', 'ocultas + fijas + reordenadas a la vez: Columns, DOM, hideColumns y edición siguen alineados', ['L-ocultas-fijas-reorden', '§0-R3', '§7-a'], async (c) => {
   await c.abrir({ body: tabla({ a: { 'column-reorder': 'true' }, cols: COLS(), data: PRODUCTOS }) });

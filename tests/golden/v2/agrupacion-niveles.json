@@ -524,11 +524,18 @@
          ]
         ],
         [
+         25,
+         1,
+         [
+          "    <th field=\"linea\" type=\"Text\" width=\"110px\" style=\"width: 110px;\" draggable=\"true\" class=\"hidde-col\">"
+         ]
+        ],
+        [
          52,
          0,
          [
           "   <tr class=\"et-group-row\" data-level=\"0\" data-key=\"\" aria-level=\"1\" aria-expanded=\"true\">",
-          "    <td class=\"et-group-cell\" colspan=\"6\">",
+          "    <td class=\"et-group-cell\" colspan=\"5\">",
           "     <div class=\"et-group-label\" tabindex=\"-1\" style=\"padding-left: 0rem;\">",
           "      <span class=\"et-group-toggle\">",
           "       \"▾\"",
@@ -553,9 +560,10 @@
         [55,1,["      \"A6\""]],
         [60,1,["      \"Seis ficticio\""]],
         [
-         64,
-         3,
+         63,
+         4,
          [
+          "    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Línea\">",
           "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; width: 110px;\"></div>"
          ]
         ],
@@ -566,7 +574,7 @@
          0,
          [
           "   <tr class=\"et-group-row\" data-level=\"0\" data-key=\"Eléctrico\" aria-level=\"1\" aria-expanded=\"true\">",
-          "    <td class=\"et-group-cell\" colspan=\"6\">",
+          "    <td class=\"et-group-cell\" colspan=\"5\">",
           "     <div class=\"et-group-label\" tabindex=\"-1\" style=\"padding-left: 0rem;\">",
           "      <span class=\"et-group-toggle\">",
           "       \"▾\"",
@@ -590,12 +598,15 @@
         ],
         [87,1,["      \"A1\""]],
         [92,1,["      \"Uno ficticio\""]],
+        [95,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Línea\">"]],
         [97,1,["      \"Eléctrico\""]],
         [102,1,["      \"X\""]],
         [107,1,["      \"2\""]],
         [112,1,["      \"10.50\""]],
+        [127,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Línea\">"]],
         [151,1,["      \"A5\""]],
         [156,1,["      \"Cinco ficticio\""]],
+        [159,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Línea\">"]],
         [161,1,["      \"Eléctrico\""]],
         [166,1,["      \"X\""]],
         [171,1,["      \"11\""]],
@@ -605,7 +616,7 @@
          0,
          [
           "   <tr class=\"et-group-row\" data-level=\"0\" data-key=\"Ferretería\" aria-level=\"1\" aria-expanded=\"true\">",
-          "    <td class=\"et-group-cell\" colspan=\"6\">",
+          "    <td class=\"et-group-cell\" colspan=\"5\">",
           "     <div class=\"et-group-label\" tabindex=\"-1\" style=\"padding-left: 0rem;\">",
           "      <span class=\"et-group-toggle\">",
           "       \"▾\"",
@@ -629,6 +640,7 @@
         ],
         [183,1,["      \"A2\""]],
         [188,1,["      \"Dos ficticio\""]],
+        [191,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Línea\">"]],
         [193,1,["      \"Ferretería\""]],
         [198,1,["      \"Y\""]],
         [203,1,["      \"3\""]],
@@ -636,9 +648,10 @@
         [215,1,["      \"A4\""]],
         [220,1,["      \"Cuatro ficticio\""]],
         [
-         224,
-         1,
+         223,
+         2,
          [
+          "    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Línea\">",
           "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; width: 110px;\">",
           "      \"Ferretería\"",
           "     </div>"
@@ -646,45 +659,49 @@
         ],
         [228,1,["      \"Y\""]],
         [233,1,["      \"7\""]],
-        [238,1,["      \"99.00\""]]
+        [238,1,["      \"99.00\""]],
+        [247,0,["    <td class=\"et-summary hidde-col\"></td>"]],
+        [248,1,[]]
        ]
       },
       "shadowEsElGuardado": "@=paso-anterior",
       "datos": "@=paso-anterior",
       "columnas": "@=paso-anterior",
       "respaldo": "@=paso-anterior",
-      "props": "@=paso-anterior",
+      "props": {"$parche":[[29,1,["hideColumns = [2]"]]]},
       "estilos": {
        "$parche": [
         [
          1,
-         2,
+         37,
          [
           "contenedor = display:block;position:static;width:640px;height:330px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:auto;overflow-y:auto",
-          "table = display:table;position:static;width:655px;height:330px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
-         ]
-        ],
-        [
-         10,
-         7,
-         [
-          "tr[0] = display:table-row;position:relative;width:653px;height:27px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[0].td[0] = display:table-cell;position:static;width:641px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
-         ]
-        ],
-        [
-         24,
-         14,
-         [
-          "tr[2] = display:table-row;position:relative;width:653px;height:27px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[2].td[0] = display:table-cell;position:static;width:641px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[8] = display:table-row;position:relative;width:653px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[8].td[0] = display:table-cell;position:relative;width:80px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[8].td[1] = display:table-cell;position:relative;width:160px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[8].td[2] = display:table-cell;position:relative;width:110px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[8].td[3] = display:table-cell;position:relative;width:70px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[8].td[4] = display:table-cell;position:relative;width:90px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[8].td[5] = display:table-cell;position:relative;width:90px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+          "table = display:table;position:static;width:640px;height:330px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "thead = display:table-header-group;position:sticky;width:638px;height:27px;color:rgb(0, 0, 0);background-color:rgb(245, 245, 245);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[0] = display:table-cell;position:relative;width:91px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[1] = display:table-cell;position:relative;width:180px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[2] = display:none;position:relative;width:110px;height:auto;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[3] = display:table-cell;position:relative;width:80px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[4] = display:table-cell;position:relative;width:102px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[5] = display:table-cell;position:relative;width:102px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0] = display:table-row;position:relative;width:638px;height:27px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[0] = display:table-cell;position:static;width:626px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1] = display:table-row;position:relative;width:638px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[0] = display:table-cell;position:relative;width:99px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[1] = display:table-cell;position:relative;width:188px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[2] = display:none;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[3] = display:table-cell;position:relative;width:88px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[4] = display:table-cell;position:relative;width:110px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[5] = display:table-cell;position:relative;width:110px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2] = display:table-row;position:relative;width:638px;height:27px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[0] = display:table-cell;position:static;width:626px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[8] = display:table-row;position:relative;width:638px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[8].td[0] = display:table-cell;position:relative;width:99px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[8].td[1] = display:table-cell;position:relative;width:188px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[8].td[2] = display:none;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[8].td[3] = display:table-cell;position:relative;width:88px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[8].td[4] = display:table-cell;position:relative;width:110px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[8].td[5] = display:table-cell;position:relative;width:110px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
          ]
         ]
        ]
@@ -770,13 +787,13 @@
       "nodo:dragover": 1,
       "nodo:dragleave": 1,
       "nodo:drop": 1,
-      "nodo:dragstart": 2,
-      "nodo:dragend": 2,
+      "nodo:dragstart": 3,
+      "nodo:dragend": 3,
       "window:beforeprint": 1,
       "window:afterprint": 1,
-      "nodo:click": 4,
-      "nodo:dblclick": 3,
-      "nodo:keydown": 4
+      "nodo:click": 8,
+      "nodo:dblclick": 6,
+      "nodo:keydown": 8
      },
      "intervalos": 1
     }
@@ -862,11 +879,19 @@
          ]
         ],
         [
+         40,
+         1,
+         [
+          "    <th field=\"marca\" type=\"Text\" width=\"70px\" style=\"width: 70px;\" draggable=\"true\" class=\"hidde-col\">"
+         ]
+        ],
+        [62,1,["    <td class=\"et-group-cell\" colspan=\"4\">"]],
+        [
          82,
          0,
          [
           "   <tr class=\"et-group-row\" data-level=\"1\" data-key=\"X\" aria-level=\"2\" aria-expanded=\"true\">",
-          "    <td class=\"et-group-cell\" colspan=\"6\">",
+          "    <td class=\"et-group-cell\" colspan=\"4\">",
           "     <div class=\"et-group-label\" tabindex=\"-1\" style=\"padding-left: 1.25rem;\">",
           "      <span class=\"et-group-toggle\">",
           "       \"▾\"",
@@ -888,12 +913,14 @@
           "   </tr>"
          ]
         ],
+        [96,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Marca\">"]],
+        [113,1,["    <td class=\"et-group-cell\" colspan=\"4\">"]],
         [
          133,
          0,
          [
           "   <tr class=\"et-group-row\" data-level=\"1\" data-key=\"X\" aria-level=\"2\" aria-expanded=\"true\">",
-          "    <td class=\"et-group-cell\" colspan=\"6\">",
+          "    <td class=\"et-group-cell\" colspan=\"4\">",
           "     <div class=\"et-group-label\" tabindex=\"-1\" style=\"padding-left: 1.25rem;\">",
           "      <span class=\"et-group-toggle\">",
           "       \"▾\"",
@@ -915,8 +942,10 @@
           "   </tr>"
          ]
         ],
+        [149,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Marca\">"]],
         [168,1,["      \"A5\""]],
         [173,1,["      \"Cinco ficticio\""]],
+        [181,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Marca\">"]],
         [183,1,["      \"X\""]],
         [188,1,["      \"11\""]],
         [193,1,["      \"1.00\""]],
@@ -925,7 +954,7 @@
          0,
          [
           "   <tr class=\"et-group-row\" data-level=\"1\" data-key=\"Y\" aria-level=\"2\" aria-expanded=\"true\">",
-          "    <td class=\"et-group-cell\" colspan=\"6\">",
+          "    <td class=\"et-group-cell\" colspan=\"4\">",
           "     <div class=\"et-group-label\" tabindex=\"-1\" style=\"padding-left: 1.25rem;\">",
           "      <span class=\"et-group-toggle\">",
           "       \"▾\"",
@@ -949,15 +978,17 @@
         ],
         [200,1,["      \"A3\""]],
         [205,1,["      \"Tres ficticio\""]],
+        [213,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Marca\">"]],
         [215,1,["      \"Y\""]],
         [220,1,["      \"5\""]],
         [225,1,["      \"7.25\""]],
+        [230,1,["    <td class=\"et-group-cell\" colspan=\"4\">"]],
         [
          250,
          0,
          [
           "   <tr class=\"et-group-row\" data-level=\"1\" data-key=\"Y\" aria-level=\"2\" aria-expanded=\"true\">",
-          "    <td class=\"et-group-cell\" colspan=\"6\">",
+          "    <td class=\"et-group-cell\" colspan=\"4\">",
           "     <div class=\"et-group-label\" tabindex=\"-1\" style=\"padding-left: 1.25rem;\">",
           "      <span class=\"et-group-toggle\">",
           "       \"▾\"",
@@ -978,14 +1009,17 @@
           "    </td>",
           "   </tr>"
          ]
-        ]
+        ],
+        [266,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Marca\">"]],
+        [298,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Marca\">"]],
+        [320,1,["    <td class=\"et-summary hidde-col\"></td>"]]
        ]
       },
       "shadowEsElGuardado": "@=paso-anterior",
       "datos": "@=paso-anterior",
       "columnas": "@=paso-anterior",
       "respaldo": "@=paso-anterior",
-      "props": "@=paso-anterior",
+      "props": {"$parche":[[29,1,["hideColumns = [2,3]"]]]},
       "estilos": {
        "$parche": [
         [
@@ -993,29 +1027,46 @@
          2,
          [
           "contenedor = display:block;position:static;width:640px;height:443px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:auto;overflow-y:auto",
-          "table = display:table;position:static;width:655px;height:443px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+          "table = display:table;position:static;width:640px;height:443px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         4,
+         2,
+         [
+          "th[0] = display:table-cell;position:relative;width:110px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[1] = display:table-cell;position:relative;width:215px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         7,
+         3,
+         [
+          "th[3] = display:none;position:relative;width:70px;height:auto;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[4] = display:table-cell;position:relative;width:123px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[5] = display:table-cell;position:relative;width:123px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
          ]
         ],
         [
          12,
          16,
          [
-          "tr[1] = display:table-row;position:relative;width:653px;height:27px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[1].td[0] = display:table-cell;position:static;width:641px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[2] = display:table-row;position:relative;width:653px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[2].td[0] = display:table-cell;position:relative;width:80px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[2].td[1] = display:table-cell;position:relative;width:160px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[2].td[2] = display:table-cell;position:relative;width:110px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[2].td[3] = display:table-cell;position:relative;width:70px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[2].td[4] = display:table-cell;position:relative;width:90px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[2].td[5] = display:table-cell;position:relative;width:90px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[12] = display:table-row;position:relative;width:653px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[12].td[0] = display:table-cell;position:relative;width:80px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[12].td[1] = display:table-cell;position:relative;width:160px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[12].td[2] = display:table-cell;position:relative;width:110px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[12].td[3] = display:table-cell;position:relative;width:70px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[12].td[4] = display:table-cell;position:relative;width:90px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[12].td[5] = display:table-cell;position:relative;width:90px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+          "tr[1] = display:table-row;position:relative;width:638px;height:27px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[0] = display:table-cell;position:static;width:626px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2] = display:table-row;position:relative;width:638px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[0] = display:table-cell;position:relative;width:118px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[1] = display:table-cell;position:relative;width:223px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[2] = display:none;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[3] = display:none;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[4] = display:table-cell;position:relative;width:131px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[5] = display:table-cell;position:relative;width:131px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[12] = display:table-row;position:relative;width:638px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[12].td[0] = display:table-cell;position:relative;width:118px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[12].td[1] = display:table-cell;position:relative;width:223px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[12].td[2] = display:none;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[12].td[3] = display:none;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[12].td[4] = display:table-cell;position:relative;width:131px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[12].td[5] = display:table-cell;position:relative;width:131px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
          ]
         ]
        ]
@@ -1109,13 +1160,13 @@
       "nodo:dragover": 1,
       "nodo:dragleave": 1,
       "nodo:drop": 1,
-      "nodo:dragstart": 4,
-      "nodo:dragend": 4,
+      "nodo:dragstart": 7,
+      "nodo:dragend": 7,
       "window:beforeprint": 1,
       "window:afterprint": 1,
-      "nodo:click": 13,
-      "nodo:dblclick": 10,
-      "nodo:keydown": 13
+      "nodo:click": 26,
+      "nodo:dblclick": 20,
+      "nodo:keydown": 26
      },
      "intervalos": 1
     }
@@ -1194,7 +1245,7 @@
           "    </td>",
           "   </tr>",
           "   <tr class=\"et-group-row\" data-level=\"1\" data-key=\"Eléctrico\" aria-level=\"2\" aria-expanded=\"true\">",
-          "    <td class=\"et-group-cell\" colspan=\"6\">",
+          "    <td class=\"et-group-cell\" colspan=\"4\">",
           "     <div class=\"et-group-label\" tabindex=\"-1\" style=\"padding-left: 1.25rem;\">",
           "      <span class=\"et-group-toggle\">",
           "       \"▾\"",
@@ -1231,20 +1282,20 @@
          2,
          [
           "contenedor = display:block;position:static;width:640px;height:415px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:auto;overflow-y:auto",
-          "table = display:table;position:static;width:655px;height:415px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+          "table = display:table;position:static;width:640px;height:415px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
          ]
         ],
         [
          21,
          7,
          [
-          "tr[11] = display:table-row;position:relative;width:653px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[11].td[0] = display:table-cell;position:relative;width:80px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[11].td[1] = display:table-cell;position:relative;width:160px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[11].td[2] = display:table-cell;position:relative;width:110px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[11].td[3] = display:table-cell;position:relative;width:70px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[11].td[4] = display:table-cell;position:relative;width:90px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[11].td[5] = display:table-cell;position:relative;width:90px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+          "tr[11] = display:table-row;position:relative;width:638px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[11].td[0] = display:table-cell;position:relative;width:118px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[11].td[1] = display:table-cell;position:relative;width:223px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[11].td[2] = display:none;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[11].td[3] = display:none;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[11].td[4] = display:table-cell;position:relative;width:131px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[11].td[5] = display:table-cell;position:relative;width:131px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
          ]
         ]
        ]
@@ -1337,13 +1388,13 @@
       "nodo:dragover": 1,
       "nodo:dragleave": 1,
       "nodo:drop": 1,
-      "nodo:dragstart": 6,
-      "nodo:dragend": 6,
+      "nodo:dragstart": 9,
+      "nodo:dragend": 9,
       "window:beforeprint": 1,
       "window:afterprint": 1,
-      "nodo:click": 21,
-      "nodo:dblclick": 16,
-      "nodo:keydown": 21
+      "nodo:click": 34,
+      "nodo:dblclick": 26,
+      "nodo:keydown": 34
      },
      "intervalos": 1
     }
@@ -1362,47 +1413,64 @@
        "$parche": [
         [9,8,[]],
         [
-         69,
+         48,
          1,
-         ["   <tr class=\"et-group-row\" data-level=\"0\" data-key=\"\" aria-level=\"1\" aria-expanded=\"true\">"]
+         ["    <th field=\"marca\" type=\"Text\" width=\"70px\" style=\"width: 70px;\" draggable=\"true\" class=\"\">"]
         ],
-        [76,21,[]],
         [
-         141,
-         1,
+         69,
+         2,
          [
-          "   <tr class=\"et-group-row\" data-level=\"0\" data-key=\"Eléctrico\" aria-level=\"1\" aria-expanded=\"true\">"
+          "   <tr class=\"et-group-row\" data-level=\"0\" data-key=\"\" aria-level=\"1\" aria-expanded=\"true\">",
+          "    <td class=\"et-group-cell\" colspan=\"5\">"
          ]
         ],
-        [143,1,["     <div class=\"et-group-label\" tabindex=\"-1\" style=\"padding-left: 0rem;\">"]],
+        [76,21,[]],
+        [125,1,["    <td class=\"EdiTable-Cell\" data-cell=\"Marca\">"]],
+        [
+         141,
+         3,
+         [
+          "   <tr class=\"et-group-row\" data-level=\"0\" data-key=\"Eléctrico\" aria-level=\"1\" aria-expanded=\"true\">",
+          "    <td class=\"et-group-cell\" colspan=\"5\">",
+          "     <div class=\"et-group-label\" tabindex=\"-1\" style=\"padding-left: 0rem;\">"
+         ]
+        ],
         [154,1,["       \"(3)\""]],
         [157,1,["       \"· Cantidad: 18 · Precio: 10.50\""]],
+        [178,1,["    <td class=\"EdiTable-Cell\" data-cell=\"Marca\">"]],
         [197,1,["      \"A3\""]],
         [202,1,["      \"Tres ficticio\""]],
+        [210,1,["    <td class=\"EdiTable-Cell\" data-cell=\"Marca\">"]],
         [212,1,["      \"Y\""]],
         [217,1,["      \"5\""]],
         [222,1,["      \"7.25\""]],
         [226,42,[]],
         [271,1,["      \"A5\""]],
         [276,1,["      \"Cinco ficticio\""]],
+        [284,1,["    <td class=\"EdiTable-Cell\" data-cell=\"Marca\">"]],
         [286,1,["      \"X\""]],
         [291,1,["      \"11\""]],
         [296,1,["      \"1.00\""]],
         [
          300,
-         1,
+         3,
          [
-          "   <tr class=\"et-group-row\" data-level=\"0\" data-key=\"Ferretería\" aria-level=\"1\" aria-expanded=\"true\">"
+          "   <tr class=\"et-group-row\" data-level=\"0\" data-key=\"Ferretería\" aria-level=\"1\" aria-expanded=\"true\">",
+          "    <td class=\"et-group-cell\" colspan=\"5\">",
+          "     <div class=\"et-group-label\" tabindex=\"-1\" style=\"padding-left: 0rem;\">"
          ]
         ],
-        [302,1,["     <div class=\"et-group-label\" tabindex=\"-1\" style=\"padding-left: 0rem;\">"]]
+        [337,1,["    <td class=\"EdiTable-Cell\" data-cell=\"Marca\">"]],
+        [369,1,["    <td class=\"EdiTable-Cell\" data-cell=\"Marca\">"]],
+        [391,1,["    <td class=\"et-summary\"></td>"]]
        ]
       },
       "shadowEsElGuardado": "@=paso-anterior",
       "datos": "@=paso-anterior",
       "columnas": "@=paso-anterior",
       "respaldo": "@=paso-anterior",
-      "props": "@=paso-anterior",
+      "props": {"$parche":[[29,1,["hideColumns = [2]"]]]},
       "estilos": {
        "$parche": [
         [
@@ -1410,29 +1478,46 @@
          2,
          [
           "contenedor = display:block;position:static;width:640px;height:330px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:auto;overflow-y:auto",
-          "table = display:table;position:static;width:655px;height:330px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+          "table = display:table;position:static;width:640px;height:330px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         4,
+         2,
+         [
+          "th[0] = display:table-cell;position:relative;width:91px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[1] = display:table-cell;position:relative;width:180px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         7,
+         3,
+         [
+          "th[3] = display:table-cell;position:relative;width:80px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[4] = display:table-cell;position:relative;width:102px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[5] = display:table-cell;position:relative;width:102px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
          ]
         ],
         [
          12,
          16,
          [
-          "tr[1] = display:table-row;position:relative;width:653px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[1].td[0] = display:table-cell;position:relative;width:80px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[1].td[1] = display:table-cell;position:relative;width:160px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[1].td[2] = display:table-cell;position:relative;width:110px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[1].td[3] = display:table-cell;position:relative;width:70px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[1].td[4] = display:table-cell;position:relative;width:90px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[1].td[5] = display:table-cell;position:relative;width:90px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[2] = display:table-row;position:relative;width:653px;height:27px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[2].td[0] = display:table-cell;position:static;width:641px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[8] = display:table-row;position:relative;width:653px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[8].td[0] = display:table-cell;position:relative;width:80px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[8].td[1] = display:table-cell;position:relative;width:160px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[8].td[2] = display:table-cell;position:relative;width:110px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[8].td[3] = display:table-cell;position:relative;width:70px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[8].td[4] = display:table-cell;position:relative;width:90px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[8].td[5] = display:table-cell;position:relative;width:90px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+          "tr[1] = display:table-row;position:relative;width:638px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[0] = display:table-cell;position:relative;width:99px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[1] = display:table-cell;position:relative;width:188px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[2] = display:none;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[3] = display:table-cell;position:relative;width:88px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[4] = display:table-cell;position:relative;width:110px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[5] = display:table-cell;position:relative;width:110px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2] = display:table-row;position:relative;width:638px;height:27px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[0] = display:table-cell;position:static;width:626px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[8] = display:table-row;position:relative;width:638px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[8].td[0] = display:table-cell;position:relative;width:99px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[8].td[1] = display:table-cell;position:relative;width:188px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[8].td[2] = display:none;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[8].td[3] = display:table-cell;position:relative;width:88px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[8].td[4] = display:table-cell;position:relative;width:110px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[8].td[5] = display:table-cell;position:relative;width:110px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
          ]
         ]
        ]
@@ -1518,13 +1603,13 @@
       "nodo:dragover": 1,
       "nodo:dragleave": 1,
       "nodo:drop": 1,
-      "nodo:dragstart": 7,
-      "nodo:dragend": 7,
+      "nodo:dragstart": 11,
+      "nodo:dragend": 11,
       "window:beforeprint": 1,
       "window:afterprint": 1,
-      "nodo:click": 25,
-      "nodo:dblclick": 19,
-      "nodo:keydown": 25
+      "nodo:click": 42,
+      "nodo:dblclick": 32,
+      "nodo:keydown": 42
      },
      "intervalos": 1
     }
@@ -1548,13 +1633,21 @@
           "<div class=\"et-group-panel\" data-placeholder=\"Arrastre aquí el encabezado de una columna para agrupar\"></div>"
          ]
         ],
+        [
+         34,
+         1,
+         [
+          "    <th field=\"linea\" type=\"Text\" width=\"110px\" style=\"width: 110px;\" draggable=\"true\" class=\"\">"
+         ]
+        ],
         [61,21,[]],
         [85,1,["      \"A1\""]],
         [90,1,["      \"Uno ficticio\""]],
         [
-         94,
-         1,
+         93,
+         2,
          [
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Línea\">",
           "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; width: 110px;\">",
           "      \"Eléctrico\"",
           "     </div>"
@@ -1565,12 +1658,15 @@
         [112,21,[]],
         [136,1,["      \"A2\""]],
         [141,1,["      \"Dos ficticio\""]],
+        [144,1,["    <td class=\"EdiTable-Cell\" data-cell=\"Línea\">"]],
         [146,1,["      \"Ferretería\""]],
         [151,1,["      \"Y\""]],
         [156,1,["      \"3\""]],
         [161,1,["      \"20.00\""]],
+        [176,1,["    <td class=\"EdiTable-Cell\" data-cell=\"Línea\">"]],
         [200,1,["      \"A4\""]],
         [205,1,["      \"Cuatro ficticio\""]],
+        [208,1,["    <td class=\"EdiTable-Cell\" data-cell=\"Línea\">"]],
         [210,1,["      \"Ferretería\""]],
         [215,1,["      \"Y\""]],
         [220,1,["      \"7\""]],
@@ -1578,6 +1674,7 @@
         [229,21,[]],
         [253,1,["      \"A5\""]],
         [258,1,["      \"Cinco ficticio\""]],
+        [261,1,["    <td class=\"EdiTable-Cell\" data-cell=\"Línea\">"]],
         [263,1,["      \"Eléctrico\""]],
         [268,1,["      \"X\""]],
         [273,1,["      \"11\""]],
@@ -1585,49 +1682,54 @@
         [285,1,["      \"A6\""]],
         [290,1,["      \"Seis ficticio\""]],
         [
-         294,
-         3,
+         293,
+         4,
          [
+          "    <td class=\"EdiTable-Cell\" data-cell=\"Línea\">",
           "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; width: 110px;\"></div>"
          ]
         ],
         [300,1,["      \"X\""]],
         [305,1,["      \"13\""]],
-        [310,1,["      \"3.50\""]]
+        [310,1,["      \"3.50\""]],
+        [319,1,[]],
+        [321,0,["    <td class=\"et-summary\"></td>"]]
        ]
       },
       "shadowEsElGuardado": "@=paso-anterior",
       "datos": "@=paso-anterior",
       "columnas": "@=paso-anterior",
       "respaldo": "@=paso-anterior",
-      "props": "@=paso-anterior",
+      "props": {"$parche":[[29,1,["hideColumns = []"]]]},
       "estilos": {
        "$parche": [
         [
          1,
-         2,
+         27,
          [
           "contenedor = display:block;position:static;width:640px;height:246px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:auto;overflow-y:auto",
-          "table = display:table;position:static;width:655px;height:246px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
-         ]
-        ],
-        [
-         10,
-         2,
-         [
+          "table = display:table;position:static;width:655px;height:246px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "thead = display:table-header-group;position:sticky;width:653px;height:27px;color:rgb(0, 0, 0);background-color:rgb(245, 245, 245);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[0] = display:table-cell;position:relative;width:72px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[1] = display:table-cell;position:relative;width:152px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[2] = display:table-cell;position:relative;width:102px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[3] = display:table-cell;position:relative;width:62px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[4] = display:table-cell;position:relative;width:82px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[5] = display:table-cell;position:relative;width:82px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[0] = display:table-row;position:relative;width:653px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[0].td[0] = display:table-cell;position:relative;width:80px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[0].td[1] = display:table-cell;position:relative;width:160px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[0].td[2] = display:table-cell;position:relative;width:110px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[0].td[3] = display:table-cell;position:relative;width:70px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[0].td[4] = display:table-cell;position:relative;width:90px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[0].td[5] = display:table-cell;position:relative;width:90px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
-         ]
-        ],
-        [
-         19,
-         9,
-         [
+          "tr[0].td[5] = display:table-cell;position:relative;width:90px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1] = display:table-row;position:relative;width:653px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[0] = display:table-cell;position:relative;width:80px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[1] = display:table-cell;position:relative;width:160px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[2] = display:table-cell;position:relative;width:110px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[3] = display:table-cell;position:relative;width:70px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[4] = display:table-cell;position:relative;width:90px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[5] = display:table-cell;position:relative;width:90px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[2] = display:table-row;position:relative;width:653px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[2].td[0] = display:table-cell;position:relative;width:80px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[2].td[1] = display:table-cell;position:relative;width:160px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",

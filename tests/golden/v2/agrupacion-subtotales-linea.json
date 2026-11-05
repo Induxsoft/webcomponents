@@ -537,6 +537,13 @@
          ]
         ],
         [
+         25,
+         1,
+         [
+          "    <th field=\"linea\" type=\"Text\" width=\"110px\" style=\"width: 110px;\" draggable=\"true\" tabindex=\"0\" class=\"hidde-col\">"
+         ]
+        ],
+        [
          52,
          0,
          [
@@ -558,7 +565,7 @@
           "     </div>",
           "    </td>",
           "    <td class=\"et-group-cell\"></td>",
-          "    <td class=\"et-group-cell\"></td>",
+          "    <td class=\"et-group-cell hidde-col\"></td>",
           "    <td class=\"et-group-cell\"></td>",
           "    <td class=\"et-group-cell et-group-sum\" data-summary=\"sum\">",
           "     \"13\"",
@@ -572,9 +579,10 @@
         [55,1,["      \"A6\""]],
         [60,1,["      \"Seis ficticio\""]],
         [
-         64,
-         3,
+         63,
+         4,
          [
+          "    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Línea\">",
           "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; width: 110px;\"></div>"
          ]
         ],
@@ -602,7 +610,7 @@
           "     </div>",
           "    </td>",
           "    <td class=\"et-group-cell\"></td>",
-          "    <td class=\"et-group-cell\"></td>",
+          "    <td class=\"et-group-cell hidde-col\"></td>",
           "    <td class=\"et-group-cell\"></td>",
           "    <td class=\"et-group-cell et-group-sum\" data-summary=\"sum\">",
           "     \"18\"",
@@ -615,12 +623,15 @@
         ],
         [87,1,["      \"A1\""]],
         [92,1,["      \"Uno ficticio\""]],
+        [95,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Línea\">"]],
         [97,1,["      \"Eléctrico\""]],
         [102,1,["      \"X\""]],
         [107,1,["      \"2\""]],
         [112,1,["      \"10.50\""]],
+        [127,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Línea\">"]],
         [151,1,["      \"A5\""]],
         [156,1,["      \"Cinco ficticio\""]],
+        [159,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Línea\">"]],
         [161,1,["      \"Eléctrico\""]],
         [166,1,["      \"X\""]],
         [171,1,["      \"11\""]],
@@ -647,7 +658,7 @@
           "     </div>",
           "    </td>",
           "    <td class=\"et-group-cell\"></td>",
-          "    <td class=\"et-group-cell\"></td>",
+          "    <td class=\"et-group-cell hidde-col\"></td>",
           "    <td class=\"et-group-cell\"></td>",
           "    <td class=\"et-group-cell et-group-sum\" data-summary=\"sum\">",
           "     \"10\"",
@@ -660,6 +671,7 @@
         ],
         [183,1,["      \"A2\""]],
         [188,1,["      \"Dos ficticio\""]],
+        [191,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Línea\">"]],
         [193,1,["      \"Ferretería\""]],
         [198,1,["      \"Y\""]],
         [203,1,["      \"3\""]],
@@ -667,9 +679,10 @@
         [215,1,["      \"A4\""]],
         [220,1,["      \"Cuatro ficticio\""]],
         [
-         224,
-         1,
+         223,
+         2,
          [
+          "    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Línea\">",
           "     <div iscellcontent=\"true\" class=\"cell-content\" style=\"max-height: none; height: 100%; width: 110px;\">",
           "      \"Ferretería\"",
           "     </div>"
@@ -677,14 +690,16 @@
         ],
         [228,1,["      \"Y\""]],
         [233,1,["      \"7\""]],
-        [238,1,["      \"99.00\""]]
+        [238,1,["      \"99.00\""]],
+        [247,0,["    <td class=\"et-summary hidde-col\"></td>"]],
+        [248,1,[]]
        ]
       },
       "shadowEsElGuardado": "@=paso-anterior",
       "datos": "@=paso-anterior",
       "columnas": "@=paso-anterior",
       "respaldo": "@=paso-anterior",
-      "props": "@=paso-anterior",
+      "props": {"$parche":[[29,1,["hideColumns = [2]"]]]},
       "estilos": {
        "$parche": [
         [
@@ -692,41 +707,55 @@
          4,
          [
           "contenedor = display:block;position:relative;width:640px;height:330px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:auto;overflow-y:auto",
-          "table = display:table;position:static;width:781px;height:330px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "thead = display:table-header-group;position:sticky;width:779px;height:27px;color:rgb(0, 0, 0);background-color:rgb(245, 245, 245);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "table = display:table;position:static;width:662px;height:330px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "thead = display:table-header-group;position:sticky;width:660px;height:27px;color:rgb(0, 0, 0);background-color:rgb(245, 245, 245);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "th[0] = display:table-cell;position:relative;width:198px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         6,
+         1,
+         [
+          "th[2] = display:none;position:relative;width:110px;height:auto;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
          ]
         ],
         [
          10,
          9,
          [
-          "tr[0] = display:table-row;position:relative;width:779px;height:27px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0] = display:table-row;position:relative;width:660px;height:27px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[0].td[0] = display:table-cell;position:static;width:202px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[0].td[1] = display:table-cell;position:static;width:156px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[0].td[2] = display:table-cell;position:static;width:106px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[2] = display:none;position:static;width:auto;height:auto;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[0].td[3] = display:table-cell;position:static;width:66px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[0].td[4] = display:table-cell;position:static;width:86px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[0].td[5] = display:table-cell;position:static;width:86px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[1] = display:table-row;position:relative;width:779px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1] = display:table-row;position:relative;width:660px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[1].td[0] = display:table-cell;position:relative;width:206px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         20,
+         1,
+         [
+          "tr[1].td[2] = display:none;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
          ]
         ],
         [
          24,
          14,
          [
-          "tr[2] = display:table-row;position:relative;width:779px;height:27px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2] = display:table-row;position:relative;width:660px;height:27px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[2].td[0] = display:table-cell;position:static;width:202px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[2].td[1] = display:table-cell;position:static;width:156px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[2].td[2] = display:table-cell;position:static;width:106px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[2] = display:none;position:static;width:auto;height:auto;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[2].td[3] = display:table-cell;position:static;width:66px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[2].td[4] = display:table-cell;position:static;width:86px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[2].td[5] = display:table-cell;position:static;width:86px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[8] = display:table-row;position:relative;width:779px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[8] = display:table-row;position:relative;width:660px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[8].td[0] = display:table-cell;position:relative;width:206px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[8].td[1] = display:table-cell;position:relative;width:160px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[8].td[2] = display:table-cell;position:relative;width:110px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[8].td[2] = display:none;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[8].td[3] = display:table-cell;position:relative;width:70px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[8].td[4] = display:table-cell;position:relative;width:90px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[8].td[5] = display:table-cell;position:relative;width:90px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
@@ -811,20 +840,20 @@
       "nodo:mousedown": 6,
       "document:mousemove": 6,
       "document:mouseup": 6,
-      "nodo:click": 5,
+      "nodo:click": 9,
       "nodo:contextmenu": 1,
-      "nodo:dragstart": 3,
+      "nodo:dragstart": 4,
       "nodo:dragenter": 2,
       "nodo:dragover": 2,
       "nodo:drop": 2,
-      "nodo:dragend": 3,
-      "nodo:keydown": 5,
+      "nodo:dragend": 4,
+      "nodo:keydown": 9,
       "document:mousedown": 1,
       "document:keydown": 1,
       "nodo:dragleave": 1,
       "window:beforeprint": 1,
       "window:afterprint": 1,
-      "nodo:dblclick": 3
+      "nodo:dblclick": 6
      },
      "intervalos": 1
     }
@@ -856,7 +885,8 @@
         [46,6,[]],
         [62,1,["    <td class=\"et-group-cell et-group-sum\" data-summary=\"sum\">"]],
         [77,0,["     \" \"","     \"13\""]],
-        [81,3,["    <td class=\"et-group-cell\"></td>"]],
+        [79,0,["    <td class=\"et-group-cell\"></td>"]],
+        [81,3,[]],
         [
          89,
          0,
@@ -871,7 +901,8 @@
         [107,5,[]],
         [119,1,["    <td class=\"et-group-cell et-group-sum\" data-summary=\"sum\">"]],
         [134,0,["     \" \"","     \"18\""]],
-        [138,3,["    <td class=\"et-group-cell\"></td>"]],
+        [136,0,["    <td class=\"et-group-cell\"></td>"]],
+        [138,3,[]],
         [
          146,
          0,
@@ -910,7 +941,8 @@
         [230,5,[]],
         [242,1,["    <td class=\"et-group-cell et-group-sum\" data-summary=\"sum\">"]],
         [257,0,["     \" \"","     \"10\""]],
-        [261,3,["    <td class=\"et-group-cell\"></td>"]],
+        [259,0,["    <td class=\"et-group-cell\"></td>"]],
+        [261,3,[]],
         [
          269,
          0,
@@ -959,7 +991,7 @@
        }
       ],
       "respaldo": "@=paso-anterior",
-      "props": "@=paso-anterior",
+      "props": {"$parche":[[29,1,["hideColumns = [3]"]]]},
       "estilos": {
        "$parche": [
         [
@@ -967,8 +999,8 @@
          3,
          [
           "contenedor = display:block;position:relative;width:640px;height:369px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:auto;overflow-y:auto",
-          "table = display:table;position:static;width:771px;height:369px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "thead = display:table-header-group;position:sticky;width:769px;height:27px;color:rgb(0, 0, 0);background-color:rgb(245, 245, 245);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+          "table = display:table;position:static;width:652px;height:369px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "thead = display:table-header-group;position:sticky;width:650px;height:27px;color:rgb(0, 0, 0);background-color:rgb(245, 245, 245);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
          ]
         ],
         [
@@ -977,7 +1009,7 @@
          [
           "th[1] = display:table-cell;position:relative;width:72px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
           "th[2] = display:table-cell;position:relative;width:152px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "th[3] = display:table-cell;position:relative;width:102px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[3] = display:none;position:relative;width:110px;height:auto;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
           "th[4] = display:table-cell;position:relative;width:62px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
          ]
         ],
@@ -985,7 +1017,7 @@
          10,
          1,
          [
-          "tr[0] = display:table-row;position:relative;width:769px;height:27px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+          "tr[0] = display:table-row;position:relative;width:650px;height:27px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
          ]
         ],
         [
@@ -994,7 +1026,7 @@
          [
           "tr[0].td[1] = display:table-cell;position:static;width:76px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[0].td[2] = display:table-cell;position:static;width:156px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[0].td[3] = display:table-cell;position:static;width:106px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[3] = display:none;position:static;width:auto;height:auto;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[0].td[4] = display:table-cell;position:static;width:66px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
          ]
         ],
@@ -1002,7 +1034,7 @@
          17,
          1,
          [
-          "tr[1] = display:table-row;position:relative;width:769px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+          "tr[1] = display:table-row;position:relative;width:650px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
          ]
         ],
         [
@@ -1011,7 +1043,7 @@
          [
           "tr[1].td[1] = display:table-cell;position:relative;width:80px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[1].td[2] = display:table-cell;position:relative;width:160px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[1].td[3] = display:table-cell;position:relative;width:110px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[3] = display:none;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[1].td[4] = display:table-cell;position:relative;width:70px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
          ]
         ],
@@ -1019,14 +1051,14 @@
          24,
          8,
          [
-          "tr[2] = display:table-row;position:relative;width:769px;height:46px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2] = display:table-row;position:relative;width:650px;height:46px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[2].td[0] = display:table-cell;position:static;width:202px;height:38px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[2].td[1] = display:table-cell;position:static;width:76px;height:38px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[2].td[2] = display:table-cell;position:static;width:156px;height:38px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[2].td[3] = display:table-cell;position:static;width:106px;height:38px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[3] = display:none;position:static;width:auto;height:auto;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[2].td[4] = display:table-cell;position:static;width:66px;height:38px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[2].td[5] = display:table-cell;position:static;width:86px;height:38px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[8] = display:table-row;position:relative;width:769px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+          "tr[8] = display:table-row;position:relative;width:650px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
          ]
         ],
         [
@@ -1035,7 +1067,7 @@
          [
           "tr[8].td[1] = display:table-cell;position:relative;width:80px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[8].td[2] = display:table-cell;position:relative;width:160px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[8].td[3] = display:table-cell;position:relative;width:110px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[8].td[3] = display:none;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[8].td[4] = display:table-cell;position:relative;width:70px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
          ]
         ]
@@ -1106,20 +1138,20 @@
       "nodo:mousedown": 6,
       "document:mousemove": 6,
       "document:mouseup": 6,
-      "nodo:click": 9,
+      "nodo:click": 13,
       "nodo:contextmenu": 1,
-      "nodo:dragstart": 4,
+      "nodo:dragstart": 5,
       "nodo:dragenter": 2,
       "nodo:dragover": 2,
       "nodo:drop": 2,
-      "nodo:dragend": 4,
-      "nodo:keydown": 9,
+      "nodo:dragend": 5,
+      "nodo:keydown": 13,
       "document:mousedown": 1,
       "document:keydown": 1,
       "nodo:dragleave": 1,
       "window:beforeprint": 1,
       "window:afterprint": 1,
-      "nodo:dblclick": 6
+      "nodo:dblclick": 9
      },
      "intervalos": 1
     }
@@ -1143,69 +1175,95 @@
           "    <th field=\"nombre\" type=\"Text\" width=\"160px\" style=\"width: 160px;\" draggable=\"true\" tabindex=\"0\" class=\"hidde-col\">"
          ]
         ],
-        [81,0,["    <td class=\"et-group-cell hidde-col\"></td>"]],
-        [83,1,[]],
+        [81,1,[]],
+        [83,0,["    <td class=\"et-group-cell hidde-col\"></td>"]],
         [99,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Nombre\">"]],
-        [138,0,["    <td class=\"et-group-cell hidde-col\"></td>"]],
-        [140,1,[]],
+        [138,1,[]],
+        [140,0,["    <td class=\"et-group-cell hidde-col\"></td>"]],
         [156,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Nombre\">"]],
         [188,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Nombre\">"]],
         [220,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Nombre\">"]],
-        [261,0,["    <td class=\"et-group-cell hidde-col\"></td>"]],
-        [263,1,[]],
+        [261,1,[]],
+        [263,0,["    <td class=\"et-group-cell hidde-col\"></td>"]],
         [279,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Nombre\">"]],
         [311,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Nombre\">"]],
-        [339,0,["    <td class=\"et-summary hidde-col\"></td>"]],
-        [341,1,[]]
+        [339,1,[]],
+        [341,0,["    <td class=\"et-summary hidde-col\"></td>"]]
        ]
       },
       "shadowEsElGuardado": "@=paso-anterior",
       "datos": "@=paso-anterior",
       "columnas": "@=paso-anterior",
       "respaldo": "@=paso-anterior",
-      "props": {"$parche":[[29,1,["hideColumns = [2]"]]]},
+      "props": {"$parche":[[29,1,["hideColumns = [3,2]"]]]},
       "estilos": {
        "$parche": [
         [
-         2,
-         36,
+         1,
+         6,
          [
-          "table = display:table;position:static;width:640px;height:369px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "contenedor = display:block;position:relative;width:640px;height:330px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:auto;overflow-y:auto",
+          "table = display:table;position:static;width:640px;height:330px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "thead = display:table-header-group;position:sticky;width:638px;height:27px;color:rgb(0, 0, 0);background-color:rgb(245, 245, 245);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "th[0] = display:table-cell;position:relative;width:200px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "th[1] = display:table-cell;position:relative;width:81px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "th[2] = display:none;position:relative;width:160px;height:auto;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "th[3] = display:table-cell;position:relative;width:111px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "th[4] = display:table-cell;position:relative;width:71px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "th[5] = display:table-cell;position:relative;width:91px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[0] = display:table-cell;position:relative;width:255px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[1] = display:table-cell;position:relative;width:105px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[2] = display:none;position:relative;width:160px;height:auto;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         8,
+         6,
+         [
+          "th[4] = display:table-cell;position:relative;width:93px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[5] = display:table-cell;position:relative;width:118px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[0] = display:table-row;position:relative;width:638px;height:27px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[0].td[0] = display:table-cell;position:static;width:204px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[0].td[1] = display:table-cell;position:static;width:85px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[0].td[2] = display:none;position:static;width:auto;height:auto;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[0].td[3] = display:table-cell;position:static;width:115px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[0].td[4] = display:table-cell;position:static;width:75px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[0].td[5] = display:table-cell;position:static;width:95px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[0] = display:table-cell;position:static;width:259px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[1] = display:table-cell;position:static;width:109px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[2] = display:none;position:static;width:auto;height:auto;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         15,
+         6,
+         [
+          "tr[0].td[4] = display:table-cell;position:static;width:97px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[5] = display:table-cell;position:static;width:122px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[1] = display:table-row;position:relative;width:638px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[1].td[0] = display:table-cell;position:relative;width:208px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[1].td[1] = display:table-cell;position:relative;width:89px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[1].td[2] = display:none;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[1].td[3] = display:table-cell;position:relative;width:119px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[1].td[4] = display:table-cell;position:relative;width:79px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[1].td[5] = display:table-cell;position:relative;width:99px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[2] = display:table-row;position:relative;width:638px;height:46px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[2].td[0] = display:table-cell;position:static;width:204px;height:38px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[2].td[1] = display:table-cell;position:static;width:85px;height:38px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[2].td[2] = display:none;position:static;width:auto;height:auto;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[2].td[3] = display:table-cell;position:static;width:115px;height:38px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[2].td[4] = display:table-cell;position:static;width:75px;height:38px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[2].td[5] = display:table-cell;position:static;width:95px;height:38px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[0] = display:table-cell;position:relative;width:263px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[1] = display:table-cell;position:relative;width:113px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[2] = display:none;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         22,
+         6,
+         [
+          "tr[1].td[4] = display:table-cell;position:relative;width:101px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[5] = display:table-cell;position:relative;width:126px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2] = display:table-row;position:relative;width:638px;height:27px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[0] = display:table-cell;position:static;width:259px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[1] = display:table-cell;position:static;width:109px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[2] = display:none;position:static;width:auto;height:auto;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         29,
+         6,
+         [
+          "tr[2].td[4] = display:table-cell;position:static;width:97px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[5] = display:table-cell;position:static;width:122px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[8] = display:table-row;position:relative;width:638px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[8].td[0] = display:table-cell;position:relative;width:208px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[8].td[1] = display:table-cell;position:relative;width:89px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[8].td[2] = display:none;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[8].td[3] = display:table-cell;position:relative;width:119px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[8].td[4] = display:table-cell;position:relative;width:79px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[8].td[5] = display:table-cell;position:relative;width:99px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+          "tr[8].td[0] = display:table-cell;position:relative;width:263px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[8].td[1] = display:table-cell;position:relative;width:113px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[8].td[2] = display:none;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         36,
+         2,
+         [
+          "tr[8].td[4] = display:table-cell;position:relative;width:101px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[8].td[5] = display:table-cell;position:relative;width:126px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
          ]
         ]
        ]
@@ -1275,20 +1333,20 @@
       "nodo:mousedown": 6,
       "document:mousemove": 6,
       "document:mouseup": 6,
-      "nodo:click": 13,
+      "nodo:click": 17,
       "nodo:contextmenu": 1,
-      "nodo:dragstart": 5,
+      "nodo:dragstart": 6,
       "nodo:dragenter": 2,
       "nodo:dragover": 2,
       "nodo:drop": 2,
-      "nodo:dragend": 5,
-      "nodo:keydown": 13,
+      "nodo:dragend": 6,
+      "nodo:keydown": 17,
       "document:mousedown": 1,
       "document:keydown": 1,
       "nodo:dragleave": 1,
       "window:beforeprint": 1,
       "window:afterprint": 1,
-      "nodo:dblclick": 9
+      "nodo:dblclick": 12
      },
      "intervalos": 1
     }
@@ -1439,90 +1497,89 @@
        "$parche": [
         [
          1,
-         2,
+         1,
          [
-          "contenedor = display:block;position:relative;width:640px;height:330px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "table = display:table;position:static;width:640px;height:330px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+          "contenedor = display:block;position:relative;width:640px;height:330px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
          ]
         ],
         [
          4,
          2,
          [
-          "th[0] = display:table-cell;position:sticky;width:198px;height:19px;color:rgb(0, 0, 0);background-color:rgb(245, 245, 245);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "th[1] = display:table-cell;position:relative;width:89px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
+          "th[0] = display:table-cell;position:sticky;width:250px;height:19px;color:rgb(0, 0, 0);background-color:rgb(245, 245, 245);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[1] = display:table-cell;position:relative;width:115px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
          ]
         ],
         [
-         7,
-         3,
+         8,
+         2,
          [
-          "th[3] = display:table-cell;position:relative;width:109px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "th[4] = display:table-cell;position:relative;width:69px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "th[5] = display:table-cell;position:relative;width:89px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
+          "th[4] = display:table-cell;position:relative;width:91px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[5] = display:table-cell;position:relative;width:115px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
          ]
         ],
         [
          11,
          2,
          [
-          "tr[0].td[0] = display:table-cell;position:sticky;width:202px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[0].td[1] = display:table-cell;position:static;width:93px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+          "tr[0].td[0] = display:table-cell;position:sticky;width:254px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[1] = display:table-cell;position:static;width:119px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
          ]
         ],
         [
-         14,
-         3,
+         15,
+         2,
          [
-          "tr[0].td[3] = display:table-cell;position:static;width:113px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[0].td[4] = display:table-cell;position:static;width:73px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[0].td[5] = display:table-cell;position:static;width:93px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+          "tr[0].td[4] = display:table-cell;position:static;width:95px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[5] = display:table-cell;position:static;width:119px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
          ]
         ],
         [
          18,
          2,
          [
-          "tr[1].td[0] = display:table-cell;position:sticky;width:206px;height:22px;color:rgb(0, 0, 0);background-color:rgb(255, 255, 255);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[1].td[1] = display:table-cell;position:relative;width:97px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+          "tr[1].td[0] = display:table-cell;position:sticky;width:258px;height:22px;color:rgb(0, 0, 0);background-color:rgb(255, 255, 255);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[1] = display:table-cell;position:relative;width:123px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
          ]
         ],
         [
-         21,
-         6,
+         22,
+         2,
          [
-          "tr[1].td[3] = display:table-cell;position:relative;width:117px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[1].td[4] = display:table-cell;position:relative;width:77px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[1].td[5] = display:table-cell;position:relative;width:97px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[2] = display:table-row;position:relative;width:638px;height:27px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[2].td[0] = display:table-cell;position:sticky;width:202px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[2].td[1] = display:table-cell;position:static;width:93px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+          "tr[1].td[4] = display:table-cell;position:relative;width:99px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[5] = display:table-cell;position:relative;width:123px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
          ]
         ],
         [
-         28,
-         3,
+         25,
+         2,
          [
-          "tr[2].td[3] = display:table-cell;position:static;width:113px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[2].td[4] = display:table-cell;position:static;width:73px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[2].td[5] = display:table-cell;position:static;width:93px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+          "tr[2].td[0] = display:table-cell;position:sticky;width:254px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[1] = display:table-cell;position:static;width:119px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         29,
+         2,
+         [
+          "tr[2].td[4] = display:table-cell;position:static;width:95px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[5] = display:table-cell;position:static;width:119px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
          ]
         ],
         [
          32,
          2,
          [
-          "tr[8].td[0] = display:table-cell;position:sticky;width:206px;height:22px;color:rgb(0, 0, 0);background-color:rgb(255, 255, 255);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[8].td[1] = display:table-cell;position:relative;width:97px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+          "tr[8].td[0] = display:table-cell;position:sticky;width:258px;height:22px;color:rgb(0, 0, 0);background-color:rgb(255, 255, 255);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[8].td[1] = display:table-cell;position:relative;width:123px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
          ]
         ],
         [
-         35,
-         3,
+         36,
+         2,
          [
-          "tr[8].td[3] = display:table-cell;position:relative;width:117px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[8].td[4] = display:table-cell;position:relative;width:77px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[8].td[5] = display:table-cell;position:relative;width:97px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+          "tr[8].td[4] = display:table-cell;position:relative;width:99px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[8].td[5] = display:table-cell;position:relative;width:123px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
          ]
         ]
        ]
@@ -1592,20 +1649,20 @@
       "nodo:mousedown": 6,
       "document:mousemove": 6,
       "document:mouseup": 6,
-      "nodo:click": 17,
+      "nodo:click": 21,
       "nodo:contextmenu": 1,
-      "nodo:dragstart": 6,
+      "nodo:dragstart": 7,
       "nodo:dragenter": 2,
       "nodo:dragover": 2,
       "nodo:drop": 2,
-      "nodo:dragend": 6,
-      "nodo:keydown": 17,
+      "nodo:dragend": 7,
+      "nodo:keydown": 21,
       "document:mousedown": 1,
       "document:keydown": 1,
       "nodo:dragleave": 1,
       "window:beforeprint": 1,
       "window:afterprint": 1,
-      "nodo:dblclick": 12
+      "nodo:dblclick": 15
      },
      "intervalos": 1
     }
@@ -1640,9 +1697,10 @@
          46,
          1,
          [
-          "    <th field=\"marca\" type=\"Text\" width=\"70px\" style=\"width: 70px;\" draggable=\"true\" tabindex=\"0\" class=\"\">"
+          "    <th field=\"marca\" type=\"Text\" width=\"70px\" style=\"width: 70px;\" draggable=\"true\" tabindex=\"0\" class=\"hidde-col\">"
          ]
         ],
+        [83,1,["    <td class=\"et-group-cell hidde-col\"></td>"]],
         [
          88,
          0,
@@ -1668,14 +1726,16 @@
           "     \"13\"",
           "    </td>",
           "    <td class=\"et-group-cell hidde-col\"></td>",
-          "    <td class=\"et-group-cell\"></td>",
-          "    <td class=\"et-group-cell\"></td>",
+          "    <td class=\"et-group-cell hidde-col\"></td>",
+          "    <td class=\"et-group-cell hidde-col\"></td>",
           "    <td class=\"et-group-cell et-group-sum\" data-summary=\"max\">",
           "     \"3.50\"",
           "    </td>",
           "   </tr>"
          ]
         ],
+        [107,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Marca\">"]],
+        [140,1,["    <td class=\"et-group-cell hidde-col\"></td>"]],
         [
          145,
          0,
@@ -1701,17 +1761,19 @@
           "     \"13\"",
           "    </td>",
           "    <td class=\"et-group-cell hidde-col\"></td>",
-          "    <td class=\"et-group-cell\"></td>",
-          "    <td class=\"et-group-cell\"></td>",
+          "    <td class=\"et-group-cell hidde-col\"></td>",
+          "    <td class=\"et-group-cell hidde-col\"></td>",
           "    <td class=\"et-group-cell et-group-sum\" data-summary=\"max\">",
           "     \"10.50\"",
           "    </td>",
           "   </tr>"
          ]
         ],
+        [166,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Marca\">"]],
         [180,1,["      \"A5\""]],
         [185,1,["      \"11\""]],
         [190,1,["      \"Cinco ficticio\""]],
+        [198,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Marca\">"]],
         [200,1,["      \"X\""]],
         [205,1,["      \"1.00\""]],
         [
@@ -1739,8 +1801,8 @@
           "     \"5\"",
           "    </td>",
           "    <td class=\"et-group-cell hidde-col\"></td>",
-          "    <td class=\"et-group-cell\"></td>",
-          "    <td class=\"et-group-cell\"></td>",
+          "    <td class=\"et-group-cell hidde-col\"></td>",
+          "    <td class=\"et-group-cell hidde-col\"></td>",
           "    <td class=\"et-group-cell et-group-sum\" data-summary=\"max\">",
           "     \"7.25\"",
           "    </td>",
@@ -1750,8 +1812,10 @@
         [212,1,["      \"A3\""]],
         [217,1,["      \"5\""]],
         [222,1,["      \"Tres ficticio\""]],
+        [230,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Marca\">"]],
         [232,1,["      \"Y\""]],
         [237,1,["      \"7.25\""]],
+        [263,1,["    <td class=\"et-group-cell hidde-col\"></td>"]],
         [
          268,
          0,
@@ -1777,21 +1841,24 @@
           "     \"10\"",
           "    </td>",
           "    <td class=\"et-group-cell hidde-col\"></td>",
-          "    <td class=\"et-group-cell\"></td>",
-          "    <td class=\"et-group-cell\"></td>",
+          "    <td class=\"et-group-cell hidde-col\"></td>",
+          "    <td class=\"et-group-cell hidde-col\"></td>",
           "    <td class=\"et-group-cell et-group-sum\" data-summary=\"max\">",
           "     \"99.00\"",
           "    </td>",
           "   </tr>"
          ]
-        ]
+        ],
+        [289,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Marca\">"]],
+        [321,1,["    <td class=\"EdiTable-Cell hidde-col\" data-cell=\"Marca\">"]],
+        [341,1,["    <td class=\"et-summary hidde-col\"></td>"]]
        ]
       },
       "shadowEsElGuardado": "@=paso-anterior",
       "datos": "@=paso-anterior",
       "columnas": "@=paso-anterior",
       "respaldo": "@=paso-anterior",
-      "props": "@=paso-anterior",
+      "props": {"$parche":[[29,1,["hideColumns = [3,2,4]"]]]},
       "estilos": {
        "$parche": [
         [
@@ -1803,30 +1870,56 @@
          ]
         ],
         [
-         17,
-         21,
+         4,
+         2,
          [
+          "th[0] = display:table-cell;position:sticky;width:304px;height:19px;color:rgb(0, 0, 0);background-color:rgb(245, 245, 245);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[1] = display:table-cell;position:relative;width:142px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         8,
+         2,
+         [
+          "th[4] = display:none;position:relative;width:70px;height:auto;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "th[5] = display:table-cell;position:relative;width:142px;height:19px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:center;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         11,
+         2,
+         [
+          "tr[0].td[0] = display:table-cell;position:sticky;width:308px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[1] = display:table-cell;position:static;width:146px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+         ]
+        ],
+        [
+         15,
+         23,
+         [
+          "tr[0].td[4] = display:none;position:static;width:auto;height:auto;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[0].td[5] = display:table-cell;position:static;width:146px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[1] = display:table-row;position:relative;width:638px;height:27px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[1].td[0] = display:table-cell;position:sticky;width:202px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[1].td[1] = display:table-cell;position:static;width:93px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[0] = display:table-cell;position:sticky;width:308px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[1] = display:table-cell;position:static;width:146px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[1].td[2] = display:none;position:static;width:auto;height:auto;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[1].td[3] = display:table-cell;position:static;width:113px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[1].td[4] = display:table-cell;position:static;width:73px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[1].td[5] = display:table-cell;position:static;width:93px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[3] = display:none;position:static;width:auto;height:auto;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[4] = display:none;position:static;width:auto;height:auto;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[1].td[5] = display:table-cell;position:static;width:146px;height:19px;color:rgb(0, 0, 0);background-color:rgb(238, 242, 247);font-weight:600;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[2] = display:table-row;position:relative;width:638px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[2].td[0] = display:table-cell;position:sticky;width:206px;height:22px;color:rgb(0, 0, 0);background-color:rgb(255, 255, 255);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[2].td[1] = display:table-cell;position:relative;width:97px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[0] = display:table-cell;position:sticky;width:312px;height:22px;color:rgb(0, 0, 0);background-color:rgb(255, 255, 255);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[1] = display:table-cell;position:relative;width:150px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[2].td[2] = display:none;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[2].td[3] = display:table-cell;position:relative;width:117px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[2].td[4] = display:table-cell;position:relative;width:77px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[2].td[5] = display:table-cell;position:relative;width:97px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[3] = display:none;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[4] = display:none;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[2].td[5] = display:table-cell;position:relative;width:150px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[12] = display:table-row;position:relative;width:638px;height:30px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[12].td[0] = display:table-cell;position:sticky;width:206px;height:22px;color:rgb(0, 0, 0);background-color:rgb(255, 255, 255);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[12].td[1] = display:table-cell;position:relative;width:97px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[12].td[0] = display:table-cell;position:sticky;width:312px;height:22px;color:rgb(0, 0, 0);background-color:rgb(255, 255, 255);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[12].td[1] = display:table-cell;position:relative;width:150px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
           "tr[12].td[2] = display:none;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[12].td[3] = display:table-cell;position:relative;width:117px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[12].td[4] = display:table-cell;position:relative;width:77px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
-          "tr[12].td[5] = display:table-cell;position:relative;width:97px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
+          "tr[12].td[3] = display:none;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[12].td[4] = display:none;position:relative;width:auto;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible",
+          "tr[12].td[5] = display:table-cell;position:relative;width:150px;height:22px;color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);font-weight:400;text-align:start;visibility:visible;overflow-x:visible;overflow-y:visible"
          ]
         ]
        ]
@@ -1916,20 +2009,20 @@
       "nodo:mousedown": 6,
       "document:mousemove": 6,
       "document:mouseup": 6,
-      "nodo:click": 26,
+      "nodo:click": 39,
       "nodo:contextmenu": 1,
-      "nodo:dragstart": 8,
+      "nodo:dragstart": 11,
       "nodo:dragenter": 2,
       "nodo:dragover": 2,
       "nodo:drop": 2,
-      "nodo:dragend": 8,
-      "nodo:keydown": 26,
+      "nodo:dragend": 11,
+      "nodo:keydown": 39,
       "document:mousedown": 1,
       "document:keydown": 1,
       "nodo:dragleave": 1,
       "window:beforeprint": 1,
       "window:afterprint": 1,
-      "nodo:dblclick": 19
+      "nodo:dblclick": 29
      },
      "intervalos": 1
     }

@@ -50,3 +50,9 @@ la spec o el comportamiento actual, no defectos del componente. Cada renglón: p
 | `dis-24` (`v09-diseno.mjs`) | Encargo 5: la restauración del diseño guardado ahora dispara `LayoutChanged` con `reason:'restore'`. | Sin cambio: `dis-24` ya filtra solo las razones de usuario (`resize`, `move`…), así que sigue pasando. |
 | Suite nueva `v15-f8a-funcional.mjs` | 91 pruebas: `bus-` (27), `val-` (13), `chg-` (12), `cap-` (15), `reg-` (15), `enc-` (8, encargos de la integración) y `f8a-features`. | Los renglones `§F8a-*` están en `spec-renglones.mjs`. |
 | Banco: `impresion/*`, `v12/impresion-media-print`, `defectos/afterprint-muestra-ocultas` (2026-11-02) | Al imprimir, el contenedor interno conservaba `overflow:auto` y los anchos fijos; la tabla salía con barra de scroll y recortada a la derecha. | Regla `@media print` insertada en el CSSOM (sin cambiar el texto de los `<style>`): contenedor `overflow:visible`, tabla al 100 % y anchos automáticos con ajuste de línea. Cambian solo los estilos calculados en modo impresión de esos 5 escenarios; referencias regeneradas. |
+
+## Lista de ventas de V12 (2026-11-05)
+
+| Prueba | Motivo | Cambio |
+|---|---|---|
+| `lim-02` (`v12-limites-y-r1.mjs`) | Decisión de Emmanuel: por omisión, agrupar por una columna la oculta (`group-hide-columns`, por omisión `true`). La copia de la fila agrupada por `linea` ya no trae esa columna. | Espera `P-003\tTornillo hexagonal\t10\t2.50`. Las pruebas nuevas están en `v17-lista-ventas.mjs` (`lv-*`). |

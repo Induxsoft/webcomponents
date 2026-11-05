@@ -14,6 +14,8 @@
   // 1. Shadow DOM abierto
   const origAttach = Element.prototype.attachShadow;
   Element.prototype.attachShadow = function (opts) {
+    // window.__ctShadowCerrado (puesto por la página antes del componente): respeta el modo pedido, como en V12.
+    if (window.__ctShadowCerrado) return origAttach.call(this, opts);
     return origAttach.call(this, Object.assign({}, opts || {}, { mode: 'open' }));
   };
 
