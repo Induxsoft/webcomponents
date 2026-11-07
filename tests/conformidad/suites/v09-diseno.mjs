@@ -182,6 +182,20 @@ t('30', 'design-auto-save-sort="true": el orden se recuerda', ['§9-n'], async (
   await c.page.reload({ waitUntil: 'load' }); await c.esperar(200);
   c.igual(await c.ev(() => __ct.t('t1').DataArray[0].codigo), 'P-004');
 });
+t('30b', 'agrupación: se recuerda por omisión (design-auto-save-group); el orden no', ['§9-n'], async (c) => {
+  await c.abrir(pag({ ruta: R('30b') }));
+  await c.ev(() => { const t = __ct.t('t1'); t._f3ComoUsuario(() => t.GroupBy(['nombre'])); }); await c.esperar(900);
+  await c.clicTh('t1', 'codigo'); await c.clicTh('t1', 'codigo'); await c.esperar(900);
+  await c.page.reload({ waitUntil: 'load' }); await c.esperar(300);
+  c.igual(JSON.stringify(await c.ev(() => __ct.t('t1').getGroups())), '["nombre"]');
+  c.igual((await lay(c)).sort, null);
+});
+t('30c', 'design-auto-save-group="false": la agrupación no se recuerda', ['§9-n'], async (c) => {
+  await c.abrir(pag({ ruta: R('30c'), a: { 'design-auto-save-group': 'false' } }));
+  await c.ev(() => { const t = __ct.t('t1'); t._f3ComoUsuario(() => t.GroupBy(['nombre'])); }); await c.esperar(900);
+  await c.page.reload({ waitUntil: 'load' }); await c.esperar(300);
+  c.igual(JSON.stringify(await c.ev(() => __ct.t('t1').getGroups())), '[]');
+});
 t('31', 'huella de columnas: si cambian los field declarados, el diseño guardado se descarta', ['§9-o'], async (c) => {
   await c.abrir(pag({ ruta: RUTA_31 }));
   await ensanchar(c, 1, 120); await c.esperar(900);

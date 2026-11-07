@@ -1,9 +1,9 @@
 {
- "generado": "2026-11-05T19:45:31.959Z",
+ "generado": "2026-11-07T01:06:40.576Z",
  "chrome": "153.0.8010.12",
  "plataforma": "linux x64",
  "node": "v22.23.4",
  "src": "src/js/induxsoft.controls.editable.js",
- "srcSha256": "c6f09004474bfecddf21d973c94fb30dae94eee09d5b98d378a649f8845ba922",
- "escenarios": 277
+ "srcSha256": "5a04830359e99162c2c650a3edab57dec9587c5478bd42cd4c4f767194382619",
+ "escenarios": 1
 }

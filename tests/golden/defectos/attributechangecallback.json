@@ -627,6 +627,7 @@
         "design-auto-save",
         "design-key",
         "design-auto-save-sort",
+        "design-auto-save-group",
         "virtual-rows",
         "group-panel",
         "theme",
